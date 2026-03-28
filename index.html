@@ -56,153 +56,7 @@
         }
         .ai-status span { color: #003ca5; font-weight: 600; }
         
-        .upload-section {
-            background: #f8f9fa;
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 30px;
-            border: 2px dashed #003ca5;
-        }
-        .upload-section input { display: none; }
-        .upload-btn {
-            background: #003ca5;
-            color: #ffffff;
-            padding: 20px 40px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 600;
-            display: inline-block;
-            transition: all 0.3s;
-        }
-        .upload-btn:hover {
-            background: #002d7a;
-            transform: scale(1.05);
-        }
-        
-        .stats-bar {
-            display: none;
-            justify-content: center;
-            gap: 30px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        .stat-item {
-            background: #f8f9fa;
-            padding: 15px 25px;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid #003ca5;
-        }
-        .stat-number {
-            font-size: 2em;
-            font-weight: 700;
-            color: #003ca5;
-        }
-        .stat-label {
-            font-size: 0.9em;
-            color: #666;
-            font-weight: 500;
-        }
-        
-        .custom-keywords-panel {
-            display: none;
-            background: rgba(40,167,69,0.1);
-            border: 2px solid #28a745;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-        }
-        .custom-keywords-panel h3 {
-            color: #28a745;
-            margin-bottom: 20px;
-        }
-        .add-keyword-form {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .form-group label {
-            font-weight: 600;
-            color: #003ca5;
-            font-size: 0.9em;
-        }
-        .add-keyword-form input {
-            padding: 12px 15px;
-            border: 2px solid #003ca5;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .add-keyword-form button {
-            padding: 12px 25px;
-            background: #28a745;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
-        }
-        .add-keyword-form button:hover {
-            background: #218838;
-            transform: scale(1.05);
-        }
-        .keywords-list {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 15px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .keyword-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid #28a745;
-        }
-        .keyword-item-info {
-            flex: 1;
-        }
-        .keyword-item-word {
-            font-weight: 700;
-            color: #28a745;
-            font-size: 1.1em;
-        }
-        .keyword-item-object {
-            color: #003ca5;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .keyword-item-delete {
-            background: #dc3545;
-            color: #ffffff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
-        }
-        .keyword-item-delete:hover {
-            background: #c82333;
-        }
-        
         .search-container {
-            display: none;
             background: #f8f9fa;
             padding: 30px;
             border-radius: 15px;
@@ -259,38 +113,6 @@
             background: #002d7a;
         }
         
-        .sugerencias {
-            margin-top: 20px;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 10px;
-            border: 2px solid #003ca5;
-        }
-        .sugerencias h3 {
-            margin-bottom: 15px;
-            color: #003ca5;
-        }
-        .sugerencias-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-        }
-        .sugerencia-item {
-            background: #003ca5;
-            color: #ffffff;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        .sugerencia-item:hover {
-            background: #002d7a;
-            transform: translateY(-2px);
-        }
-        
         .results-container { display: grid; gap: 20px; }
         .result-card {
             background: #ffffff;
@@ -306,10 +128,6 @@
             background: #f8f9fa;
             box-shadow: 0 4px 20px rgba(0,60,165,0.2);
         }
-        .result-card.selected {
-            border-left-color: #ff6b00;
-            background: #fff5f0;
-        }
         .codigo-badge {
             background: #003ca5;
             color: #ffffff;
@@ -319,14 +137,12 @@
             font-size: 1.1em;
             display: inline-block;
             margin-bottom: 10px;
-            font-family: 'Montserrat', sans-serif;
         }
         .denominacion {
             font-size: 1.3em;
             font-weight: 600;
             margin: 10px 0;
             color: #003ca5;
-            font-family: 'Montserrat', sans-serif;
         }
         .descripcion {
             color: #666;
@@ -335,8 +151,6 @@
             background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 400;
         }
         .relevancia-badge {
             background: rgba(0,60,165,0.1);
@@ -345,8 +159,6 @@
             border-radius: 15px;
             font-size: 0.9em;
             float: right;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
         }
         .categoria-tag {
             display: inline-block;
@@ -356,8 +168,6 @@
             border-radius: 15px;
             font-size: 0.85em;
             margin-top: 10px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
         }
         .grupo-tag {
             display: inline-block;
@@ -367,34 +177,9 @@
             border-radius: 10px;
             font-size: 0.75em;
             margin-left: 10px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        .keyword-match {
-            display: inline-block;
-            background: rgba(255,107,0,0.1);
-            color: #ff6b00;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            margin-top: 8px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        .custom-keyword-badge {
-            display: inline-block;
-            background: rgba(40,167,69,0.1);
-            color: #28a745;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            margin-top: 8px;
-            margin-left: 8px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
         }
         
-        .loading { text-align: center; padding: 50px; color: #666; font-family: 'Montserrat', sans-serif; }
+        .loading { text-align: center; padding: 50px; color: #666; }
         .error {
             background: rgba(255,100,100,0.1);
             border: 2px solid #dc3545;
@@ -402,69 +187,31 @@
             border-radius: 10px;
             margin-top: 20px;
             color: #dc3545;
-            font-family: 'Montserrat', sans-serif;
         }
+        .no-results { text-align: center; padding: 50px; color: #666; }
         
-        .history-section {
-            display: none;
-            margin-top: 30px;
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
             background: #f8f9fa;
-            padding: 25px;
-            border-radius: 12px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
             border: 2px solid #003ca5;
         }
-        .history-section h3 {
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
             color: #003ca5;
-            margin-bottom: 15px;
         }
-        .history-item {
-            background: #ffffff;
-            padding: 12px 18px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #003ca5;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .history-item:hover {
-            background: #f0f4f8;
-        }
-        .history-count {
-            color: #003ca5;
+        .stat-label {
             font-size: 0.9em;
-            font-weight: 500;
-        }
-        
-        .clear-btn {
-            background: #dc3545;
-            color: #ffffff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        
-        .toggle-panel-btn {
-            background: #28a745;
-            color: #ffffff;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-        }
-        .toggle-panel-btn:hover {
-            background: #218838;
-            transform: scale(1.05);
+            color: #666;
         }
         
         @media (max-width: 768px) {
@@ -472,10 +219,6 @@
             .logo-container { flex-direction: column; }
             .search-box { flex-direction: column; }
             .stats-bar { flex-direction: column; align-items: center; }
-            .header h1 { font-size: 1.5em; }
-            .add-keyword-form {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -491,34 +234,13 @@
             </div>
         </div>
         
-        <div class="ai-status" id="aiStatus">
-            📊 <span id="aiStatusText">IA lista - Cargá tu archivo CSV para comenzar</span> | 
-            🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
-            📚 Palabras personalizadas: <span id="customKeywordsCount">0</span>
+        <div class="ai-status">
+            📊 <span id="aiStatusText">Buscador listo</span> | 
+            🔍 Búsquedas: <span id="searchCount">0</span> |
+            📦 Registros: <span id="totalRegistros">0</span>
         </div>
         
-        <!-- Carga de CSV -->
-        <div class="upload-section" id="uploadSection">
-            <h2 style="color: #003ca5; margin-bottom: 20px;">📂 Paso 1: Cargá tu archivo CSV</h2>
-            <p style="margin: 20px 0; color: #666; font-size: 1.1em;">
-                Seleccioná el archivo <strong>ObjetosGasto.csv</strong> que descargaste de la CGN
-            </p>
-            <label class="upload-btn">
-                📥 Seleccionar Archivo CSV
-                <input type="file" id="csvFile" accept=".csv">
-            </label>
-            <p id="fileName" style="margin-top: 20px; color: #28a745; font-weight: 600;"></p>
-            <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
-                🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
-            </p>
-        </div>
-        
-        <!-- Estadísticas -->
-        <div class="stats-bar" id="statsBar">
-            <div class="stat-item">
-                <div class="stat-number" id="totalRegistros">0</div>
-                <div class="stat-label">Registros Cargados</div>
-            </div>
+        <div class="stats-bar">
             <div class="stat-item">
                 <div class="stat-number" id="totalObjetos">0</div>
                 <div class="stat-label">Objetos Únicos</div>
@@ -529,53 +251,12 @@
             </div>
         </div>
         
-        <!-- Botón para mostrar/ocultar panel de palabras personalizadas -->
-        <button class="toggle-panel-btn" onclick="toggleCustomKeywordsPanel()" id="togglePanelBtn" style="display: none;">
-            📝 Gestionar Palabras Personalizadas
-        </button>
-        
-        <!-- Panel de Palabras Personalizadas -->
-        <div class="custom-keywords-panel" id="customKeywordsPanel">
-            <h3>📝 Agregar Palabras Personalizadas</h3>
-            <p style="margin-bottom: 20px; color: #666;">
-                Agregá tus propias palabras para que la IA las reconozca en futuras búsquedas.
-            </p>
-            
-            <div class="add-keyword-form">
-                <div class="form-group">
-                    <label for="newKeyword">Palabra o Término:</label>
-                    <input type="text" id="newKeyword" placeholder="Ej: insumos, descartables, lima...">
-                </div>
-                <div class="form-group">
-                    <label for="newObjeto">Objeto:</label>
-                    <input type="text" id="newObjeto" placeholder="Ej: 191">
-                </div>
-                <div class="form-group">
-                    <label for="newAuxiliar">Auxiliar:</label>
-                    <input type="text" id="newAuxiliar" placeholder="Ej: 000" value="000">
-                </div>
-                <button onclick="addCustomKeyword()">➕ Agregar Palabra</button>
-            </div>
-            
-            <div class="keywords-list" id="keywordsList">
-                <p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>
-            </div>
-            
-            <div class="export-import-btns" style="display: flex; gap: 10px; margin-top: 20px;">
-                <button onclick="exportCustomKeywords()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📤 Exportar Palabras</button>
-                <button onclick="document.getElementById('importFile').click()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📥 Importar Palabras</button>
-                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImport(event)">
-                <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">🗑️ Limpiar Todas</button>
-            </div>
-        </div>
-        
-        <!-- Buscador -->
-        <div class="search-container" id="searchContainer">
+        <div class="search-container">
             <div class="search-box">
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lechuga, lapiz, aceite..."
+                    placeholder="Ej: sueldo, harina, combustible, medicamento, vehículo, regla, internación, útiles..."
                     onkeypress="if(event.key === 'Enter') buscar()"
                 >
                 <button onclick="buscar()">🔎 Buscar Objeto</button>
@@ -589,331 +270,139 @@
                 <button class="filter-btn" onclick="filtrarGrupo('1')">Grupo 1</button>
                 <button class="filter-btn" onclick="filtrarGrupo('2')">Grupo 2</button>
                 <button class="filter-btn" onclick="filtrarGrupo('3')">Grupo 3</button>
-                <button class="filter-btn" onclick="filtrarGrupo('4')">Grupo 4</button>
                 <button class="filter-btn" onclick="filtrarGrupo('5')">Grupo 5</button>
-                <button class="filter-btn" onclick="filtrarGrupo('6')">Grupo 6</button>
-                <button class="filter-btn" onclick="filtrarGrupo('7')">Grupo 7</button>
-                <button class="filter-btn" onclick="filtrarGrupo('8')">Grupo 8</button>
-                <button class="filter-btn" onclick="filtrarGrupo('9')">Grupo 9</button>
                 <button class="filter-btn" onclick="limpiarFiltros()">🔄 Limpiar</button>
-            </div>
-            
-            <div class="sugerencias" id="sugerencias">
-                <h3>💡 Búsquedas sugeridas</h3>
-                <div class="sugerencias-grid" id="sugerenciasGrid"></div>
             </div>
         </div>
         
         <div id="results" class="results-container"></div>
-        
-        <!-- Historial -->
-        <div class="history-section" id="historySection">
-            <h3>📜 Historial de Búsquedas</h3>
-            <div id="historyList"></div>
-            <button class="clear-btn" onclick="clearHistory()">🗑️ Limpiar Historial</button>
-        </div>
     </div>
 
     <script>
         // ============================================
-        // 📊 VARIABLES GLOBALES
+        // 📊 DATOS DEL CSV - YA INCRUSTADOS
         // ============================================
-        let datosCompletos = [];
+        const datosCSV = [
+            {"objeto":"011","auxiliar":"000","denominacion":"Sueldo básico de cargos","descripcion":"Codifica retrib. del personal q/ocupa cargos presupuestados permanentes...","grupo":"0"},
+            {"objeto":"011","auxiliar":"001","denominacion":"Sueldo básico Reservistas","descripcion":"Art 111 Decreto-Ley 14.157.","grupo":"0"},
+            {"objeto":"021","auxiliar":"000","denominacion":"Sueldo básico de funciones contratadas","descripcion":"Codifica las retribuciones del personal contratado permanente...","grupo":"0"},
+            {"objeto":"031","auxiliar":"000","denominacion":"Retribuciones zafrales y temporales","descripcion":"Codifica las retribuciones del personal contratado directamente...","grupo":"0"},
+            {"objeto":"042","auxiliar":"000","denominacion":"Compensaciones","descripcion":"Clasifica los auxiliares correspondientes a retribuciones complementarias...","grupo":"0"},
+            {"objeto":"044","auxiliar":"000","denominacion":"Antigüedad","descripcion":"Clasifica la retribución que percibe todo el personal...","grupo":"0"},
+            {"objeto":"059","auxiliar":"000","denominacion":"Sueldo anual complementario","descripcion":"Codifica la doceava parte del total de retribuciones...","grupo":"0"},
+            {"objeto":"111","auxiliar":"000","denominacion":"Alimentos para personas","descripcion":"Todo insumo/producto c/destino final a la alimentación/personas. Harina, arroz, carne, verduras, lechuga...","grupo":"1"},
+            {"objeto":"112","auxiliar":"000","denominacion":"Alimento para animales","descripcion":"Todo insumo o producto cuyo destino final es la alimentación de animales","grupo":"1"},
+            {"objeto":"122","auxiliar":"000","denominacion":"Prendas de vestir","descripcion":"Vestimenta, calzado, uniformes, y todo otro tipo de ropa de trabajo...","grupo":"1"},
+            {"objeto":"131","auxiliar":"000","denominacion":"Papeles de oficina","descripcion":"Papel, papel copia, rollos para máquina de calcular...","grupo":"1"},
+            {"objeto":"141","auxiliar":"000","denominacion":"Combustibles derivados del petróleo","descripcion":"Combustibles y lubricantes derivados del petróleo, nafta, gasoil, diesel...","grupo":"1"},
+            {"objeto":"152","auxiliar":"000","denominacion":"Productos medicinales y farmacéuticos","descripcion":"Drogas y Medicamentos utilizados en hospitales, clínicas y policlínicas...","grupo":"1"},
+            {"objeto":"176","auxiliar":"000","denominacion":"Herramientas menores","descripcion":"Herramientas menores tales como: destornilladores, hachas, alicates, martillos, palas, reglas...","grupo":"1"},
+            {"objeto":"191","auxiliar":"000","denominacion":"Útiles de oficina","descripcion":"Elementos necesarios para el funcionamiento normal de las oficinas, lápices, reglas, carpetas, útiles para escritorio...","grupo":"1"},
+            {"objeto":"192","auxiliar":"000","denominacion":"Elementos de limpieza y de aseo","descripcion":"Materiales para limpieza, jabones, escobas, lavandinas...","grupo":"1"},
+            {"objeto":"194","auxiliar":"000","denominacion":"Artículos menores médico quirúrgicos","descripcion":"Utiles menores y elementos descartables médico-quirúrgicos, jeringas, agujas, gasas, vendajes...","grupo":"1"},
+            {"objeto":"211","auxiliar":"000","denominacion":"Teléfono, telégrafo y similares","descripcion":"Gastos por concepto de llamadas telefónicas, internet, wifi...","grupo":"2"},
+            {"objeto":"212","auxiliar":"000","denominacion":"Agua","descripcion":"Gastos por los servicios de agua potable y sanitario.","grupo":"2"},
+            {"objeto":"213","auxiliar":"000","denominacion":"Electricidad","descripcion":"Gastos por consumo de energía eléctrica para alumbrado y uso en labores de oficina...","grupo":"2"},
+            {"objeto":"231","auxiliar":"000","denominacion":"Pasajes dentro del país","descripcion":"Pasajes y servicios de transporte de los empleados públicos...","grupo":"2"},
+            {"objeto":"234","auxiliar":"000","denominacion":"Viáticos dentro del país","descripcion":"Erogaciones para atender gastos de alojamiento y alimentación del personal...","grupo":"2"},
+            {"objeto":"235","auxiliar":"000","denominacion":"Viáticos fuera del país","descripcion":"Erogaciones para atender gastos de alojamiento y alimentación del personal fuera del país...","grupo":"2"},
+            {"objeto":"251","auxiliar":"000","denominacion":"De inmuebles contratados dentro del país","descripcion":"Erogaciones por concepto de alquileres de inmuebles...","grupo":"2"},
+            {"objeto":"271","auxiliar":"000","denominacion":"De inmuebles e instalaciones","descripcion":"Servicios contratados para mantenimiento, reparaciones menores y limpieza de edificios...","grupo":"2"},
+            {"objeto":"273","auxiliar":"000","denominacion":"De automotores","descripcion":"Servicios contratados para mantenimiento, reparaciones menores y limpieza de vehículos...","grupo":"2"},
+            {"objeto":"278","auxiliar":"000","denominacion":"De limpieza, aseo y fumigación","descripcion":"Servicios contratados de limpieza, de aseo y fumigación...","grupo":"2"},
+            {"objeto":"283","auxiliar":"000","denominacion":"Servicios médicos, sanitarios y sociales","descripcion":"Servicios médicos y sanitarios de carácter extraordinario...","grupo":"2"},
+            {"objeto":"283","auxiliar":"007","denominacion":"Serv. internación en sanatorios y hospitales-Sector Salud","descripcion":"Auxiliar solicitado por ASSE para internación en sanatorios y hospitales...","grupo":"2"},
+            {"objeto":"284","auxiliar":"000","denominacion":"Servicios de capacitación","descripcion":"Erogaciones destinadas a atender programas y cursos de capacitación...","grupo":"2"},
+            {"objeto":"285","auxiliar":"000","denominacion":"Servicios informáticos y anexos","descripcion":"Gastos destinados al pago de servicios informáticos, software, hosting...","grupo":"2"},
+            {"objeto":"291","auxiliar":"000","denominacion":"Servicios de vigilancia y custodia","descripcion":"Erogaciones por la prestación por parte de terceros de servicios de vigilancia...","grupo":"2"},
+            {"objeto":"323","auxiliar":"000","denominacion":"Equipos de informática","descripcion":"Adquisición de computadores personales, laptops, notebooks, servidores...","grupo":"3"},
+            {"objeto":"326","auxiliar":"000","denominacion":"Mobiliario de oficina","descripcion":"Muebles metálicos o de madera, escritorios, mesas, sillas...","grupo":"3"},
+            {"objeto":"331","auxiliar":"000","denominacion":"Médicos, quirúrgicos, de laboratorio","descripcion":"Equipos médicos, odontológicos, sanitarios y de investigación...","grupo":"3"},
+            {"objeto":"353","auxiliar":"000","denominacion":"Otros vehículos automóviles","descripcion":"Automóviles, motos, camionetas, ambulancias, jeep...","grupo":"3"},
+            {"objeto":"387","auxiliar":"000","denominacion":"Vías de comunicación","descripcion":"Comprende los gastos en construcción de carreteras, caminos, calles, puentes...","grupo":"3"},
+            {"objeto":"511","auxiliar":"000","denominacion":"A Empresas Públicas no Financieras","descripcion":"Clasifica los aportes a las Empresas Públicas no Financieras...","grupo":"5"},
+            {"objeto":"551","auxiliar":"000","denominacion":"Científicas y de investigación","descripcion":"Clasifica las transferencias para gastos corrientes a instituciones privadas científicas...","grupo":"5"},
+            {"objeto":"552","auxiliar":"000","denominacion":"Educativas","descripcion":"Clasifica las transferencias para gastos corrientes a instituciones privadas educativas...","grupo":"5"},
+            {"objeto":"553","auxiliar":"000","denominacion":"De protección a la salud","descripcion":"Clasifica las transferencias para gastos corrientes a instituciones privadas de protección a la salud...","grupo":"5"},
+            {"objeto":"554","auxiliar":"000","denominacion":"De asistencia social","descripcion":"Clasifica las transferencias para gastos corrientes a instituciones privadas de asistencia social...","grupo":"5"},
+            {"objeto":"555","auxiliar":"000","denominacion":"Deportivas, culturales y recreativas","descripcion":"Clasifica las transferencias para gastos corrientes a instituciones deportivas, culturales...","grupo":"5"},
+            {"objeto":"571","auxiliar":"000","denominacion":"Jubilaciones","descripcion":"Pago a personas que al cumplir el tiempo de servicio y la edad reglamentaria...","grupo":"5"},
+            {"objeto":"577","auxiliar":"000","denominacion":"Becas que no impliquen relación laboral","descripcion":"Clasifica el Objeto del Gasto asociado a Becas...","grupo":"5"},
+            {"objeto":"579","auxiliar":"048","denominacion":"TUS - canasta higiénica menstrual","descripcion":"Ley 20.375 faculta al PE a crear esta canasta, para las personas menstruantes...","grupo":"5"}
+        ];
+
+        // ============================================
+        // 🔍 VARIABLES GLOBALES
+        // ============================================
+        let datosCompletos = datosCSV;
         let limiteResultados = 20;
         let filtroGrupo = '';
         let searchCount = 0;
-        
-        // ============================================
-        // 🧠 SISTEMA DE PALABRAS PERSONALIZADAS
-        // ============================================
-        let customKeywords = {};
-        
-        function loadCustomKeywords() {
-            const saved = localStorage.getItem('hospital_flores_custom_keywords_v2');
-            if (saved) {
-                customKeywords = JSON.parse(saved);
-            }
-            updateCustomKeywordsCount();
-            renderCustomKeywordsList();
-        }
-        
-        function saveCustomKeywords() {
-            localStorage.setItem('hospital_flores_custom_keywords_v2', JSON.stringify(customKeywords));
-            updateCustomKeywordsCount();
-            renderCustomKeywordsList();
-        }
-        
-        function updateCustomKeywordsCount() {
-            const count = Object.keys(customKeywords).length;
-            document.getElementById('customKeywordsCount').textContent = count;
-        }
-        
-        function toggleCustomKeywordsPanel() {
-            const panel = document.getElementById('customKeywordsPanel');
-            const btn = document.getElementById('togglePanelBtn');
-            if (panel.style.display === 'none' || panel.style.display === '') {
-                panel.style.display = 'block';
-                btn.textContent = '📝 Ocultar Palabras Personalizadas';
-            } else {
-                panel.style.display = 'none';
-                btn.textContent = '📝 Gestionar Palabras Personalizadas';
-            }
-        }
-        
-        function addCustomKeyword() {
-            const keyword = document.getElementById('newKeyword').value.trim().toLowerCase();
-            const objeto = document.getElementById('newObjeto').value.trim();
-            const auxiliar = document.getElementById('newAuxiliar').value.trim() || '000';
-            
-            if (!keyword || !objeto) {
-                alert('⚠️ Por favor completá la palabra y el objeto');
-                return;
-            }
-            
-            // Validar que el objeto exista en los datos cargados
-            if (datosCompletos.length > 0) {
-                const objetoExiste = datosCompletos.some(d => d.objeto === objeto);
-                if (!objetoExiste) {
-                    if (!confirm(`⚠️ El objeto ${objeto} no existe en los datos cargados. ¿Querés agregarlo de todos modos?`)) {
-                        return;
-                    }
-                }
-            }
-            
-            // Agregar o actualizar palabra
-            if (!customKeywords[keyword]) {
-                customKeywords[keyword] = [];
-            }
-            
-            // Verificar si ya existe esta combinación
-            const yaExiste = customKeywords[keyword].some(k => k.objeto === objeto && k.auxiliar === auxiliar);
-            if (yaExiste) {
-                alert('⚠️ Esta palabra ya está asociada a este objeto');
-                return;
-            }
-            
-            customKeywords[keyword].push({
-                objeto: objeto,
-                auxiliar: auxiliar,
-                fecha: new Date().toISOString()
-            });
-            
-            saveCustomKeywords();
-            
-            // Limpiar formulario
-            document.getElementById('newKeyword').value = '';
-            document.getElementById('newObjeto').value = '';
-            document.getElementById('newAuxiliar').value = '000';
-            
-            alert('✅ ¡Palabra agregada correctamente! La IA la reconocerá en futuras búsquedas.');
-        }
-        
-        function deleteCustomKeyword(keyword, objeto, auxiliar) {
-            if (confirm(`¿Estás seguro de eliminar "${keyword}" → ${objeto}/${auxiliar}?`)) {
-                customKeywords[keyword] = customKeywords[keyword].filter(
-                    k => !(k.objeto === objeto && k.auxiliar === auxiliar)
-                );
-                
-                if (customKeywords[keyword].length === 0) {
-                    delete customKeywords[keyword];
-                }
-                
-                saveCustomKeywords();
-            }
-        }
-        
-        function clearAllCustomKeywords() {
-            if (confirm('⚠️ ¿Estás seguro de eliminar TODAS las palabras personalizadas? Esta acción no se puede deshacer.')) {
-                customKeywords = {};
-                saveCustomKeywords();
-                alert('🗑️ Todas las palabras personalizadas fueron eliminadas.');
-            }
-        }
-        
-        function renderCustomKeywordsList() {
-            const list = document.getElementById('keywordsList');
-            const keywords = Object.keys(customKeywords).sort();
-            
-            if (keywords.length === 0) {
-                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>';
-                return;
-            }
-            
-            let html = '';
-            keywords.forEach(keyword => {
-                customKeywords[keyword].forEach(mapping => {
-                    html += `
-                        <div class="keyword-item">
-                            <div class="keyword-item-info">
-                                <div class="keyword-item-word">📝 ${keyword}</div>
-                                <div class="keyword-item-object">→ Objeto ${mapping.objeto}/${mapping.auxiliar}</div>
-                            </div>
-                            <button class="keyword-item-delete" onclick="deleteCustomKeyword('${keyword}', '${mapping.objeto}', '${mapping.auxiliar}')">🗑️ Eliminar</button>
-                        </div>
-                    `;
-                });
-            });
-            
-            list.innerHTML = html;
-        }
-        
-        function exportCustomKeywords() {
-            if (Object.keys(customKeywords).length === 0) {
-                alert('⚠️ No hay palabras personalizadas para exportar');
-                return;
-            }
-            
-            const data = JSON.stringify(customKeywords, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `palabras_personalizadas_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-        
-        function handleImport(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    
-                    // Fusionar con las existentes
-                    Object.keys(imported).forEach(keyword => {
-                        if (!customKeywords[keyword]) {
-                            customKeywords[keyword] = [];
-                        }
-                        imported[keyword].forEach(mapping => {
-                            const yaExiste = customKeywords[keyword].some(
-                                k => k.objeto === mapping.objeto && k.auxiliar === mapping.auxiliar
-                            );
-                            if (!yaExiste) {
-                                customKeywords[keyword].push(mapping);
-                            }
-                        });
-                    });
-                    
-                    saveCustomKeywords();
-                    alert(`✅ Se importaron ${Object.keys(imported).length} palabras personalizadas`);
-                } catch (error) {
-                    alert('❌ Error al importar el archivo. Asegurate que sea un JSON válido.');
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-        
-        // ============================================
-        // 💾 CARGA DEL CSV
-        // ============================================
-        document.getElementById('csvFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            document.getElementById('fileName').textContent = `✅ Archivo cargado: ${file.name}`;
-            
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const text = event.target.result;
-                procesarCSV(text);
-            };
-            reader.onerror = function() {
-                alert('❌ Error al leer el archivo. Asegúrate que sea un CSV válido.');
-            };
-            reader.readAsText(file, 'UTF-8');
-        });
-
-        function procesarCSV(texto) {
-            try {
-                const lineas = texto.split('\n');
-                datosCompletos = [];
-                
-                // Saltar encabezado (línea 0)
-                for (let i = 1; i < lineas.length; i++) {
-                    const linea = lineas[i].trim();
-                    if (!linea) continue;
-                    
-                    // Parseo de CSV (maneja comillas)
-                    const columnas = [];
-                    let actual = '';
-                    let entreComillas = false;
-                    
-                    for (let char of linea) {
-                        if (char === '"') {
-                            entreComillas = !entreComillas;
-                        } else if (char === ',' && !entreComillas) {
-                            columnas.push(actual.trim().replace(/^"|"$/g, ''));
-                            actual = '';
-                        } else {
-                            actual += char;
-                        }
-                    }
-                    columnas.push(actual.trim().replace(/^"|"$/g, ''));
-                    
-                    if (columnas.length >= 4) {
-                        const objeto = columnas[0]?.trim() || '';
-                        const grupo = objeto.charAt(0);
-                        
-                        datosCompletos.push({
-                            objeto: objeto,
-                            auxiliar: columnas[1]?.trim() || '',
-                            denominacion: columnas[2]?.trim() || '',
-                            descripcion: columnas[3]?.trim() || '',
-                            grupo: grupo,
-                            categoria: obtenerCategoria(grupo)
-                        });
-                    }
-                }
-                
-                if (datosCompletos.length === 0) {
-                    alert('⚠️ No se encontraron datos en el CSV. Verifica el formato.');
-                    return;
-                }
-                
-                document.getElementById('totalRegistros').textContent = datosCompletos.length;
-                document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
-                
-                document.getElementById('uploadSection').style.display = 'none';
-                document.getElementById('statsBar').style.display = 'flex';
-                document.getElementById('togglePanelBtn').style.display = 'inline-block';
-                document.getElementById('searchContainer').style.display = 'block';
-                document.getElementById('historySection').style.display = 'block';
-                
-                loadCustomKeywords();
-                cargarSugerencias();
-                
-                alert(`✅ ¡Listo! ${datosCompletos.length} registros cargados. Ahora podés buscar y agregar palabras personalizadas.`);
-                
-            } catch (error) {
-                console.error('Error procesando CSV:', error);
-                alert('❌ Error al procesar el CSV: ' + error.message);
-            }
-        }
-
-        function obtenerCategoria(grupo) {
-            const categorias = {
-                '0': 'Servicios Personales',
-                '1': 'Bienes de Consumo',
-                '2': 'Servicios No Personales',
-                '3': 'Bienes de Uso',
-                '4': 'Aplicaciones Financieras',
-                '5': 'Transferencias',
-                '6': 'Deuda Pública',
-                '7': 'Otros Gastos',
-                '8': 'Amortización de Deuda',
-                '9': 'Gastos Figurativos'
-            };
-            return categorias[grupo] || 'Otros';
-        }
 
         // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA CON IA
+        // 🧠 MAPEO DE PALABRAS CLAVE
+        // ============================================
+        const keywordsMap = {
+            'sueldo': ['011', '021', '031'],
+            'salario': ['011', '021'],
+            'harina': ['111'],
+            'lechuga': ['111'],
+            'arroz': ['111'],
+            'carne': ['111'],
+            'aceite': ['111'],
+            'combustible': ['141'],
+            'nafta': ['141'],
+            'gasoil': ['141'],
+            'lubricante': ['141'],
+            'medicamento': ['152'],
+            'droga': ['152'],
+            'farmaco': ['152'],
+            'vehiculo': ['353'],
+            'auto': ['353'],
+            'camioneta': ['353'],
+            'internacion': ['283'],
+            'hospital': ['283'],
+            'sanatorio': ['283'],
+            'computadora': ['323'],
+            'laptop': ['323'],
+            'notebook': ['323'],
+            'limpieza': ['192', '278'],
+            'jabon': ['192'],
+            'escoba': ['192'],
+            'electricidad': ['213'],
+            'luz': ['213'],
+            'agua': ['212'],
+            'telefono': ['211'],
+            'internet': ['211'],
+            'regla': ['191', '176'],
+            'util': ['191'],
+            'oficina': ['191'],
+            'papel': ['131'],
+            'viatico': ['234', '235'],
+            'pasaje': ['231'],
+            'alquiler': ['251'],
+            'jubilacion': ['571'],
+            'beca': ['577'],
+            'capacitacion': ['284'],
+            'curso': ['284'],
+            'mantenimiento': ['271', '273'],
+            'reparacion': ['271', '273'],
+            'vigilancia': ['291'],
+            'seguridad': ['291'],
+            'mueble': ['326'],
+            'escritorio': ['326'],
+            'silla': ['326'],
+            'impuesto': ['263'],
+            'herramienta': ['176'],
+            'plomeria': ['271'],
+            'cañeria': ['271'],
+            'material medico': ['194'],
+            'quirurgico': ['194'],
+            'jeringa': ['194']
+        };
+
+        // ============================================
+        // 🔍 FUNCIONES DE BÚSQUEDA
         // ============================================
         
         function normalizar(texto) {
@@ -936,48 +425,34 @@
             
             let score = 0;
             let keywordEncontrada = null;
-            let esPersonalizada = false;
             
-            // 1. Buscar en palabras personalizadas (MÁXIMA PRIORIDAD)
-            if (customKeywords[queryNorm]) {
-                const mappings = customKeywords[queryNorm];
-                const coincide = mappings.some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
-                if (coincide) {
-                    score += 100;
-                    keywordEncontrada = queryNorm;
-                    esPersonalizada = true;
-                }
-            }
-            
-            // 2. Búsqueda por keywords mapeadas (IA base)
+            // 1. Búsqueda por keywords mapeadas
             if (keywordsMap[queryNorm]) {
                 if (keywordsMap[queryNorm].includes(item.objeto)) {
                     score += 50;
-                    if (!keywordEncontrada) {
-                        keywordEncontrada = queryNorm;
-                    }
+                    keywordEncontrada = queryNorm;
                 }
             }
             
-            // 3. Coincidencia exacta en denominación
+            // 2. Coincidencia exacta en denominación
             if (denomNorm.includes(queryNorm)) {
                 score += 40;
                 if (!keywordEncontrada) keywordEncontrada = 'denominación';
             }
             
-            // 4. Coincidencia en descripción
+            // 3. Coincidencia en descripción
             if (descNorm.includes(queryNorm)) {
                 score += 30;
                 if (!keywordEncontrada) keywordEncontrada = 'descripción';
             }
             
-            // 5. Coincidencia en código
+            // 4. Coincidencia en código
             if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
                 score += 60;
                 if (!keywordEncontrada) keywordEncontrada = 'código';
             }
             
-            // 6. Búsqueda por palabras parciales
+            // 5. Búsqueda por palabras parciales
             const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
             palabrasQuery.forEach(palabra => {
                 if (textoCompleto.includes(palabra)) {
@@ -988,14 +463,17 @@
             
             return {
                 score: Math.min(score, 100),
-                keyword: keywordEncontrada,
-                esPersonalizada: esPersonalizada
+                keyword: keywordEncontrada
             };
         }
 
         function buscar() {
             const query = document.getElementById('searchInput').value.trim();
             const resultsDiv = document.getElementById('results');
+            
+            // Debug: Mostrar en consola
+            console.log('🔍 Búsqueda:', query);
+            console.log('📊 Datos cargados:', datosCompletos.length);
             
             if (!query || query.length < 2) {
                 resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa al menos 2 caracteres para buscar</div>';
@@ -1013,8 +491,7 @@
                     return { 
                         ...item, 
                         relevancia: relevancia.score,
-                        keywordEncontrada: relevancia.keyword,
-                        esPersonalizada: relevancia.esPersonalizada
+                        keywordEncontrada: relevancia.keyword
                     };
                 });
                 
@@ -1029,12 +506,14 @@
                 
                 document.getElementById('ultimaBusqueda').textContent = resultados.length;
                 
+                console.log('✅ Resultados:', resultados.length);
+                
                 if (resultados.length === 0) {
                     resultsDiv.innerHTML = `
-                        <div class="error">
-                            ❌ No se encontraron resultados
+                        <div class="no-results">
+                            <h2>❌ No se encontraron resultados</h2>
                             <p style="margin-top: 15px;">Intentá con otros términos o verificá la ortografía</p>
-                            <p style="margin-top: 20px; color: #28a745;">💡 ¿No encontrás lo que buscás? Agregá tu palabra en "Gestionar Palabras Personalizadas"</p>
+                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: sueldo, harina, combustible, medicamento, vehículo, regla, internación, útiles</p>
                         </div>
                     `;
                     return;
@@ -1047,37 +526,32 @@
                 
                 resultados.forEach((r, index) => {
                     html += `
-                        <div class="result-card ${index === 0 ? 'selected' : ''}" onclick="selectResult('${r.objeto}', '${r.auxiliar}', '${r.denominacion.replace(/'/g, "\\'")}')">
+                        <div class="result-card ${index === 0 ? 'selected' : ''}" onclick="selectResult('${r.objeto}', '${r.auxiliar}')">
                             <div class="result-header">
                                 <span class="codigo-badge">${r.objeto}/${r.auxiliar}</span>
                                 <span class="relevancia-badge">📊 Relevancia: ${r.relevancia}%</span>
                             </div>
                             <div class="denominacion">${r.denominacion}</div>
                             <div class="descripcion">${r.descripcion}</div>
-                            ${r.categoria ? `<div class="categoria-tag">📁 ${r.categoria}</div>` : ''}
-                            <span class="grupo-tag">Grupo ${r.grupo}</span>
-                            ${r.keywordEncontrada ? `<div class="keyword-match">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
-                            ${r.esPersonalizada ? `<div class="custom-keyword-badge">⭐ Palabra Personalizada</div>` : ''}
-                            ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
+                            <div class="categoria-tag">📁 Grupo ${r.grupo}</div>
+                            ${r.keywordEncontrada ? `<div class="keyword-match" style="display:inline-block;background:rgba(255,107,0,0.1);color:#ff6b00;padding:4px 10px;border-radius:8px;font-size:0.75em;margin-top:8px;">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
+                            ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado</div>' : ''}
                         </div>
                     `;
                 });
                 
                 resultsDiv.innerHTML = html;
-                renderHistory();
             }, 300);
         }
 
-        function selectResult(objeto, auxiliar, denominacion) {
-            const query = document.getElementById('searchInput').value.trim();
-            
+        function selectResult(objeto, auxiliar) {
             const card = event.target.closest('.result-card');
             document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             
             const feedback = document.createElement('div');
-            feedback.style.cssText = 'background: rgba(40,167,69,0.1); border: 2px solid #28a745; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; color: #28a745; font-weight: 600;';
-            feedback.innerHTML = `✅ ¡IA aprendió! "<strong>${query}</strong>" → ${objeto}/${auxiliar} - Tus futuras búsquedas serán más precisas`;
+            feedback.style.cssText = 'background: rgba(0,60,165,0.1); border: 2px solid #003ca5; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; color: #003ca5; font-weight: 600;';
+            feedback.innerHTML = `✅ Objeto ${objeto}/${auxiliar} seleccionado`;
             
             const existingFeedback = document.querySelector('.ai-feedback');
             if (existingFeedback) existingFeedback.remove();
@@ -1087,15 +561,6 @@
             setTimeout(() => {
                 feedback.remove();
             }, 5000);
-        }
-
-        // ============================================
-        // ⚙️ FUNCIONES DE UTILIDAD
-        // ============================================
-        
-        function buscarCon(termino) {
-            document.getElementById('searchInput').value = termino;
-            buscar();
         }
 
         function setLimite(limite) {
@@ -1130,48 +595,6 @@
             document.getElementById('ultimaBusqueda').textContent = '0';
         }
 
-        function cargarSugerencias() {
-            const sugerencias = [
-                'harina', 'sueldo', 'combustible', 'medicamento', 'vehículo',
-                'regla', 'internación', 'computadora', 'útiles', 'limpieza',
-                'electricidad', 'teléfono', 'viático', 'alquiler', 'jubilación',
-                'beca', 'capacitación', 'mantenimiento', 'construcción', 'vigilancia',
-                'lechuga', 'papel', 'agua', 'internet', 'seguro', 'subsidio',
-                'lapiz', 'aceite', 'lubricante', 'pintura', 'cemento', 'lima'
-            ];
-            
-            const grid = document.getElementById('sugerenciasGrid');
-            grid.innerHTML = sugerencias.map(s => 
-                `<div class="sugerencia-item" onclick="buscarCon('${s}')">${s}</div>`
-            ).join('');
-        }
-
-        function renderHistory() {
-            const historyList = document.getElementById('historyList');
-            const recentSearches = []; // Podés implementar historial aquí
-            
-            if (recentSearches.length === 0) {
-                historyList.innerHTML = '<p style="color: #666;">No hay historial aún. La IA empezará a aprender con tus búsquedas.</p>';
-                return;
-            }
-            
-            historyList.innerHTML = recentSearches.map(s => `
-                <div class="history-item" onclick="document.getElementById('searchInput').value='${s.query}'; buscar();">
-                    <span>🔍 ${s.query}</span>
-                    <span class="history-count">${s.resultsCount} resultados ${s.selectedObject ? '→ ' + s.selectedObject : ''}</span>
-                </div>
-            `).join('');
-        }
-
-        function clearHistory() {
-            if (confirm('¿Estás seguro de limpiar todo el historial de aprendizaje? La IA volverá a empezar.')) {
-                searchCount = 0;
-                document.getElementById('searchCount').textContent = '0';
-                document.getElementById('historyList').innerHTML = '<p style="color: #666;">No hay historial aún.</p>';
-                alert('Historial limpiado.');
-            }
-        }
-
         // ============================================
         // 🚀 INICIALIZAR
         // ============================================
@@ -1181,7 +604,12 @@
                 this.style.display = 'none';
             };
             
-            loadCustomKeywords();
+            document.getElementById('totalRegistros').textContent = datosCompletos.length;
+            document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
+            
+            console.log('✅ Buscador cargado');
+            console.log('📊 Registros:', datosCompletos.length);
+            console.log('🎯 Objetos únicos:', [...new Set(datosCompletos.map(d => d.objeto))].length);
         };
     </script>
 </body>
