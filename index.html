@@ -29,7 +29,7 @@
         .logo-container {
             display: flex;
             align-items: center;
-            &nbsp;&nbsp;&nbsp;&nbsp;gap: 20px;
+            gap: 20px;
         }
         .logo-img {
             max-width: 200px;
@@ -277,6 +277,7 @@
         }
         .no-results { text-align: center; padding: 50px; color: #666; }
         
+        /* Internet Results Panel */
         .internet-results {
             display: none;
             background: rgba(138,43,226,0.05);
@@ -288,6 +289,9 @@
         .internet-results h4 {
             color: #8a2be2;
             margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .internet-item {
             background: #ffffff;
@@ -372,24 +376,24 @@
         </div>
         
         <div class="ai-status">
-            🤖 <span id="aiStatusText">IA lista</span> | 
-            🔍 Búsquedas: <span id="searchCount">0</span> |
+            📋 <span id="aiStatusText">Lista actualizada</span> | 
+            🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
             🌐 Internet: <span id="internetStatus">Activo</span>
         </div>
         
         <!-- Carga de CSV -->
         <div class="upload-section" id="uploadSection">
-            <h2 style="color: #003ca5; margin-bottom: 20px;">📂 Paso 1: Seleccioná el archivo</h2>
+            <h2 style="color: #003ca5; margin-bottom: 20px;">📂 Paso 1: Cargá tu archivo CSV</h2>
             <p style="margin: 20px 0; color: #666; font-size: 1.1em;">
-                Seleccioná el archivo <strong>ObjetosGasto.csv</strong>
+                Seleccioná el archivo <strong>ObjetosGasto.csv</strong> que descargaste de la CGN
             </p>
             <label class="upload-btn">
-                📥 Seleccionar Archivo
+                📥 Seleccionar Archivo CSV
                 <input type="file" id="csvFile" accept=".csv">
             </label>
             <p id="fileName" style="margin-top: 20px; color: #28a745; font-weight: 600;"></p>
             <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
-                🔒 El archivo se procesa localmente. No se envía a ningún servidor.
+                🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
             </p>
         </div>
         
@@ -418,7 +422,7 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Ej: arveja, atun, sueldo, combustible, medicamento..."
+                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lapiz, aceite..."
                     onkeypress="if(event.key === 'Enter') buscar()"
                 >
                 <button onclick="buscar()">🔎 Buscar Objeto</button>
@@ -466,53 +470,67 @@
         // 🧠 BASE DE CONOCIMIENTO - MAPEO SEMÁNTICO
         // ============================================
         const keywordsMap = {
-            // Grupo 0 - Servicios Personales
-            'sueldo': ['011', '021', '031'], 'salario': ['011', '021'], 
-            'remuneracion': ['011'], 'jornal': ['011', '031'], 'paga': ['011'],
-            'honorario': ['011', '021'], 'retribucion': ['011', '021', '031'],
-            'antiguedad': ['044'], 'compensacion': ['042'], 'dedicacion': ['013', '023'],
-            'jubilacion': ['571'], 'pension': ['571', '572'], 'retiro': ['571'],
-            
-            // Grupo 1 - Bienes de Consumo
-            'harina': ['111'], 'arroz': ['111'], 'carne': ['111'], 'verdura': ['111'],
-            'lechuga': ['111'], 'aceite': ['111'], 'aceite comestible': ['111'],
-            'azucar': ['111'], 'sal': ['111'], 'fideo': ['111'], 'pasta': ['111'],
-            'pan': ['111'], 'leche': ['111'], 'huevos': ['111'], 'queso': ['111'],
-            'manteca': ['111'], 'cafe': ['111'], 'te': ['111'], 'yerba': ['111'],
-            'comida': ['111'], 'alimento': ['111'], 'arveja': ['111'], 'atun': ['111'],
-            'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'],
-            'lubricante': ['141'], 'aceite motor': ['141'],
-            'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'],
-            'vacuna': ['152'], 'pastilla': ['152'], 'jarabe': ['152'],
-            'limpieza': ['192'], 'jabon': ['192'], 'escoba': ['192'],
-            'utiles': ['191'], 'oficina': ['191'], 'papel': ['131', '191'],
-            'lapiz': ['191'], 'boligrafo': ['191'], 'birome': ['191'],
-            'carpeta': ['131', '191'], 'grapa': ['191'], 'regla': ['191', '176'],
-            'ferreteria': ['176'], 'herramienta': ['176'],
-            'plomeria': ['271'], 'cañeria': ['271'], 'tuberia': ['271'],
-            'grifo': ['271'], 'canilla': ['271'],
-            
-            // Grupo 2 - Servicios
-            'electricidad': ['213'], 'luz': ['213'], 'agua': ['212'],
-            'telefono': ['211'], 'internet': ['211'], 'wifi': ['211'],
-            'viatico': ['234', '235'], 'pasaje': ['231'], 'alquiler': ['251'],
-            'mantenimiento': ['271', '273'], 'reparacion': ['271', '273'],
-            'internacion': ['283'], 'hospital': ['283'], 'sanatorio': ['283'],
-            'medico': ['283'], 'clinica': ['283'],
-            'capacitacion': ['284'], 'curso': ['284'],
-            'informatica': ['285'], 'software': ['285'],
-            'vigilancia': ['291'], 'seguridad': ['291'],
-            
-            // Grupo 3 - Bienes de Uso
-            'computadora': ['323'], 'laptop': ['323'], 'notebook': ['323'],
-            'servidor': ['323'], 'mueble': ['326'], 'escritorio': ['326'],
-            'silla': ['326'], 'mesa': ['326'],
-            'vehiculo': ['353'], 'auto': ['353'], 'camioneta': ['353'],
-            'moto': ['353'], 'ambulancia': ['353'],
-            'construccion': ['387'], 'cemento': ['387'], 'ladrillo': ['387'],
-            
-            // Grupo 5 - Transferencias
-            'beca': ['577'], 'subsidio': ['511', '554'],
+            'sueldo': ['011', '021', '031'],
+            'salario': ['011', '021'],
+            'harina': ['111'],
+            'lechuga': ['111'],
+            'arroz': ['111'],
+            'carne': ['111'],
+            'aceite': ['111'],
+            'aceite comestible': ['111'],
+            'aceite de cocina': ['111'],
+            'combustible': ['141'],
+            'nafta': ['141'],
+            'gasoil': ['141'],
+            'lubricante': ['141'],
+            'aceite motor': ['141'],
+            'medicamento': ['152'],
+            'droga': ['152'],
+            'farmaco': ['152'],
+            'vehiculo': ['353'],
+            'auto': ['353'],
+            'camioneta': ['353'],
+            'internacion': ['283'],
+            'hospital': ['283'],
+            'sanatorio': ['283'],
+            'computadora': ['323'],
+            'laptop': ['323'],
+            'notebook': ['323'],
+            'limpieza': ['192'],
+            'jabon': ['192'],
+            'escoba': ['192'],
+            'electricidad': ['213'],
+            'luz': ['213'],
+            'agua': ['212'],
+            'telefono': ['211'],
+            'internet': ['211'],
+            'regla': ['191'],
+            'util': ['191'],
+            'oficina': ['191'],
+            'papel': ['131'],
+            'lapiz': ['191'],
+            'viatico': ['234'],
+            'pasaje': ['231'],
+            'alquiler': ['251'],
+            'jubilacion': ['571'],
+            'beca': ['577'],
+            'capacitacion': ['284'],
+            'curso': ['284'],
+            'mantenimiento': ['271'],
+            'reparacion': ['271'],
+            'vigilancia': ['291'],
+            'seguridad': ['291'],
+            'mueble': ['326'],
+            'escritorio': ['326'],
+            'silla': ['326'],
+            'mesa': ['326'],
+            'ferreteria': ['176'],
+            'herramienta': ['176'],
+            'plomeria': ['271'],
+            'cañeria': ['271'],
+            'tuberia': ['271'],
+            'grifo': ['271'],
+            'canilla': ['271']
         };
 
         // ============================================
@@ -530,7 +548,7 @@
                 procesarCSV(text);
             };
             reader.onerror = function() {
-                alert('❌ Error al leer el archivo.');
+                alert('❌ Error al leer el archivo. Asegúrate que sea un CSV válido.');
             };
             reader.readAsText(file, 'UTF-8');
         });
@@ -576,7 +594,7 @@
                 }
                 
                 if (datosCompletos.length === 0) {
-                    alert('⚠️ No se encontraron datos.');
+                    alert('⚠️ No se encontraron datos en el CSV. Verifica el formato.');
                     return;
                 }
                 
@@ -593,8 +611,8 @@
                 alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados.`);
                 
             } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Error: ' + error.message);
+                console.error('Error procesando CSV:', error);
+                alert('❌ Error al procesar el CSV: ' + error.message);
             }
         }
 
@@ -615,77 +633,7 @@
         }
 
         // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA CON IA
-        // ============================================
-        
-        function normalizar(texto) {
-            if (!texto) return '';
-            texto = texto.toLowerCase().trim();
-            // Quitar tildes y caracteres especiales
-            texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-            // Reemplazar caracteres especiales
-            texto = texto.replace(/ñ/g, 'n');
-            texto = texto.replace(/á/g, 'a');
-            texto = texto.replace(/é/g, 'e');
-            texto = texto.replace(/í/g, 'i');
-            texto = texto.replace(/ó/g, 'o');
-            texto = texto.replace(/ú/g, 'u');
-            texto = texto.replace(/ü/g, 'u');
-            return texto;
-        }
-
-        function calcularRelevancia(query, item) {
-            const queryNorm = normalizar(query);
-            const textoCompleto = normalizar(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
-            const denomNorm = normalizar(item.denominacion);
-            const descNorm = normalizar(item.descripcion);
-            
-            let score = 0;
-            let keywordEncontrada = null;
-            
-            // 1. Palabras personalizadas (MÁXIMA PRIORIDAD)
-            if (keywordsMap[queryNorm]) {
-                if (keywordsMap[queryNorm].includes(item.objeto)) {
-                    score += 50;
-                    keywordEncontrada = queryNorm;
-                }
-            }
-            
-            // 2. Coincidencia exacta en denominación
-            if (denomNorm.includes(queryNorm)) {
-                score += 40;
-                if (!keywordEncontrada) keywordEncontrada = 'denominación';
-            }
-            
-            // 3. Coincidencia en descripción
-            if (descNorm.includes(queryNorm)) {
-                score += 30;
-                if (!keywordEncontrada) keywordEncontrada = 'descripción';
-            }
-            
-            // 4. Coincidencia en código
-            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
-                score += 60;
-                if (!keywordEncontrada) keywordEncontrada = 'código';
-            }
-            
-            // 5. Búsqueda por palabras parciales
-            const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
-            palabrasQuery.forEach(palabra => {
-                if (textoCompleto.includes(palabra)) {
-                    score += 15;
-                    if (!keywordEncontrada) keywordEncontrada = palabra;
-                }
-            });
-            
-            return {
-                score: Math.min(score, 100),
-                keyword: keywordEncontrada
-            };
-        }
-
-        // ============================================
-        // 🌐 BÚSQUEDA EN INTERNET
+        // 🌐 BÚSQUEDA EN INTERNET (Wikipedia + Sinónimos)
         // ============================================
         
         async function buscarEnInternet(query) {
@@ -693,27 +641,27 @@
             internetDiv.style.display = 'block';
             internetDiv.innerHTML = '<div class="loading">🌐 Buscando en internet...</div>';
             
+            let html = '<h4>🌐 Información de Internet para "<strong>' + query + '</strong>":</h4>';
+            
             try {
                 // Búsqueda en Wikipedia
                 const wikiResponse = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
                 const wikiData = await wikiResponse.json();
                 
-                // Búsqueda de sinónimos en Datamuse
-                const sinonimosResponse = await fetch(`https://api.datamuse.com/words?ml=${encodeURIComponent(query)}&max=5`);
-                const sinonimosData = await sinonimosResponse.json();
-                
-                let html = '<h4>🌐 Información de Internet:</h4>';
-                
-                if (wikiData && wikiData.extract && !wikiData.type === 'disambiguation') {
+                if (wikiData && wikiData.extract && !wikiData.type) {
                     html += `
                         <div class="internet-item">
                             <h5>📚 Wikipedia</h5>
                             <p><strong>${wikiData.title}</strong></p>
                             <p>${wikiData.extract.substring(0, 300)}...</p>
-                            ${wikiData.content_urls?.desktop?.page ? `<a href="${wikiData.content_urls.desktop.page}" target="_blank">Ver más →</a>` : ''}
+                            ${wikiData.content_urls?.desktop?.page ? `<a href="${wikiData.content_urls.desktop.page}" target="_blank">Ver más en Wikipedia →</a>` : ''}
                         </div>
                     `;
                 }
+                
+                // Búsqueda de sinónimos en Datamuse
+                const sinonimosResponse = await fetch(`https://api.datamuse.com/words?ml=${encodeURIComponent(query)}&max=5`);
+                const sinonimosData = await sinonimosResponse.json();
                 
                 if (sinonimosData && sinonimosData.length > 0) {
                     const sinonimos = sinonimosData.map(s => s.word).join(', ');
@@ -729,16 +677,77 @@
                 
             } catch (error) {
                 console.log('Error en búsqueda internet:', error);
-                internetDiv.innerHTML = '<div class="error">⚠️ No se pudo obtener información de internet</div>';
+                internetDiv.innerHTML = '<div class="error">⚠️ No se pudo obtener información de internet. Verificá tu conexión.</div>';
             }
         }
 
-        function buscar() {
+        // ============================================
+        // 🔍 MOTOR DE BÚSQUEDA
+        // ============================================
+        
+        function normalizar(texto) {
+            if (!texto) return '';
+            texto = texto.toLowerCase().trim();
+            texto = texto.replace(/[áàäâ]/g, 'a');
+            texto = texto.replace(/[éèëê]/g, 'e');
+            texto = texto.replace(/[íìïî]/g, 'i');
+            texto = texto.replace(/[óòöô]/g, 'o');
+            texto = texto.replace(/[úùüû]/g, 'u');
+            texto = texto.replace(/ñ/g, 'n');
+            return texto;
+        }
+
+        function calcularRelevancia(query, item) {
+            const queryNorm = normalizar(query);
+            const textoCompleto = normalizar(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
+            const denomNorm = normalizar(item.denominacion);
+            const descNorm = normalizar(item.descripcion);
+            
+            let score = 0;
+            let keywordEncontrada = null;
+            
+            if (keywordsMap[queryNorm]) {
+                if (keywordsMap[queryNorm].includes(item.objeto)) {
+                    score += 50;
+                    keywordEncontrada = queryNorm;
+                }
+            }
+            
+            if (denomNorm.includes(queryNorm)) {
+                score += 40;
+                if (!keywordEncontrada) keywordEncontrada = 'denominación';
+            }
+            
+            if (descNorm.includes(queryNorm)) {
+                score += 30;
+                if (!keywordEncontrada) keywordEncontrada = 'descripción';
+            }
+            
+            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
+                score += 60;
+                if (!keywordEncontrada) keywordEncontrada = 'código';
+            }
+            
+            const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
+            palabrasQuery.forEach(palabra => {
+                if (textoCompleto.includes(palabra)) {
+                    score += 15;
+                    if (!keywordEncontrada) keywordEncontrada = palabra;
+                }
+            });
+            
+            return {
+                score: Math.min(score, 100),
+                keyword: keywordEncontrada
+            };
+        }
+
+        async function buscar() {
             const query = document.getElementById('searchInput').value.trim();
             const resultsDiv = document.getElementById('results');
             
             if (!query || query.length < 2) {
-                resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa al menos 2 caracteres</div>';
+                resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa al menos 2 caracteres para buscar</div>';
                 return;
             }
             
@@ -747,13 +756,16 @@
             
             // Guardar en historial
             searchHistory.unshift({ query, timestamp: Date.now() });
-            if (searchHistory.length > 10) searchHistory.pop();
+            if (searchHistory.length > 10) searchHistory = searchHistory.slice(0, 10);
             renderHistory();
+            
+            // Ocultar resultados anteriores de internet
+            document.getElementById('internetResults').style.display = 'none';
             
             resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en ' + datosCompletos.length + ' objetos...</div>';
             
-            // Ocultar resultados de internet anteriores
-            document.getElementById('internetResults').style.display = 'none';
+            // Búsqueda en internet en paralelo
+            buscarEnInternet(query);
             
             setTimeout(() => {
                 let resultados = datosCompletos.map(item => {
@@ -780,8 +792,8 @@
                     resultsDiv.innerHTML = `
                         <div class="no-results">
                             <h2>❌ No se encontraron resultados</h2>
-                            <p style="margin-top: 15px;">Intentá con otros términos</p>
-                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: arveja, atún, sueldo, combustible, medicamento</p>
+                            <p style="margin-top: 15px;">Intentá con otros términos o verificá la ortografía</p>
+                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: harina, sueldo, combustible, medicamento, vehículo, regla, internación, útiles, lapiz, aceite</p>
                         </div>
                     `;
                     return;
@@ -789,7 +801,7 @@
                 
                 let html = `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; font-weight: 600;">
                     ✅ <strong>${resultados.length}</strong> resultados encontrados 
-                    (de ${datosCompletos.length} objetos)
+                    (de ${datosCompletos.length} objetos totales)
                 </div>`;
                 
                 resultados.forEach((r, index) => {
@@ -810,10 +822,6 @@
                 });
                 
                 resultsDiv.innerHTML = html;
-                
-                // Búsqueda en internet (en segundo plano)
-                buscarEnInternet(query);
-                
             }, 300);
         }
 
@@ -879,10 +887,10 @@
 
         function cargarSugerencias() {
             const sugerencias = [
-                'arveja', 'atun', 'sueldo', 'combustible', 'medicamento',
-                'vehiculo', 'regla', 'internacion', 'computadora', 'limpieza',
+                'harina', 'sueldo', 'combustible', 'medicamento', 'vehiculo',
+                'regla', 'internacion', 'computadora', 'limpieza',
                 'electricidad', 'telefono', 'viatico', 'alquiler', 'jubilacion',
-                'beca', 'capacitacion', 'mantenimiento'
+                'beca', 'capacitacion', 'mantenimiento', 'lapiz', 'aceite'
             ];
             
             const grid = document.getElementById('sugerenciasGrid');
