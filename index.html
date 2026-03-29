@@ -106,117 +106,38 @@
             font-weight: 500;
         }
         
-        /* Panel de Palabras Personalizadas */
-        .custom-keywords-panel {
+        .internet-results {
             display: none;
-            background: rgba(40,167,69,0.1);
-            border: 2px solid #28a745;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-        }
-        .custom-keywords-panel h3 {
-            color: #28a745;
-            margin-bottom: 20px;
-        }
-        .add-keyword-form {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .form-group label {
-            font-weight: 600;
-            color: #003ca5;
-            font-size: 0.9em;
-        }
-        .add-keyword-form input {
-            padding: 12px 15px;
+            background: rgba(0,60,165,0.05);
             border: 2px solid #003ca5;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: 'Montserrat', sans-serif;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
-        .add-keyword-form button {
-            padding: 12px 25px;
-            background: #28a745;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
+        .internet-results h4 {
+            color: #003ca5;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .add-keyword-form button:hover {
-            background: #218838;
-            transform: scale(1.05);
-        }
-        .keywords-list {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 15px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .keyword-item {
-            background: #f8f9fa;
+        .uruguay-source {
+            background: rgba(0,60,165,0.1);
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid #28a745;
         }
-        .keyword-item-info {
-            flex: 1;
-        }
-        .keyword-item-word {
-            font-weight: 700;
-            color: #28a745;
-            font-size: 1.1em;
-        }
-        .keyword-item-object {
+        .uruguay-source h5 {
             color: #003ca5;
-            font-size: 0.9em;
-            margin-top: 5px;
+            margin-bottom: 8px;
         }
-        .keyword-item-delete {
-            background: #dc3545;
-            color: #ffffff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
+        .uruguay-source a {
+            color: #003ca5;
+            text-decoration: none;
             font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
         }
-        .keyword-item-delete:hover {
-            background: #c82333;
-        }
-        
-        .toggle-panel-btn {
-            background: #28a745;
-            color: #ffffff;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-        }
-        .toggle-panel-btn:hover {
-            background: #218838;
-            transform: scale(1.05);
+        .uruguay-source a:hover {
+            text-decoration: underline;
         }
         
         .search-container {
@@ -387,16 +308,6 @@
             font-size: 0.75em;
             margin-top: 8px;
         }
-        .uruguay-badge {
-            display: inline-block;
-            background: rgba(0,123,255,0.1);
-            color: #007bff;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            margin-top: 8px;
-            margin-left: 8px;
-        }
         
         .loading { text-align: center; padding: 50px; color: #666; }
         .error {
@@ -408,6 +319,118 @@
             color: #dc3545;
         }
         .no-results { text-align: center; padding: 50px; color: #666; }
+        
+        .custom-keywords-panel {
+            display: none;
+            background: rgba(40,167,69,0.1);
+            border: 2px solid #28a745;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .custom-keywords-panel h3 {
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .add-keyword-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #003ca5;
+            font-size: 0.9em;
+        }
+        .add-keyword-form input {
+            padding: 12px 15px;
+            border: 2px solid #003ca5;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .add-keyword-form button {
+            padding: 12px 25px;
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }
+        .add-keyword-form button:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        .keywords-list {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .keyword-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #28a745;
+        }
+        .keyword-item-info {
+            flex: 1;
+        }
+        .keyword-item-word {
+            font-weight: 700;
+            color: #28a745;
+            font-size: 1.1em;
+        }
+        .keyword-item-object {
+            color: #003ca5;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .keyword-item-delete {
+            background: #dc3545;
+            color: #ffffff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }
+        .keyword-item-delete:hover {
+            background: #c82333;
+        }
+        
+        .toggle-panel-btn {
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .toggle-panel-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
         
         .history-section {
             display: none;
@@ -453,33 +476,6 @@
             font-weight: 500;
         }
         
-        .export-import-btns {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .export-import-btns button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
-        }
-        .export-import-btns button.export {
-            background: #003ca5;
-            color: #fff;
-        }
-        .export-import-btns button.import {
-            background: #28a745;
-            color: #fff;
-        }
-        .export-import-btns button.clear {
-            background: #dc3545;
-            color: #fff;
-        }
-        
         @media (max-width: 768px) {
             .header { flex-direction: column; text-align: center; }
             .logo-container { flex-direction: column; }
@@ -506,7 +502,7 @@
         
         <div class="ai-status" id="aiStatus">
             🇺🇾 <span id="aiStatusText">Buscador Uruguay - Cargá tu archivo CSV</span> | 
-            🔍 Búsquedas: <span id="searchCount">0</span> |
+            🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
             📚 Palabras personalizadas: <span id="customKeywordsCount">0</span>
         </div>
         
@@ -522,7 +518,7 @@
             </label>
             <p id="fileName" style="margin-top: 20px; color: #28a745; font-weight: 600;"></p>
             <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
-                🔒 El archivo se procesa localmente. No se envía a ningún servidor.
+                🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
             </p>
         </div>
         
@@ -541,6 +537,9 @@
                 <div class="stat-label">Resultados</div>
             </div>
         </div>
+        
+        <!-- Resultados de Internet -->
+        <div class="internet-results" id="internetResults"></div>
         
         <!-- Botón para mostrar/ocultar panel de palabras personalizadas -->
         <button class="toggle-panel-btn" onclick="toggleCustomKeywordsPanel()" id="togglePanelBtn" style="display: none;">
@@ -574,11 +573,11 @@
                 <p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>
             </div>
             
-            <div class="export-import-btns">
-                <button class="export" onclick="exportCustomKeywords()">📤 Exportar Palabras</button>
-                <button class="import" onclick="document.getElementById('importFile').click()">📥 Importar Palabras</button>
+            <div class="export-import-btns" style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="exportCustomKeywords()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📤 Exportar Palabras</button>
+                <button onclick="document.getElementById('importFile').click()" style="background: #28a745; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📥 Importar Palabras</button>
                 <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImport(event)">
-                <button class="clear" onclick="clearAllCustomKeywords()">🗑️ Limpiar Todas</button>
+                <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">🗑️ Limpiar Todas</button>
             </div>
         </div>
         
@@ -588,7 +587,7 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lapiz, aceite..."
+                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lápiz, aceite..."
                     onkeypress="if(event.key === 'Enter') buscar()"
                 >
                 <button onclick="buscar()">🔎 Buscar Objeto</button>
@@ -635,93 +634,36 @@
         let limiteResultados = 20;
         let filtroGrupo = '';
         let searchCount = 0;
-        
-        // ============================================
-        // 🧠 SISTEMA DE PALABRAS PERSONALIZADAS
-        // ============================================
         let customKeywords = {};
         
         // ============================================
-        // 🇺🇾 DICCIONARIO URUGUAY - DEFINICIONES LOCALES
+        // 🧠 BASE DE CONOCIMIENTO - MAPEO SEMÁNTICO
         // ============================================
-        const diccionarioUruguay = {
-            'harina': {
-                definicion: 'Polvo fino obtenido de la molienda de cereales, principalmente trigo. En Uruguay se usa para pan, pastas, etc.',
-                objeto: '111',
-                contexto: 'Alimentos básicos en Uruguay'
-            },
-            'aceite': {
-                definicion: 'Líquido graso de origen vegetal o animal. En Uruguay: aceite de girasol, oliva, maíz para cocina.',
-                objeto: '111',
-                contexto: 'Aceite comestible - Grupo 1 Bienes de Consumo'
-            },
-            'aceite motor': {
-                definicion: 'Lubricante para motores de vehículos. En Uruguay se usa nafta, gasoil, lubricantes para automotores.',
-                objeto: '141',
-                contexto: 'Combustibles y lubricantes - Grupo 1'
-            },
-            'lima': {
-                definicion: 'Herramienta de acero con superficie rugosa para limar metales, madera, etc. En Uruguay se usa en talleres, mantenimiento.',
-                objeto: '176',
-                contexto: 'Herramientas menores - Grupo 1'
-            },
-            'birome': {
-                definicion: 'Bolígrafo, lapicera. Término muy usado en Uruguay (por el inventor László Bíró).',
-                objeto: '191',
-                contexto: 'Útiles de oficina - Grupo 1'
-            },
-            'bondi': {
-                definicion: 'Ómnibus, autobús. Término coloquial uruguayo para transporte público.',
-                objeto: '231',
-                contexto: 'Pasajes de transporte - Grupo 2'
-            },
-            'fideo': {
-                definicion: 'Pasta alimenticia de harina. En Uruguay: tallarines, ñoquis, sorrentinos, etc.',
-                objeto: '111',
-                contexto: 'Alimentos - Grupo 1'
-            },
-            'gasoil': {
-                definicion: 'Combustible diesel. En Uruguay se usa en vehículos, calefacción, generadores.',
-                objeto: '141',
-                contexto: 'Combustibles - Grupo 1'
-            },
-            'lavandina': {
-                definicion: 'Hipoclorito de sodio, lavandina. Producto de limpieza muy usado en Uruguay.',
-                objeto: '192',
-                contexto: 'Elementos de limpieza - Grupo 1'
-            },
-            'mate': {
-                definicion: 'Infusión tradicional uruguaya de yerba mate. Infaltable en oficinas, hogares.',
-                objeto: '111',
-                contexto: 'Alimentos/Infusiones - Grupo 1'
-            },
-            'nafta': {
-                definicion: 'Gasolina para vehículos. En Uruguay nafta súper, premium.',
-                objeto: '141',
-                contexto: 'Combustibles - Grupo 1'
-            },
-            'pilas': {
-                definicion: 'Baterías eléctricas. En Uruguay: pilas AA, AAA, etc. para dispositivos.',
-                objeto: '191',
-                contexto: 'Útiles de oficina - Grupo 1'
-            },
-            'scotch': {
-                definicion: 'Cinta adhesiva. Marca registrada pero usada como término genérico en Uruguay.',
-                objeto: '191',
-                contexto: 'Útiles de oficina - Grupo 1'
-            },
-            'termo': {
-                definicion: 'Recipiente térmico para mantener bebidas calientes/frías. Muy usado en Uruguay.',
-                objeto: '191',
-                contexto: 'Útiles de oficina - Grupo 1'
-            },
-            'yerba': {
-                definicion: 'Yerba mate. Producto tradicional uruguayo para preparar mate.',
-                objeto: '111',
-                contexto: 'Alimentos/Infusiones - Grupo 1'
-            }
+        const keywordsMap = {
+            'harina': ['111'], 'lechuga': ['111'], 'arroz': ['111'], 'carne': ['111'],
+            'aceite': ['111'], 'aceite comestible': ['111'], 'aceite de cocina': ['111'],
+            'sueldo': ['011', '021', '031'], 'salario': ['011', '021'],
+            'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'],
+            'lubricante': ['141'], 'aceite motor': ['141'],
+            'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'],
+            'vehiculo': ['353'], 'auto': ['353'], 'camioneta': ['353'],
+            'internacion': ['283'], 'hospital': ['283'], 'sanatorio': ['283'],
+            'computadora': ['323'], 'laptop': ['323'], 'notebook': ['323'],
+            'limpieza': ['192'], 'jabon': ['192'], 'escoba': ['192'],
+            'electricidad': ['213'], 'luz': ['213'], 'agua': ['212'],
+            'telefono': ['211'], 'internet': ['211'],
+            'regla': ['191', '176'], 'util': ['191'], 'oficina': ['191'],
+            'lapiz': ['191'], 'lapiz': ['191'], 'papel': ['131', '191'],
+            'viatico': ['234', '235'], 'pasaje': ['231'], 'alquiler': ['251'],
+            'jubilacion': ['571'], 'beca': ['577'],
+            'capacitacion': ['284'], 'curso': ['284'],
+            'mantenimiento': ['271', '273'], 'reparacion': ['271', '273'],
+            'vigilancia': ['291'], 'seguridad': ['291'],
+            'ferreteria': ['176'], 'herramienta': ['176'],
+            'plomeria': ['271'], 'canilla': ['271'], 'grifo': ['271'],
+            'lima': ['176']
         };
-        
+
         // ============================================
         // 💾 PERSISTENCIA (LocalStorage)
         // ============================================
@@ -772,16 +714,6 @@
                 return;
             }
             
-            // Validar que el objeto exista en los datos cargados
-            if (datosCompletos.length > 0) {
-                const objetoExiste = datosCompletos.some(d => d.objeto === objeto);
-                if (!objetoExiste) {
-                    if (!confirm(`⚠️ El objeto ${objeto} no existe en los datos cargados. ¿Querés agregarlo de todos modos?`)) {
-                        return;
-                    }
-                }
-            }
-            
             if (!customKeywords[keyword]) {
                 customKeywords[keyword] = [];
             }
@@ -804,7 +736,7 @@
             document.getElementById('newObjeto').value = '';
             document.getElementById('newAuxiliar').value = '000';
             
-            alert('✅ ¡Palabra agregada correctamente! El buscador la reconocerá en futuras búsquedas.');
+            alert('✅ ¡Palabra agregada correctamente!');
         }
 
         function deleteCustomKeyword(keyword, objeto, auxiliar) {
@@ -822,7 +754,7 @@
         }
 
         function clearAllCustomKeywords() {
-            if (confirm('⚠️ ¿Estás seguro de eliminar TODAS las palabras personalizadas? Esta acción no se puede deshacer.')) {
+            if (confirm('⚠️ ¿Estás seguro de eliminar TODAS las palabras personalizadas?')) {
                 customKeywords = {};
                 saveCustomKeywords();
                 alert('🗑️ Todas las palabras personalizadas fueron eliminadas.');
@@ -834,7 +766,7 @@
             const keywords = Object.keys(customKeywords).sort();
             
             if (keywords.length === 0) {
-                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>';
+                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún.</p>';
                 return;
             }
             
@@ -898,9 +830,9 @@
                     });
                     
                     saveCustomKeywords();
-                    alert(`✅ Se importaron ${Object.keys(imported).length} palabras personalizadas`);
+                    alert(`✅ Se importaron ${Object.keys(imported).length} palabras`);
                 } catch (error) {
-                    alert('❌ Error al importar el archivo. Asegurate que sea un JSON válido.');
+                    alert('❌ Error al importar. Asegurate que sea JSON válido.');
                 }
             };
             reader.readAsText(file);
@@ -922,7 +854,7 @@
                 procesarCSV(text);
             };
             reader.onerror = function() {
-                alert('❌ Error al leer el archivo. Asegúrate que sea un CSV válido.');
+                alert('❌ Error al leer el archivo.');
             };
             reader.readAsText(file, 'UTF-8');
         });
@@ -968,7 +900,7 @@
                 }
                 
                 if (datosCompletos.length === 0) {
-                    alert('⚠️ No se encontraron datos en el CSV. Verifica el formato.');
+                    alert('⚠️ No se encontraron datos en el CSV.');
                     return;
                 }
                 
@@ -984,11 +916,11 @@
                 loadCustomKeywords();
                 cargarSugerencias();
                 
-                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados. Ahora podés buscar y agregar palabras personalizadas.`);
+                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados.`);
                 
             } catch (error) {
-                console.error('Error procesando CSV:', error);
-                alert('❌ Error al procesar el CSV: ' + error.message);
+                console.error('Error:', error);
+                alert('❌ Error: ' + error.message);
             }
         }
 
@@ -1009,17 +941,70 @@
         }
 
         // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA CON IA
+        // 🌐 BÚSQUEDA EN INTERNET (WIKIPEDIA URUGUAY)
+        // ============================================
+        
+        async function buscarEnInternet(query) {
+            const internetDiv = document.getElementById('internetResults');
+            internetDiv.style.display = 'block';
+            internetDiv.innerHTML = '<div class="loading">🌐 Buscando definiciones en Uruguay...</div>';
+            
+            try {
+                // Búsqueda en Wikipedia en español
+                const wikiResponse = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
+                const wikiData = await wikiResponse.json();
+                
+                let html = '<h4>🌐 Información de Internet para "<strong>' + query + '</strong>":</h4>';
+                
+                if (wikiData && wikiData.extract && !wikiData.type) {
+                    html += `
+                        <div class="uruguay-source">
+                            <h5>📚 Wikipedia</h5>
+                            <p><strong>${wikiData.title}</strong></p>
+                            <p>${wikiData.extract.substring(0, 300)}...</p>
+                            ${wikiData.content_urls?.desktop?.page ? `<a href="${wikiData.content_urls.desktop.page}" target="_blank">Ver más en Wikipedia →</a>` : ''}
+                        </div>
+                    `;
+                } else {
+                    html += '<div class="uruguay-source"><p>No se encontró información en Wikipedia.</p></div>';
+                }
+                
+                // Búsqueda en Google Uruguay
+                html += `
+                    <div class="uruguay-source">
+                        <h5>🔍 Google Uruguay</h5>
+                        <p><a href="https://www.google.com.uy/search?q=${encodeURIComponent(query + ' objeto del gasto Uruguay')}" target="_blank">Buscar en Google Uruguay →</a></p>
+                    </div>
+                `;
+                
+                // Búsqueda en sitios gubernamentales de Uruguay
+                html += `
+                    <div class="uruguay-source">
+                        <h5>🏛️ Sitios Gubernamentales de Uruguay</h5>
+                        <p><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank">CGN (Contaduría General) →</a></p>
+                        <p><a href="https://www.siif.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank">SIIF Uruguay →</a></p>
+                        <p><a href="https://www.impo.com.uy/buscar/${encodeURIComponent(query)}" target="_blank">IMPO (Legislación) →</a></p>
+                    </div>
+                `;
+                
+                internetDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.log('Error en búsqueda internet:', error);
+                internetDiv.innerHTML = '<div class="error">⚠️ No se pudo obtener información de internet. Verificá tu conexión.</div>';
+            }
+        }
+
+        // ============================================
+        // 🔍 MOTOR DE BÚSQUEDA (CORREGIDO TILDES)
         // ============================================
         
         function normalizar(texto) {
             if (!texto) return '';
             texto = texto.toLowerCase().trim();
-            texto = texto.replace(/[áàäâ]/g, 'a');
-            texto = texto.replace(/[éèëê]/g, 'e');
-            texto = texto.replace(/[íìïî]/g, 'i');
-            texto = texto.replace(/[óòöô]/g, 'o');
-            texto = texto.replace(/[úùüû]/g, 'u');
+            // Quitar tildes correctamente
+            texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            // Reemplazar ñ por n
             texto = texto.replace(/ñ/g, 'n');
             return texto;
         }
@@ -1032,7 +1017,6 @@
             
             let score = 0;
             let keywordEncontrada = null;
-            let esDiccionarioUruguay = false;
             
             // 1. Palabras personalizadas (MÁXIMA PRIORIDAD)
             if (customKeywords[queryNorm]) {
@@ -1044,24 +1028,23 @@
                 }
             }
             
-            // 2. Diccionario Uruguay
-            if (diccionarioUruguay[queryNorm]) {
-                if (diccionarioUruguay[queryNorm].objeto === item.objeto) {
-                    score += 90;
-                    keywordEncontrada = queryNorm;
-                    esDiccionarioUruguay = true;
+            // 2. Keywords mapeadas
+            if (keywordsMap[queryNorm]) {
+                if (keywordsMap[queryNorm].includes(item.objeto)) {
+                    score += 50;
+                    if (!keywordEncontrada) keywordEncontrada = queryNorm;
                 }
             }
             
             // 3. Coincidencia en denominación
             if (denomNorm.includes(queryNorm)) {
-                score += 50;
+                score += 40;
                 if (!keywordEncontrada) keywordEncontrada = 'denominación';
             }
             
             // 4. Coincidencia en descripción
             if (descNorm.includes(queryNorm)) {
-                score += 40;
+                score += 30;
                 if (!keywordEncontrada) keywordEncontrada = 'descripción';
             }
             
@@ -1075,19 +1058,18 @@
             const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
             palabrasQuery.forEach(palabra => {
                 if (textoCompleto.includes(palabra)) {
-                    score += 20;
+                    score += 15;
                     if (!keywordEncontrada) keywordEncontrada = palabra;
                 }
             });
             
             return {
                 score: Math.min(score, 100),
-                keyword: keywordEncontrada,
-                esDiccionarioUruguay: esDiccionarioUruguay
+                keyword: keywordEncontrada
             };
         }
 
-        function buscar() {
+        async function buscar() {
             const query = document.getElementById('searchInput').value.trim();
             const resultsDiv = document.getElementById('results');
             
@@ -1099,7 +1081,13 @@
             searchCount++;
             document.getElementById('searchCount').textContent = searchCount;
             
+            // Ocultar resultados anteriores de internet
+            document.getElementById('internetResults').style.display = 'none';
+            
             resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en ' + datosCompletos.length + ' objetos...</div>';
+            
+            // Búsqueda en internet en paralelo
+            buscarEnInternet(query);
             
             setTimeout(() => {
                 let resultados = datosCompletos.map(item => {
@@ -1107,8 +1095,7 @@
                     return { 
                         ...item, 
                         relevancia: relevancia.score,
-                        keywordEncontrada: relevancia.keyword,
-                        esDiccionarioUruguay: relevancia.esDiccionarioUruguay
+                        keywordEncontrada: relevancia.keyword
                     };
                 });
                 
@@ -1128,8 +1115,7 @@
                         <div class="no-results">
                             <h2>❌ No se encontraron resultados</h2>
                             <p style="margin-top: 15px;">Intentá con otros términos o verificá la ortografía</p>
-                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: harina, sueldo, combustible, medicamento, vehículo, regla, internación, útiles, lapiz, aceite</p>
-                            <p style="margin-top: 10px; color: #28a745;">📝 ¿No encontrás lo que buscás? Agregá tu palabra en "Gestionar Palabras Personalizadas"</p>
+                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: harina, sueldo, combustible, medicamento, vehículo, regla, internación, útiles, lápiz, aceite</p>
                         </div>
                     `;
                     return;
@@ -1152,7 +1138,6 @@
                             ${r.categoria ? `<div class="categoria-tag">📁 ${r.categoria}</div>` : ''}
                             <span class="grupo-tag">Grupo ${r.grupo}</span>
                             ${r.keywordEncontrada ? `<div class="keyword-match">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
-                            ${r.esDiccionarioUruguay ? `<div class="uruguay-badge">🇺🇾 Diccionario Uruguay</div>` : ''}
                             ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
                         </div>
                     `;
@@ -1221,6 +1206,7 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('results').innerHTML = '';
             document.getElementById('ultimaBusqueda').textContent = '0';
+            document.getElementById('internetResults').style.display = 'none';
         }
 
         function cargarSugerencias() {
@@ -1229,7 +1215,7 @@
                 'regla', 'internacion', 'computadora', 'utiles', 'limpieza',
                 'electricidad', 'telefono', 'viatico', 'alquiler', 'jubilacion',
                 'beca', 'capacitacion', 'mantenimiento', 'lapiz', 'aceite',
-                'birome', 'lavandina', 'mate', 'yerba', 'nafta', 'gasoil'
+                'lima', 'ferreteria', 'plomeria'
             ];
             
             const grid = document.getElementById('sugerenciasGrid');
