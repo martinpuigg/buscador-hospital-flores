@@ -3,1330 +3,600 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Buscador de Objetos del Gasto - Hospital de Flores ASSE">
-    <meta name="theme-color" content="#003ca5">
-    <!-- Content Security Policy recomendado -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; connect-src 'self' https://es.wikipedia.org https://www.cgn.gub.uy https://www.siif.gub.uy https://www.impo.com.uy; img-src 'self' data:;">
-    
-    <title>🏥 Hospital de Flores "Edison Camacho" - Sector Contaduría</title>
-    
-    <!-- Fuentes -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    
+    <title>🏥 Hospital de Flores - Contaduría</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ============================================
-           🎨 VARIABLES CSS - Tema Principal
-           ============================================ */
         :root {
-            /* Colores institucionales */
-            --color-primary: #003ca5;
-            --color-primary-dark: #002d7a;
-            --color-primary-light: rgba(0, 60, 165, 0.1);
-            --color-success: #28a745;
-            --color-success-dark: #218838;
-            --color-danger: #dc3545;
-            --color-danger-dark: #c82333;
-            --color-warning: #ff6b00;
-            --color-warning-light: rgba(255, 107, 0, 0.1);
-            
-            /* Colores de fondo y texto */
-            --color-bg: #ffffff;
-            --color-bg-alt: #f8f9fa;
-            --color-text: #003ca5;
-            --color-text-muted: #666666;
-            --color-text-light: #ffffff;
-            
-            /* Bordes y sombras */
-            --border-radius: 10px;
-            --border-radius-sm: 8px;
-            --border-radius-lg: 15px;
-            --border-width: 2px;
-            --shadow-sm: 0 2px 10px rgba(0, 60, 165, 0.1);
-            --shadow-md: 0 4px 20px rgba(0, 60, 165, 0.2);
-            --shadow-lg: 0 8px 30px rgba(0, 60, 165, 0.3);
-            
-            /* Transiciones */
-            --transition-fast: 0.2s ease;            --transition-normal: 0.3s ease;
-            --transition-slow: 0.5s ease;
-            
-            /* Tipografía */
-            --font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --font-size-base: 16px;
-            --font-size-sm: 0.875em;
-            --font-size-lg: 1.1em;
-            --font-size-xl: 1.3em;
-            --font-size-2xl: 1.8em;
-            
-            /* Espaciado */
-            --spacing-xs: 5px;
-            --spacing-sm: 10px;
-            --spacing-md: 15px;
-            --spacing-lg: 20px;
-            --spacing-xl: 30px;
-            --spacing-2xl: 40px;
-            
-            /* Z-index */
-            --z-dropdown: 100;
-            --z-modal: 1000;
-            --z-toast: 2000;
+            --primary: #003ca5;
+            --primary-dark: #002d7a;
+            --primary-light: rgba(0,60,165,0.1);
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ff6b00;
+            --bg: #ffffff;
+            --bg-alt: #f8f9fa;
+            --text: #003ca5;
+            --text-muted: #666;
+            --radius: 10px;
+            --shadow: 0 2px 10px rgba(0,60,165,0.1);
         }
 
-        /* ============================================
-           🌓 MODO OSCURO (Automático)
-           ============================================ */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --color-bg: #1a1a2e;
-                --color-bg-alt: #16213e;
-                --color-text: #e6e6e6;
-                --color-text-muted: #a0a0a0;
-                --color-primary-light: rgba(0, 100, 200, 0.2);
-                --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.3);
-                --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
-            }
-            body { background: var(--color-bg); }
-            .result-card, .upload-section, .search-container,
-            .custom-keywords-panel, .history-section {
-                background: var(--color-bg-alt);
-                border-color: var(--color-primary);
-            }
-        }
-
-        /* ============================================
-           🔄 RESET & BASE
-           ============================================ */
-        *, *::before, *::after {            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            font-size: var(--font-size-base);
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: var(--font-family);
-            background: var(--color-bg);
-            color: var(--color-text);
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
-        /* ============================================
-           ♿ ACCESIBILIDAD
-           ============================================ */
-        :focus-visible {
-            outline: 3px solid var(--color-warning);
-            outline-offset: 2px;
-        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
 
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-
-        [aria-busy="true"] {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        /* ============================================
-           📐 LAYOUT
-           ============================================ */
-        .container {
-            max-width: 1400px;            margin: 0 auto;
-            padding: 0 var(--spacing-md);
-        }
-
-        /* ============================================
-           🏷️ HEADER
-           ============================================ */
+        /* Header */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: var(--spacing-xl) 0;
-            border-bottom: var(--border-width) solid var(--color-primary);
-            margin-bottom: var(--spacing-xl);
-            gap: var(--spacing-md);
+            padding: 30px 0;
+            border-bottom: 3px solid var(--primary);
+            margin-bottom: 30px;
             flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-lg);
-        }
+        .logo-container { display: flex; align-items: center; gap: 20px; }
+        .logo-img { max-width: 200px; height: auto; }
+        .header-text h1 { font-size: 1.8em; font-weight: 700; }        .header-text p { color: var(--text-muted); }
 
-        .logo-img {
-            max-width: 200px;
-            height: auto;
-            transition: transform var(--transition-normal);
-        }
-
-        .logo-img:hover {
-            transform: scale(1.02);
-        }
-
-        .header-text h1 {
-            font-size: var(--font-size-2xl);
-            color: var(--color-primary);
-            font-weight: 700;
-            line-height: 1.3;
-        }
-
-        .header-text p {
-            color: var(--color-text-muted);
-            font-size: 1em;
-            font-weight: 500;
-        }
-
-        /* ============================================
-           🤖 AI STATUS BAR
-           ============================================ */        .ai-status {
-            background: var(--color-primary-light);
-            border: var(--border-width) solid var(--color-primary);
-            padding: var(--spacing-md);
-            border-radius: var(--border-radius);
+        /* AI Status */
+        .ai-status {
+            background: var(--primary-light);
+            border: 2px solid var(--primary);
+            padding: 15px;
+            border-radius: var(--radius);
             text-align: center;
-            margin-bottom: var(--spacing-md);
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: var(--spacing-sm);
+            gap: 10px;
             flex-wrap: wrap;
-            font-size: var(--font-size-sm);
         }
 
-        .ai-status span {
-            color: var(--color-primary);
-            font-weight: 600;
-        }
-
+        .ai-status span { color: var(--primary); font-weight: 600; }
         .status-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--color-success);
-            border-radius: 50%;
-            display: inline-block;
+            width: 10px; height: 10px; background: var(--success);
+            border-radius: 50%; display: inline-block;
             animation: pulse 2s infinite;
         }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* ============================================
-           📤 UPLOAD SECTION
-           ============================================ */
+        /* Upload Section */
         .upload-section {
-            background: var(--color-bg-alt);
-            padding: var(--spacing-2xl);
-            border-radius: var(--border-radius-lg);
+            background: var(--bg-alt);
+            padding: 40px;
+            border-radius: 15px;
             text-align: center;
-            margin-bottom: var(--spacing-xl);
-            border: var(--border-width) dashed var(--color-primary);
-            transition: all var(--transition-normal);
+            margin-bottom: 30px;
+            border: 2px dashed var(--primary);
+            transition: all 0.3s;
         }
-
-        .upload-section:hover {
-            border-color: var(--color-primary-dark);
-            background: var(--color-primary-light);        }
-
-        .upload-section input[type="file"] {
-            display: none;
-        }
-
+        .upload-section:hover { border-color: var(--primary-dark); }
+        .upload-section input { display: none; }
+        
         .upload-btn {
-            background: var(--color-primary);
-            color: var(--color-text-light);
-            padding: var(--spacing-lg) var(--spacing-xl);
-            border-radius: var(--border-radius);
+            background: var(--primary);
+            color: #fff;
+            padding: 20px 40px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: var(--font-size-lg);
+            font-size: 18px;
             font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            transition: all var(--transition-normal);
+            display: inline-block;
+            transition: all 0.3s;
             border: none;
-            font-family: var(--font-family);
-        }
+            font-family: inherit;        }
+        .upload-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
+        .file-info { margin-top: 20px; color: var(--success); font-weight: 600; }
+        .security-note { margin-top: 15px; color: var(--text-muted); font-size: 0.9em; }
 
-        .upload-btn:hover,
-        .upload-btn:focus {
-            background: var(--color-primary-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .upload-btn:active {
-            transform: translateY(0);
-        }
-
-        .file-info {
-            margin-top: var(--spacing-md);
-            color: var(--color-success);
-            font-weight: 600;
-            min-height: 1.5em;
-        }
-
-        .security-note {
-            margin-top: var(--spacing-md);
-            color: var(--color-text-muted);
-            font-size: var(--font-size-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--spacing-xs);
-        }
-        /* ============================================
-           📊 STATS BAR
-           ============================================ */
+        /* Stats Bar */
         .stats-bar {
             display: none;
             justify-content: center;
-            gap: var(--spacing-lg);
-            margin: var(--spacing-md) 0 var(--spacing-xl);
+            gap: 30px;
+            margin: 20px 0;
             flex-wrap: wrap;
         }
-
         .stat-item {
-            background: var(--color-bg-alt);
-            padding: var(--spacing-md) var(--spacing-lg);
-            border-radius: var(--border-radius);
+            background: var(--bg-alt);
+            padding: 15px 25px;
+            border-radius: 10px;
             text-align: center;
-            border: var(--border-width) solid var(--color-primary);
+            border: 2px solid var(--primary);
             min-width: 150px;
-            transition: transform var(--transition-fast);
         }
+        .stat-number { font-size: 2em; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.9em; color: var(--text-muted); }
 
-        .stat-item:hover {
-            transform: translateY(-3px);
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: 700;
-            color: var(--color-primary);
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: var(--font-size-sm);
-            color: var(--color-text-muted);
-            font-weight: 500;
-            margin-top: var(--spacing-xs);
-        }
-
-        /* ============================================
-           🔍 SEARCH CONTAINER
-           ============================================ */
+        /* Search Container */
         .search-container {
             display: none;
-            background: var(--color-bg-alt);
-            padding: var(--spacing-xl);
-            border-radius: var(--border-radius-lg);
-            margin-bottom: var(--spacing-xl);
-            border: var(--border-width) solid var(--color-primary);
+            background: var(--bg-alt);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid var(--primary);
         }
-        .search-box {
-            display: flex;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-            flex-wrap: wrap;
-        }
-
+        .search-box { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
         .search-box input {
             flex: 1;
             min-width: 250px;
-            padding: var(--spacing-md) var(--spacing-lg);
-            font-size: var(--font-size-lg);
-            border: var(--border-width) solid var(--color-primary);
-            border-radius: var(--border-radius);
-            background: var(--color-bg);
-            color: var(--color-text);
-            font-family: var(--font-family);
-            transition: all var(--transition-fast);
-        }
-
-        .search-box input:focus {
-            border-color: var(--color-primary-dark);
-            box-shadow: 0 0 0 3px var(--color-primary-light);
+            padding: 18px 25px;
+            font-size: 18px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text);
+            font-family: inherit;
             outline: none;
+            transition: border-color 0.3s;
         }
-
-        .search-box input::placeholder {
-            color: var(--color-text-muted);
-            opacity: 1;
-        }
-
-        .search-btn {
-            padding: var(--spacing-md) var(--spacing-xl);
-            background: var(--color-primary);
-            color: var(--color-text-light);
+        .search-box input:focus { border-color: var(--primary-dark); box-shadow: 0 0 10px var(--primary-light); }
+        
+        .search-btn {            padding: 18px 40px;
+            background: var(--primary);
+            color: #fff;
             border: none;
-            border-radius: var(--border-radius);
-            font-size: var(--font-size-lg);
+            border-radius: 10px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            font-family: var(--font-family);
-            transition: all var(--transition-normal);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
+            font-family: inherit;
+            transition: all 0.3s;
         }
+        .search-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
 
-        .search-btn:hover,
-        .search-btn:focus {            background: var(--color-primary-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .search-btn:active {
-            transform: translateY(0);
-        }
-
-        .search-btn[aria-busy="true"] {
-            position: relative;
-        }
-
-        .search-btn[aria-busy="true"]::after {
-            content: "";
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            border: 2px solid transparent;
-            border-top-color: currentColor;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-left: var(--spacing-xs);
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ============================================
-           🔘 FILTERS
-           ============================================ */
-        .filters {
-            display: flex;
-            gap: var(--spacing-xs);
-            flex-wrap: wrap;
-            margin-bottom: var(--spacing-lg);
-            padding-bottom: var(--spacing-md);
-            border-bottom: 1px solid var(--color-primary-light);
-        }
-
+        /* Filters */
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--primary-light); }
         .filter-btn {
-            padding: var(--spacing-xs) var(--spacing-md);
-            background: var(--color-primary);
-            color: var(--color-text-light);
+            padding: 10px 20px;
+            background: var(--primary);
+            color: #fff;
             border: none;
             border-radius: 20px;
             cursor: pointer;
-            transition: all var(--transition-fast);
-            font-family: var(--font-family);            font-weight: 500;
-            font-size: var(--font-size-sm);
-            white-space: nowrap;
+            transition: all 0.3s;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 14px;
         }
+        .filter-btn:hover, .filter-btn.active { background: var(--primary-dark); }
+        .filter-btn.danger { background: var(--danger); }
+        .filter-btn.danger:hover { background: #c82333; }
 
-        .filter-btn:hover,
-        .filter-btn:focus {
-            background: var(--color-primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .filter-btn.active {
-            background: var(--color-primary-dark);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .filter-btn.danger {
-            background: var(--color-danger);
-        }
-
-        .filter-btn.danger:hover {
-            background: var(--color-danger-dark);
-        }
-
-        /* ============================================
-           💡 SUGERENCIAS
-           ============================================ */
+        /* Suggestions */
         .sugerencias {
-            margin-top: var(--spacing-lg);
-            padding: var(--spacing-md);
-            background: var(--color-bg);
-            border-radius: var(--border-radius);
-            border: var(--border-width) solid var(--color-primary);
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            border: 2px solid var(--primary);
         }
-
-        .sugerencias h3 {
-            margin-bottom: var(--spacing-md);
-            color: var(--color-primary);
-            font-size: 1.1em;
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
+        .sugerencias h3 { margin-bottom: 15px; color: var(--primary); }
         .sugerencias-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: var(--spacing-sm);
+            gap: 10px;
         }
         .sugerencia-item {
-            background: var(--color-primary);
-            color: var(--color-text-light);
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: var(--border-radius-sm);
-            cursor: pointer;
-            transition: all var(--transition-fast);
+            background: var(--primary);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;            cursor: pointer;
+            transition: all 0.3s;
             text-align: center;
-            font-family: var(--font-family);
             font-weight: 500;
-            font-size: var(--font-size-sm);
-            border: 2px solid transparent;
+            font-size: 0.9em;
         }
+        .sugerencia-item:hover { background: var(--primary-dark); transform: translateY(-2px); }
 
-        .sugerencia-item:hover,
-        .sugerencia-item:focus {
-            background: var(--color-primary-dark);
-            transform: translateY(-2px);
-            border-color: var(--color-warning);
-        }
-
-        /* ============================================
-           📋 RESULTADOS
-           ============================================ */
-        .results-container {
-            display: grid;
-            gap: var(--spacing-md);
-        }
-
+        /* Results */
+        .results-container { display: grid; gap: 20px; }
         .result-card {
-            background: var(--color-bg);
-            border-left: 4px solid var(--color-primary);
-            padding: var(--spacing-lg);
-            border-radius: var(--border-radius);
-            transition: all var(--transition-normal);
+            background: #fff;
+            border-left: 4px solid var(--primary);
+            padding: 25px;
+            border-radius: 10px;
+            transition: all 0.3s;
             cursor: pointer;
-            box-shadow: var(--shadow-sm);
-            position: relative;
+            box-shadow: var(--shadow);
         }
-
-        .result-card:hover,
-        .result-card:focus-within {
-            transform: translateX(5px);
-            background: var(--color-bg-alt);
-            box-shadow: var(--shadow-md);
-            border-left-color: var(--color-warning);
+        .result-card:hover, .result-card.selected {
+            transform: translateX(10px);
+            background: var(--bg-alt);
+            border-left-color: var(--warning);
+            box-shadow: 0 4px 20px rgba(0,60,165,0.2);
         }
-
-        .result-card.selected {
-            border-left-color: var(--color-warning);            background: var(--color-warning-light);
-            box-shadow: var(--shadow-md);
-        }
-
-        .result-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 0;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, var(--color-primary-light));
-            transition: width var(--transition-fast);
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
-            z-index: -1;
-        }
-
-        .result-card:hover::before {
-            width: 100%;
-        }
-
-        .result-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: wrap;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-sm);
-        }
-
+        .result-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+        
         .codigo-badge {
-            background: var(--color-primary);
-            color: var(--color-text-light);
-            padding: var(--spacing-xs) var(--spacing-md);
+            background: var(--primary);
+            color: #fff;
+            padding: 8px 20px;
             border-radius: 20px;
             font-weight: 600;
-            font-size: var(--font-size-lg);
+            font-size: 1.1em;
             display: inline-flex;
             align-items: center;
-            gap: var(--spacing-xs);
+            gap: 5px;
         }
-
         .copy-btn {
-            background: none;
-            border: 1px solid var(--color-primary);
-            color: var(--color-primary);
-            padding: 2px var(--spacing-xs);
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8em;            margin-left: var(--spacing-xs);
-            transition: all var(--transition-fast);
+            background: none; border: 1px solid #fff; color: #fff;
+            padding: 2px 8px; border-radius: 4px; cursor: pointer;
+            font-size: 0.8em; transition: all 0.2s;
         }
-
-        .copy-btn:hover,
-        .copy-btn:focus {
-            background: var(--color-primary);
-            color: var(--color-text-light);
-        }
-
+        .copy-btn:hover { background: #fff; color: var(--primary); }
+        
         .relevancia-badge {
-            background: var(--color-primary-light);
-            color: var(--color-primary);
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: 15px;
-            font-size: var(--font-size-sm);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 5px 15px;
+            border-radius: 15px;            font-size: 0.9em;
         }
-
-        .denominacion {
-            font-size: var(--font-size-xl);
-            font-weight: 600;
-            margin: var(--spacing-sm) 0;
-            color: var(--color-primary);
-            line-height: 1.4;
-        }
-
+        
+        .denominacion { font-size: 1.3em; font-weight: 600; margin: 10px 0; color: var(--primary); }
         .descripcion {
-            color: var(--color-text-muted);
+            color: var(--text-muted);
             line-height: 1.6;
-            font-size: var(--font-size-sm);
-            background: var(--color-bg-alt);
-            padding: var(--spacing-md);
-            border-radius: var(--border-radius-sm);
-            margin: var(--spacing-sm) 0;
+            font-size: 0.95em;
+            background: var(--bg-alt);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
         }
-
-        .tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--spacing-xs);
-            margin-top: var(--spacing-sm);
+        
+        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .categoria-tag, .grupo-tag, .keyword-match {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 12px; border-radius: 15px; font-size: 0.85em; font-weight: 500;
         }
-
-        .categoria-tag,
-        .grupo-tag,
-        .keyword-match {            display: inline-flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-            padding: var(--spacing-xs) var(--spacing-sm);
-            border-radius: 15px;
-            font-size: var(--font-size-sm);
-            font-weight: 500;
-        }
-
-        .categoria-tag {
-            background: var(--color-primary-light);
-            color: var(--color-primary);
-        }
-
-        .grupo-tag {
-            background: var(--color-bg-alt);
-            color: var(--color-text-muted);
-        }
-
-        .keyword-match {
-            background: var(--color-warning-light);
-            color: var(--color-warning);
-        }
-
+        .categoria-tag { background: var(--primary-light); color: var(--primary); }
+        .grupo-tag { background: var(--bg-alt); color: var(--text-muted); }
+        .keyword-match { background: rgba(255,107,0,0.1); color: var(--warning); }
+        
         .best-result-indicator {
-            margin-top: var(--spacing-sm);
-            color: var(--color-warning);
-            font-weight: 600;
-            font-size: var(--font-size-sm);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
+            margin-top: 10px; color: var(--warning);
+            font-weight: 600; font-size: 0.9em;
         }
 
-        /* ============================================
-           📝 CUSTOM KEYWORDS PANEL
-           ============================================ */
+        /* Custom Keywords Panel */
         .custom-keywords-panel {
             display: none;
-            background: rgba(40, 167, 69, 0.1);
-            border: var(--border-width) solid var(--color-success);
-            padding: var(--spacing-xl);
-            border-radius: var(--border-radius-lg);
-            margin-bottom: var(--spacing-xl);
+            background: rgba(40,167,69,0.1);
+            border: 2px solid var(--success);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
         }
-
-        .custom-keywords-panel h3 {
-            color: var(--color-success);
-            margin-bottom: var(--spacing-md);
-            display: flex;            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
+        .custom-keywords-panel h3 { color: var(--success); margin-bottom: 20px; }
+        
         .add-keyword-form {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
+            gap: 15px;
+            margin-bottom: 20px;
             align-items: end;
         }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-xs);
-        }
-
-        .form-group label {
-            font-weight: 600;
-            color: var(--color-primary);
-            font-size: var(--font-size-sm);
-        }
-
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-weight: 600; color: var(--primary); font-size: 0.9em; }
         .add-keyword-form input {
-            padding: var(--spacing-sm) var(--spacing-md);
-            border: var(--border-width) solid var(--color-primary);
-            border-radius: var(--border-radius-sm);
-            font-size: var(--font-size-base);
-            font-family: var(--font-family);
-            background: var(--color-bg);
-            color: var(--color-text);
-            transition: border-color var(--transition-fast);
+            padding: 12px 15px;            border: 2px solid var(--primary);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #fff;
         }
-
-        .add-keyword-form input:focus {
-            border-color: var(--color-primary-dark);
-            outline: none;
-            box-shadow: 0 0 0 3px var(--color-primary-light);
-        }
-
+        .add-keyword-form input:focus { border-color: var(--primary-dark); outline: none; }
+        
         .add-keyword-form button {
-            padding: var(--spacing-sm) var(--spacing-lg);
-            background: var(--color-success);
-            color: var(--color-text-light);
+            padding: 12px 25px;
+            background: var(--success);
+            color: #fff;
             border: none;
-            border-radius: var(--border-radius-sm);
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            font-family: var(--font-family);            transition: all var(--transition-normal);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--spacing-xs);
+            font-family: inherit;
+            transition: all 0.3s;
         }
-
-        .add-keyword-form button:hover,
-        .add-keyword-form button:focus {
-            background: var(--color-success-dark);
-            transform: translateY(-2px);
-        }
-
+        .add-keyword-form button:hover { background: #218838; transform: scale(1.05); }
+        
         .keywords-list {
-            background: var(--color-bg);
-            border-radius: var(--border-radius-sm);
-            padding: var(--spacing-md);
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
             max-height: 300px;
             overflow-y: auto;
-            border: 1px solid var(--color-primary-light);
+            border: 1px solid var(--primary-light);
         }
-
         .keyword-item {
-            background: var(--color-bg-alt);
-            padding: var(--spacing-md);
-            border-radius: var(--border-radius-sm);
-            margin-bottom: var(--spacing-sm);
+            background: var(--bg-alt);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 4px solid var(--color-success);
-            gap: var(--spacing-md);
+            border-left: 4px solid var(--success);
+            gap: 15px;
             flex-wrap: wrap;
         }
-
-        .keyword-item-info {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .keyword-item-word {
-            font-weight: 700;
-            color: var(--color-success);
-            font-size: var(--font-size-lg);
-        }
-
-        .keyword-item-object {
-            color: var(--color-primary);
-            font-size: var(--font-size-sm);
-            margin-top: var(--spacing-xs);        }
-
-        .keyword-item-meta {
-            font-size: 0.75em;
-            color: var(--color-text-muted);
-            margin-top: var(--spacing-xs);
-        }
-
+        .keyword-item-info { flex: 1; min-width: 200px; }
+        .keyword-item-word { font-weight: 700; color: var(--success); font-size: 1.1em; }
+        .keyword-item-object { color: var(--primary); font-size: 0.9em; margin-top: 5px; }
+        
         .keyword-item-delete {
-            background: var(--color-danger);
-            color: var(--color-text-light);
+            background: var(--danger);
+            color: #fff;
             border: none;
-            padding: var(--spacing-xs) var(--spacing-md);
-            border-radius: var(--border-radius-sm);
+            padding: 8px 15px;            border-radius: 5px;
             cursor: pointer;
             font-weight: 600;
-            font-family: var(--font-family);
-            transition: all var(--transition-fast);
-            font-size: var(--font-size-sm);
+            font-family: inherit;
+            transition: all 0.3s;
         }
-
-        .keyword-item-delete:hover,
-        .keyword-item-delete:focus {
-            background: var(--color-danger-dark);
-            transform: translateY(-1px);
-        }
-
-        .keywords-actions {
-            display: flex;
-            gap: var(--spacing-sm);
-            margin-top: var(--spacing-lg);
-            flex-wrap: wrap;
-        }
-
+        .keyword-item-delete:hover { background: #c82333; }
+        
+        .keywords-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
         .btn-secondary {
-            background: var(--color-primary);
-            color: var(--color-text-light);
-            padding: var(--spacing-sm) var(--spacing-lg);
+            padding: 12px 25px;
+            background: var(--primary);
+            color: #fff;
             border: none;
-            border-radius: var(--border-radius-sm);
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            font-family: var(--font-family);
-            transition: all var(--transition-fast);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
+            font-family: inherit;
+            transition: all 0.3s;
         }
+        .btn-secondary:hover { background: var(--primary-dark); }
+        .btn-danger { background: var(--danger); }
+        .btn-danger:hover { background: #c82333; }
 
-        .btn-secondary:hover,        .btn-secondary:focus {
-            background: var(--color-primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-danger {
-            background: var(--color-danger);
-        }
-
-        .btn-danger:hover {
-            background: var(--color-danger-dark);
-        }
-
-        /* ============================================
-           🌐 INTERNET RESULTS
-           ============================================ */
+        /* Internet Results */
         .internet-results {
             display: none;
-            background: var(--color-primary-light);
-            border: var(--border-width) solid var(--color-primary);
-            padding: var(--spacing-lg);
-            border-radius: var(--border-radius);
-            margin-bottom: var(--spacing-xl);
+            background: var(--primary-light);
+            border: 2px solid var(--primary);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
-
-        .internet-results h4 {
-            color: var(--color-primary);
-            margin-bottom: var(--spacing-md);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
+        .internet-results h4 { color: var(--primary); margin-bottom: 15px; }
         .uruguay-source {
-            background: var(--color-bg);
-            padding: var(--spacing-md);
-            border-radius: var(--border-radius-sm);
-            margin-bottom: var(--spacing-sm);
-            border-left: 3px solid var(--color-primary);
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--primary);
         }
+        .uruguay-source h5 { color: var(--primary); margin-bottom: 8px; }
+        .uruguay-source a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        .uruguay-source a:hover { text-decoration: underline; }
 
-        .uruguay-source h5 {
-            color: var(--color-primary);
-            margin-bottom: var(--spacing-xs);
-            font-size: 1em;
-        }
-
-        .uruguay-source p {
-            margin-bottom: var(--spacing-xs);
-            font-size: var(--font-size-sm);            color: var(--color-text-muted);
-        }
-
-        .uruguay-source a {
-            color: var(--color-primary);
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        .uruguay-source a:hover,
-        .uruguay-source a:focus {
-            text-decoration: underline;
-            color: var(--color-primary-dark);
-        }
-
-        /* ============================================
-           📜 HISTORY SECTION
-           ============================================ */
+        /* History */
         .history-section {
             display: none;
-            margin-top: var(--spacing-xl);
-            background: var(--color-bg-alt);
-            padding: var(--spacing-lg);
-            border-radius: var(--border-radius);
-            border: var(--border-width) solid var(--color-primary);
+            margin-top: 30px;
+            background: var(--bg-alt);            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid var(--primary);
         }
-
-        .history-section h3 {
-            color: var(--color-primary);
-            margin-bottom: var(--spacing-md);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-xs);
-        }
-
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-xs);
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
+        .history-section h3 { color: var(--primary); margin-bottom: 15px; }
+        .history-list { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; }
         .history-item {
-            background: var(--color-bg);
-            padding: var(--spacing-sm) var(--spacing-md);
-            border-radius: var(--border-radius-sm);            cursor: pointer;
+            background: #fff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid var(--color-primary-light);
-            transition: all var(--transition-fast);
+            border: 1px solid var(--primary-light);
+            transition: all 0.2s;
         }
-
-        .history-item:hover,
-        .history-item:focus {
-            background: var(--color-primary-light);
-            border-color: var(--color-primary);
-        }
-
-        .history-query {
-            font-weight: 500;
-            color: var(--color-primary);
-        }
-
-        .history-time {
-            color: var(--color-text-muted);
-            font-size: var(--font-size-sm);
-        }
-
+        .history-item:hover { background: var(--primary-light); border-color: var(--primary); }
+        .history-query { font-weight: 500; color: var(--primary); }
+        .history-time { color: var(--text-muted); font-size: 0.9em; }
+        
         .clear-btn {
-            background: var(--color-danger);
-            color: var(--color-text-light);
+            background: var(--danger);
+            color: #fff;
             border: none;
-            padding: var(--spacing-xs) var(--spacing-lg);
-            border-radius: var(--border-radius-sm);
+            padding: 8px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            margin-top: var(--spacing-md);
-            font-family: var(--font-family);
+            margin-top: 15px;
+            font-family: inherit;
             font-weight: 500;
-            font-size: var(--font-size-sm);
-            transition: all var(--transition-fast);
         }
+        .clear-btn:hover { background: #c82333; }
 
-        .clear-btn:hover,
-        .clear-btn:focus {
-            background: var(--color-danger-dark);
-            transform: translateY(-1px);
-        }
-
-        /* ============================================
-           🔘 TOGGLE PANEL BUTTON
-           ============================================ */
+        /* Toggle Button */
         .toggle-panel-btn {
-            background: var(--color-success);
-            color: var(--color-text-light);            border: none;
-            padding: var(--spacing-md) var(--spacing-xl);
-            border-radius: var(--border-radius);
+            background: var(--success);
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
-            font-family: var(--font-family);
-            margin-bottom: var(--spacing-md);
-            transition: all var(--transition-normal);
+            font-family: inherit;
+            margin-bottom: 20px;
+            transition: all 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: var(--spacing-xs);
-        }
+            gap: 8px;
+        }        .toggle-panel-btn:hover { background: #218838; transform: scale(1.05); }
 
-        .toggle-panel-btn:hover,
-        .toggle-panel-btn:focus {
-            background: var(--color-success-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        /* ============================================
-           ⚠️ ESTADOS: Loading, Error, No Results
-           ============================================ */
-        .loading,
-        .no-results,
-        .error {
+        /* Loading/Error States */
+        .loading, .no-results, .error {
             text-align: center;
-            padding: var(--spacing-2xl);
-            color: var(--color-text-muted);
+            padding: 50px;
+            color: var(--text-muted);
         }
-
-        .loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: var(--spacing-md);
-        }
-
+        .loading { display: flex; flex-direction: column; align-items: center; gap: 20px; }
         .loading::after {
-            content: "";
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--color-primary-light);
-            border-top-color: var(--color-primary);
+            content: ""; width: 40px; height: 40px;
+            border: 4px solid var(--primary-light);
+            border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
         .error {
-            background: rgba(220, 53, 69, 0.1);            border: var(--border-width) solid var(--color-danger);
-            padding: var(--spacing-lg);
-            border-radius: var(--border-radius);
-            margin-top: var(--spacing-md);
-            color: var(--color-danger);
+            background: rgba(220,53,69,0.1);
+            border: 2px solid var(--danger);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            color: var(--danger);
         }
-
-        .no-results h2 {
-            color: var(--color-primary);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .no-results p {
-            margin: var(--spacing-xs) 0;
-        }
-
+        .no-results h2 { color: var(--primary); margin-bottom: 15px; }
         .suggestion-hint {
-            margin-top: var(--spacing-lg);
-            padding: var(--spacing-md);
-            background: var(--color-primary-light);
-            border-radius: var(--border-radius-sm);
-            color: var(--color-primary);
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            color: var(--primary);
         }
 
-        /* ============================================
-           🔔 TOAST NOTIFICATIONS
-           ============================================ */
+        /* Toast Notifications */
         .toast-container {
             position: fixed;
-            bottom: var(--spacing-lg);
-            right: var(--spacing-lg);
-            z-index: var(--z-toast);
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
             display: flex;
             flex-direction: column;
-            gap: var(--spacing-sm);
+            gap: 10px;
             max-width: 350px;
         }
-
         .toast {
-            background: var(--color-bg);
-            border-left: 4px solid var(--color-primary);
-            padding: var(--spacing-md) var(--spacing-lg);
-            border-radius: var(--border-radius-sm);
-            box-shadow: var(--shadow-lg);
+            background: #fff;
+            border-left: 4px solid var(--primary);
+            padding: 15px 20px;            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
-            gap: var(--spacing-md);
+            gap: 12px;
             animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
-            max-width: 100%;
         }
-        .toast.success { border-left-color: var(--color-success); }
-        .toast.error { border-left-color: var(--color-danger); }
-        .toast.warning { border-left-color: var(--color-warning); }
-
-        .toast-icon {
-            font-size: 1.2em;
-            flex-shrink: 0;
-        }
-
-        .toast-message {
-            flex: 1;
-            font-size: var(--font-size-sm);
-            line-height: 1.4;
-        }
-
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+        
+        .toast-icon { font-size: 1.2em; }
+        .toast-message { flex: 1; font-size: 0.9em; }
         .toast-close {
-            background: none;
-            border: none;
-            color: var(--color-text-muted);
-            cursor: pointer;
-            padding: var(--spacing-xs);
-            font-size: 1.2em;
-            line-height: 1;
-            transition: color var(--transition-fast);
+            background: none; border: none; color: var(--text-muted);
+            cursor: pointer; padding: 5px; font-size: 1.2em;
         }
+        .toast-close:hover { color: var(--text); }
+        
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 
-        .toast-close:hover {
-            color: var(--color-text);
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-
-        /* ============================================
-           📱 RESPONSIVE DESIGN
-           ============================================ */        @media (max-width: 768px) {
-            .container {
-                padding: 0 var(--spacing-sm);
-            }
-            
-            .header {
-                flex-direction: column;
-                text-align: center;
-                padding: var(--spacing-lg) 0;
-            }
-            
-            .logo-container {
-                flex-direction: column;
-                gap: var(--spacing-md);
-            }
-            
-            .header-text h1 {
-                font-size: var(--font-size-xl);
-            }
-            
-            .search-box {
-                flex-direction: column;
-            }
-            
-            .search-box input {
-                min-width: 100%;
-            }
-            
-            .stats-bar {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .stat-item {
-                width: 100%;
-                max-width: 300px;
-            }
-            
-            .add-keyword-form {
-                grid-template-columns: 1fr;
-            }
-            
-            .filters {
-                justify-content: center;
-            }
-            
-            .sugerencias-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            }
-                        .result-card {
-                padding: var(--spacing-md);
-            }
-            
-            .result-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .toast-container {
-                left: var(--spacing-sm);
-                right: var(--spacing-sm);
-                bottom: var(--spacing-md);
-            }
-            
-            .toast {
-                max-width: 100%;
-            }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header { flex-direction: column; text-align: center; }
+            .logo-container { flex-direction: column; }
+            .header-text h1 { font-size: 1.5em; }
+            .search-box { flex-direction: column; }
+            .search-box input { min-width: 100%; }
+            .stats-bar { flex-direction: column; align-items: center; }
+            .stat-item { width: 100%; max-width: 300px; }
+            .add-keyword-form { grid-template-columns: 1fr; }
+            .filters { justify-content: center; }
+            .sugerencias-grid { grid-template-columns: repeat(2, 1fr); }
+            .result-card { padding: 20px; }
+            .result-header { flex-direction: column; align-items: flex-start; }
+            .toast-container { left: 20px; right: 20px; }
         }
 
         @media (max-width: 480px) {
-            :root {
-                --font-size-base: 14px;
-            }
-            
-            .upload-section,
-            .search-container,
-            .custom-keywords-panel {
-                padding: var(--spacing-lg);
-            }
-            
-            .sugerencias-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .keyword-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .keywords-actions {
-                flex-direction: column;
-            }
-            
-            .keywords-actions button {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-        /* ============================================
-           🖨️ PRINT STYLES
-           ============================================ */
-        @media print {
-            body {
-                background: white;
-                color: black;
-                font-size: 12pt;
-            }
-            
-            .upload-section,
-            .search-container,
-            .filters,
-            .sugerencias,
-            .custom-keywords-panel,
-            .history-section,
-            .internet-results,
-            .toggle-panel-btn {
-                display: none !important;
-            }
-            
-            .result-card {
-                break-inside: avoid;
-                page-break-inside: avoid;
-                border: 1px solid #000;
-                box-shadow: none;
-            }
-            
-            .result-card:hover {
-                transform: none;
-            }
+            .upload-section, .search-container, .custom-keywords-panel { padding: 20px; }
+            .sugerencias-grid { grid-template-columns: 1fr 1fr; }
+            .keyword-item { flex-direction: column; align-items: flex-start; }
+            .keywords-actions { flex-direction: column; }
+            .keywords-actions button { width: 100%; justify-content: center; }
         }
 
-        /* ============================================
-           🎯 UTILITIES
-           ============================================ */
+        /* Print Styles */
+        @media print {
+            body { background: #fff; color: #000; }            .upload-section, .search-container, .filters, .sugerencias,
+            .custom-keywords-panel, .history-section, .internet-results,
+            .toggle-panel-btn, .toast-container { display: none !important; }
+            .result-card { break-inside: avoid; border: 1px solid #000; box-shadow: none; }
+            .result-card:hover { transform: none; }
+        }
+
+        /* Utilities */
         .hidden { display: none !important; }
         .text-center { text-align: center; }
-        .mt-sm { margin-top: var(--spacing-sm); }
-        .mt-md { margin-top: var(--spacing-md); }
-        .mb-sm { margin-bottom: var(--spacing-sm); }
-        .mb-md { margin-bottom: var(--spacing-md); }
+        .mt-2 { margin-top: 20px; }
+        .mb-2 { margin-bottom: 20px; }
         .flex { display: flex; }
         .flex-wrap { flex-wrap: wrap; }
         .items-center { align-items: center; }
         .justify-between { justify-content: space-between; }
-        .gap-sm { gap: var(--spacing-sm); }
-        .gap-md { gap: var(--spacing-md); }
+        .gap-2 { gap: 20px; }
     </style>
-</head><body>
-    <!-- Skip Link para accesibilidad -->
-    <a href="#main-content" class="sr-only" id="skip-link">Saltar al contenido principal</a>
-    
+</head>
+<body>
     <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+    <div class="toast-container" id="toastContainer"></div>
 
     <div class="container">
-        <!-- HEADER -->
+        <!-- Header -->
         <header class="header">
             <div class="logo-container">
-                <img src="logo_hospital_flores.png" 
-                     alt="Logo Hospital de Flores ASSE" 
-                     class="logo-img" 
-                     id="hospitalLogo"
-                     loading="lazy"
-                     onerror="this.style.display='none'; this.nextElementSibling?.style.display='block'">
-                <div class="header-text" role="banner">
+                <img src="logo_hospital_flores.png" alt="Hospital de Flores" class="logo-img" id="hospitalLogo" onerror="this.style.display='none'">
+                <div class="header-text">
                     <h1>🏥 Hospital de Flores "Edison Camacho"</h1>
                     <p>Sector Contaduría | Clasificador de Objetos del Gasto</p>
                 </div>
             </div>
         </header>
 
-        <!-- AI STATUS -->
-        <div class="ai-status" id="aiStatus" role="status" aria-live="polite">
-            <span class="status-dot" aria-hidden="true"></span>
-            🇺🇾 <span id="aiStatusText">Buscador Uruguay - Cargá tu archivo CSV</span> |   
-            🔍 Búsquedas: <span id="searchCount">0</span> |  
+        <!-- AI Status -->
+        <div class="ai-status" id="aiStatus">
+            <span class="status-dot"></span>
+            🇺🇾 <span id="aiStatusText">Buscador Uruguay - Cargá tu CSV</span> |
+            🔍 Búsquedas: <span id="searchCount">0</span> |
             📚 Personalizadas: <span id="customKeywordsCount">0</span>
         </div>
 
-        <!-- UPLOAD SECTION -->
-        <section class="upload-section" id="uploadSection" aria-labelledby="upload-title">
-            <h2 id="upload-title" style="color: var(--color-primary); margin-bottom: var(--spacing-md);">📂 Paso 1: Cargá tu archivo CSV</h2>
-            <p style="margin: var(--spacing-md) 0; color: var(--color-text-muted); font-size: var(--font-size-lg);">
-                Seleccioná el archivo <strong>ObjetosGasto.csv</strong> descargado de la CGN
+        <!-- Upload Section -->
+        <section class="upload-section" id="uploadSection">
+            <h2 style="color:var(--primary);margin-bottom:20px">📂 Paso 1: Cargá tu archivo CSV</h2>
+            <p style="margin:20px 0;color:var(--text-muted);font-size:1.1em">
+                Seleccioná el archivo <strong>ObjetosGasto.csv</strong> de la CGN
             </p>
-            
-            <label class="upload-btn" for="csvFile" tabindex="0" role="button" aria-label="Seleccionar archivo CSV">
-                📥 Seleccionar Archivo CSV
-                <input type="file" id="csvFile" accept=".csv" aria-describedby="fileHelp">
+            <label class="upload-btn" for="csvFile">                📥 Seleccionar Archivo CSV
+                <input type="file" id="csvFile" accept=".csv">
             </label>
-            <span id="fileHelp" class="sr-only">Formato aceptado: archivos CSV con codificación UTF-8</span>
-            
-            <p id="fileName" class="file-info" role="status" aria-live="polite"></p>
-            
-            <p class="security-note">
-                🔒 Procesamiento local • Sin envío a servidores • Tus datos permanecen en tu navegador
-            </p>        </section>
+            <p id="fileName" class="file-info"></p>
+            <p class="security-note">🔒 Procesamiento local • Sin envío a servidores</p>
+        </section>
 
-        <!-- STATS BAR -->
-        <nav class="stats-bar" id="statsBar" aria-label="Estadísticas de datos">
+        <!-- Stats Bar -->
+        <nav class="stats-bar" id="statsBar">
             <div class="stat-item">
-                <div class="stat-number" id="totalRegistros" aria-label="Total de objetos cargados">0</div>
+                <div class="stat-number" id="totalRegistros">0</div>
                 <div class="stat-label">Objetos Cargados</div>
             </div>
             <div class="stat-item">
@@ -1339,1268 +609,523 @@
             </div>
         </nav>
 
-        <!-- TOGGLE CUSTOM KEYWORDS -->
-        <button class="toggle-panel-btn" 
-                id="togglePanelBtn" 
-                style="display: none;"
-                aria-expanded="false"
-                aria-controls="customKeywordsPanel"
-                onclick="toggleCustomKeywordsPanel()">
+        <!-- Toggle Panel Button -->
+        <button class="toggle-panel-btn" id="togglePanelBtn" style="display:none" onclick="togglePanel()">
             📝 Gestionar Palabras Personalizadas
         </button>
 
-        <!-- CUSTOM KEYWORDS PANEL -->
-        <section class="custom-keywords-panel" 
-                 id="customKeywordsPanel" 
-                 aria-labelledby="keywords-title"
-                 hidden>
-            <h3 id="keywords-title">📝 Agregar Palabras Personalizadas</h3>
-            <p style="margin-bottom: var(--spacing-md); color: var(--color-text-muted);">
-                Asociá tus propios términos a objetos de gasto para mejorar las búsquedas.
-            </p>
+        <!-- Custom Keywords Panel -->
+        <section class="custom-keywords-panel" id="customKeywordsPanel">
+            <h3>📝 Agregar Palabras Personalizadas</h3>
+            <p style="margin-bottom:20px;color:var(--text-muted)">Asociá tus términos a objetos de gasto.</p>
             
-            <form class="add-keyword-form" onsubmit="addCustomKeyword(event); return false;" aria-label="Formulario para agregar palabra personalizada">
+            <form class="add-keyword-form" onsubmit="addKeyword(event);return false">
                 <div class="form-group">
-                    <label for="newKeyword">Palabra o Término:</label>
-                    <input type="text" 
-                           id="newKeyword" 
-                           placeholder="Ej: insumos, descartables..." 
-                           required
-                           maxlength="50"
-                           pattern="[\p{L}\p{N}\s\-_,]+"
-                           title="Solo letras, números, espacios y signos básicos">
+                    <label for="newKeyword">Palabra:</label>
+                    <input type="text" id="newKeyword" placeholder="Ej: insumos" required maxlength="50">
                 </div>
-                <div class="form-group">                    <label for="newObjeto">Objeto:</label>
-                    <input type="text" 
-                           id="newObjeto" 
-                           placeholder="Ej: 191" 
-                           required
-                           pattern="\d{3}"
-                           maxlength="3"
-                           title="Código de 3 dígitos">
+                <div class="form-group">
+                    <label for="newObjeto">Objeto:</label>
+                    <input type="text" id="newObjeto" placeholder="Ej: 191" required pattern="\d{3}" maxlength="3">
                 </div>
                 <div class="form-group">
                     <label for="newAuxiliar">Auxiliar:</label>
-                    <input type="text" 
-                           id="newAuxiliar" 
-                           placeholder="Ej: 000" 
-                           value="000"
-                           pattern="\d{3}"
-                           maxlength="3"
-                           title="Código auxiliar de 3 dígitos">
+                    <input type="text" id="newAuxiliar" value="000" pattern="\d{3}" maxlength="3">
                 </div>
-                <button type="submit" aria-label="Agregar nueva palabra personalizada">
-                    ➕ Agregar
-                </button>
+                <button type="submit">➕ Agregar</button>
             </form>
             
-            <div class="keywords-list" id="keywordsList" role="list" aria-label="Lista de palabras personalizadas">
-                <p style="color: var(--color-text-muted); text-align: center; padding: var(--spacing-lg);">
-                    No hay palabras personalizadas aún. Agregá la primera arriba.
-                </p>
+            <div class="keywords-list" id="keywordsList">                <p style="color:var(--text-muted);text-align:center;padding:20px">Sin palabras personalizadas aún.</p>
             </div>
             
             <div class="keywords-actions">
-                <button onclick="exportCustomKeywords()" 
-                        class="btn-secondary"
-                        aria-label="Exportar palabras personalizadas a archivo JSON">
-                    📤 Exportar
-                </button>
-                <button onclick="document.getElementById('importFile').click()" 
-                        class="btn-secondary"
-                        aria-label="Importar palabras desde archivo JSON">
-                    📥 Importar
-                </button>
-                <input type="file" 
-                       id="importFile" 
-                       accept=".json" 
-                       class="hidden" 
-                       onchange="handleImport(event)"
-                       aria-label="Archivo JSON para importar">
-                <button onclick="clearAllCustomKeywords()" 
-                        class="btn-secondary btn-danger"
-                        aria-label="Eliminar todas las palabras personalizadas">                    🗑️ Limpiar Todo
-                </button>
+                <button class="btn-secondary" onclick="exportKeywords()">📤 Exportar</button>
+                <button class="btn-secondary" onclick="document.getElementById('importFile').click()">📥 Importar</button>
+                <input type="file" id="importFile" accept=".json" class="hidden" onchange="importKeywords(event)">
+                <button class="btn-secondary btn-danger" onclick="clearKeywords()">🗑️ Limpiar Todo</button>
             </div>
         </section>
 
-        <!-- INTERNET RESULTS -->
-        <section class="internet-results" id="internetResults" aria-live="polite"></section>
+        <!-- Internet Results -->
+        <section class="internet-results" id="internetResults"></section>
 
-        <!-- SEARCH CONTAINER -->
-        <section class="search-container" 
-                 id="searchContainer" 
-                 aria-labelledby="search-title"
-                 hidden>
-            <h2 id="search-title" class="sr-only">Buscador de Objetos del Gasto</h2>
-            
+        <!-- Search Container -->
+        <section class="search-container" id="searchContainer">
             <div class="search-box">
-                <label for="searchInput" class="sr-only">Término de búsqueda</label>
-                <input type="search" 
-                       id="searchInput" 
-                       placeholder="Ej: harina, sueldo, combustible, medicamento..." 
-                       aria-describedby="searchHelp"
-                       autocomplete="off"
-                       spellcheck="false">
-                <span id="searchHelp" class="sr-only">
-                    Ingresa al menos 2 caracteres. Usa términos como: harina, sueldo, combustible, vehículo, medicamento
-                </span>
-                <button class="search-btn" 
-                        id="searchBtn"
-                        onclick="buscar()"
-                        aria-label="Buscar objetos del gasto">
-                    🔎 Buscar
-                </button>
+                <input type="search" id="searchInput" placeholder="Ej: harina, sueldo, combustible..." onkeypress="if(event.key==='Enter')buscar()">
+                <button class="search-btn" id="searchBtn" onclick="buscar()">🔎 Buscar</button>
             </div>
             
-            <div class="filters" role="group" aria-label="Filtros de búsqueda">
-                <button class="filter-btn active" onclick="setLimite(20)" aria-pressed="true">20 resultados</button>
-                <button class="filter-btn" onclick="setLimite(50)" aria-pressed="false">50 resultados</button>
-                <button class="filter-btn" onclick="setLimite(100)" aria-pressed="false">100 resultados</button>
-                <span role="separator" aria-hidden="true" style="margin: 0 var(--spacing-xs); color: var(--color-text-muted);">|</span>
-                <button class="filter-btn" onclick="filtrarGrupo('0')" aria-pressed="false">G0</button>
-                <button class="filter-btn" onclick="filtrarGrupo('1')" aria-pressed="false">G1</button>
-                <button class="filter-btn" onclick="filtrarGrupo('2')" aria-pressed="false">G2</button>
-                <button class="filter-btn" onclick="filtrarGrupo('3')" aria-pressed="false">G3</button>
-                <button class="filter-btn" onclick="filtrarGrupo('4')" aria-pressed="false">G4</button>
-                <button class="filter-btn" onclick="filtrarGrupo('5')" aria-pressed="false">G5</button>
-                <button class="filter-btn" onclick="filtrarGrupo('6')" aria-pressed="false">G6</button>
-                <button class="filter-btn" onclick="filtrarGrupo('7')" aria-pressed="false">G7</button>
-                <button class="filter-btn" onclick="filtrarGrupo('8')" aria-pressed="false">G8</button>
-                <button class="filter-btn" onclick="filtrarGrupo('9')" aria-pressed="false">G9</button>
-                <button class="filter-btn danger" onclick="limpiarFiltros()" aria-label="Limpiar filtros y búsqueda">🔄 Limpiar</button>            </div>
+            <div class="filters">
+                <button class="filter-btn active" onclick="setLimite(20)">20 resultados</button>
+                <button class="filter-btn" onclick="setLimite(50)">50 resultados</button>
+                <button class="filter-btn" onclick="setLimite(100)">100 resultados</button>
+                <span style="margin:0 5px;color:var(--text-muted)">|</span>
+                <button class="filter-btn" onclick="filterGroup('0')">G0</button>
+                <button class="filter-btn" onclick="filterGroup('1')">G1</button>
+                <button class="filter-btn" onclick="filterGroup('2')">G2</button>
+                <button class="filter-btn" onclick="filterGroup('3')">G3</button>
+                <button class="filter-btn" onclick="filterGroup('4')">G4</button>
+                <button class="filter-btn" onclick="filterGroup('5')">G5</button>
+                <button class="filter-btn" onclick="filterGroup('6')">G6</button>
+                <button class="filter-btn" onclick="filterGroup('7')">G7</button>
+                <button class="filter-btn" onclick="filterGroup('8')">G8</button>
+                <button class="filter-btn" onclick="filterGroup('9')">G9</button>
+                <button class="filter-btn danger" onclick="clearFilters()">🔄 Limpiar</button>
+            </div>
             
             <div class="sugerencias" id="sugerencias">
                 <h3>💡 Búsquedas sugeridas</h3>
-                <div class="sugerencias-grid" id="sugerenciasGrid" role="list"></div>
+                <div class="sugerencias-grid" id="sugerenciasGrid"></div>
             </div>
         </section>
 
-        <!-- RESULTS -->
-        <main id="main-content" aria-live="polite">
-            <div id="results" class="results-container" role="region" aria-label="Resultados de búsqueda"></div>
+        <!-- Results -->
+        <main>
+            <div id="results" class="results-container"></div>
         </main>
-
-        <!-- HISTORY -->
-        <aside class="history-section" id="historySection" aria-labelledby="history-title" hidden>
-            <h3 id="history-title">📜 Historial de Búsquedas</h3>
-            <div id="historyList" class="history-list" role="list" aria-label="Búsquedas recientes"></div>
-            <button class="clear-btn" onclick="clearHistory()" aria-label="Eliminar historial de búsquedas">
-                🗑️ Limpiar Historial
-            </button>
+        <!-- History -->
+        <aside class="history-section" id="historySection">
+            <h3>📜 Historial de Búsquedas</h3>
+            <div id="historyList" class="history-list"></div>
+            <button class="clear-btn" onclick="clearHistory()">🗑️ Limpiar Historial</button>
         </aside>
     </div>
 
-    <!-- JAVASCRIPT MODULE -->
     <script>
-    /**
-     * 🏥 Hospital de Flores - Buscador de Objetos del Gasto
-     * Versión optimizada con mejoras de accesibilidad, rendimiento y UX
-     * 
-     * @author Sector Contaduría - Hospital de Flores "Edison Camacho"
-     * @license MIT
-     */
-
-    'use strict';
-
-    // ============================================
-    // 📊 ESTADO GLOBAL
-    // ============================================
-    const AppState = {
+    // Estado global
+    const state = {
         datos: [],
         limite: 20,
         filtroGrupo: '',
         searchCount: 0,
         customKeywords: {},
         searchHistory: [],
-        searchCache: new Map(),
-        debounceTimer: null,
-        DEBOUNCE_DELAY: 300
+        debounceTimer: null
     };
-    // ============================================
-    // 🧠 BASE DE CONOCIMIENTO - MAPEO SEMÁNTICO
-    // ============================================
-    const KeywordsMap = Object.freeze({
-        // Alimentos (111)
-        'harina': ['111'], 'lechuga': ['111'], 'arroz': ['111'], 'carne': ['111'],
-        'aceite': ['111'], 'aceite comestible': ['111'], 'aceite de cocina': ['111'],
-        'azucar': ['111'], 'azúcar': ['111'], 'sal': ['111'], 'fideo': ['111'], 'pasta': ['111'],
-        
-        // Sueldos (011, 021, 031)
-        'sueldo': ['011', '021', '031'], 'salario': ['011', '021'],
-        
-        // Combustibles (141)
-        'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'],
-        'lubricante': ['141'], 'aceite motor': ['141'],
-        
-        // Medicamentos (152)
-        'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'], 'fármaco': ['152'],
-        
-        // Vehículos (353)
-        'vehiculo': ['353'], 'vehículo': ['353'], 'auto': ['353'], 'camioneta': ['353'],
-        
-        // Internación (283)
-        'internacion': ['283'], 'internación': ['283'], 'hospital': ['283'],
-        
-        // Computadoras (323)
-        'computadora': ['323'], 'laptop': ['323'], 'notebook': ['323'],
-        
-        // Limpieza (192)
-        'limpieza': ['192'], 'jabon': ['192'], 'jabón': ['192'], 'escoba': ['192'],
-        
-        // Servicios (211, 212, 213)
-        'electricidad': ['213'], 'luz': ['213'], 'agua': ['212'],
-        'telefono': ['211'], 'teléfono': ['211'], 'internet': ['211'],
-        
-        // Útiles oficina (191)
-        'regla': ['191', '176'], 'util': ['191'], 'útil': ['191'], 'oficina': ['191'],
-        'lapiz': ['191'], 'lápiz': ['191'], 'papel': ['131', '191'],
-        
-        // Viáticos (231, 234, 235)
-        'viatico': ['234', '235'], 'viático': ['234', '235'], 'pasaje': ['231'],
-        'alquiler': ['251'],
-        
-        // Jubilación/Becas (571, 577)
-        'jubilacion': ['571'], 'jubilación': ['571'], 'beca': ['577'],
-        
-        // Herramientas (176)
-        'herramienta': ['176'], 'ferreteria': ['176'], 'ferretería': ['176'],
-        
-        // Plomería (271, 163, 154)        'plomeria': ['271', '163', '154'], 'plomería': ['271', '163', '154'],
-        'cañeria': ['271', '163'], 'cañería': ['271', '163'],
-        
-        // Material Médico (194)
-        'material medico': ['194'], 'material médico': ['194'],
-        'quirurgico': ['194'], 'quirúrgico': ['194'], 'jeringa': ['194'],
-        
-        // Capacitación (284)
-        'capacitacion': ['284'], 'capacitación': ['284'], 'curso': ['284'],
-        
-        // Vigilancia (291)
-        'vigilancia': ['291'], 'seguridad': ['291'],
-        
-        // Mobiliario (326)
-        'mueble': ['326'], 'escritorio': ['326'], 'silla': ['326'], 'mesa': ['326'],
-        
-        // Impuestos (263)
-        'impuesto': ['263'], 'tasa': ['263'], 'dgi': ['263'], 'bps': ['263'],
-        
-        // Construcción (387)
-        'construccion': ['387'], 'construcción': ['387'], 'cemento': ['387'],
-        
-        // Seguros (264)
-        'seguro': ['264'], 'poliza': ['264'], 'póliza': ['264'],
-        
-        // Mantenimiento (271, 273)
-        'mantenimiento': ['271', '273'], 'reparacion': ['271', '273'],
-    });
 
-    // ============================================
-    // 💾 PERSISTENCIA - LocalStorage
-    // ============================================
+    // Mapeo de keywords
+    const keywordsMap = {
+        'harina':['111'],'lechuga':['111'],'arroz':['111'],'carne':['111'],
+        'aceite':['111'],'azucar':['111'],'azúcar':['111'],'sal':['111'],
+        'sueldo':['011','021','031'],'salario':['011','021'],
+        'combustible':['141'],'nafta':['141'],'gasoil':['141'],'lubricante':['141'],
+        'medicamento':['152'],'droga':['152'],'farmaco':['152'],'fármaco':['152'],
+        'vehiculo':['353'],'vehículo':['353'],'auto':['353'],
+        'internacion':['283'],'internación':['283'],'hospital':['283'],
+        'computadora':['323'],'laptop':['323'],
+        'limpieza':['192'],'jabon':['192'],'jabón':['192'],
+        'electricidad':['213'],'luz':['213'],'agua':['212'],
+        'telefono':['211'],'teléfono':['211'],'internet':['211'],
+        'regla':['191','176'],'util':['191'],'útil':['191'],'oficina':['191'],
+        'lapiz':['191'],'lápiz':['191'],'papel':['131','191'],
+        'viatico':['234','235'],'viático':['234','235'],'pasaje':['231'],
+        'jubilacion':['571'],'jubilación':['571'],'beca':['577'],
+        'herramienta':['176'],'ferreteria':['176'],
+        'plomeria':['271','163'],'plomería':['271','163'],
+        'material medico':['194'],'material médico':['194'],
+        'capacitacion':['284'],'capacitación':['284'],'curso':['284'],
+        'vigilancia':['291'],'seguridad':['291'],
+        'mueble':['326'],'escritorio':['326'],'silla':['326'],
+        'impuesto':['263'],'tasa':['263'],'dgi':['263'],'bps':['263'],
+        'construccion':['387'],'construcción':['387'],
+        'seguro':['264'],'poliza':['264'],'póliza':['264'],
+        'mantenimiento':['271','273']
+    };
+
+    // Utilidades    const Utils = {
+        normalize: (t) => t ? t.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ñ/g,'n') : '',
+        escape: (t) => { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; },
+        toast: (msg, type='success', dur=3000) => {
+            const c=document.getElementById('toastContainer');
+            const t=document.createElement('div');
+            t.className=`toast ${type}`;
+            const icons={success:'✅',error:'❌',warning:'⚠️'};
+            t.innerHTML=`<span class="toast-icon">${icons[type]}</span><span class="toast-message">${Utils.escape(msg)}</span><button class="toast-close">&times;</button>`;
+            t.querySelector('.toast-close').onclick=()=>t.remove();
+            c.appendChild(t);
+            setTimeout(()=>{if(t.parentNode){t.style.animation='fadeOut 0.3s';setTimeout(()=>t.remove(),300)}},dur);
+        }
+    };
+
+    // Persistencia
     const Storage = {
-        KEYS: {
-            CUSTOM_KEYWORDS: 'hospital_flores_custom_keywords',
-            SEARCH_HISTORY: 'hospital_flores_search_history'
-        },
-
-        /**
-         * Carga datos desde localStorage
-         * @param {string} key - Clave de almacenamiento
-         * @param {*} defaultValue - Valor por defecto si no existe
-         * @returns {*} Datos cargados o valor por defecto
-         */
-        load(key, defaultValue = {}) {
-            try {
-                const item = localStorage.getItem(key);
-                return item ? JSON.parse(item) : defaultValue;
-            } catch (error) {
-                console.warn(`Error cargando ${key}:`, error);                return defaultValue;
-            }
-        },
-
-        /**
-         * Guarda datos en localStorage
-         * @param {string} key - Clave de almacenamiento
-         * @param {*} value - Datos a guardar
-         */
-        save(key, value) {
-            try {
-                localStorage.setItem(key, JSON.stringify(value));
-            } catch (error) {
-                console.warn(`Error guardando ${key}:`, error);
-                // Intentar limpiar espacio si falla por cuota
-                if (error.name === 'QuotaExceededError') {
-                    localStorage.clear();
-                    console.info('LocalStorage limpiado por exceso de cuota');
-                }
-            }
-        }
+        load: (k,d={})=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}},
+        save: (k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
     };
 
-    // ============================================
-    // 🎨 UTILIDADES UI
-    // ============================================
-    const UI = {
-        /**
-         * Muestra notificación toast
-         * @param {string} message - Mensaje a mostrar
-         * @param {'success'|'error'|'warning'} type - Tipo de notificación
-         * @param {number} duration - Duración en ms
-         */
-        toast(message, type = 'success', duration = 3000) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.role = 'alert';
+    // Motor de búsqueda
+    const Search = {
+        relevance: (q,item)=>{
+            const qn=Utils.normalize(q);
+            const full=Utils.normalize(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
+            let score=0, kw=null;
             
-            const icons = { success: '✅', error: '❌', warning: '⚠️' };
+            if(state.customKeywords[qn]?.some(m=>m.objeto===item.objeto&&m.auxiliar===item.auxiliar)){score+=100;kw='personalizada'}
+            if(keywordsMap[qn]?.includes(item.objeto)){score+=50;kw=kw||'mapeo'}
+            if(item.objeto===qn||item.auxiliar===qn){score+=60;kw=kw||'código'}
+            if(Utils.normalize(item.denominacion).includes(qn)){score+=40;kw=kw||'denominación'}
+            if(Utils.normalize(item.descripcion).includes(qn)){score+=30;kw=kw||'descripción'}
             
-            toast.innerHTML = `
-                <span class="toast-icon" aria-hidden="true">${icons[type]}</span>
-                <span class="toast-message">${this.escapeHtml(message)}</span>
-                <button class="toast-close" aria-label="Cerrar notificación">&times;</button>
-            `;
-            
-            const closeBtn = toast.querySelector('.toast-close');
-            closeBtn.onclick = () => toast.remove();
-                        container.appendChild(toast);
-            
-            // Auto-remover después de la duración
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.style.animation = 'fadeOut 0.3s ease forwards';
-                    setTimeout(() => toast.remove(), 300);
-                }
-            }, duration);
-        },
-
-        /**
-         * Escapa HTML para prevenir XSS
-         * @param {string} text - Texto a escapar
-         * @returns {string} Texto seguro para HTML
-         */
-        escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        },
-
-        /**
-         * Actualiza contadores en la UI
-         */
-        updateStats() {
-            document.getElementById('searchCount').textContent = AppState.searchCount;
-            document.getElementById('customKeywordsCount').textContent = 
-                Object.keys(AppState.customKeywords).length;
-            document.getElementById('totalRegistros').textContent = AppState.datos.length;
-        },
-
-        /**
-         * Muestra/oculta elemento con transición
-         * @param {HTMLElement} element - Elemento a togglear
-         * @param {boolean} show - Mostrar u ocultar
-         */
-        toggleVisibility(element, show) {
-            if (show) {
-                element.hidden = false;
-                element.style.display = '';
-            } else {
-                element.hidden = true;
-                element.style.display = 'none';
-            }
-        }
-    };
-
-    // ============================================
-    // 🔤 UTILIDADES DE TEXTO    // ============================================
-    const TextUtils = {
-        /**
-         * Normaliza texto para búsqueda (sin tildes, minúsculas)
-         * @param {string} text - Texto a normalizar
-         * @returns {string} Texto normalizado
-         */
-        normalize(text) {
-            if (!text) return '';
-            return text
-                .toLowerCase()
-                .trim()
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .replace(/ñ/g, 'n');
-        },
-
-        /**
-         * Destaca coincidencias en texto
-         * @param {string} text - Texto original
-         * @param {string} query - Término buscado
-         * @returns {string} HTML con coincidencias destacadas
-         */
-        highlight(text, query) {
-            if (!query || query.length < 2) return UI.escapeHtml(text);
-            const normalized = this.normalize(query);
-            const regex = new RegExp(`(${this.escapeRegex(normalized)})`, 'gi');
-            return UI.escapeHtml(text).replace(regex, '<mark style="background:var(--color-warning-light);color:var(--color-warning);padding:0 2px;border-radius:3px;">$1</mark>');
-        },
-
-        /**
-         * Escapa caracteres especiales para regex
-         * @param {string} text - Texto a escapar
-         * @returns {string} Texto escapado
-         */
-        escapeRegex(text) {
-            return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        }
-    };
-
-    // ============================================
-    // 🔍 MOTOR DE BÚSQUEDA
-    // ============================================
-    const SearchEngine = {
-        /**
-         * Calcula relevancia de un ítem para una búsqueda
-         * @param {string} query - Término de búsqueda
-         * @param {Object} item - Ítem a evaluar
-         * @returns {{score: number, keyword: string|null}} Puntuación y keyword encontrada
-         */        calculateRelevance(query, item) {
-            const queryNorm = TextUtils.normalize(query);
-            const fullText = TextUtils.normalize(
-                `${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`
-            );
-            
-            let score = 0;
-            let matchedKeyword = null;
-
-            // 1. Palabras personalizadas (PRIORIDAD MÁXIMA)
-            if (AppState.customKeywords[queryNorm]) {
-                const match = AppState.customKeywords[queryNorm].some(
-                    m => m.objeto === item.objeto && m.auxiliar === item.auxiliar
-                );
-                if (match) {
-                    score += 100;
-                    matchedKeyword = `personalizada: ${queryNorm}`;
-                }
-            }
-
-            // 2. Keywords predefinidas
-            if (KeywordsMap[queryNorm]?.includes(item.objeto)) {
-                score += 50;
-                if (!matchedKeyword) matchedKeyword = `mapeo: ${queryNorm}`;
-            }
-
-            // 3. Coincidencia exacta en código
-            if (item.objeto === queryNorm || item.auxiliar === queryNorm) {
-                score += 60;
-                if (!matchedKeyword) matchedKeyword = 'código exacto';
-            }
-
-            // 4. Coincidencia en denominación
-            if (TextUtils.normalize(item.denominacion).includes(queryNorm)) {
-                score += 40;
-                if (!matchedKeyword) matchedKeyword = 'denominación';
-            }
-
-            // 5. Coincidencia en descripción
-            if (TextUtils.normalize(item.descripcion).includes(queryNorm)) {
-                score += 30;
-                if (!matchedKeyword) matchedKeyword = 'descripción';
-            }
-
-            // 6. Búsqueda por palabras parciales
-            const words = queryNorm.split(/\s+/).filter(w => w.length > 2);
-            words.forEach(word => {
-                if (fullText.includes(word)) {
-                    score += 15;
-                    if (!matchedKeyword) matchedKeyword = `parcial: "${word}"`;                }
+            qn.split(/\s+/).filter(w=>w.length>2).forEach(w=>{
+                if(full.includes(w)){score+=15;kw=kw||`"${w}"`}
             });
-
-            return {
-                score: Math.min(score, 100),
-                keyword: matchedKeyword
-            };
+            
+            return {score:Math.min(score,100), keyword:kw};
         },
-
-        /**
-         * Ejecuta búsqueda con filtros y ordenamiento
-         * @param {string} query - Término de búsqueda
-         * @returns {Array} Resultados ordenados por relevancia
-         */
-        search(query) {
-            // Verificar cache
-            const cacheKey = `${query}|${AppState.limite}|${AppState.filtroGrupo}`;
-            if (AppState.searchCache.has(cacheKey)) {
-                return AppState.searchCache.get(cacheKey);
-            }
-
-            const queryNorm = TextUtils.normalize(query);
-            
-            let results = AppState.datos.map(item => {
-                const relevance = this.calculateRelevance(queryNorm, item);
-                return { ...item, relevancia: relevance.score, keywordEncontrada: relevance.keyword };
-            });
-
-            // Filtrar por relevancia mínima y grupo
-            results = results.filter(r => 
-                r.relevancia >= 15 && 
-                (!AppState.filtroGrupo || r.grupo === AppState.filtroGrupo)
-            );
-
-            // Ordenar por relevancia descendente
-            results.sort((a, b) => b.relevancia - a.relevancia);
-            
-            // Limitar resultados
-            results = results.slice(0, AppState.limite);
-
-            // Guardar en cache (máximo 50 entradas)
-            if (AppState.searchCache.size >= 50) {
-                const firstKey = AppState.searchCache.keys().next().value;
-                AppState.searchCache.delete(firstKey);
-            }
-            AppState.searchCache.set(cacheKey, results);
-
-            return results;
+        search: (q)=>{
+            const qn=Utils.normalize(q);
+            let r=state.datos.map(i=>({...i,...Search.relevance(qn,i)}));
+            r=r.filter(x=>x.relevancia>=15&&(!state.filtroGrupo||x.grupo===state.filtroGrupo));
+            r.sort((a,b)=>b.relevancia-a.relevancia);
+            return r.slice(0,state.limite);
         }
     };
-    // ============================================
-    // 📝 GESTIÓN DE PALABRAS PERSONALIZADAS
-    // ============================================
-    const CustomKeywords = {
-        init() {
-            AppState.customKeywords = Storage.load(Storage.KEYS.CUSTOM_KEYWORDS, {});
-            this.renderList();
-            UI.updateStats();
+
+    // Gestión de keywords personalizadas    const CustomKW = {
+        init: ()=>{
+            state.customKeywords=Storage.load('hf_custom_kw',{});
+            CustomKW.render();
+            updateStats();
         },
-
-        add(keyword, objeto, auxiliar = '000') {
-            const kwNorm = TextUtils.normalize(keyword);
-            
-            if (!kwNorm || !objeto) {
-                UI.toast('Completá la palabra y el objeto', 'error');
-                return false;
-            }
-
-            // Validar formato de objeto
-            if (!/^\d{3}$/.test(objeto)) {
-                UI.toast('El objeto debe ser un código de 3 dígitos', 'error');
-                return false;
-            }
-
-            if (!AppState.customKeywords[kwNorm]) {
-                AppState.customKeywords[kwNorm] = [];
-            }
-
-            // Evitar duplicados
-            const exists = AppState.customKeywords[kwNorm].some(
-                k => k.objeto === objeto && k.auxiliar === auxiliar
-            );
-            
-            if (exists) {
-                UI.toast('Esta asociación ya existe', 'warning');
-                return false;
-            }
-
-            AppState.customKeywords[kwNorm].push({
-                objeto,
-                auxiliar,
-                fecha: new Date().toISOString()
-            });
-
-            this.save();
-            UI.toast(`✅ "${keyword}" asociada al objeto ${objeto}/${auxiliar}`, 'success');
+        add: (kw,obj,aux='000')=>{
+            const kn=Utils.normalize(kw);
+            if(!kn||!obj||!/^\d{3}$/.test(obj)){Utils.toast('Verificá los datos','error');return false}
+            if(!state.customKeywords[kn])state.customKeywords[kn]=[];
+            if(state.customKeywords[kn].some(m=>m.objeto===obj&&m.auxiliar===aux)){Utils.toast('Ya existe','warning');return false}
+            state.customKeywords[kn].push({objeto:obj,auxiliar:aux,fecha:new Date().toISOString()});
+            CustomKW.save();
+            Utils.toast(`✅ "${kw}" → ${obj}/${aux}`,'success');
             return true;
         },
-        remove(keyword, objeto, auxiliar) {
-            if (!confirm(`¿Eliminar "${keyword}" → ${objeto}/${auxiliar}?`)) return;
-            
-            AppState.customKeywords[keyword] = AppState.customKeywords[keyword]?.filter(
-                k => !(k.objeto === objeto && k.auxiliar === auxiliar)
-            ) || [];
-
-            if (!AppState.customKeywords[keyword].length) {
-                delete AppState.customKeywords[keyword];
-            }
-
-            this.save();
-            UI.toast('🗑️ Asociación eliminada', 'success');
+        remove: (kw,obj,aux)=>{
+            if(!confirm(`¿Eliminar "${kw}" → ${obj}/${aux}?`))return;
+            state.customKeywords[kw]=state.customKeywords[kw]?.filter(m=>!(m.objeto===obj&&m.auxiliar===aux))||[];
+            if(!state.customKeywords[kw].length)delete state.customKeywords[kw];
+            CustomKW.save();
+            Utils.toast('🗑️ Eliminado','success');
         },
-
-        clearAll() {
-            if (!confirm('⚠️ ¿Eliminar TODAS las palabras personalizadas?')) return;
-            AppState.customKeywords = {};
-            this.save();
-            UI.toast('Todas las palabras personalizadas fueron eliminadas', 'success');
+        clear: ()=>{
+            if(!confirm('¿Eliminar TODAS las palabras?'))return;
+            state.customKeywords={};
+            CustomKW.save();
+            Utils.toast('Todo limpiado','success');
         },
-
-        save() {
-            Storage.save(Storage.KEYS.CUSTOM_KEYWORDS, AppState.customKeywords);
-            this.renderList();
-            UI.updateStats();
-            AppState.searchCache.clear(); // Invalidar cache
+        save: ()=>{
+            Storage.save('hf_custom_kw',state.customKeywords);
+            CustomKW.render();
+            updateStats();
         },
-
-        renderList() {
-            const list = document.getElementById('keywordsList');
-            const keywords = Object.keys(AppState.customKeywords).sort();
-
-            if (!keywords.length) {
-                list.innerHTML = '<p style="color:var(--color-text-muted);text-align:center;padding:var(--spacing-lg)">No hay palabras personalizadas aún.</p>';
-                return;
-            }
-
-            list.innerHTML = keywords.map(kw => 
-                AppState.customKeywords[kw].map(mapping => `
-                    <div class="keyword-item" role="listitem">
-                        <div class="keyword-item-info">
-                            <div class="keyword-item-word">📝 ${UI.escapeHtml(kw)}</div>
-                            <div class="keyword-item-object">→ Objeto ${mapping.objeto}/${mapping.auxiliar}</div>
-                            <div class="keyword-item-meta">Agregado: ${new Date(mapping.fecha).toLocaleDateString('es-UY')}</div>
-                        </div>
-                        <button class="keyword-item-delete" 
-                                onclick="CustomKeywords.remove('${kw}', '${mapping.objeto}', '${mapping.auxiliar}')"
-                                aria-label="Eliminar asociación de ${kw}">
-                            🗑️                        </button>
+        render: ()=>{
+            const l=document.getElementById('keywordsList');
+            const kws=Object.keys(state.customKeywords).sort();
+            if(!kws.length){l.innerHTML='<p style="color:var(--text-muted);text-align:center;padding:20px">Sin palabras personalizadas.</p>';return}
+            l.innerHTML=kws.map(k=>state.customKeywords[k].map(m=>`
+                <div class="keyword-item">
+                    <div class="keyword-item-info">
+                        <div class="keyword-item-word">📝 ${Utils.escape(k)}</div>
+                        <div class="keyword-item-object">→ ${m.objeto}/${m.auxiliar}</div>
                     </div>
-                `).join('')
-            ).join('');
+                    <button class="keyword-item-delete" onclick="CustomKW.remove('${k}','${m.objeto}','${m.auxiliar}')">🗑️</button>
+                </div>`).join('')).join('');
         },
-
-        export() {
-            if (!Object.keys(AppState.customKeywords).length) {
-                UI.toast('No hay datos para exportar', 'warning');
-                return;
-            }
-
-            const data = JSON.stringify(AppState.customKeywords, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `palabras_personalizadas_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            UI.toast('📤 Archivo exportado correctamente', 'success');
+        export: ()=>{
+            if(!Object.keys(state.customKeywords).length){Utils.toast('Nada para exportar','warning');return}
+            const b=new Blob([JSON.stringify(state.customKeywords,null,2)],{type:'application/json'});            const a=document.createElement('a');a.href=URL.createObjectURL(b);
+            a.download=`palabras_${new Date().toISOString().split('T')[0]}.json`;a.click();
+            Utils.toast('📤 Exportado','success');
         },
-
-        import(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    let count = 0;
-
-                    Object.entries(imported).forEach(([kw, mappings]) => {
-                        const kwNorm = TextUtils.normalize(kw);
-                        if (!AppState.customKeywords[kwNorm]) {
-                            AppState.customKeywords[kwNorm] = [];
-                        }
-                        
-                        mappings.forEach(m => {
-                            const exists = AppState.customKeywords[kwNorm].some(
-                                x => x.objeto === m.objeto && x.auxiliar === m.auxiliar
-                            );
-                            if (!exists) {
-                                AppState.customKeywords[kwNorm].push({ ...m, imported: true });
-                                count++;
+        import: (file)=>{
+            const r=new FileReader();
+            r.onload=e=>{
+                try{
+                    const imp=JSON.parse(e.target.result);let c=0;
+                    Object.entries(imp).forEach(([k,ms])=>{
+                        const kn=Utils.normalize(k);
+                        if(!state.customKeywords[kn])state.customKeywords[kn]=[];
+                        ms.forEach(m=>{
+                            if(!state.customKeywords[kn].some(x=>x.objeto===m.objeto&&x.auxiliar===m.auxiliar)){
+                                state.customKeywords[kn].push(m);c++;
                             }
                         });
                     });
-
-                    this.save();                    UI.toast(`✅ Se importaron ${count} asociaciones nuevas`, 'success');
-                } catch (err) {
-                    UI.toast('❌ Error: Archivo JSON inválido', 'error');
-                }
+                    CustomKW.save();
+                    Utils.toast(`✅ ${c} importadas`,'success');
+                }catch(err){Utils.toast('❌ JSON inválido','error')}
             };
-            reader.readAsText(file);
+            r.readAsText(file);
         }
     };
 
-    // ============================================
-    // 🌐 BÚSQUEDA EN INTERNET (URUGUAY)
-    // ============================================
-    async function buscarEnInternet(query) {
-        const container = document.getElementById('internetResults');
-        UI.toggleVisibility(container, true);
-        container.innerHTML = '<div class="loading">🌐 Buscando información...</div>';
-
-        try {
-            // Wikipedia (con timeout)
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 3000);
-            
-            const response = await fetch(
-                `https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query + ' Uruguay')}`,
-                { signal: controller.signal }
-            );
-            clearTimeout(timeout);
-            
-            const data = await response.json();
-            
-            let html = `<h4>🇺🇾 Información para "<strong>${UI.escapeHtml(query)}</strong>":</h4>`;
-            
-            if (data?.extract && !data.type) {
-                html += `
-                    <div class="uruguay-source">
-                        <h5>📚 Wikipedia</h5>
-                        <p><strong>${UI.escapeHtml(data.title)}</strong></p>
-                        <p>${UI.escapeHtml(data.extract.substring(0, 250))}...</p>
-                        ${data.content_urls?.desktop?.page 
-                            ? `<a href="${data.content_urls.desktop.page}" target="_blank" rel="noopener">Ver más →</a>` 
-                            : ''}
-                    </div>
-                `;
+    // Búsqueda en internet
+    async function buscarInternet(q){
+        const c=document.getElementById('internetResults');
+        c.style.display='block';
+        c.innerHTML='<div class="loading">🌐 Buscando...</div>';
+        try{
+            const ctrl=new AbortController();
+            const to=setTimeout(()=>ctrl.abort(),3000);
+            const r=await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q+' Uruguay')}`,{signal:ctrl.signal});
+            clearTimeout(to);
+            const d=await r.json();
+            let h=`<h4>🇺🇾 Info para "${Utils.escape(q)}":</h4>`;
+            if(d?.extract&&!d.type){
+                h+=`<div class="uruguay-source"><h5>📚 Wikipedia</h5><p><b>${Utils.escape(d.title)}</b></p><p>${Utils.escape(d.extract.slice(0,200))}...</p>${d.content_urls?.desktop?.page?`<a href="${d.content_urls.desktop.page}" target="_blank">Ver más →</a>`:''}</div>`;
             }
-
-            // Enlaces gubernamentales
-            html += `
-                <div class="uruguay-source">
-                    <h5>🏛️ Sitios Oficiales de Uruguay</h5>
-                    <p><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank" rel="noopener">CGN - Contaduría General →</a></p>                    <p><a href="https://www.siif.gub.uy/" target="_blank" rel="noopener">SIIF Uruguay →</a></p>
-                    <p><a href="https://www.impo.com.uy/buscar/${encodeURIComponent(query)}" target="_blank" rel="noopener">IMPO - Legislación →</a></p>
-                </div>
-            `;
-            
-            container.innerHTML = html;
-        } catch (error) {
-            console.log('Búsqueda internet:', error.message);
-            container.innerHTML = `
-                <div class="error">
-                    ⚠️ No se pudo obtener información externa. 
-                    <button onclick="buscarEnInternet('${UI.escapeHtml(query)}')" 
-                            style="background:none;border:none;color:var(--color-primary);cursor:pointer;text-decoration:underline;margin-left:5px">
-                        Reintentar
-                    </button>
-                </div>
-            `;
-        }
+            h+=`<div class="uruguay-source"><h5>🏛️ Sitios Uruguay</h5>
+                <p><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(q)}" target="_blank">CGN →</a></p>
+                <p><a href="https://www.siif.gub.uy/" target="_blank">SIIF →</a></p>
+                <p><a href="https://www.impo.com.uy/buscar/${encodeURIComponent(q)}" target="_blank">IMPO →</a></p></div>`;
+            c.innerHTML=h;
+        }catch(e){c.innerHTML='<div class="error">⚠️ Sin conexión externa</div>'}
     }
 
-    // ============================================
-    // 📂 PROCESAMIENTO DE CSV
-    // ============================================
-    function procesarCSV(texto) {
-        try {
-            const lines = texto.split('\n').filter(l => l.trim());
-            if (lines.length < 2) throw new Error('CSV vacío o sin datos');
-
-            AppState.datos = [];
-            
-            // Parseo robusto de CSV (maneja comillas y comas dentro de campos)
-            for (let i = 1; i < lines.length; i++) {
-                const fields = parseCSVLine(lines[i]);
-                if (fields.length >= 4 && fields[0]?.match(/^\d{3}$/)) {
-                    const objeto = fields[0].trim();
-                    AppState.datos.push({
-                        objeto,
-                        auxiliar: fields[1]?.trim() || '000',
-                        denominacion: fields[2]?.trim() || '',
-                        descripcion: fields[3]?.trim() || '',
-                        grupo: objeto.charAt(0),
-                        categoria: getCategoria(objeto.charAt(0))
+    // Procesar CSV    function procesarCSV(txt){
+        try{
+            const lines=txt.split('\n').filter(l=>l.trim());
+            if(lines.length<2)throw new Error('CSV vacío');
+            state.datos=[];
+            for(let i=1;i<lines.length;i++){
+                const f=parseCSV(lines[i]);
+                if(f.length>=4&&f[0]?.match(/^\d{3}$/)){
+                    const obj=f[0].trim();
+                    state.datos.push({
+                        objeto:obj,auxiliar:f[1]?.trim()||'000',
+                        denominacion:f[2]?.trim()||'',descripcion:f[3]?.trim()||'',
+                        grupo:obj[0],categoria:getCat(obj[0])
                     });
                 }
             }
-
-            if (!AppState.datos.length) {
-                throw new Error('No se encontraron objetos válidos en el CSV');
-            }
-            // Actualizar UI
-            document.getElementById('totalRegistros').textContent = AppState.datos.length;
-            UI.toggleVisibility(document.getElementById('uploadSection'), false);
-            UI.toggleVisibility(document.getElementById('statsBar'), true);
-            UI.toggleVisibility(document.getElementById('togglePanelBtn'), true);
-            UI.toggleVisibility(document.getElementById('searchContainer'), true);
-            UI.toggleVisibility(document.getElementById('historySection'), true);
+            if(!state.datos.length)throw new Error('Sin datos válidos');
             
-            CustomKeywords.init();
-            cargarSugerencias();
+            document.getElementById('totalRegistros').textContent=state.datos.length;
+            document.getElementById('uploadSection').style.display='none';
+            document.getElementById('statsBar').style.display='flex';
+            document.getElementById('togglePanelBtn').style.display='inline-flex';
+            document.getElementById('searchContainer').style.display='block';
+            document.getElementById('historySection').style.display='block';
             
-            UI.toast(`✅ ${AppState.datos.length} objetos cargados correctamente`, 'success');
+            CustomKW.init();
+            loadSuggestions();
+            Utils.toast(`✅ ${state.datos.length} objetos cargados`,'success');
+        }catch(err){Utils.toast(`❌ ${err.message}`,'error')}
+    }
+
+    function parseCSV(line){
+        const f=[];let fld='',q=false;
+        for(let i=0;i<line.length;i++){
+            const c=line[i],n=line[i+1];
+            if(c==='"'){if(q&&n==='"'){fld+='"';i++}else q=!q}
+            else if(c===','&&!q){f.push(fld.trim());fld=''}
+            else fld+=c;
+        }
+        f.push(fld.trim());
+        return f.map(x=>x.replace(/^"|"$/g,''));
+    }
+
+    function getCat(g){
+        const c={'0':'Serv.Personales','1':'Bienes Consumo','2':'Serv.No Personales','3':'Bienes Uso','4':'Financiero','5':'Transferencias','6':'Deuda Pública','7':'Otros','8':'Amortización','9':'Figurativos'};
+        return c[g]||'Otros';
+    }
+
+    // Búsqueda principal
+    async function buscar(){        const inp=document.getElementById('searchInput');
+        const q=inp.value.trim();
+        const res=document.getElementById('results');
+        const btn=document.getElementById('searchBtn');
+        
+        if(q.length<2){res.innerHTML='<div class="error">⚠️ Mínimo 2 caracteres</div>';inp.focus();return}
+        
+        state.searchCount++;
+        updateStats();
+        addHistory(q);
+        
+        btn.disabled=true;btn.innerHTML='🔍 Buscando...';
+        res.innerHTML='<div class="loading"></div>';
+        
+        try{
+            buscarInternet(q).catch(()=>{});
+            await new Promise(r=>setTimeout(r,100));
+            const results=Search.search(q);
+            document.getElementById('ultimaBusqueda').textContent=results.length;
             
-        } catch (error) {
-            console.error('Error procesando CSV:', error);
-            UI.toast(`❌ Error: ${error.message}`, 'error');
-            document.getElementById('fileName').textContent = '';
-        }
+            if(!results.length){
+                res.innerHTML=`<div class="no-results"><h2>❌ Sin resultados</h2><p>Probá con: harina, sueldo, combustible, medicamento</p><div class="suggestion-hint">💡 Usá términos específicos</div></div>`;
+            }else{
+                res.innerHTML=`<div style="margin-bottom:20px;color:var(--primary);font-weight:600">✅ <b>${results.length}</b> resultados</div>`+
+                    results.map((r,i)=>renderCard(r,i)).join('');
+            }
+        }catch(e){res.innerHTML='<div class="error">❌ Error en búsqueda</div>'}
+        finally{btn.disabled=false;btn.innerHTML='🔎 Buscar'}
     }
 
-    /**
-     * Parsea una línea de CSV respetando comillas
-     * @param {string} line - Línea de CSV
-     * @returns {Array<string>} Campos parseados
-     */
-    function parseCSVLine(line) {
-        const fields = [];
-        let field = '';
-        let inQuotes = false;
+    function renderCard(r,i){
+        const best=i===0;
+        return `<div class="result-card ${best?'selected':''}" onclick="selectResult('${r.objeto}','${r.auxiliar}',this)" tabindex="${best?0:-1}">
+            <div class="result-header">
+                <span class="codigo-badge">${r.objeto}/${r.auxiliar}
+                    <button class="copy-btn" onclick="event.stopPropagation();copiar('${r.objeto}/${r.auxiliar}')">📋</button>
+                </span>
+                <span class="relevancia-badge">📊 ${r.relevancia}%</span>
+            </div>
+            <h3 class="denominacion">${highlight(r.denominacion,document.getElementById('searchInput').value)}</h3>
+            ${r.desc?<p class="descripcion">${highlight(r.descripcion,document.getElementById('searchInput').value)}</p>':''}
+            <div class="tags-container">
+                ${r.categoria?`<span class="categoria-tag">📁 ${r.categoria}</span>`:''}
+                <span class="grupo-tag">Grupo ${r.grupo}</span>
+                ${r.keywordEncontrada?`<span class="keyword-match">🏷️ ${r.keywordEncontrada}</span>`:''}
+            </div>
+            ${best?'<div class="best-result-indicator">⭐ Mejor resultado</div>':''}
+        </div>`;
+    }
+    function highlight(txt,q){
+        if(!q||q.length<2)return Utils.escape(txt);
+        const n=Utils.normalize(q);
+        const re=new RegExp(`(${n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi');
+        return Utils.escape(txt).replace(re,'<mark style="background:var(--primary-light);color:var(--primary);padding:0 3px;border-radius:3px">$1</mark>');
+    }
+
+    function selectResult(obj,aux,el){
+        document.querySelectorAll('.result-card.selected').forEach(c=>{c.classList.remove('selected');c.tabIndex=-1});
+        el.classList.add('selected');el.tabIndex=0;el.focus();
+        Utils.toast(`✅ ${obj}/${aux} seleccionado`,'success');
+    }
+
+    async function copiar(txt){
+        try{await navigator.clipboard.writeText(txt);Utils.toast('📋 Copiado','success',1500)}
+        catch{const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);Utils.toast('📋 Copiado','success',1500)}
+    }
+
+    // Controles
+    function setupEvents(){
+        const inp=document.getElementById('searchInput');
+        inp.addEventListener('input',e=>{
+            clearTimeout(state.debounceTimer);
+            state.debounceTimer=setTimeout(()=>{if(e.target.value.trim().length>=2)buscar()},300);
+        });
+        inp.addEventListener('keypress',e=>{if(e.key==='Enter'){e.preventDefault();buscar()}});
         
-        for (let i = 0; i < line.length; i++) {
-            const char = line[i];
-            const next = line[i + 1];
-            
-            if (char === '"') {
-                if (inQuotes && next === '"') {
-                    field += '"';
-                    i++;
-                } else {
-                    inQuotes = !inQuotes;
-                }
-            } else if (char === ',' && !inQuotes) {
-                fields.push(field.trim());
-                field = '';
-            } else {
-                field += char;
-            }
-        }
-        fields.push(field.trim());
-                return fields.map(f => f.replace(/^"|"$/g, ''));
-    }
-
-    function getCategoria(grupo) {
-        const cats = {
-            '0': 'Servicios Personales', '1': 'Bienes de Consumo',
-            '2': 'Servicios No Personales', '3': 'Bienes de Uso',
-            '4': 'Aplicaciones Financieras', '5': 'Transferencias',
-            '6': 'Deuda Pública', '7': 'Otros Gastos',
-            '8': 'Amortización', '9': 'Gastos Figurativos'
-        };
-        return cats[grupo] || 'Otros';
-    }
-
-    // ============================================
-    // 🔎 FUNCIÓN PRINCIPAL DE BÚSQUEDA
-    // ============================================
-    async function buscar() {
-        const input = document.getElementById('searchInput');
-        const query = input.value.trim();
-        const resultsDiv = document.getElementById('results');
-        const searchBtn = document.getElementById('searchBtn');
-
-        // Validación
-        if (query.length < 2) {
-            resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa al menos 2 caracteres</div>';
-            input.focus();
-            return;
-        }
-
-        // Actualizar estado
-        AppState.searchCount++;
-        UI.updateStats();
-        addToHistory(query);
-
-        // UI Loading
-        searchBtn.setAttribute('aria-busy', 'true');
-        searchBtn.disabled = true;
-        resultsDiv.innerHTML = '<div class="loading">🔍 Buscando...</div>';
-
-        try {
-            // Búsqueda en internet (paralela, no bloqueante)
-            buscarEnInternet(query).catch(() => {});
-
-            // Ejecutar búsqueda principal
-            await new Promise(resolve => setTimeout(resolve, 100)); // Pequeño delay para UI
-            const results = SearchEngine.search(query);
-
-            // Actualizar contador
-            document.getElementById('ultimaBusqueda').textContent = results.length;
-            // Renderizar resultados
-            if (!results.length) {
-                resultsDiv.innerHTML = `
-                    <div class="no-results">
-                        <h2>❌ Sin resultados</h2>
-                        <p>Intentá con otros términos o revisá la ortografía</p>
-                        <div class="suggestion-hint">
-                            💡 Probá con: harina, sueldo, combustible, medicamento, vehículo, útiles
-                        </div>
-                    </div>
-                `;
-            } else {
-                resultsDiv.innerHTML = `
-                    <div style="margin-bottom:var(--spacing-md);color:var(--color-primary);font-weight:600">
-                        ✅ <strong>${results.length}</strong> resultados encontrados
-                    </div>
-                    ${results.map((r, i) => renderResultCard(r, i)).join('')}
-                `;
-                
-                // Auto-focus en primer resultado para accesibilidad
-                const firstCard = resultsDiv.querySelector('.result-card');
-                if (firstCard) {
-                    firstCard.setAttribute('tabindex', '0');
-                    firstCard.focus();
-                }
-            }
-        } catch (error) {
-            console.error('Error en búsqueda:', error);
-            resultsDiv.innerHTML = '<div class="error">❌ Error al procesar la búsqueda</div>';
-        } finally {
-            searchBtn.setAttribute('aria-busy', 'false');
-            searchBtn.disabled = false;
-        }
-    }
-
-    /**
-     * Renderiza una tarjeta de resultado
-     * @param {Object} r - Resultado
-     * @param {number} index - Índice para destacar el mejor
-     * @returns {string} HTML de la tarjeta
-     */
-    function renderResultCard(r, index) {
-        const isBest = index === 0;
-        return `
-            <article class="result-card ${isBest ? 'selected' : ''}" 
-                     tabindex="${isBest ? '0' : '-1'}"
-                     onclick="selectResult('${r.objeto}', '${r.auxiliar}', this)"
-                     onkeypress="if(event.key==='Enter') selectResult('${r.objeto}', '${r.auxiliar}', this)"
-                     role="button"                     aria-label="Objeto ${r.objeto}/${r.auxiliar}: ${UI.escapeHtml(r.denominacion)}">
-                
-                <div class="result-header">
-                    <span class="codigo-badge">
-                        ${r.objeto}/${r.auxiliar}
-                        <button class="copy-btn" 
-                                onclick="event.stopPropagation(); copiarAlPortapapeles('${r.objeto}/${r.auxiliar}')"
-                                aria-label="Copiar código ${r.objeto}/${r.auxiliar}">
-                            📋
-                        </button>
-                    </span>
-                    <span class="relevancia-badge">📊 ${r.relevancia}%</span>
-                </div>
-                
-                <h3 class="denominacion">${TextUtils.highlight(r.denominacion, document.getElementById('searchInput').value)}</h3>
-                
-                ${r.descripcion ? `<p class="descripcion">${TextUtils.highlight(r.descripcion, document.getElementById('searchInput').value)}</p>` : ''}
-                
-                <div class="tags-container">
-                    ${r.categoria ? `<span class="categoria-tag">📁 ${r.categoria}</span>` : ''}
-                    <span class="grupo-tag">Grupo ${r.grupo}</span>
-                    ${r.keywordEncontrada ? `<span class="keyword-match">🏷️ ${r.keywordEncontrada}</span>` : ''}
-                </div>
-                
-                ${isBest ? '<div class="best-result-indicator">⭐ Mejor resultado</div>' : ''}
-            </article>
-        `;
-    }
-
-    function selectResult(objeto, auxiliar, element) {
-        // Remover selección previa
-        document.querySelectorAll('.result-card.selected').forEach(el => {
-            el.classList.remove('selected');
-            el.setAttribute('tabindex', '-1');
+        document.addEventListener('keydown',e=>{
+            if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();inp.focus()}
+            if(e.key==='Escape'){inp.value='';document.getElementById('results').innerHTML=''}
         });
         
-        // Aplicar selección actual
-        element.classList.add('selected');
-        element.setAttribute('tabindex', '0');
-        element.focus();
-        
-        // Feedback visual
-        UI.toast(`✅ Objeto ${objeto}/${auxiliar} seleccionado`, 'success');
-        
-        // Copiar al portapapeles automáticamente (opcional)
-        // copiarAlPortapapeles(`${objeto}/${auxiliar}`);
-    }
-
-    async function copiarAlPortapapeles(texto) {
-        try {            await navigator.clipboard.writeText(texto);
-            UI.toast('📋 Código copiado al portapapeles', 'success', 1500);
-        } catch {
-            // Fallback para navegadores antiguos
-            const textarea = document.createElement('textarea');
-            textarea.value = texto;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-            UI.toast('📋 Código copiado', 'success', 1500);
-        }
-    }
-
-    // ============================================
-    // ⚙️ FUNCIONES DE CONTROL
-    // ============================================
-    function setupEventListeners() {
-        // Búsqueda con debounce
-        const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('input', (e) => {
-            clearTimeout(AppState.debounceTimer);
-            AppState.debounceTimer = setTimeout(() => {
-                if (e.target.value.trim().length >= 2) buscar();
-            }, AppState.DEBOUNCE_DELAY);
-        });
-
-        // Búsqueda con Enter
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                buscar();
-            }
-        });
-
-        // Atajos de teclado globales
-        document.addEventListener('keydown', (e) => {
-            // Ctrl+K o Cmd+K para enfocar búsqueda
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                document.getElementById('searchInput').focus();
-            }
-            // Escape para limpiar
-            if (e.key === 'Escape') {
-                document.getElementById('searchInput').value = '';
-                document.getElementById('results').innerHTML = '';
-            }
-        });
-
-        // Carga de archivo CSV        document.getElementById('csvFile').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            // Validar tipo y tamaño
-            if (!file.name.endsWith('.csv')) {
-                UI.toast('❌ Solo se aceptan archivos CSV', 'error');
-                return;
-            }
-            if (file.size > 10 * 1024 * 1024) { // 10MB
-                UI.toast('❌ Archivo muy grande (máx. 10MB)', 'error');
-                return;
-            }
-
-            document.getElementById('fileName').textContent = `✅ ${file.name}`;
-            
-            const reader = new FileReader();
-            reader.onload = (ev) => procesarCSV(ev.target.result);
-            reader.onerror = () => UI.toast('❌ Error al leer el archivo', 'error');
-            reader.readAsText(file, 'UTF-8');
-        });
-
-        // Cargar sugerencias al hacer click
-        document.getElementById('sugerenciasGrid')?.addEventListener('click', (e) => {
-            if (e.target.classList.contains('sugerencia-item')) {
-                document.getElementById('searchInput').value = e.target.textContent;
-                buscar();
-            }
+        document.getElementById('csvFile').addEventListener('change',e=>{
+            const f=e.target.files[0];if(!f)return;
+            if(!f.name.endsWith('.csv')){Utils.toast('❌ Solo CSV','error');return}
+            if(f.size>10*1024*1024){Utils.toast('❌ Máx 10MB','error');return}
+            document.getElementById('fileName').textContent=`✅ ${f.name}`;
+            const r=new FileReader();
+            r.onload=ev=>procesarCSV(ev.target.result);
+            r.onerror=()=>Utils.toast('❌ Error al leer','error');
+            r.readAsText(f,'UTF-8');
         });
     }
 
-    function setLimite(limite) {
-        AppState.limite = limite;
-        AppState.searchCache.clear();
-        
-        // Actualizar botones activos
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            const isLimitBtn = btn.textContent.includes('resultados');
-            btn.classList.toggle('active', isLimitBtn && btn.textContent.includes(limite));
-            btn.setAttribute('aria-pressed', isLimitBtn && btn.textContent.includes(limite));
-        });
-        
-        // Refrescar búsqueda si hay resultados
-        if (document.getElementById('results').children.length) {
-            buscar();
-        }
+    function setLimite(l){
+        state.limite=l;
+        document.querySelectorAll('.filter-btn').forEach(b=>{
+            const isL=b.textContent.includes('resultados');
+            b.classList.toggle('active',isL&&b.textContent.includes(l));
+        });        if(document.getElementById('results').children.length)buscar();
     }
 
-    function filtrarGrupo(grupo) {
-        AppState.filtroGrupo = AppState.filtroGrupo === grupo ? '' : grupo;        AppState.searchCache.clear();
-        
-        // Actualizar UI de botones
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            if (btn.textContent.startsWith('G')) {
-                const isActive = btn.textContent === `G${grupo}` && AppState.filtroGrupo === grupo;
-                btn.classList.toggle('active', isActive);
-                btn.setAttribute('aria-pressed', isActive);
-            }
+    function filterGroup(g){
+        state.filtroGrupo=state.filtroGrupo===g?'':g;
+        document.querySelectorAll('.filter-btn').forEach(b=>{
+            if(b.textContent.startsWith('G'))b.classList.toggle('active',b.textContent===`G${g}`&&state.filtroGrupo===g);
         });
-        
         buscar();
     }
 
-    function limpiarFiltros() {
-        AppState.filtroGrupo = '';
-        AppState.limite = 20;
-        AppState.searchCache.clear();
-        
-        document.getElementById('searchInput').value = '';
-        document.getElementById('results').innerHTML = '';
-        document.getElementById('ultimaBusqueda').textContent = '0';
-        
-        // Resetear botones
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            const isActive = btn.textContent.includes('20 resultados');
-            btn.classList.toggle('active', isActive);
-            btn.setAttribute('aria-pressed', isActive);
+    function clearFilters(){
+        state.filtroGrupo='';state.limite=20;
+        document.getElementById('searchInput').value='';
+        document.getElementById('results').innerHTML='';
+        document.getElementById('ultimaBusqueda').textContent='0';
+        document.querySelectorAll('.filter-btn').forEach(b=>{
+            b.classList.toggle('active',b.textContent.includes('20 resultados'));
         });
-        
         document.getElementById('searchInput').focus();
     }
 
-    function cargarSugerencias() {
-        const sugerencias = [
-            'harina', 'sueldo', 'combustible', 'medicamento', 'vehículo',
-            'regla', 'internación', 'computadora', 'útiles', 'limpieza',
-            'electricidad', 'teléfono', 'viático', 'alquiler', 'jubilación',
-            'beca', 'capacitación', 'mantenimiento', 'construcción', 'vigilancia'
-        ];
-        
-        const grid = document.getElementById('sugerenciasGrid');
-        if (grid) {
-            grid.innerHTML = sugerencias.map(s => 
-                `<button class="sugerencia-item" 
-                        role="listitem"
-                        onclick="document.getElementById('searchInput').value='${s}'; buscar()"
-                        aria-label="Buscar ${s}">
-                    ${s}
-                </button>`            ).join('');
-        }
+    function loadSuggestions(){
+        const s=['harina','sueldo','combustible','medicamento','vehículo','regla','internación','computadora','útiles','limpieza','electricidad','teléfono','viático','jubilación'];
+        document.getElementById('sugerenciasGrid').innerHTML=s.map(x=>`<button class="sugerencia-item" onclick="document.getElementById('searchInput').value='${x}';buscar()">${x}</button>`).join('');
     }
 
-    // ============================================
-    // 📜 HISTORIAL DE BÚSQUEDAS
-    // ============================================
-    function addToHistory(query) {
-        // Evitar duplicados consecutivos
-        const last = AppState.searchHistory[AppState.searchHistory.length - 1];
-        if (last?.query.toLowerCase() === query.toLowerCase()) return;
-
-        AppState.searchHistory.push({
-            query,
-            timestamp: Date.now()
-        });
-
-        // Mantener últimos 20
-        if (AppState.searchHistory.length > 20) {
-            AppState.searchHistory.shift();
-        }
-
-        Storage.save(Storage.KEYS.SEARCH_HISTORY, AppState.searchHistory);
+    // Historial
+    function addHistory(q){
+        const last=state.searchHistory[state.searchHistory.length-1];
+        if(last?.query.toLowerCase()===q.toLowerCase())return;
+        state.searchHistory.push({query:q,timestamp:Date.now()});
+        if(state.searchHistory.length>20)state.searchHistory.shift();
+        Storage.save('hf_history',state.searchHistory);
         renderHistory();
     }
 
-    function renderHistory() {
-        const list = document.getElementById('historyList');
-        if (!list) return;
-
-        if (!AppState.searchHistory.length) {
-            list.innerHTML = '<p style="color:var(--color-text-muted);font-style:italic">Sin búsquedas recientes</p>';
-            return;
-        }
-
-        list.innerHTML = AppState.searchHistory
-            .slice(-10)
-            .reverse()
-            .map(item => `
-                <button class="history-item" 
-                        onclick="document.getElementById('searchInput').value='${UI.escapeHtml(item.query)}'; buscar()"
-                        role="listitem"
-                        aria-label="Repetir búsqueda: ${UI.escapeHtml(item.query)}">
-                    <span class="history-query">🔍 ${UI.escapeHtml(item.query)}</span>
-                    <span class="history-time">${new Date(item.timestamp).toLocaleTimeString('es-UY', {hour: '2-digit', minute:'2-digit'})}</span>
-                </button>
-            `).join('');
+    function renderHistory(){
+        const l=document.getElementById('historyList');
+        if(!state.searchHistory.length){l.innerHTML='<p style="color:var(--text-muted);font-style:italic">Sin búsquedas recientes</p>';return}
+        l.innerHTML=state.searchHistory.slice(-10).reverse().map(h=>`
+            <button class="history-item" onclick="document.getElementById('searchInput').value='${Utils.escape(h.query)}';buscar()">
+                <span class="history-query">🔍 ${Utils.escape(h.query)}</span>
+                <span class="history-time">${new Date(h.timestamp).toLocaleTimeString('es-UY',{hour:'2-digit',minute:'2-digit'})}</span>
+            </button>`).join('');
     }
 
-    function clearHistory() {        if (!confirm('¿Limpiar historial de búsquedas?')) return;
-        AppState.searchHistory = [];
-        Storage.save(Storage.KEYS.SEARCH_HISTORY, []);
-        renderHistory();
-        UI.toast('🗑️ Historial limpiado', 'success');
+    function clearHistory(){
+        if(!confirm('¿Limpiar historial?'))return;
+        state.searchHistory=[];Storage.save('hf_history',[]);renderHistory();        Utils.toast('🗑️ Historial limpiado','success');
     }
 
-    // ============================================
-    // 🎛️ PANEL DE PALABRAS PERSONALIZADAS
-    // ============================================
-    function toggleCustomKeywordsPanel() {
-        const panel = document.getElementById('customKeywordsPanel');
-        const btn = document.getElementById('togglePanelBtn');
-        const isHidden = panel.hidden;
-        
-        panel.hidden = !isHidden;
-        btn.setAttribute('aria-expanded', String(!isHidden));
-        btn.textContent = isHidden ? '📝 Ocultar Panel' : '📝 Gestionar Palabras';
-        
-        if (!isHidden) {
-            document.getElementById('newKeyword')?.focus();
-        }
+    // Panel keywords
+    function togglePanel(){
+        const p=document.getElementById('customKeywordsPanel');
+        const b=document.getElementById('togglePanelBtn');
+        const h=p.style.display==='none'||!p.style.display;
+        p.style.display=h?'block':'none';
+        b.textContent=h?'📝 Ocultar Panel':'📝 Gestionar Palabras';
+        if(h)document.getElementById('newKeyword')?.focus();
     }
 
-    function addCustomKeyword(event) {
-        event?.preventDefault();
-        
-        const keyword = document.getElementById('newKeyword').value;
-        const objeto = document.getElementById('newObjeto').value;
-        const auxiliar = document.getElementById('newAuxiliar').value || '000';
-        
-        if (CustomKeywords.add(keyword, objeto, auxiliar)) {
-            // Resetear formulario
-            event.target.reset();
-            document.getElementById('newAuxiliar').value = '000';
+    function addKeyword(e){
+        e?.preventDefault();
+        const kw=document.getElementById('newKeyword').value;
+        const obj=document.getElementById('newObjeto').value;
+        const aux=document.getElementById('newAuxiliar').value||'000';
+        if(CustomKW.add(kw,obj,aux)){
+            e.target.reset();document.getElementById('newAuxiliar').value='000';
             document.getElementById('newKeyword').focus();
         }
     }
 
-    function exportCustomKeywords() {
-        CustomKeywords.export();
+    function exportKeywords(){CustomKW.export()}
+    function importKeywords(e){const f=e.target.files[0];if(f)CustomKW.import(f);e.target.value=''}
+    function clearKeywords(){CustomKW.clear()}
+
+    function updateStats(){
+        document.getElementById('searchCount').textContent=state.searchCount;
+        document.getElementById('customKeywordsCount').textContent=Object.keys(state.customKeywords).length;
     }
 
-    function handleImport(event) {
-        const file = event.target.files[0];
-        if (file) CustomKeywords.import(file);
-        event.target.value = '';
-    }
-
-    function clearAllCustomKeywords() {        CustomKeywords.clearAll();
-    }
-
-    // ============================================
-    // 🚀 INICIALIZACIÓN
-    // ============================================
-    function init() {
-        // Cargar datos persistentes
-        AppState.searchHistory = Storage.load(Storage.KEYS.SEARCH_HISTORY, []);
-        
-        // Configurar eventos
-        setupEventListeners();
-        
-        // Renderizar historial
+    // Init
+    function init(){
+        state.searchHistory=Storage.load('hf_history',[]);
+        setupEvents();
         renderHistory();
-        
-        // Mejorar accesibilidad del skip link
-        document.getElementById('skip-link').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('main-content').setAttribute('tabindex', '-1');
-            document.getElementById('main-content').focus();
-        });
-
-        // Manejar error de logo
-        const logo = document.getElementById('hospitalLogo');
-        if (logo) {
-            logo.addEventListener('error', function() {
-                this.style.display = 'none';
-                UI.toast('⚠️ No se pudo cargar el logo del hospital', 'warning', 2000);
-            });
-        }
-
-        console.log('🏥 Buscador Hospital de Flores inicializado');
+        console.log('🏥 Buscador inicializado');
     }
 
-    // Ejecutar cuando el DOM esté listo
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
+    // Exponer funciones globales
+    window.buscar=buscar;window.selectResult=selectResult;window.setLimite=setLimite;
+    window.filterGroup=filterGroup;window.clearFilters=clearFilters;
+    window.togglePanel=togglePanel;window.addKeyword=addKeyword;
+    window.exportKeywords=exportKeywords;window.importKeywords=importKeywords;
+    window.clearKeywords=clearKeywords;window.clearHistory=clearHistory;
 
-    // Exponer funciones globales necesarias para los onclick inline
-    window.buscar = buscar;
-    window.selectResult = selectResult;
-    window.setLimite = setLimite;
-    window.filtrarGrupo = filtrarGrupo;
-    window.limpiarFiltros = limpiarFiltros;
-    window.toggleCustomKeywordsPanel = toggleCustomKeywordsPanel;
-    window.addCustomKeyword = addCustomKeyword;    window.deleteCustomKeyword = CustomKeywords.remove.bind(CustomKeywords);
-    window.exportCustomKeywords = exportCustomKeywords;
-    window.handleImport = handleImport;
-    window.clearAllCustomKeywords = clearAllCustomKeywords;
-    window.clearHistory = clearHistory;
-    window.buscarEnInternet = buscarEnInternet;
+    // Ejecutar
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);    else init();
     </script>
 </body>
 </html>
