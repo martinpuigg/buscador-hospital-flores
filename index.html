@@ -242,7 +242,7 @@
             transform: scale(1.05);
         }
         
-        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
         .filter-btn {
             padding: 10px 20px;
             background: #003ca5;
@@ -360,6 +360,15 @@
             font-size: 0.75em;
             margin-left: 10px;
         }
+        .keyword-match {
+            display: inline-block;
+            background: rgba(255,107,0,0.1);
+            color: #ff6b00;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.75em;
+            margin-top: 8px;
+        }
         
         .loading { text-align: center; padding: 50px; color: #666; }
         .error {
@@ -370,13 +379,50 @@
             margin-top: 20px;
             color: #dc3545;
         }
-        .success {
-            background: rgba(40,167,69,0.1);
-            border: 2px solid #28a745;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            color: #28a745;
+        .no-results { text-align: center; padding: 50px; color: #666; }
+        
+        .history-section {
+            display: none;
+            margin-top: 30px;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #003ca5;
+        }
+        .history-section h3 {
+            color: #003ca5;
+            margin-bottom: 15px;
+        }
+        .history-item {
+            background: #ffffff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #003ca5;
+        }
+        .history-item:hover {
+            background: #f0f4f8;
+        }
+        .history-count {
+            color: #003ca5;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .clear-btn {
+            background: #dc3545;
+            color: #ffffff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
         }
         
         .toggle-panel-btn {
@@ -440,7 +486,6 @@
             <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
                 🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
             </p>
-            <div id="debugInfo" style="margin-top: 20px; color: #666; font-size: 0.85em; text-align: left;"></div>
         </div>
         
         <!-- Estadísticas -->
@@ -498,28 +543,13 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lapiz, aceite..."
+                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lápiz, aceite..."
                     onkeypress="if(event.key === 'Enter') buscar()"
                 >
                 <button onclick="buscar()">🔎 Buscar Objeto</button>
             </div>
             
-            <div class="filters">
-                <button class="filter-btn active" onclick="setLimite(20)">20 resultados</button>
-                <button class="filter-btn" onclick="setLimite(50)">50 resultados</button>
-                <button class="filter-btn" onclick="setLimite(100)">100 resultados</button>
-                <button class="filter-btn" onclick="filtrarGrupo('0')">Grupo 0</button>
-                <button class="filter-btn" onclick="filtrarGrupo('1')">Grupo 1</button>
-                <button class="filter-btn" onclick="filtrarGrupo('2')">Grupo 2</button>
-                <button class="filter-btn" onclick="filtrarGrupo('3')">Grupo 3</button>
-                <button class="filter-btn" onclick="filtrarGrupo('4')">Grupo 4</button>
-                <button class="filter-btn" onclick="filtrarGrupo('5')">Grupo 5</button>
-                <button class="filter-btn" onclick="filtrarGrupo('6')">Grupo 6</button>
-                <button class="filter-btn" onclick="filtrarGrupo('7')">Grupo 7</button>
-                <button class="filter-btn" onclick="filtrarGrupo('8')">Grupo 8</button>
-                <button class="filter-btn" onclick="filtrarGrupo('9')">Grupo 9</button>
-                <button class="filter-btn" onclick="limpiarFiltros()">🔄 Limpiar</button>
-            </div>
+            <!-- FILTROS DE GRUPO ELIMINADOS -->
             
             <div class="sugerencias" id="sugerencias">
                 <h3>💡 Búsquedas sugeridas</h3>
@@ -528,6 +558,13 @@
         </div>
         
         <div id="results" class="results-container"></div>
+        
+        <!-- Historial -->
+        <div class="history-section" id="historySection">
+            <h3>📜 Historial de Búsquedas</h3>
+            <div id="historyList"></div>
+            <button class="clear-btn" onclick="clearHistory()">🗑️ Limpiar Historial</button>
+        </div>
     </div>
 
     <script>
@@ -536,10 +573,13 @@
         // ============================================
         let datosCompletos = [];
         let limiteResultados = 20;
-        let filtroGrupo = '';
         let searchCount = 0;
+        
+        // ============================================
+        // 🧠 SISTEMA DE PALABRAS PERSONALIZADAS
+        // ============================================
         let customKeywords = {};
-
+        
         // ============================================
         // 💾 PERSISTENCIA (LocalStorage)
         // ============================================
@@ -661,71 +701,29 @@
         }
 
         // ============================================
-        // 📂 CARGA DEL CSV (CORREGIDA)
+        // 📂 CARGA DEL CSV
         // ============================================
         document.getElementById('csvFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
             
-            document.getElementById('fileName').textContent = `📁 Procesando: ${file.name}`;
-            const debugInfo = document.getElementById('debugInfo');
-            debugInfo.innerHTML = '<div style="color: #003ca5;">⏳ Leyendo archivo...</div>';
+            document.getElementById('fileName').textContent = `✅ Archivo cargado: ${file.name}`;
             
-            // Probar múltiples encodings
-            const encodings = ['UTF-8', 'ISO-8859-1', 'windows-1252'];
-            let encodingIndex = 0;
-            
-            function tryReadEncoding() {
-                if (encodingIndex >= encodings.length) {
-                    debugInfo.innerHTML += '<div style="color: #dc3545;">❌ No se pudo leer con ningún encoding</div>';
-                    return;
-                }
-                
-                const encoding = encodings[encodingIndex];
-                const reader = new FileReader();
-                
-                reader.onload = function(event) {
-                    try {
-                        const text = event.target.result;
-                        debugInfo.innerHTML += `<div style="color: #28a745;">✅ Leyendo con encoding: ${encoding}</div>`;
-                        debugInfo.innerHTML += `<div>📊 Tamaño: ${text.length} caracteres</div>`;
-                        procesarCSV(text);
-                    } catch (error) {
-                        debugInfo.innerHTML += `<div style="color: #dc3545;">❌ Error con ${encoding}: ${error.message}</div>`;
-                        encodingIndex++;
-                        tryReadEncoding();
-                    }
-                };
-                
-                reader.onerror = function() {
-                    debugInfo.innerHTML += '<div style="color: #dc3545;">❌ Error al leer el archivo</div>';
-                    encodingIndex++;
-                    tryReadEncoding();
-                };
-                
-                reader.readAsText(file, encoding);
-            }
-            
-            tryReadEncoding();
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const text = event.target.result;
+                procesarCSV(text);
+            };
+            reader.onerror = function() {
+                alert('❌ Error al leer el archivo. Asegúrate que sea un CSV válido.');
+            };
+            reader.readAsText(file, 'UTF-8');
         });
 
         function procesarCSV(texto) {
             try {
-                const lineas = texto.split(/\r?\n/);
+                const lineas = texto.split('\n');
                 datosCompletos = [];
-                
-                console.log('Total líneas:', lineas.length);
-                
-                // Detectar delimiter
-                let delimiter = ',';
-                const primeraLinea = lineas.find(l => l.trim().length > 0) || '';
-                if (primeraLinea.includes(';')) {
-                    delimiter = ';';
-                } else if (primeraLinea.includes('\t')) {
-                    delimiter = '\t';
-                }
-                
-                console.log('Delimiter detectado:', delimiter === '\t' ? 'TAB' : delimiter);
                 
                 // Saltar encabezado (línea 0)
                 for (let i = 1; i < lineas.length; i++) {
@@ -740,7 +738,7 @@
                     for (let char of linea) {
                         if (char === '"') {
                             entreComillas = !entreComillas;
-                        } else if (char === delimiter && !entreComillas) {
+                        } else if (char === ',' && !entreComillas) {
                             columnas.push(actual.trim().replace(/^"|"$/g, ''));
                             actual = '';
                         } else {
@@ -749,38 +747,25 @@
                     }
                     columnas.push(actual.trim().replace(/^"|"$/g, ''));
                     
-                    if (columnas.length >= 3) {
-                        let objeto = columnas[0]?.trim() || '';
-                        
-                        // Normalizar código de objeto (asegurar 3 dígitos)
-                        if (objeto && !/^\d{3}$/.test(objeto)) {
-                            // Si tiene 1 o 2 dígitos, agregar ceros al inicio
-                            objeto = objeto.padStart(3, '0');
-                        }
-                        
+                    if (columnas.length >= 4) {
+                        const objeto = columnas[0]?.trim() || '';
                         const grupo = objeto.charAt(0);
-                        const auxiliar = columnas[1]?.trim() || '000';
-                        const denominacion = columnas[2]?.trim() || '';
-                        const descripcion = columnas[3]?.trim() || '';
                         
-                        if (objeto && /^\d{3}$/.test(objeto) && denominacion) {
-                            datosCompletos.push({
-                                objeto: objeto,
-                                auxiliar: auxiliar.padStart(3, '0'),
-                                denominacion: denominacion,
-                                descripcion: descripcion,
-                                grupo: grupo,
-                                categoria: obtenerCategoria(grupo)
-                            });
-                        }
+                        datosCompletos.push({
+                            objeto: objeto,
+                            auxiliar: columnas[1]?.trim() || '',
+                            denominacion: columnas[2]?.trim() || '',
+                            descripcion: columnas[3]?.trim() || '',
+                            grupo: grupo,
+                            categoria: obtenerCategoria(grupo)
+                        });
                     }
                 }
                 
                 if (datosCompletos.length === 0) {
-                    throw new Error('No se encontraron datos válidos en el CSV. Verificá el formato.');
+                    alert('⚠️ No se encontraron datos en el CSV. Verifica el formato.');
+                    return;
                 }
-                
-                console.log('Objetos cargados:', datosCompletos.length);
                 
                 document.getElementById('totalRegistros').textContent = datosCompletos.length;
                 document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
@@ -789,34 +774,16 @@
                 document.getElementById('statsBar').style.display = 'flex';
                 document.getElementById('togglePanelBtn').style.display = 'inline-block';
                 document.getElementById('searchContainer').style.display = 'block';
-                
-                document.getElementById('fileName').textContent = `✅ ${datosCompletos.length} objetos cargados`;
-                document.getElementById('fileName').style.color = '#28a745';
+                document.getElementById('historySection').style.display = 'block';
                 
                 loadCustomKeywords();
                 cargarSugerencias();
                 
-                const successDiv = document.createElement('div');
-                successDiv.className = 'success';
-                successDiv.innerHTML = `✅ ¡Listo! ${datosCompletos.length} objetos cargados correctamente.`;
-                document.getElementById('uploadSection').appendChild(successDiv);
+                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados.`);
                 
             } catch (error) {
                 console.error('Error procesando CSV:', error);
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'error';
-                errorDiv.innerHTML = `❌ Error: ${error.message}<br><br>
-                    <strong>Posibles causas:</strong><br>
-                    1. El archivo no es un CSV válido<br>
-                    2. El formato de columnas no es correcto<br>
-                    3. El archivo está vacío o corrupto<br><br>
-                    <strong>Formato esperado:</strong><br>
-                    Objeto,Auxiliar,Denominación,Descripción<br>
-                    011,000,Sueldo básico,Descripción...
-                `;
-                document.getElementById('uploadSection').appendChild(errorDiv);
-                document.getElementById('fileName').textContent = '❌ Error en el formato';
-                document.getElementById('fileName').style.color = '#dc3545';
+                alert('❌ Error al procesar el CSV: ' + error.message);
             }
         }
 
@@ -837,15 +804,20 @@
         }
 
         // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA
+        // 🔍 MOTOR DE BÚSQUEDA (CON TILDES CORREGIDAS)
         // ============================================
         
         function normalizar(texto) {
             if (!texto) return '';
+            // Convertir a minúsculas y trim
             texto = texto.toLowerCase().trim();
+            // Quitar tildes correctamente usando NFD normalization
             texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            // Reemplazar ñ por n
             texto = texto.replace(/ñ/g, 'n');
-            return texto;
+            // Eliminar caracteres especiales
+            texto = texto.replace(/[^\w\s]/g, ' ');
+            return texto.trim();
         }
 
         function calcularRelevancia(query, item) {
@@ -856,6 +828,7 @@
             
             let score = 0;
             let keywordEncontrada = null;
+            let esPersonalizada = false;
             
             // 1. Palabras personalizadas (MÁXIMA PRIORIDAD)
             if (customKeywords[queryNorm]) {
@@ -864,6 +837,7 @@
                 if (coincide) {
                     score = 100;
                     keywordEncontrada = queryNorm;
+                    esPersonalizada = true;
                 }
             }
             
@@ -895,8 +869,9 @@
             });
             
             return {
-                score: score,
-                keyword: keywordEncontrada
+                score: Math.min(score, 100),
+                keyword: keywordEncontrada,
+                esPersonalizada: esPersonalizada
             };
         }
 
@@ -920,15 +895,12 @@
                     return { 
                         ...item, 
                         relevancia: relevancia.score,
-                        keywordEncontrada: relevancia.keyword
+                        keywordEncontrada: relevancia.keyword,
+                        esPersonalizada: relevancia.esPersonalizada
                     };
                 });
                 
                 resultados = resultados.filter(r => r.relevancia >= 20);
-                
-                if (filtroGrupo) {
-                    resultados = resultados.filter(r => r.grupo === filtroGrupo);
-                }
                 
                 resultados.sort((a, b) => b.relevancia - a.relevancia);
                 resultados = resultados.slice(0, limiteResultados);
@@ -937,10 +909,10 @@
                 
                 if (resultados.length === 0) {
                     resultsDiv.innerHTML = `
-                        <div class="error">
-                            ❌ No se encontraron resultados
+                        <div class="no-results">
+                            <h2>❌ No se encontraron resultados</h2>
                             <p style="margin-top: 15px;">Intentá con otros términos o verificá la ortografía</p>
-                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: harina, sueldo, combustible, medicamento, vehículo, regla, internación, útiles, lapiz, aceite</p>
+                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: harina, sueldo, combustible, medicamento, vehículo, regla, internación, útiles, lápiz, aceite</p>
                         </div>
                     `;
                     return;
@@ -962,13 +934,15 @@
                             <div class="descripcion">${r.descripcion}</div>
                             ${r.categoria ? `<div class="categoria-tag">📁 ${r.categoria}</div>` : ''}
                             <span class="grupo-tag">Grupo ${r.grupo}</span>
-                            ${r.keywordEncontrada ? `<div class="keyword-match" style="display:inline-block;background:rgba(255,107,0,0.1);color:#ff6b00;padding:4px 10px;border-radius:8px;font-size:0.75em;margin-top:8px;">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
+                            ${r.keywordEncontrada ? `<div class="keyword-match">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
+                            ${r.esPersonalizada ? `<div class="keyword-match" style="background:rgba(40,167,69,0.1);color:#28a745;">⭐ Palabra Personalizada</div>` : ''}
                             ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
                         </div>
                     `;
                 });
                 
                 resultsDiv.innerHTML = html;
+                renderHistory();
             }, 300);
         }
 
@@ -1010,28 +984,6 @@
             });
         }
 
-        function filtrarGrupo(grupo) {
-            filtroGrupo = grupo;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.textContent.includes('Grupo')) {
-                    btn.classList.remove('active');
-                    if (btn.textContent.includes('Grupo ' + grupo)) btn.classList.add('active');
-                }
-            });
-            buscar();
-        }
-
-        function limpiarFiltros() {
-            filtroGrupo = '';
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.includes('20 resultados')) btn.classList.add('active');
-            });
-            document.getElementById('searchInput').value = '';
-            document.getElementById('results').innerHTML = '';
-            document.getElementById('ultimaBusqueda').textContent = '0';
-        }
-
         function cargarSugerencias() {
             const sugerencias = [
                 'harina', 'sueldo', 'combustible', 'medicamento', 'vehículo',
@@ -1046,6 +998,32 @@
             grid.innerHTML = sugerencias.map(s => 
                 `<div class="sugerencia-item" onclick="buscarCon('${s}')">${s}</div>`
             ).join('');
+        }
+
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            const recentSearches = []; // Podés implementar historial si querés
+            
+            if (recentSearches.length === 0) {
+                historyList.innerHTML = '<p style="color: #666;">No hay historial aún.</p>';
+                return;
+            }
+            
+            historyList.innerHTML = recentSearches.map(s => `
+                <div class="history-item" onclick="document.getElementById('searchInput').value='${s.query}'; buscar();">
+                    <span>🔍 ${s.query}</span>
+                    <span class="history-count">${s.resultsCount} resultados</span>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            if (confirm('¿Estás seguro de limpiar todo el historial?')) {
+                searchCount = 0;
+                document.getElementById('searchCount').textContent = '0';
+                document.getElementById('historyList').innerHTML = '<p style="color: #666;">No hay historial aún.</p>';
+                alert('Historial limpiado.');
+            }
         }
 
         // ============================================
