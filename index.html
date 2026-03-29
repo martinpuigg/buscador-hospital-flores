@@ -242,7 +242,7 @@
             transform: scale(1.05);
         }
         
-        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
         .filter-btn {
             padding: 10px 20px;
             background: #003ca5;
@@ -360,25 +360,6 @@
             font-size: 0.75em;
             margin-left: 10px;
         }
-        .keyword-match {
-            display: inline-block;
-            background: rgba(255,107,0,0.1);
-            color: #ff6b00;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            margin-top: 8px;
-        }
-        .custom-keyword-badge {
-            display: inline-block;
-            background: rgba(40,167,69,0.1);
-            color: #28a745;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            margin-top: 8px;
-            margin-left: 8px;
-        }
         
         .loading { text-align: center; padding: 50px; color: #666; }
         .error {
@@ -389,43 +370,13 @@
             margin-top: 20px;
             color: #dc3545;
         }
-        .no-results { text-align: center; padding: 50px; color: #666; }
-        
-        .internet-results {
-            display: none;
-            background: rgba(138,43,226,0.05);
-            border: 2px solid #8a2be2;
+        .success {
+            background: rgba(40,167,69,0.1);
+            border: 2px solid #28a745;
             padding: 20px;
             border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .internet-results h4 {
-            color: #8a2be2;
-            margin-bottom: 15px;
-        }
-        .internet-item {
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 3px solid #8a2be2;
-        }
-        .internet-item h5 {
-            color: #8a2be2;
-            margin-bottom: 8px;
-        }
-        .internet-item p {
-            color: #666;
-            font-size: 0.9em;
-            line-height: 1.6;
-        }
-        .internet-item a {
-            color: #003ca5;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .internet-item a:hover {
-            text-decoration: underline;
+            margin-top: 20px;
+            color: #28a745;
         }
         
         .toggle-panel-btn {
@@ -443,18 +394,6 @@
         .toggle-panel-btn:hover {
             background: #218838;
             transform: scale(1.05);
-        }
-        
-        .clear-btn {
-            background: #dc3545;
-            color: #ffffff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
         }
         
         @media (max-width: 768px) {
@@ -484,8 +423,7 @@
         <div class="ai-status" id="aiStatus">
             📋 <span id="aiStatusText">Sistema listo - Cargá tu archivo CSV</span> | 
             🔍 Búsquedas: <span id="searchCount">0</span> |
-            📚 Palabras personalizadas: <span id="customKeywordsCount">0</span> |
-            🌐 API: <span id="apiStatus">Conectada</span>
+            📚 Palabras personalizadas: <span id="customKeywordsCount">0</span>
         </div>
         
         <!-- Carga de CSV -->
@@ -502,6 +440,7 @@
             <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
                 🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
             </p>
+            <div id="debugInfo" style="margin-top: 20px; color: #666; font-size: 0.85em; text-align: left;"></div>
         </div>
         
         <!-- Estadísticas -->
@@ -588,9 +527,6 @@
             </div>
         </div>
         
-        <!-- Resultados de Internet (API Real) -->
-        <div class="internet-results" id="internetResults"></div>
-        
         <div id="results" class="results-container"></div>
     </div>
 
@@ -603,32 +539,6 @@
         let filtroGrupo = '';
         let searchCount = 0;
         let customKeywords = {};
-        let internetDataCache = {};
-
-        // ============================================
-        // 🧠 BASE DE CONOCIMIENTO - MAPEO SEMÁNTICO
-        // ============================================
-        const keywordsMap = {
-            'harina': ['111'], 'lechuga': ['111'], 'arroz': ['111'], 'carne': ['111'],
-            'aceite': ['111'], 'aceite comestible': ['111'], 'aceite de cocina': ['111'],
-            'sueldo': ['011', '021', '031'], 'salario': ['011', '021'],
-            'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'],
-            'lubricante': ['141'], 'aceite motor': ['141'],
-            'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'],
-            'vehiculo': ['353'], 'auto': ['353'], 'camioneta': ['353'],
-            'internacion': ['283'], 'hospital': ['283'], 'sanatorio': ['283'],
-            'computadora': ['323'], 'laptop': ['323'], 'notebook': ['323'],
-            'limpieza': ['192'], 'jabon': ['192'], 'escoba': ['192'],
-            'electricidad': ['213'], 'luz': ['213'], 'agua': ['212'],
-            'telefono': ['211'], 'internet': ['211'],
-            'regla': ['191', '176'], 'util': ['191'], 'oficina': ['191'],
-            'lapiz': ['191'], 'papel': ['131', '191'],
-            'viatico': ['234', '235'], 'pasaje': ['231'], 'alquiler': ['251'],
-            'jubilacion': ['571'], 'beca': ['577'],
-            'herramienta': ['176'], 'ferreteria': ['176'], 'lima': ['176'],
-            'plomeria': ['271', '163'], 'cañeria': ['271', '163'],
-            'material medico': ['194'], 'quirurgico': ['194'], 'jeringa': ['194']
-        };
 
         // ============================================
         // 💾 PERSISTENCIA (LocalStorage)
@@ -656,411 +566,6 @@
         function updateCustomKeywordsCount() {
             const count = Object.keys(customKeywords).length;
             document.getElementById('customKeywordsCount').textContent = count;
-        }
-
-        // ============================================
-        // 🌐 API REAL - Wikipedia + Datamuse
-        // ============================================
-        
-        async function buscarEnWikipedia(query) {
-            try {
-                // Usamos CORS proxy para evitar bloqueos
-                const proxyUrl = 'https://corsproxy.io/?';
-                const wikiUrl = `https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`;
-                
-                const response = await fetch(proxyUrl + encodeURIComponent(wikiUrl));
-                const data = await response.json();
-                
-                if (data && data.extract && !data.type) {
-                    return {
-                        title: data.title,
-                        extract: data.extract.substring(0, 400) + '...',
-                        url: data.content_urls?.desktop?.page || ''
-                    };
-                }
-                return null;
-            } catch (error) {
-                console.log('Wikipedia error:', error);
-                return null;
-            }
-        }
-
-        async function buscarSinonimos(query) {
-            try {
-                const proxyUrl = 'https://corsproxy.io/?';
-                const datamuseUrl = `https://api.datamuse.com/words?ml=${encodeURIComponent(query)}&max=10`;
-                
-                const response = await fetch(proxyUrl + encodeURIComponent(datamuseUrl));
-                const data = await response.json();
-                
-                if (data && data.length > 0) {
-                    return data.map(item => item.word);
-                }
-                return [];
-            } catch (error) {
-                console.log('Datamuse error:', error);
-                return [];
-            }
-        }
-
-        async function buscarEnInternet(query) {
-            const internetDiv = document.getElementById('internetResults');
-            
-            // Verificar cache
-            if (internetDataCache[query]) {
-                mostrarResultadosInternet(internetDataCache[query]);
-                return;
-            }
-            
-            internetDiv.style.display = 'block';
-            internetDiv.innerHTML = '<div class="loading">🌐 Buscando definición en internet...</div>';
-            
-            try {
-                // Búsquedas en paralelo
-                const [wiki, sinonimos] = await Promise.all([
-                    buscarEnWikipedia(query),
-                    buscarSinonimos(query)
-                ]);
-                
-                const resultado = { wiki, sinonimos };
-                internetDataCache[query] = resultado;
-                
-                mostrarResultadosInternet(resultado);
-            } catch (error) {
-                internetDiv.innerHTML = '<div class="error">⚠️ No se pudo obtener información de internet. Verificá tu conexión.</div>';
-            }
-        }
-
-        function mostrarResultadosInternet(data) {
-            const internetDiv = document.getElementById('internetResults');
-            
-            if (!data.wiki && (!data.sinonimos || data.sinonimos.length === 0)) {
-                internetDiv.style.display = 'none';
-                return;
-            }
-            
-            let html = '<h4>🌐 Información de Internet para "<strong>' + document.getElementById('searchInput').value + '</strong>":</h4>';
-            
-            if (data.wiki) {
-                html += `
-                    <div class="internet-item">
-                        <h5>📚 Wikipedia</h5>
-                        <p><strong>${data.wiki.title}</strong></p>
-                        <p>${data.wiki.extract}</p>
-                        ${data.wiki.url ? `<p><a href="${data.wiki.url}" target="_blank">Ver más en Wikipedia →</a></p>` : ''}
-                    </div>
-                `;
-            }
-            
-            if (data.sinonimos && data.sinonimos.length > 0) {
-                html += `
-                    <div class="internet-item">
-                        <h5>🔤 Sinónimos y palabras relacionadas</h5>
-                        <p>${data.sinonimos.join(', ')}</p>
-                    </div>
-                `;
-            }
-            
-            internetDiv.innerHTML = html;
-        }
-
-        // ============================================
-        // 📂 CARGA DEL CSV (CORREGIDA)
-        // ============================================
-        document.getElementById('csvFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) {
-                alert('⚠️ No se seleccionó ningún archivo');
-                return;
-            }
-            
-            document.getElementById('fileName').textContent = `📁 Procesando: ${file.name}`;
-            
-            const reader = new FileReader();
-            
-            reader.onload = function(event) {
-                try {
-                    const text = event.target.result;
-                    if (!text || text.trim().length === 0) {
-                        throw new Error('El archivo está vacío');
-                    }
-                    procesarCSV(text);
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('❌ Error al leer el archivo: ' + error.message);
-                    document.getElementById('fileName').textContent = '❌ Error al cargar';
-                }
-            };
-            
-            reader.onerror = function() {
-                alert('❌ Error al leer el archivo. Verificá que sea un CSV válido.');
-                document.getElementById('fileName').textContent = '❌ Error de lectura';
-            };
-            
-            // Intentar con diferentes encodings
-            reader.readAsText(file, 'UTF-8');
-        });
-
-        function procesarCSV(texto) {
-            try {
-                const lineas = texto.split('\n');
-                datosCompletos = [];
-                
-                console.log('Líneas encontradas:', lineas.length);
-                
-                // Saltar encabezado (línea 0)
-                for (let i = 1; i < lineas.length; i++) {
-                    const linea = lineas[i].trim();
-                    if (!linea) continue;
-                    
-                    // Parseo de CSV (maneja comillas)
-                    const columnas = [];
-                    let actual = '';
-                    let entreComillas = false;
-                    
-                    for (let char of linea) {
-                        if (char === '"') {
-                            entreComillas = !entreComillas;
-                        } else if (char === ',' && !entreComillas) {
-                            columnas.push(actual.trim().replace(/^"|"$/g, ''));
-                            actual = '';
-                        } else {
-                            actual += char;
-                        }
-                    }
-                    columnas.push(actual.trim().replace(/^"|"$/g, ''));
-                    
-                    if (columnas.length >= 3) {
-                        const objeto = columnas[0]?.trim() || '';
-                        if (objeto && /^\d{3}$/.test(objeto)) {
-                            const grupo = objeto.charAt(0);
-                            
-                            datosCompletos.push({
-                                objeto: objeto,
-                                auxiliar: columnas[1]?.trim() || '000',
-                                denominacion: columnas[2]?.trim() || '',
-                                descripcion: columnas[3]?.trim() || '',
-                                grupo: grupo,
-                                categoria: obtenerCategoria(grupo)
-                            });
-                        }
-                    }
-                }
-                
-                if (datosCompletos.length === 0) {
-                    throw new Error('No se encontraron datos válidos en el CSV. Verificá el formato.');
-                }
-                
-                console.log('Objetos cargados:', datosCompletos.length);
-                
-                document.getElementById('totalRegistros').textContent = datosCompletos.length;
-                document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
-                
-                document.getElementById('uploadSection').style.display = 'none';
-                document.getElementById('statsBar').style.display = 'flex';
-                document.getElementById('togglePanelBtn').style.display = 'inline-block';
-                document.getElementById('searchContainer').style.display = 'block';
-                
-                document.getElementById('fileName').textContent = `✅ ${datosCompletos.length} objetos cargados`;
-                
-                loadCustomKeywords();
-                cargarSugerencias();
-                
-                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados correctamente.`);
-                
-            } catch (error) {
-                console.error('Error procesando CSV:', error);
-                alert('❌ Error al procesar el CSV: ' + error.message + '\n\nVerificá que el archivo tenga el formato correcto.');
-                document.getElementById('fileName').textContent = '❌ Error en el formato';
-            }
-        }
-
-        function obtenerCategoria(grupo) {
-            const categorias = {
-                '0': 'Servicios Personales',
-                '1': 'Bienes de Consumo',
-                '2': 'Servicios No Personales',
-                '3': 'Bienes de Uso',
-                '4': 'Aplicaciones Financieras',
-                '5': 'Transferencias',
-                '6': 'Deuda Pública',
-                '7': 'Otros Gastos',
-                '8': 'Amortización de Deuda',
-                '9': 'Gastos Figurativos'
-            };
-            return categorias[grupo] || 'Otros';
-        }
-
-        // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA
-        // ============================================
-        
-        function normalizar(texto) {
-            if (!texto) return '';
-            texto = texto.toLowerCase().trim();
-            texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-            texto = texto.replace(/ñ/g, 'n');
-            return texto;
-        }
-
-        function calcularRelevancia(query, item) {
-            const queryNorm = normalizar(query);
-            const textoCompleto = normalizar(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
-            const denomNorm = normalizar(item.denominacion);
-            const descNorm = normalizar(item.descripcion);
-            
-            let score = 0;
-            let keywordEncontrada = null;
-            let esPersonalizada = false;
-            
-            // 1. Palabras personalizadas (MÁXIMA PRIORIDAD)
-            if (customKeywords[queryNorm]) {
-                const mappings = customKeywords[queryNorm];
-                const coincide = mappings.some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
-                if (coincide) {
-                    score = 100;
-                    keywordEncontrada = queryNorm;
-                    esPersonalizada = true;
-                }
-            }
-            
-            // 2. Keywords mapeadas
-            if (keywordsMap[queryNorm]) {
-                if (keywordsMap[queryNorm].includes(item.objeto)) {
-                    score = Math.max(score, 80);
-                    if (!keywordEncontrada) keywordEncontrada = queryNorm;
-                }
-            }
-            
-            // 3. Coincidencia en denominación
-            if (denomNorm.includes(queryNorm)) {
-                score = Math.max(score, 70);
-                if (!keywordEncontrada) keywordEncontrada = 'denominación';
-            }
-            
-            // 4. Coincidencia en descripción
-            if (descNorm.includes(queryNorm)) {
-                score = Math.max(score, 60);
-                if (!keywordEncontrada) keywordEncontrada = 'descripción';
-            }
-            
-            // 5. Coincidencia en código
-            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
-                score = Math.max(score, 90);
-                if (!keywordEncontrada) keywordEncontrada = 'código';
-            }
-            
-            // 6. Búsqueda por palabras parciales
-            const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
-            palabrasQuery.forEach(palabra => {
-                if (textoCompleto.includes(palabra)) {
-                    score = Math.max(score, 50);
-                    if (!keywordEncontrada) keywordEncontrada = palabra;
-                }
-            });
-            
-            return {
-                score: score,
-                keyword: keywordEncontrada,
-                esPersonalizada: esPersonalizada
-            };
-        }
-
-        async function buscar() {
-            const query = document.getElementById('searchInput').value.trim();
-            const resultsDiv = document.getElementById('results');
-            
-            if (!query || query.length < 2) {
-                resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa al menos 2 caracteres para buscar</div>';
-                return;
-            }
-            
-            searchCount++;
-            document.getElementById('searchCount').textContent = searchCount;
-            
-            resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en ' + datosCompletos.length + ' objetos...</div>';
-            document.getElementById('internetResults').style.display = 'none';
-            
-            // Búsqueda en internet en paralelo
-            buscarEnInternet(query);
-            
-            setTimeout(() => {
-                let resultados = datosCompletos.map(item => {
-                    const relevancia = calcularRelevancia(query, item);
-                    return { 
-                        ...item, 
-                        relevancia: relevancia.score,
-                        keywordEncontrada: relevancia.keyword,
-                        esPersonalizada: relevancia.esPersonalizada
-                    };
-                });
-                
-                resultados = resultados.filter(r => r.relevancia >= 20);
-                
-                if (filtroGrupo) {
-                    resultados = resultados.filter(r => r.grupo === filtroGrupo);
-                }
-                
-                resultados.sort((a, b) => b.relevancia - a.relevancia);
-                resultados = resultados.slice(0, limiteResultados);
-                
-                document.getElementById('ultimaBusqueda').textContent = resultados.length;
-                
-                if (resultados.length === 0) {
-                    resultsDiv.innerHTML = `
-                        <div class="no-results">
-                            <h2>❌ No se encontraron resultados</h2>
-                            <p style="margin-top: 15px;">Intentá con otros términos o verificá la ortografía</p>
-                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: harina, sueldo, combustible, medicamento, vehículo, regla, útiles, lapiz, aceite, lima</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                let html = `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; font-weight: 600;">
-                    ✅ <strong>${resultados.length}</strong> resultados encontrados 
-                    (de ${datosCompletos.length} objetos totales)
-                </div>`;
-                
-                resultados.forEach((r, index) => {
-                    html += `
-                        <div class="result-card ${index === 0 ? 'selected' : ''}" onclick="selectResult('${r.objeto}', '${r.auxiliar}')">
-                            <div class="result-header">
-                                <span class="codigo-badge">${r.objeto}/${r.auxiliar}</span>
-                                <span class="relevancia-badge">📊 Relevancia: ${r.relevancia}%</span>
-                            </div>
-                            <div class="denominacion">${r.denominacion}</div>
-                            <div class="descripcion">${r.descripcion}</div>
-                            ${r.categoria ? `<div class="categoria-tag">📁 ${r.categoria}</div>` : ''}
-                            <span class="grupo-tag">Grupo ${r.grupo}</span>
-                            ${r.keywordEncontrada ? `<div class="keyword-match">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
-                            ${r.esPersonalizada ? `<div class="custom-keyword-badge">⭐ Palabra Personalizada</div>` : ''}
-                            ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
-                        </div>
-                    `;
-                });
-                
-                resultsDiv.innerHTML = html;
-            }, 300);
-        }
-
-        function selectResult(objeto, auxiliar) {
-            const card = event.target.closest('.result-card');
-            document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            
-            const feedback = document.createElement('div');
-            feedback.style.cssText = 'background: rgba(0,60,165,0.1); border: 2px solid #003ca5; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; color: #003ca5; font-weight: 600;';
-            feedback.innerHTML = `✅ Objeto ${objeto}/${auxiliar} seleccionado`;
-            
-            const existingFeedback = document.querySelector('.ai-feedback');
-            if (existingFeedback) existingFeedback.remove();
-            feedback.classList.add('ai-feedback');
-            document.getElementById('results').appendChild(feedback);
-            
-            setTimeout(() => {
-                feedback.remove();
-            }, 5000);
         }
 
         // ============================================
@@ -1156,6 +661,337 @@
         }
 
         // ============================================
+        // 📂 CARGA DEL CSV (CORREGIDA)
+        // ============================================
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            document.getElementById('fileName').textContent = `📁 Procesando: ${file.name}`;
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.innerHTML = '<div style="color: #003ca5;">⏳ Leyendo archivo...</div>';
+            
+            // Probar múltiples encodings
+            const encodings = ['UTF-8', 'ISO-8859-1', 'windows-1252'];
+            let encodingIndex = 0;
+            
+            function tryReadEncoding() {
+                if (encodingIndex >= encodings.length) {
+                    debugInfo.innerHTML += '<div style="color: #dc3545;">❌ No se pudo leer con ningún encoding</div>';
+                    return;
+                }
+                
+                const encoding = encodings[encodingIndex];
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    try {
+                        const text = event.target.result;
+                        debugInfo.innerHTML += `<div style="color: #28a745;">✅ Leyendo con encoding: ${encoding}</div>`;
+                        debugInfo.innerHTML += `<div>📊 Tamaño: ${text.length} caracteres</div>`;
+                        procesarCSV(text);
+                    } catch (error) {
+                        debugInfo.innerHTML += `<div style="color: #dc3545;">❌ Error con ${encoding}: ${error.message}</div>`;
+                        encodingIndex++;
+                        tryReadEncoding();
+                    }
+                };
+                
+                reader.onerror = function() {
+                    debugInfo.innerHTML += '<div style="color: #dc3545;">❌ Error al leer el archivo</div>';
+                    encodingIndex++;
+                    tryReadEncoding();
+                };
+                
+                reader.readAsText(file, encoding);
+            }
+            
+            tryReadEncoding();
+        });
+
+        function procesarCSV(texto) {
+            try {
+                const lineas = texto.split(/\r?\n/);
+                datosCompletos = [];
+                
+                console.log('Total líneas:', lineas.length);
+                
+                // Detectar delimiter
+                let delimiter = ',';
+                const primeraLinea = lineas.find(l => l.trim().length > 0) || '';
+                if (primeraLinea.includes(';')) {
+                    delimiter = ';';
+                } else if (primeraLinea.includes('\t')) {
+                    delimiter = '\t';
+                }
+                
+                console.log('Delimiter detectado:', delimiter === '\t' ? 'TAB' : delimiter);
+                
+                // Saltar encabezado (línea 0)
+                for (let i = 1; i < lineas.length; i++) {
+                    const linea = lineas[i].trim();
+                    if (!linea) continue;
+                    
+                    // Parseo de CSV (maneja comillas)
+                    const columnas = [];
+                    let actual = '';
+                    let entreComillas = false;
+                    
+                    for (let char of linea) {
+                        if (char === '"') {
+                            entreComillas = !entreComillas;
+                        } else if (char === delimiter && !entreComillas) {
+                            columnas.push(actual.trim().replace(/^"|"$/g, ''));
+                            actual = '';
+                        } else {
+                            actual += char;
+                        }
+                    }
+                    columnas.push(actual.trim().replace(/^"|"$/g, ''));
+                    
+                    if (columnas.length >= 3) {
+                        let objeto = columnas[0]?.trim() || '';
+                        
+                        // Normalizar código de objeto (asegurar 3 dígitos)
+                        if (objeto && !/^\d{3}$/.test(objeto)) {
+                            // Si tiene 1 o 2 dígitos, agregar ceros al inicio
+                            objeto = objeto.padStart(3, '0');
+                        }
+                        
+                        const grupo = objeto.charAt(0);
+                        const auxiliar = columnas[1]?.trim() || '000';
+                        const denominacion = columnas[2]?.trim() || '';
+                        const descripcion = columnas[3]?.trim() || '';
+                        
+                        if (objeto && /^\d{3}$/.test(objeto) && denominacion) {
+                            datosCompletos.push({
+                                objeto: objeto,
+                                auxiliar: auxiliar.padStart(3, '0'),
+                                denominacion: denominacion,
+                                descripcion: descripcion,
+                                grupo: grupo,
+                                categoria: obtenerCategoria(grupo)
+                            });
+                        }
+                    }
+                }
+                
+                if (datosCompletos.length === 0) {
+                    throw new Error('No se encontraron datos válidos en el CSV. Verificá el formato.');
+                }
+                
+                console.log('Objetos cargados:', datosCompletos.length);
+                
+                document.getElementById('totalRegistros').textContent = datosCompletos.length;
+                document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
+                
+                document.getElementById('uploadSection').style.display = 'none';
+                document.getElementById('statsBar').style.display = 'flex';
+                document.getElementById('togglePanelBtn').style.display = 'inline-block';
+                document.getElementById('searchContainer').style.display = 'block';
+                
+                document.getElementById('fileName').textContent = `✅ ${datosCompletos.length} objetos cargados`;
+                document.getElementById('fileName').style.color = '#28a745';
+                
+                loadCustomKeywords();
+                cargarSugerencias();
+                
+                const successDiv = document.createElement('div');
+                successDiv.className = 'success';
+                successDiv.innerHTML = `✅ ¡Listo! ${datosCompletos.length} objetos cargados correctamente.`;
+                document.getElementById('uploadSection').appendChild(successDiv);
+                
+            } catch (error) {
+                console.error('Error procesando CSV:', error);
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error';
+                errorDiv.innerHTML = `❌ Error: ${error.message}<br><br>
+                    <strong>Posibles causas:</strong><br>
+                    1. El archivo no es un CSV válido<br>
+                    2. El formato de columnas no es correcto<br>
+                    3. El archivo está vacío o corrupto<br><br>
+                    <strong>Formato esperado:</strong><br>
+                    Objeto,Auxiliar,Denominación,Descripción<br>
+                    011,000,Sueldo básico,Descripción...
+                `;
+                document.getElementById('uploadSection').appendChild(errorDiv);
+                document.getElementById('fileName').textContent = '❌ Error en el formato';
+                document.getElementById('fileName').style.color = '#dc3545';
+            }
+        }
+
+        function obtenerCategoria(grupo) {
+            const categorias = {
+                '0': 'Servicios Personales',
+                '1': 'Bienes de Consumo',
+                '2': 'Servicios No Personales',
+                '3': 'Bienes de Uso',
+                '4': 'Aplicaciones Financieras',
+                '5': 'Transferencias',
+                '6': 'Deuda Pública',
+                '7': 'Otros Gastos',
+                '8': 'Amortización de Deuda',
+                '9': 'Gastos Figurativos'
+            };
+            return categorias[grupo] || 'Otros';
+        }
+
+        // ============================================
+        // 🔍 MOTOR DE BÚSQUEDA
+        // ============================================
+        
+        function normalizar(texto) {
+            if (!texto) return '';
+            texto = texto.toLowerCase().trim();
+            texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            texto = texto.replace(/ñ/g, 'n');
+            return texto;
+        }
+
+        function calcularRelevancia(query, item) {
+            const queryNorm = normalizar(query);
+            const textoCompleto = normalizar(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
+            const denomNorm = normalizar(item.denominacion);
+            const descNorm = normalizar(item.descripcion);
+            
+            let score = 0;
+            let keywordEncontrada = null;
+            
+            // 1. Palabras personalizadas (MÁXIMA PRIORIDAD)
+            if (customKeywords[queryNorm]) {
+                const mappings = customKeywords[queryNorm];
+                const coincide = mappings.some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
+                if (coincide) {
+                    score = 100;
+                    keywordEncontrada = queryNorm;
+                }
+            }
+            
+            // 2. Coincidencia en denominación
+            if (denomNorm.includes(queryNorm)) {
+                score = Math.max(score, 80);
+                if (!keywordEncontrada) keywordEncontrada = 'denominación';
+            }
+            
+            // 3. Coincidencia en descripción
+            if (descNorm.includes(queryNorm)) {
+                score = Math.max(score, 60);
+                if (!keywordEncontrada) keywordEncontrada = 'descripción';
+            }
+            
+            // 4. Coincidencia en código
+            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
+                score = Math.max(score, 90);
+                if (!keywordEncontrada) keywordEncontrada = 'código';
+            }
+            
+            // 5. Búsqueda por palabras parciales
+            const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
+            palabrasQuery.forEach(palabra => {
+                if (textoCompleto.includes(palabra)) {
+                    score = Math.max(score, 50);
+                    if (!keywordEncontrada) keywordEncontrada = palabra;
+                }
+            });
+            
+            return {
+                score: score,
+                keyword: keywordEncontrada
+            };
+        }
+
+        function buscar() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('results');
+            
+            if (!query || query.length < 2) {
+                resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa al menos 2 caracteres para buscar</div>';
+                return;
+            }
+            
+            searchCount++;
+            document.getElementById('searchCount').textContent = searchCount;
+            
+            resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en ' + datosCompletos.length + ' objetos...</div>';
+            
+            setTimeout(() => {
+                let resultados = datosCompletos.map(item => {
+                    const relevancia = calcularRelevancia(query, item);
+                    return { 
+                        ...item, 
+                        relevancia: relevancia.score,
+                        keywordEncontrada: relevancia.keyword
+                    };
+                });
+                
+                resultados = resultados.filter(r => r.relevancia >= 20);
+                
+                if (filtroGrupo) {
+                    resultados = resultados.filter(r => r.grupo === filtroGrupo);
+                }
+                
+                resultados.sort((a, b) => b.relevancia - a.relevancia);
+                resultados = resultados.slice(0, limiteResultados);
+                
+                document.getElementById('ultimaBusqueda').textContent = resultados.length;
+                
+                if (resultados.length === 0) {
+                    resultsDiv.innerHTML = `
+                        <div class="error">
+                            ❌ No se encontraron resultados
+                            <p style="margin-top: 15px;">Intentá con otros términos o verificá la ortografía</p>
+                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: harina, sueldo, combustible, medicamento, vehículo, regla, internación, útiles, lapiz, aceite</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; font-weight: 600;">
+                    ✅ <strong>${resultados.length}</strong> resultados encontrados 
+                    (de ${datosCompletos.length} objetos totales)
+                </div>`;
+                
+                resultados.forEach((r, index) => {
+                    html += `
+                        <div class="result-card ${index === 0 ? 'selected' : ''}" onclick="selectResult('${r.objeto}', '${r.auxiliar}')">
+                            <div class="result-header">
+                                <span class="codigo-badge">${r.objeto}/${r.auxiliar}</span>
+                                <span class="relevancia-badge">📊 Relevancia: ${r.relevancia}%</span>
+                            </div>
+                            <div class="denominacion">${r.denominacion}</div>
+                            <div class="descripcion">${r.descripcion}</div>
+                            ${r.categoria ? `<div class="categoria-tag">📁 ${r.categoria}</div>` : ''}
+                            <span class="grupo-tag">Grupo ${r.grupo}</span>
+                            ${r.keywordEncontrada ? `<div class="keyword-match" style="display:inline-block;background:rgba(255,107,0,0.1);color:#ff6b00;padding:4px 10px;border-radius:8px;font-size:0.75em;margin-top:8px;">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
+                            ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
+                        </div>
+                    `;
+                });
+                
+                resultsDiv.innerHTML = html;
+            }, 300);
+        }
+
+        function selectResult(objeto, auxiliar) {
+            const card = event.target.closest('.result-card');
+            document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            
+            const feedback = document.createElement('div');
+            feedback.style.cssText = 'background: rgba(0,60,165,0.1); border: 2px solid #003ca5; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; color: #003ca5; font-weight: 600;';
+            feedback.innerHTML = `✅ Objeto ${objeto}/${auxiliar} seleccionado`;
+            
+            const existingFeedback = document.querySelector('.ai-feedback');
+            if (existingFeedback) existingFeedback.remove();
+            feedback.classList.add('ai-feedback');
+            document.getElementById('results').appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.remove();
+            }, 5000);
+        }
+
+        // ============================================
         // ⚙️ FUNCIONES DE UTILIDAD
         // ============================================
         
@@ -1194,15 +1030,16 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('results').innerHTML = '';
             document.getElementById('ultimaBusqueda').textContent = '0';
-            document.getElementById('internetResults').style.display = 'none';
         }
 
         function cargarSugerencias() {
             const sugerencias = [
-                'harina', 'sueldo', 'combustible', 'medicamento', 'vehiculo',
-                'regla', 'internacion', 'computadora', 'utiles', 'limpieza',
-                'electricidad', 'telefono', 'viatico', 'alquiler', 'jubilacion',
-                'beca', 'capacitacion', 'mantenimiento', 'lapiz', 'aceite', 'lima'
+                'harina', 'sueldo', 'combustible', 'medicamento', 'vehículo',
+                'regla', 'internación', 'computadora', 'útiles', 'limpieza',
+                'electricidad', 'teléfono', 'viático', 'alquiler', 'jubilación',
+                'beca', 'capacitación', 'mantenimiento', 'construcción', 'vigilancia',
+                'lechuga', 'papel', 'agua', 'internet', 'seguro', 'subsidio',
+                'lápiz', 'aceite', 'lubricante', 'pintura', 'cemento', 'lima'
             ];
             
             const grid = document.getElementById('sugerenciasGrid');
@@ -1221,17 +1058,6 @@
             };
             
             loadCustomKeywords();
-            
-            // Verificar conexión a APIs
-            fetch('https://corsproxy.io/?' + encodeURIComponent('https://es.wikipedia.org/'))
-                .then(() => {
-                    document.getElementById('apiStatus').textContent = '✅ Conectada';
-                    document.getElementById('apiStatus').style.color = '#28a745';
-                })
-                .catch(() => {
-                    document.getElementById('apiStatus').textContent = '⚠️ Verificar conexión';
-                    document.getElementById('apiStatus').style.color = '#ff6b00';
-                });
         };
     </script>
 </body>
