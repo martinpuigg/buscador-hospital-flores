@@ -7,20 +7,16 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             padding: 20px;
             color: #fff;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            padding: 40px 0;
-        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* Header */
+        .header { text-align: center; padding: 40px 0; }
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
@@ -28,6 +24,9 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        .header p { color: #aaa; font-size: 1.1em; }
+        
+        /* Stats Bar */
         .stats-bar {
             display: flex;
             justify-content: center;
@@ -40,19 +39,15 @@
             padding: 15px 25px;
             border-radius: 10px;
             text-align: center;
+            min-width: 150px;
         }
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #00ff88;
-        }
-        .stat-label {
-            font-size: 0.9em;            color: #aaa;
-        }
+        .stat-number { font-size: 2em; font-weight: bold; color: #00ff88; }
+        .stat-label { font-size: 0.9em; color: #aaa; }
+        
+        /* Search Container */
         .search-container {
             background: rgba(255,255,255,0.1);
-            padding: 30px;
-            border-radius: 15px;
+            padding: 30px;            border-radius: 15px;
             margin-bottom: 30px;
         }
         .search-box {
@@ -75,9 +70,7 @@
             border-color: #00ff88;
             background: rgba(255,255,255,0.15);
         }
-        .search-box input::placeholder {
-            color: #888;
-        }
+        .search-box input::placeholder { color: #888; }
         .search-box button {
             padding: 18px 40px;
             background: linear-gradient(90deg, #00d9ff, #00ff88);
@@ -89,14 +82,11 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-        .search-box button:hover {
-            transform: scale(1.05);
-        }
-        .filters {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }        .filter-btn {
+        .search-box button:hover { transform: scale(1.05); }
+        
+        /* Filters */
+        .filters { display: flex; gap: 15px; flex-wrap: wrap; }
+        .filter-btn {
             padding: 10px 20px;
             background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.2);
@@ -106,13 +96,34 @@
             transition: all 0.3s;
         }
         .filter-btn:hover, .filter-btn.active {
-            background: #00ff88;
-            color: #000;
+            background: #00ff88;            color: #000;
         }
-        .results-container {
+        
+        /* Suggestions */
+        .sugerencias {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        .sugerencias h3 { margin-bottom: 15px; color: #00d9ff; }
+        .sugerencias-grid {
             display: grid;
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
         }
+        .sugerencia-item {
+            background: rgba(255,255,255,0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .sugerencia-item:hover { background: #00ff88; color: #000; }
+        
+        /* Results */
+        .results-container { display: grid; gap: 20px; }
         .result-card {
             background: rgba(255,255,255,0.08);
             border-left: 4px solid #00ff88;
@@ -134,8 +145,7 @@
         }
         .codigo-badge {
             background: linear-gradient(90deg, #00d9ff, #00ff88);
-            color: #000;
-            padding: 8px 20px;
+            color: #000;            padding: 8px 20px;
             border-radius: 20px;
             font-weight: bold;
             font-size: 1.1em;
@@ -145,7 +155,8 @@
             padding: 5px 15px;
             border-radius: 15px;
             font-size: 0.9em;
-        }        .denominacion {
+        }
+        .denominacion {
             font-size: 1.3em;
             font-weight: 600;
             margin-bottom: 10px;
@@ -165,58 +176,31 @@
             font-size: 0.85em;
             margin-top: 10px;
         }
-        .loading {
-            text-align: center;
-            padding: 50px;
-            font-size: 1.5em;
-            color: #888;
+        .fuente-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            margin-left: 10px;
         }
+        
+        /* Loading & Error */
+        .loading { text-align: center; padding: 50px; font-size: 1.5em; color: #888; }
         .error {
             background: rgba(255,100,100,0.2);
             border: 1px solid #ff6464;
             padding: 20px;
             border-radius: 10px;
             margin-top: 20px;
-        }
-        .no-results {
-            text-align: center;
-            padding: 50px;
-            color: #888;
-        }
-        .sugerencias {
-            margin-top: 20px;
-            padding: 20px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-        }
-        .sugerencias h3 {
-            margin-bottom: 15px;
-            color: #00d9ff;
-        }
-        .sugerencias-grid {
-            display: grid;            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-        }
-        .sugerencia-item {
-            background: rgba(255,255,255,0.1);
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-        }
-        .sugerencia-item:hover {
-            background: #00ff88;
-            color: #000;
-        }
+        }        .no-results { text-align: center; padding: 50px; color: #888; }
+        
+        /* Responsive */
         @media (max-width: 768px) {
-            .search-box {
-                flex-direction: column;
-            }
-            .stats-bar {
-                flex-direction: column;
-                align-items: center;
-            }
+            .search-box { flex-direction: column; }
+            .stats-bar { flex-direction: column; align-items: center; }
+            .header h1 { font-size: 1.8em; }
         }
     </style>
 </head>
@@ -224,7 +208,7 @@
     <div class="container">
         <div class="header">
             <h1>🔍 Buscador IA - Objetos del Gasto</h1>
-            <p>Clasificador CGN - SIIF Uruguay | Búsqueda Inteligente</p>
+            <p>Clasificador CGN - SIIF Uruguay | Búsqueda Inteligente en +<span id="totalRegistrosHeader">0</span> registros</p>
         </div>
         
         <div class="stats-bar">
@@ -243,10 +227,11 @@
         </div>
         
         <div class="search-container">
-            <div class="search-box">                <input 
+            <div class="search-box">
+                <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, construcción..."
+                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, construcción, internación, regla, útiles..."
                     onkeypress="if(event.key === 'Enter') buscar()"
                 >
                 <button onclick="buscar()">🔎 Buscar</button>
@@ -257,11 +242,10 @@
                 <button class="filter-btn" onclick="setLimite(50)">50 resultados</button>
                 <button class="filter-btn" onclick="setLimite(100)">100 resultados</button>
             </div>
-        </div>
-        
-        <div id="sugerencias" class="sugerencias" style="display: none;">
-            <h3>💡 Búsquedas sugeridas</h3>
-            <div class="sugerencias-grid" id="sugerenciasGrid"></div>
+            
+            <div class="sugerencias" id="sugerencias">                <h3>💡 Búsquedas sugeridas</h3>
+                <div class="sugerencias-grid" id="sugerenciasGrid"></div>
+            </div>
         </div>
         
         <div id="results" class="results-container"></div>
@@ -277,27 +261,28 @@
                 const response = await fetch(`${API_URL}/estadisticas`);
                 const data = await response.json();
                 document.getElementById('totalRegistros').textContent = data.total_registros;
+                document.getElementById('totalRegistrosHeader').textContent = data.total_registros;
                 document.getElementById('totalObjetos').textContent = data.total_objetos;
                 
                 // Mostrar sugerencias
-                mostrarSugerencias();
+                cargarSugerencias();
             } catch (e) {
                 console.log('Error cargando stats');
             }
         }
         
-        function mostrarSugerencias() {
-            const sugerencias = [
-                'harina', 'sueldo', 'combustible', 'medicamento', 'vehículo',
-                'construcción', 'electricidad', 'teléfono', 'viático', 'alquiler',
-                'computadora', 'uniforme', 'limpieza', 'seguro', 'capacitación'
-            ];
-                        const grid = document.getElementById('sugerenciasGrid');
-            grid.innerHTML = sugerencias.map(s => 
-                `<div class="sugerencia-item" onclick="buscarCon('${s}')">${s}</div>`
-            ).join('');
-            
-            document.getElementById('sugerencias').style.display = 'block';
+        // Cargar sugerencias
+        async function cargarSugerencias() {
+            try {
+                const response = await fetch(`${API_URL}/sugerencias`);
+                const data = await response.json();
+                const grid = document.getElementById('sugerenciasGrid');
+                grid.innerHTML = data.sugerencias.map(s => 
+                    `<div class="sugerencia-item" onclick="buscarCon('${s}')">${s}</div>`
+                ).join('');
+            } catch (e) {
+                console.log('Error cargando sugerencias');
+            }
         }
         
         function setLimite(limite) {
@@ -307,8 +292,7 @@
                 if(btn.textContent.includes(limite)) btn.classList.add('active');
             });
         }
-        
-        function buscarCon(termino) {
+                function buscarCon(termino) {
             document.getElementById('searchInput').value = termino;
             buscar();
         }
@@ -318,7 +302,7 @@
             const resultsDiv = document.getElementById('results');
             
             if (!query) {
-                resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa un término de búsqueda</div>';
+                resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa un término de búsqueda (mínimo 2 caracteres)</div>';
                 return;
             }
             
@@ -335,13 +319,15 @@
                         <div class="no-results">
                             <h2>❌ No se encontraron resultados</h2>
                             <p>Intenta con otros términos o verifica la ortografía</p>
+                            <p style="margin-top: 20px; color: #00d9ff;">💡 Prueba con: harina, sueldo, combustible, medicamento, vehículo, construcción, internación, regla, útiles</p>
                         </div>
                     `;
                     return;
                 }
                 
                 let html = `<div style="margin-bottom: 20px; color: #00ff88;">
-                    ✅ <strong>${data.total_encontrados}</strong> resultados encontrados                     (de ${data.total_registros} registros)
+                    ✅ <strong>${data.total_encontrados}</strong> resultados encontrados 
+                    (de ${data.total_registros} registros) | Búsqueda: ${data.tipo_busqueda}
                 </div>`;
                 
                 data.resultados.forEach(r => {
@@ -354,7 +340,8 @@
                             <div class="denominacion">${r.denominacion}</div>
                             <div class="descripcion">${r.descripcion}</div>
                             ${r.categoria ? `<div class="categoria-tag">📁 ${r.categoria}</div>` : ''}
-                        </div>
+                            ${r.fuente ? `<span class="fuente-tag">🔍 ${r.fuente}</span>` : ''}
+                            ${r.keyword_encontrada ? `<span class="fuente-tag">🏷️ Keyword: ${r.keyword_encontrada}</span>` : ''}                        </div>
                     `;
                 });
                 
@@ -363,7 +350,8 @@
                 resultsDiv.innerHTML = `
                     <div class="error">
                         ❌ Error de conexión: ${error.message}<br>
-                        💡 Asegúrate de que el backend esté corriendo en puerto 8000
+                        💡 Asegúrate de que el backend esté corriendo en puerto 8000<br>
+                        📖 Ejecuta: python main.py en la carpeta backend/
                     </div>
                 `;
             }
