@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador Hospital de Flores - Memoria Permanente</title>
+    <title>Clasificador Hospital de Flores - Memoria Permanente</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --blue: #003ca5; --orange: #ff6b00; --green: #28a745; --bg: #f4f7f6; }
@@ -11,87 +11,256 @@
         body { background: var(--bg); padding: 10px; color: #333; }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         
-        /* Cabecera */
-        .header { border-bottom: 3px solid var(--blue); margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .header { border-bottom: 3px solid var(--blue); margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .header h1 { color: var(--blue); font-size: 1.2em; }
 
-        /* Cargador de Archivo (Se oculta si ya hay datos) */
-        #uploadSection { background: #eef2f7; padding: 20px; border-radius: 10px; text-align: center; border: 2px dashed var(--blue); margin-bottom: 20px; }
-        .btn-file { background: var(--blue); color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; display: inline-block; margin-top: 10px; }
-        
-        /* Panel IA */
-        .ai-box { background: #f8f9fa; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-        .api-input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; margin-top: 8px; }
+        /* Cargador Inicial */
+        #uploadSection { background: #eef2f7; padding: 30px; border-radius: 10px; text-align: center; border: 2px dashed var(--blue); margin-bottom: 20px; }
+        .btn-file { background: var(--blue); color: white; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-block; margin-top: 15px; }
 
-        /* Buscador */
-        .search-area { display: none; background: var(--blue); padding: 15px; border-radius: 10px; gap: 10px; flex-direction: column; }
+        /* Panel de IA */
+        .ai-box { background: #f8f9fa; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .api-input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; margin-top: 8px; font-size: 0.9em; }
+
+        /* Buscador Principal */
+        .search-area { background: var(--blue); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
         @media (min-width: 600px) { .search-area { flex-direction: row; } }
         #q { flex: 1; padding: 12px; border-radius: 6px; border: none; font-size: 1em; outline: none; }
-        #b { padding: 12px 25px; background: var(--orange); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        
-        /* Resultados e IA */
-        .ia-status-msg { display: none; background: #fff5f0; border: 1px solid var(--orange); padding: 15px; border-radius: 8px; margin-top: 15px; color: #d35400; font-size: 0.95em; }
-        .card { border-left: 6px solid var(--blue); padding: 15px; background: white; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 6px; }
+        #b { padding: 12px 25px; background: var(--orange); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        #b:disabled { background: #999; cursor: not-allowed; }
+
+        /* Diccionario Interno */
+        .toggle-btn { width: 100%; padding: 10px; background: var(--green); color: white; border: none; border-radius: 6px; margin: 15px 0; font-weight: 600; cursor: pointer; }
+        .dic-panel { display: none; background: #f0fff4; border: 2px solid var(--green); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .dic-form { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
+        @media (min-width: 600px) { .dic-form { grid-template-columns: 2fr 1fr 1fr auto; align-items: end; } }
+        .dic-form input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+
+        /* Resultados */
+        .ia-status-msg { display: none; background: #fff5f0; border: 1px solid var(--orange); padding: 15px; border-radius: 8px; margin-top: 15px; color: #d35400; font-size: 0.95em; line-height: 1.4; }
+        .card { border-left: 6px solid var(--blue); padding: 15px; background: white; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 6px; position: relative; }
         .card.ia-found { border-left-color: var(--orange); background: #fffaf5; }
-        .code-badge { background: var(--blue); color: white; padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 0.8em; }
+        .code-badge { background: var(--blue); color: white; padding: 4px 12px; border-radius: 15px; font-weight: bold; font-size: 0.85em; }
+        .ia-label { background: var(--orange); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; font-weight: bold; margin-left: 10px; }
         
         .loading { text-align: center; padding: 20px; font-weight: bold; color: var(--blue); }
-        .reset-db { font-size: 0.7em; color: #999; cursor: pointer; text-decoration: underline; margin-top: 20px; display: block; text-align: center; }
+        .reset-db { font-size: 0.7em; color: #999; cursor: pointer; text-decoration: underline; margin-top: 30px; display: block; text-align: center; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🏥 Hospital de Flores</h1>
-            <div id="dbStatus" style="font-size: 0.7em; font-weight: bold;"></div>
+            <div id="dbStatus" style="font-size: 0.7em; font-weight: bold;">ESPERANDO BASE DE DATOS...</div>
         </div>
 
         <div id="uploadSection">
-            <h3 style="color: var(--blue);">📂 Carga la base de datos (Solo una vez)</h3>
-            <p style="font-size: 0.8em; color: #666; margin-top: 5px;">Selecciona el archivo ObjetosGasto.csv para guardarlo en la memoria del buscador.</p>
+            <h2 style="color: var(--blue); font-size: 1.2em;">📂 Carga Inicial de Objetos</h2>
+            <p style="font-size: 0.85em; color: #666; margin-top: 5px;">Selecciona el archivo <b>ObjetosGasto.csv</b>. Se guardará en la memoria de este navegador para siempre.</p>
             <label class="btn-file">
-                SELECCIONAR ARCHIVO
+                SELECCIONAR ARCHIVO CSV
                 <input type="file" id="csvFile" accept=".csv" style="display:none;">
             </label>
         </div>
 
         <div id="mainApp" style="display:none;">
             <div class="ai-box">
-                <label style="font-weight:bold; color:var(--orange); font-size: 0.8em;">🔑 Clave API Google Gemini:</label>
+                <label style="font-weight:bold; color:var(--orange); font-size: 0.8em;">🤖 Google Gemini API Key:</label>
                 <input type="password" id="key" class="api-input" placeholder="Pega tu clave AIzaSy...">
             </div>
 
-            <div class="search-area" id="searchArea" style="display: flex;">
-                <input type="text" id="q" placeholder="Ej: Atún, Jeringas, 152, Reparación..." onkeypress="if(event.key==='Enter') buscar()">
+            <div class="search-area">
+                <input type="text" id="q" placeholder="¿Qué quieres clasificar? (Ej: Atun, Jeringa, 111...)" onkeypress="if(event.key==='Enter') buscar()">
                 <button id="b" onclick="buscar()">ANALIZAR</button>
+            </div>
+
+            <button class="toggle-btn" onclick="toggleDic()">📝 Diccionario Interno (Reglas Hospital)</button>
+            
+            <div id="dic" class="dic-panel">
+                <div class="dic-form">
+                    <input type="text" id="nk" placeholder="Palabra">
+                    <input type="text" id="no" placeholder="Objeto (3 dig)">
+                    <input type="text" id="na" placeholder="Aux (000)" value="000">
+                    <button onclick="addK()" style="background:var(--green); color:white; border:none; padding:10px; border-radius:5px; font-weight:bold; cursor:pointer;">GUARDAR</button>
+                </div>
+                <div id="klist" style="font-size: 0.8em; line-height: 1.6;"></div>
             </div>
 
             <div id="iaStatus" class="ia-status-msg"></div>
             <div id="results"></div>
             
-            <span class="reset-db" onclick="resetDatabase()">⚠️ Cambiar o borrar base de datos actual</span>
+            <span class="reset-db" onclick="resetDatabase()">⚠️ Borrar base de datos y volver a cargar</span>
         </div>
     </div>
 
     <script>
         let DB_LOCAL = [];
-        let isWorking = false;
+        let dics = JSON.parse(localStorage.getItem('h_dic') || '{}');
+        let cacheIA = JSON.parse(localStorage.getItem('h_cache_ia') || '{}');
+        let busy = false;
 
         window.onload = () => {
             document.getElementById('key').value = localStorage.getItem('h_key') || '';
+            renderD();
             checkDatabase();
         };
 
-        // --- GESTIÓN DE MEMORIA PERMANENTE ---
+        // --- GESTIÓN DE LA BASE DE DATOS (LOCALSTORAGE) ---
         function checkDatabase() {
-            const savedData = localStorage.getItem('hospital_db');
-            if (savedData) {
-                DB_LOCAL = JSON.parse(savedData);
+            const saved = localStorage.getItem('hospital_db');
+            if (saved) {
+                DB_LOCAL = JSON.parse(saved);
                 document.getElementById('uploadSection').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
-                document.getElementById('dbStatus').innerHTML = `✅ ${DB_LOCAL.length} OBJETOS CARGADOS`;
+                document.getElementById('dbStatus').innerText = `✅ ${DB_LOCAL.length} OBJETOS LISTOS`;
                 document.getElementById('dbStatus').style.color = "var(--green)";
             }
         }
 
-        document.getElementById('
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const text = event.target.result;
+                procesarCSV(text);
+            };
+            reader.readAsText(file, 'ISO-8859-1');
+        });
+
+        function procesarCSV(texto) {
+            const lineas = texto.split(/\r?\n/);
+            const dataProcesada = [];
+            for (let i = 1; i < lineas.length; i++) {
+                const col = lineas[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                if (col.length >= 3) {
+                    dataProcesada.push({
+                        o: col[0].replace(/"/g, '').trim(),
+                        a: col[1].replace(/"/g, '').trim() || "000",
+                        n: col[2].replace(/"/g, '').trim(),
+                        d: (col[3] || "").replace(/"/g, '').trim()
+                    });
+                }
+            }
+            if (dataProcesada.length > 0) {
+                localStorage.setItem('hospital_db', JSON.stringify(dataProcesada));
+                checkDatabase();
+            }
+        }
+
+        function resetDatabase() {
+            if(confirm("¿Seguro quieres borrar los datos guardados? Deberás cargar el CSV de nuevo.")) {
+                localStorage.removeItem('hospital_db');
+                location.reload();
+            }
+        }
+
+        // --- DICCIONARIO INTERNO ---
+        function toggleDic() { let d = document.getElementById('dic'); d.style.display = d.style.display==='block' ? 'none' : 'block'; }
+        function addK() {
+            let k = document.getElementById('nk').value.toLowerCase().trim();
+            let o = document.getElementById('no').value.trim();
+            let a = document.getElementById('na').value.trim();
+            if(k && o) { dics[k] = {o, a}; localStorage.setItem('h_dic', JSON.stringify(dics)); renderD(); }
+        }
+        function delK(k) { delete dics[k]; localStorage.setItem('h_dic', JSON.stringify(dics)); renderD(); }
+        function renderD() {
+            let l = document.getElementById('klist'); l.innerHTML = '';
+            for(let k in dics) {
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:5px 0;"><span><b>${k}</b> ➔ ${dics[k].o}/${dics[k].a}</span><span onclick="delK('${k}')" style="color:red; cursor:pointer;">✖</span></div>`;
+            }
+        }
+
+        // --- LÓGICA DE BÚSQUEDA ---
+        async function buscar() {
+            if(busy) return;
+            const query = document.getElementById('q').value.trim();
+            if(query.length < 2) return;
+
+            busy = true;
+            const btn = document.getElementById('b');
+            const resDiv = document.getElementById('results');
+            const statusDiv = document.getElementById('iaStatus');
+            
+            btn.innerText = "⏳...";
+            btn.disabled = true;
+            resDiv.innerHTML = '<div class="loading">Buscando localmente...</div>';
+            statusDiv.style.display = 'none';
+
+            let qL = query.toLowerCase();
+
+            // 1. Prioridad: Diccionario Interno
+            let targetCodeFromDic = dics[qL] ? dics[qL].o : null;
+
+            // 2. Buscar en la Base de Datos Local
+            let localMatches = DB_LOCAL.filter(i => 
+                i.n.toLowerCase().includes(qL) || 
+                i.o === query || 
+                i.o === targetCodeFromDic
+            );
+
+            if (localMatches.length > 0) {
+                mostrarCards(localMatches, false);
+                busy = false; btn.innerText = "ANALIZAR"; btn.disabled = false;
+            } else {
+                // 3. Si no hay nada, pedirle a la IA que busque en la web y asocie
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = `🤖 No encontré "${query}" en el Excel. Consultando a la red...`;
+                
+                let aiCode = await consultarIA(query);
+                
+                if (aiCode) {
+                    let aiMatches = DB_LOCAL.filter(i => i.o === aiCode);
+                    if (aiMatches.length > 0) {
+                        statusDiv.innerHTML = `✨ IA identificó "${query}" como Objeto ${aiCode}`;
+                        mostrarCards(aiMatches, true, query);
+                    } else {
+                        resDiv.innerHTML = `<div class="card ia-found"><h3>Sugerencia IA: Objeto ${aiCode}</h3><p>La IA asocia "${query}" al código ${aiCode}, pero no está en tu archivo actual.</p></div>`;
+                    }
+                } else {
+                    resDiv.innerHTML = '<p style="text-align:center; padding:20px;">No se pudo encontrar una asociación.</p>';
+                }
+                busy = false; btn.innerText = "ANALIZAR"; btn.disabled = false;
+            }
+        }
+
+        async function consultarIA(q) {
+            const key = document.getElementById('key').value.trim();
+            if (!key) return null;
+            localStorage.setItem('h_key', key);
+
+            if(cacheIA[q.toLowerCase()]) return cacheIA[q.toLowerCase()];
+
+            try {
+                const prompt = `Actúa como experto contable de Uruguay. Analiza: "${q}". ¿A qué OBJETO DE GASTO de la CGN (011-923) pertenece? Responde ÚNICAMENTE el número de 3 dígitos. Si es comida pon 111, si es medicina 152, si es repuesto de auto 273.`;
+                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                    method: "POST", headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+                const d = await r.json();
+                const code = d.candidates[0].content.parts[0].text.trim().substring(0,3);
+                
+                if (!isNaN(code)) {
+                    cacheIA[q.toLowerCase()] = code;
+                    localStorage.setItem('h_cache_ia', JSON.stringify(cacheIA));
+                    return code;
+                }
+            } catch (e) { return null; }
+        }
+
+        function mostrarCards(items, esIA, qOrig) {
+            const resDiv = document.getElementById('results');
+            resDiv.innerHTML = esIA ? `<p style="font-size:0.7em; font-weight:bold; color:var(--orange); margin-top:15px;">ASOCIACIÓN POR INTELIGENCIA ARTIFICIAL:</p>` : '';
+            items.slice(0, 30).forEach(r => {
+                resDiv.innerHTML += `
+                    <div class="card ${esIA ? 'ia-found' : ''}">
+                        <span class="code-badge">OBJETO ${r.o} / ${r.a}</span>
+                        ${esIA ? `<span class="ia-label">PARA "${qOrig.toUpperCase()}"</span>` : ''}
+                        <h3 style="margin:8px 0 4px 0; color:var(--blue); font-size:1em;">${r.n}</h3>
+                        <p style="color:#666; font-size:0.8em; line-height:1.4;">${r.d}</p>
+                    </div>`;
+            });
+        }
+    </script>
+</body>
+</html>
