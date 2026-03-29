@@ -3,283 +3,264 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clasificador Hospital de Flores - SISTEMA ESTABLE</title>
+    <title>Clasificador Hospital de Flores - Memoria Permanente</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --blue: #003ca5; --orange: #ff6b00; --green: #28a745; --bg: #f4f7f6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-        body { background: var(--bg); padding: 10px; color: #333; line-height: 1.4; }
+        body { background: var(--bg); padding: 10px; color: #333; }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         
-        .header { border-bottom: 3px solid var(--blue); margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { color: var(--blue); font-size: 1.1em; text-transform: uppercase; }
+        .header { border-bottom: 3px solid var(--blue); margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .header h1 { color: var(--blue); font-size: 1.2em; }
 
-        /* Cargador de Excel */
-        #uploadSection { background: #eef2f7; padding: 25px; border-radius: 10px; text-align: center; border: 2px dashed var(--blue); margin-bottom: 20px; }
-        .btn-blue { background: var(--blue); color: white; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-block; border: none; }
+        /* Cargador Inicial */
+        #uploadSection { background: #eef2f7; padding: 30px; border-radius: 10px; text-align: center; border: 2px dashed var(--blue); margin-bottom: 20px; }
+        .btn-file { background: var(--blue); color: white; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-block; margin-top: 15px; }
 
-        /* IA y Buscador */
-        .api-box { background: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-        .api-input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-top: 5px; font-size: 0.9em; }
-        
+        /* Panel de IA */
+        .ai-box { background: #f8f9fa; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .api-input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; margin-top: 8px; font-size: 0.9em; }
+
+        /* Buscador Principal */
         .search-area { background: var(--blue); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
         @media (min-width: 600px) { .search-area { flex-direction: row; } }
         #q { flex: 1; padding: 12px; border-radius: 6px; border: none; font-size: 1em; outline: none; }
-        #b { padding: 12px 25px; background: var(--orange); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; min-width: 140px; }
-        #b:disabled { background: #999; }
-
-        /* Resultados IA con Definición */
-        #iaPanel { display: none; background: #fff5f0; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin: 15px 0; }
-        .ia-title { color: var(--orange); font-weight: 800; font-size: 0.8em; text-transform: uppercase; display: block; margin-bottom: 5px; }
-        .ia-def { font-size: 1em; color: #222; font-style: italic; margin-bottom: 10px; }
+        #b { padding: 12px 25px; background: var(--orange); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        #b:disabled { background: #999; cursor: not-allowed; }
 
         /* Diccionario Interno */
-        .dic-toggle { width: 100%; padding: 10px; background: var(--green); color: white; border: none; border-radius: 6px; margin: 15px 0; font-weight: 600; cursor: pointer; }
-        .dic-content { display: none; background: #f0fff4; border: 1px solid var(--green); padding: 15px; border-radius: 10px; }
-        .rule-item { display: flex; justify-content: space-between; background: white; padding: 8px; border-radius: 4px; margin-bottom: 5px; border: 1px solid #ddd; font-size: 0.85em; }
+        .toggle-btn { width: 100%; padding: 10px; background: var(--green); color: white; border: none; border-radius: 6px; margin: 15px 0; font-weight: 600; cursor: pointer; }
+        .dic-panel { display: none; background: #f0fff4; border: 2px solid var(--green); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .dic-form { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
+        @media (min-width: 600px) { .dic-form { grid-template-columns: 2fr 1fr 1fr auto; align-items: end; } }
+        .dic-form input { padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
 
-        /* Tarjetas del Excel */
-        .card { border-left: 6px solid var(--blue); padding: 15px; background: white; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 6px; }
-        .card.ia-match { border-left-color: var(--orange); background: #fffaf5; }
-        .badge { background: var(--blue); color: white; padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 0.8em; }
-
+        /* Resultados */
+        .ia-status-msg { display: none; background: #fff5f0; border: 1px solid var(--orange); padding: 15px; border-radius: 8px; margin-top: 15px; color: #d35400; font-size: 0.95em; line-height: 1.4; }
+        .card { border-left: 6px solid var(--blue); padding: 15px; background: white; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 6px; position: relative; }
+        .card.ia-found { border-left-color: var(--orange); background: #fffaf5; }
+        .code-badge { background: var(--blue); color: white; padding: 4px 12px; border-radius: 15px; font-weight: bold; font-size: 0.85em; }
+        .ia-label { background: var(--orange); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; font-weight: bold; margin-left: 10px; }
+        
         .loading { text-align: center; padding: 20px; font-weight: bold; color: var(--blue); }
-        .footer-links { text-align: center; margin-top: 30px; font-size: 0.7em; color: #999; }
+        .reset-db { font-size: 0.7em; color: #999; cursor: pointer; text-decoration: underline; margin-top: 30px; display: block; text-align: center; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🏥 Hospital de Flores</h1>
-            <div id="dbIndicator" style="font-size: 0.7em; font-weight: bold;">SIN BASE DE DATOS</div>
+            <div id="dbStatus" style="font-size: 0.7em; font-weight: bold;">ESPERANDO BASE DE DATOS...</div>
         </div>
 
-        <div id="uploadArea">
-            <h2 style="color: var(--blue); font-size: 1em;">📂 Paso 1: Carga el archivo ObjetosGasto.csv</h2>
-            <p style="font-size: 0.8em; color: #666; margin: 10px 0;">Solo se hace una vez por computadora.</p>
-            <label class="btn-blue">
-                SELECCIONAR CSV
+        <div id="uploadSection">
+            <h2 style="color: var(--blue); font-size: 1.2em;">📂 Carga Inicial de Objetos</h2>
+            <p style="font-size: 0.85em; color: #666; margin-top: 5px;">Selecciona el archivo <b>ObjetosGasto.csv</b>. Se guardará en la memoria de este navegador para siempre.</p>
+            <label class="btn-file">
+                SELECCIONAR ARCHIVO CSV
                 <input type="file" id="csvFile" accept=".csv" style="display:none;">
             </label>
         </div>
 
-        <div id="appInterface" style="display:none;">
-            <div class="api-box">
-                <label style="font-weight:bold; color:var(--orange); font-size: 0.8em;">🤖 Clave API Gemini:</label>
-                <input type="password" id="apiKey" class="api-input" placeholder="Pega tu clave aquí...">
+        <div id="mainApp" style="display:none;">
+            <div class="ai-box">
+                <label style="font-weight:bold; color:var(--orange); font-size: 0.8em;">🤖 Google Gemini API Key:</label>
+                <input type="password" id="key" class="api-input" placeholder="Pega tu clave AIzaSy...">
             </div>
 
             <div class="search-area">
-                <input type="text" id="q" placeholder="Ej: Atún, Jeringas, 152, Reparación..." onkeypress="if(event.key==='Enter') buscar()">
+                <input type="text" id="q" placeholder="¿Qué quieres clasificar? (Ej: Atun, Jeringa, 111...)" onkeypress="if(event.key==='Enter') buscar()">
                 <button id="b" onclick="buscar()">ANALIZAR</button>
             </div>
 
-            <div id="iaPanel">
-                <span class="ia-title">🤖 Asociación e Inteligencia:</span>
-                <div id="iaDef" class="ia-def"></div>
-                <div id="iaCode" style="font-weight: bold; color: var(--orange);"></div>
-            </div>
-
-            <div id="results"></div>
-
-            <button class="dic-toggle" onclick="toggleDic()">📝 Mi Diccionario de Reglas</button>
-            <div id="dicPanel" class="dic-content">
-                <div style="display:flex; gap:5px; margin-bottom:10px;">
-                    <input type="text" id="nk" placeholder="Palabra" style="flex:2; padding:8px; border:1px solid #ccc;">
-                    <input type="text" id="no" placeholder="Objeto" style="flex:1; padding:8px; border:1px solid #ccc;">
-                    <button onclick="saveRule()" style="background:var(--green); color:white; border:none; padding:8px 15px; border-radius:5px; font-weight:bold; cursor:pointer;">OK</button>
+            <button class="toggle-btn" onclick="toggleDic()">📝 Diccionario Interno (Reglas Hospital)</button>
+            
+            <div id="dic" class="dic-panel">
+                <div class="dic-form">
+                    <input type="text" id="nk" placeholder="Palabra">
+                    <input type="text" id="no" placeholder="Objeto (3 dig)">
+                    <input type="text" id="na" placeholder="Aux (000)" value="000">
+                    <button onclick="addK()" style="background:var(--green); color:white; border:none; padding:10px; border-radius:5px; font-weight:bold; cursor:pointer;">GUARDAR</button>
                 </div>
-                <div id="rulesList"></div>
+                <div id="klist" style="font-size: 0.8em; line-height: 1.6;"></div>
             </div>
 
-            <div class="footer-links">
-                <span style="cursor:pointer; text-decoration:underline;" onclick="resetAll()">⚠️ Borrar Todo y Reiniciar</span>
-            </div>
+            <div id="iaStatus" class="ia-status-msg"></div>
+            <div id="results"></div>
+            
+            <span class="reset-db" onclick="resetDatabase()">⚠️ Borrar base de datos y volver a cargar</span>
         </div>
     </div>
 
     <script>
-        let DATA_EXCEL = [];
-        let MI_DICCIONARIO = JSON.parse(localStorage.getItem('hosp_dic_vFinal') || '{}');
-        let MEMORIA_IA = JSON.parse(localStorage.getItem('hosp_ai_cache_vFinal') || '{}');
-        let estaBuscando = false;
+        let DB_LOCAL = [];
+        let dics = JSON.parse(localStorage.getItem('h_dic') || '{}');
+        let cacheIA = JSON.parse(localStorage.getItem('h_cache_ia') || '{}');
+        let busy = false;
 
         window.onload = () => {
-            document.getElementById('apiKey').value = localStorage.getItem('hosp_key_vFinal') || '';
-            const savedDB = localStorage.getItem('hosp_db_vFinal');
-            if (savedDB) {
-                DATA_EXCEL = JSON.parse(savedDB);
-                mostrarApp();
-            }
-            renderRules();
+            document.getElementById('key').value = localStorage.getItem('h_key') || '';
+            renderD();
+            checkDatabase();
         };
 
-        function mostrarApp() {
-            document.getElementById('uploadArea').style.display = 'none';
-            document.getElementById('appInterface').style.display = 'block';
-            document.getElementById('dbIndicator').innerText = `✅ ${DATA_EXCEL.length} OBJETOS LISTOS`;
-            document.getElementById('dbIndicator').style.color = "var(--green)";
+        // --- GESTIÓN DE LA BASE DE DATOS (LOCALSTORAGE) ---
+        function checkDatabase() {
+            const saved = localStorage.getItem('hospital_db');
+            if (saved) {
+                DB_LOCAL = JSON.parse(saved);
+                document.getElementById('uploadSection').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('dbStatus').innerText = `✅ ${DB_LOCAL.length} OBJETOS LISTOS`;
+                document.getElementById('dbStatus').style.color = "var(--green)";
+            }
         }
 
-        // --- CARGA DE ARCHIVO ---
         document.getElementById('csvFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = (event) => {
-                const lineas = event.target.result.split(/\r?\n/);
-                const tmp = [];
-                for (let i = 1; i < lineas.length; i++) {
-                    const col = lineas[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    if (col.length >= 3) {
-                        tmp.push({
-                            o: col[0].replace(/"/g, '').trim(),
-                            a: col[1].replace(/"/g, '').trim() || "000",
-                            n: col[2].replace(/"/g, '').trim(),
-                            d: (col[3] || "").replace(/"/g, '').trim()
-                        });
-                    }
-                }
-                if (tmp.length > 0) {
-                    localStorage.setItem('hosp_db_vFinal', JSON.stringify(tmp));
-                    location.reload();
-                }
+            reader.onload = function(event) {
+                const text = event.target.result;
+                procesarCSV(text);
             };
             reader.readAsText(file, 'ISO-8859-1');
         });
 
-        // --- DICCIONARIO ---
-        function toggleDic() { const p = document.getElementById('dicPanel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
-        function saveRule() {
-            const k = document.getElementById('nk').value.toLowerCase().trim();
-            const o = document.getElementById('no').value.trim();
-            if(k && o) {
-                MI_DICCIONARIO[k] = o;
-                localStorage.setItem('hosp_dic_vFinal', JSON.stringify(MI_DICCIONARIO));
-                renderRules();
-                document.getElementById('nk').value = '';
-                document.getElementById('no').value = '';
+        function procesarCSV(texto) {
+            const lineas = texto.split(/\r?\n/);
+            const dataProcesada = [];
+            for (let i = 1; i < lineas.length; i++) {
+                const col = lineas[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                if (col.length >= 3) {
+                    dataProcesada.push({
+                        o: col[0].replace(/"/g, '').trim(),
+                        a: col[1].replace(/"/g, '').trim() || "000",
+                        n: col[2].replace(/"/g, '').trim(),
+                        d: (col[3] || "").replace(/"/g, '').trim()
+                    });
+                }
             }
-        }
-        function deleteRule(k) {
-            delete MI_DICCIONARIO[k];
-            localStorage.setItem('hosp_dic_vFinal', JSON.stringify(MI_DICCIONARIO));
-            renderRules();
-        }
-        function renderRules() {
-            const list = document.getElementById('rulesList');
-            list.innerHTML = '';
-            for(let k in MI_DICCIONARIO) {
-                list.innerHTML += `<div class="rule-item"><span><b>${k}</b> ➔ Objeto ${MI_DICCIONARIO[k]}</span><span style="color:red; cursor:pointer;" onclick="deleteRule('${k}')">✖</span></div>`;
+            if (dataProcesada.length > 0) {
+                localStorage.setItem('hospital_db', JSON.stringify(dataProcesada));
+                checkDatabase();
             }
         }
 
-        // --- MOTOR DE BÚSQUEDA ---
+        function resetDatabase() {
+            if(confirm("¿Seguro quieres borrar los datos guardados? Deberás cargar el CSV de nuevo.")) {
+                localStorage.removeItem('hospital_db');
+                location.reload();
+            }
+        }
+
+        // --- DICCIONARIO INTERNO ---
+        function toggleDic() { let d = document.getElementById('dic'); d.style.display = d.style.display==='block' ? 'none' : 'block'; }
+        function addK() {
+            let k = document.getElementById('nk').value.toLowerCase().trim();
+            let o = document.getElementById('no').value.trim();
+            let a = document.getElementById('na').value.trim();
+            if(k && o) { dics[k] = {o, a}; localStorage.setItem('h_dic', JSON.stringify(dics)); renderD(); }
+        }
+        function delK(k) { delete dics[k]; localStorage.setItem('h_dic', JSON.stringify(dics)); renderD(); }
+        function renderD() {
+            let l = document.getElementById('klist'); l.innerHTML = '';
+            for(let k in dics) {
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:5px 0;"><span><b>${k}</b> ➔ ${dics[k].o}/${dics[k].a}</span><span onclick="delK('${k}')" style="color:red; cursor:pointer;">✖</span></div>`;
+            }
+        }
+
+        // --- LÓGICA DE BÚSQUEDA ---
         async function buscar() {
-            if(estaBuscando) return;
+            if(busy) return;
             const query = document.getElementById('q').value.trim();
             if(query.length < 2) return;
 
-            estaBuscando = true;
+            busy = true;
             const btn = document.getElementById('b');
             const resDiv = document.getElementById('results');
-            const iaPanel = document.getElementById('iaPanel');
+            const statusDiv = document.getElementById('iaStatus');
             
-            btn.disabled = true; btn.innerText = "⏳...";
+            btn.innerText = "⏳...";
+            btn.disabled = true;
             resDiv.innerHTML = '<div class="loading">Buscando localmente...</div>';
-            iaPanel.style.display = 'none';
+            statusDiv.style.display = 'none';
 
-            const queryL = query.toLowerCase();
+            let qL = query.toLowerCase();
 
-            // 1. Prioridad: ¿Está en mi Diccionario?
-            let manualCode = MI_DICCIONARIO[queryL] || null;
+            // 1. Prioridad: Diccionario Interno
+            let targetCodeFromDic = dics[qL] ? dics[qL].o : null;
 
-            // 2. Buscar en el Excel
-            let locales = DATA_EXCEL.filter(i => i.n.toLowerCase().includes(queryL) || i.o === query || i.o === manualCode);
+            // 2. Buscar en la Base de Datos Local
+            let localMatches = DB_LOCAL.filter(i => 
+                i.n.toLowerCase().includes(qL) || 
+                i.o === query || 
+                i.o === targetCodeFromDic
+            );
 
-            if (locales.length > 0) {
-                mostrarCards(locales, false);
-                // Igual lanzamos la IA por si aporta definición, pero sin bloquear
-                consultarIA(query);
+            if (localMatches.length > 0) {
+                mostrarCards(localMatches, false);
+                busy = false; btn.innerText = "ANALIZAR"; btn.disabled = false;
             } else {
-                // 3. No hay nada local, forzar IA
-                resDiv.innerHTML = '<div class="loading">🤖 Analizando en la web con IA...</div>';
-                await consultarIA(query);
+                // 3. Si no hay nada, pedirle a la IA que busque en la web y asocie
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = `🤖 No encontré "${query}" en el Excel. Consultando a la red...`;
+                
+                let aiCode = await consultarIA(query);
+                
+                if (aiCode) {
+                    let aiMatches = DB_LOCAL.filter(i => i.o === aiCode);
+                    if (aiMatches.length > 0) {
+                        statusDiv.innerHTML = `✨ IA identificó "${query}" como Objeto ${aiCode}`;
+                        mostrarCards(aiMatches, true, query);
+                    } else {
+                        resDiv.innerHTML = `<div class="card ia-found"><h3>Sugerencia IA: Objeto ${aiCode}</h3><p>La IA asocia "${query}" al código ${aiCode}, pero no está en tu archivo actual.</p></div>`;
+                    }
+                } else {
+                    resDiv.innerHTML = '<p style="text-align:center; padding:20px;">No se pudo encontrar una asociación.</p>';
+                }
+                busy = false; btn.innerText = "ANALIZAR"; btn.disabled = false;
             }
-
-            estaBuscando = false; btn.disabled = false; btn.innerText = "ANALIZAR";
         }
 
-        async function consultarIA(query) {
-            const key = document.getElementById('apiKey').value.trim();
-            const iaPanel = document.getElementById('iaPanel');
-            const iaDef = document.getElementById('iaDef');
-            
-            if(!key) return;
-            localStorage.setItem('hosp_key_vFinal', key);
+        async function consultarIA(q) {
+            const key = document.getElementById('key').value.trim();
+            if (!key) return null;
+            localStorage.setItem('h_key', key);
 
-            if(MEMORIA_IA[query.toLowerCase()]) {
-                mostrarResultadoIA(MEMORIA_IA[query.toLowerCase()]);
-                return;
-            }
+            if(cacheIA[q.toLowerCase()]) return cacheIA[q.toLowerCase()];
 
             try {
-                const prompt = `Actúa como experto contable de Uruguay. Analiza el gasto: "${query}". 
-                Responde únicamente en este formato JSON:
-                {"codigo": "número de 3 dígitos", "definicion": "explicación de qué es el producto y por qué pertenece a ese objeto de gasto en el clasificador CGN"}`;
-
-                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
+                const prompt = `Actúa como experto contable de Uruguay. Analiza: "${q}". ¿A qué OBJETO DE GASTO de la CGN (011-923) pertenece? Responde ÚNICAMENTE el número de 3 dígitos. Si es comida pon 111, si es medicina 152, si es repuesto de auto 273.`;
+                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                    method: "POST", headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
-
-                const data = await resp.json();
-                let text = data.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
-                const aiObj = JSON.parse(text);
-
-                if(aiObj.codigo) {
-                    MEMORIA_IA[query.toLowerCase()] = aiObj;
-                    localStorage.setItem('hosp_ai_cache_vFinal', JSON.stringify(MEMORIA_IA));
-                    mostrarResultadoIA(aiObj);
+                const d = await r.json();
+                const code = d.candidates[0].content.parts[0].text.trim().substring(0,3);
+                
+                if (!isNaN(code)) {
+                    cacheIA[q.toLowerCase()] = code;
+                    localStorage.setItem('h_cache_ia', JSON.stringify(cacheIA));
+                    return code;
                 }
-            } catch (e) { console.error("Error IA"); }
+            } catch (e) { return null; }
         }
 
-        function mostrarResultadoIA(aiObj) {
-            const iaPanel = document.getElementById('iaPanel');
-            const iaDef = document.getElementById('iaDef');
+        function mostrarCards(items, esIA, qOrig) {
             const resDiv = document.getElementById('results');
-
-            iaPanel.style.display = 'block';
-            iaDef.innerHTML = `"${aiObj.definicion}"`;
-
-            // Buscar la tarjeta oficial del Excel para ese código
-            const tarjetasIA = DATA_EXCEL.filter(i => i.o === aiObj.codigo);
-            if(tarjetasIA.length > 0) {
-                // Si la pantalla estaba vacía o cargando, mostramos la tarjeta
-                if(resDiv.innerHTML.includes("loading") || resDiv.innerHTML.includes("Buscando")) {
-                    mostrarCards(tarjetasIA, true);
-                }
-            }
-        }
-
-        function mostrarCards(items, esIA) {
-            const resDiv = document.getElementById('results');
-            if(!esIA) resDiv.innerHTML = ''; 
-            else resDiv.innerHTML = '<p style="font-size:0.7em; font-weight:bold; color:var(--orange); margin-bottom:5px;">TARJETA ASOCIADA POR IA:</p>';
-
-            items.slice(0, 25).forEach(r => {
+            resDiv.innerHTML = esIA ? `<p style="font-size:0.7em; font-weight:bold; color:var(--orange); margin-top:15px;">ASOCIACIÓN POR INTELIGENCIA ARTIFICIAL:</p>` : '';
+            items.slice(0, 30).forEach(r => {
                 resDiv.innerHTML += `
-                    <div class="card ${esIA ? 'ia-match' : ''}">
-                        <span class="badge">OBJETO ${r.o} / ${r.a}</span>
+                    <div class="card ${esIA ? 'ia-found' : ''}">
+                        <span class="code-badge">OBJETO ${r.o} / ${r.a}</span>
+                        ${esIA ? `<span class="ia-label">PARA "${qOrig.toUpperCase()}"</span>` : ''}
                         <h3 style="margin:8px 0 4px 0; color:var(--blue); font-size:1em;">${r.n}</h3>
-                        <p style="color:#666; font-size:0.85em;">${r.d}</p>
+                        <p style="color:#666; font-size:0.8em; line-height:1.4;">${r.d}</p>
                     </div>`;
             });
         }
-
-        function resetAll() { if(confirm("¿Borrar base de datos, diccionario y memoria?")) { localStorage.clear(); location.reload(); } }
     </script>
 </body>
 </html>
