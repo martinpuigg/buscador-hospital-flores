@@ -4,177 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clasificador IA - Hospital de Flores</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --blue: #003ca5; --orange: #ff6b00; --green: #28a745; --gray: #f4f7f6; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-        body { background: var(--gray); padding: 20px; color: #333; }
-        .container { max-width: 1100px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .header { border-bottom: 3px solid var(--blue); margin-bottom: 25px; padding-bottom: 15px; }
-        .header h1 { color: var(--blue); font-size: 1.6em; }
-        .status-panel { background: #eef2f7; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-around; flex-wrap: wrap; border: 1px solid #d1d9e6; }
-        .stat-badge { font-weight: 600; font-size: 0.9em; color: var(--blue); }
-        .api-input-group { margin: 20px 0; text-align: center; background: #fff5f0; padding: 15px; border-radius: 10px; border: 1px dashed var(--orange); }
-        input[type="password"], input[type="text"] { padding: 10px; border: 2px solid #ddd; border-radius: 5px; outline: none; }
-        .upload-zone { border: 3px dashed var(--blue); padding: 40px; text-align: center; border-radius: 15px; cursor: pointer; }
-        .search-section { display: none; margin-top: 20px; }
-        .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
-        .search-bar input { flex: 1; padding: 15px; font-size: 1.1em; border: 2px solid var(--blue); border-radius: 8px; }
-        .search-bar button { padding: 15px 30px; background: var(--blue); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; }
-        #aiOutput { display: none; background: #fff8f0; border: 2px solid var(--orange); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-        .ai-confirm-btn { background: var(--green); color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: 600; width: 100%; }
-        .results-grid { display: grid; gap: 15px; }
-        .card { background: white; padding: 20px; border-radius: 10px; border: 1px solid #eee; border-left: 6px solid var(--blue); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .match-badge { background: #e8f5e9; color: var(--green); padding: 4px 8px; border-radius: 5px; font-size: 0.8em; float: right; font-weight: bold; }
-        .hidden { display: none !important; }
+        /* ==========================================
+           🎨 ESTILOS Y RESPONSIVE
+           ========================================== */
+        :root { --blue: #003ca5; --orange: #ff6b00; --green: #28a745; --bg: #f4f7f6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: #333; padding: 10px; min-height: 100vh; }
+        .container { max-width: 1000px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+        /* Cabecera */
+        .header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; border-bottom: 3px solid var(--blue); margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .header-text h1 { font-size: 1.5em; color: var(--blue); font-weight: 700; }
+        .header-text p { color: #666; font-size: 0.9em; }
+
+        /* Panel de Estado IA */
+        .status-bar { background: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; text-align: center; }
+        .stat-item { font-size: 0.85em; font-weight: 600; color: var(--blue); }
+        .stat-val { color: var(--orange); font-weight: 700; }
+
+        /* Configuración API */
+        .api-config { background: #fff5f0; border: 1px dashed var(--orange); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
+        .api-config input { padding: 10px; width: 100%; max-width: 350px; border: 2px solid #ddd; border-radius: 6px; margin: 10px 0; outline: none; }
+        .btn-save-key { background: var(--orange); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+
+        /* Sección Carga CSV */
+        .upload-section { border: 2px dashed var(--blue); padding: 30px; text-align: center; border-radius: 10px; cursor: pointer; background: #f0f4f8; transition: 0.3s; }
+        .upload-section:hover { background: #e2e8f0; }
+
+        /* Buscador */
+        .main-ui { display: none; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-box input { flex: 1; padding: 15px; border: 2px solid var(--blue); border-radius: 8px; font-size: 1em; font-family: inherit; }
+        .search-box button { background: var(--blue); color: white; border: none; padding: 0 25px; border-radius: 8px; font-weight: 700; cursor: pointer; }
+
+        /* Resultados IA */
+        #aiResult { display: none; background: #fff8f0; border: 2px solid var(--orange); padding: 20px; border-radius: 10px; margin-bottom: 20px; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .btn-confirm { background: var(--green); color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: 700; margin-top: 10px; cursor: pointer; }
+
+        /* Tarjetas de Resultados Locales */
+        .results-list { display: grid; gap: 15px; }
+        .card { background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee; border-left: 5px solid var(--blue); box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: relative; }
+        .card-code { font-weight: 800; color: var(--blue); font-size: 1.1em; margin-bottom: 5px; }
+        .card-name { font-weight: 600; margin-bottom: 5px; display: block; }
+        .card-desc { font-size: 0.85em; color: #666; line-height: 1.4; }
+        .badge-mem { background: #e8f5e9; color: var(--green); padding: 3px 8px; border-radius: 4px; font-size: 0.7em; position: absolute; top: 10px; right: 10px; font-weight: 700; }
+
+        /* Responsive movil */
+        @media (max-width: 600px) {
+            .search-box { flex-direction: column; }
+            .search-box button { padding: 15px; }
+            .header { justify-content: center; text-align: center; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h1>🏥 Hospital de Flores "Edison Camacho"</h1>
-        <p>Contaduría - Clasificador con IA Gemini 1.5 Flash</p>
-    </div>
-
-    <div class="status-panel">
-        <div class="stat-badge">📊 Memoria: <span id="memCount">0</span> reglas</div>
-        <div class="stat-badge">🤖 IA Hoy: <span id="aiUsage">0</span>/100</div>
-        <div class="stat-badge">📂 Base: <span id="cgnCount">0</span> objetos</div>
-    </div>
-
-    <div class="api-input-group">
-        <label>🔑 API Key: </label>
-        <input type="password" id="apiKey" placeholder="AIzaSy...">
-        <button onclick="guardarKey()" style="padding: 10px; cursor:pointer;">Guardar</button>
-    </div>
-
-    <div id="uploadSection" class="upload-zone" onclick="document.getElementById('csvFile').click()">
-        <h2>📥 Cargar ObjetosGasto.csv</h2>
-        <input type="file" id="csvFile" class="hidden" accept=".csv">
-    </div>
-
-    <div id="mainUI" class="search-section">
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="¿Qué quieres clasificar?" onkeypress="if(event.key==='Enter') ejecutarBusqueda()">
-            <button onclick="ejecutarBusqueda()">ANALIZAR</button>
+        <div class="header-text">
+            <h1>🏥 Hospital de Flores</h1>
+            <p>Contaduría | Clasificador Inteligente (Gemini 1.5 Flash)</p>
         </div>
-        <div id="aiOutput"></div>
-        <div id="resultsList" class="results-grid"></div>
     </div>
-</div>
 
-<script>
-    let baseDatos = [];
-    let memoriaLocal = JSON.parse(localStorage.getItem('hosp_mem') || '{}');
-    let usoDia = parseInt(localStorage.getItem('hosp_uso') || '0');
+    <div class="status-bar">
+        <div class="stat-item">Reglas en Memoria: <span id="memCount" class="stat-val">0</span></div>
+        <div class="stat-item">IA Hoy: <span id="aiUsage" class="stat-val">0</span>/100</div>
+        <div class="stat-item">Base CGN: <span id="cgnCount" class="stat-val">0</span></div>
+    </div>
 
-    function guardarKey() {
-        const key = document.getElementById('apiKey').value.trim();
-        localStorage.setItem('hosp_key', key);
-        alert("Clave guardada");
-    }
+    <div class="api-config">
+        <p style="font-size: 0.85em; font-weight: 600; color: var(--orange);">🔑 Configuración de IA:</p>
+        <input type="password" id="apiKeyInput" placeholder="Pega tu clave Gemini aquí...">
+        <button class="btn-save-key" onclick="saveKey()">Guardar Clave</button>
+    </div>
 
-    window.onload = () => {
-        document.getElementById('apiKey').value = localStorage.getItem('hosp_key') || '';
-        actualizarUI();
-    };
-
-    function actualizarUI() {
-        document.getElementById('memCount').innerText = Object.keys(memoriaLocal).length;
-        document.getElementById('aiUsage').innerText = usoDia;
-        document.getElementById('cgnCount').innerText = baseDatos.length;
-    }
-
-    document.getElementById('csvFile').addEventListener('change', function(e) {
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const lineas = ev.target.result.split('\n');
-            baseDatos = lineas.slice(1).map(l => {
-                const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                return { obj: c[0]?.replace(/"/g,'').trim(), aux: c[1]?.replace(/"/g,'').trim(), nom: c[2]?.replace(/"/g,'').trim(), desc: c[3]?.replace(/"/g,'').trim() };
-            }).filter(i => i.obj);
-            document.getElementById('uploadSection').style.display = 'none';
-            document.getElementById('mainUI').style.display = 'block';
-            actualizarUI();
-        };
-        reader.readAsText(e.target.files[0], 'ISO-8859-1');
-    });
-
-    async function ejecutarBusqueda() {
-        const q = document.getElementById('searchInput').value.trim().toLowerCase();
-        if(!q) return;
-
-        const resultsDiv = document.getElementById('resultsList');
-        const aiDiv = document.getElementById('aiOutput');
-        aiDiv.style.display = 'none';
-
-        // 1. Memoria
-        if(memoriaLocal[q]) {
-            const item = baseDatos.find(i => i.obj === memoriaLocal[q].obj);
-            renderResultados(item ? [item] : [], true);
-            return;
-        }
-
-        // 2. Local
-        const filtrados = baseDatos.filter(i => i.nom.toLowerCase().includes(q) || i.obj.includes(q)).slice(0, 5);
-        renderResultados(filtrados, false);
-
-        // 3. IA
-        if(filtrados.length === 0) consultarIA(q);
-    }
-
-    function renderResultados(lista, esMem) {
-        document.getElementById('resultsList').innerHTML = lista.map(i => `
-            <div class="card">
-                ${esMem ? '<span class="match-badge">APRENDIDO</span>' : ''}
-                <strong>Objeto ${i.obj} / ${i.aux}</strong><br>${i.nom}<br>
-                <small style="color: #666">${i.desc}</small>
-            </div>
-        `).join('');
-    }
-
-    async function consultarIA(query) {
-        const key = localStorage.getItem('hosp_key');
-        if(!key || usoDia >= 100) return;
-
-        const aiDiv = document.getElementById('aiOutput');
-        aiDiv.innerHTML = "⏳ Analizando con Gemini 1.5 Flash...";
-        aiDiv.style.display = 'block';
-
-        const prompt = `Como contador de ASSE Uruguay, clasifica: "${query}". 
-        Grupo 1: Bienes. Grupo 2: Servicios. Grupo 3: Inversiones.
-        Responde SOLO JSON: {"explicacion":"...", "objeto":"3 digitos", "auxiliar":"3 digitos"}`;
-
-        try {
-            const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({contents: [{parts: [{text: prompt}]}]})
-            });
-            const data = await resp.json();
-            const res = JSON.parse(data.candidates[0].content.parts[0].text.replace(/```json|```/g, ''));
-            
-            usoDia++;
-            localStorage.setItem('hosp_uso', usoDia);
-            actualizarUI();
-
-            aiDiv.innerHTML = `
-                <strong>Sugerencia IA:</strong> ${res.explicacion}<br>
-                <button class="ai-confirm-btn" onclick="aprender('${query}', '${res.objeto}', '${res.auxiliar}')">
-                    CONFIRMAR OBJETO ${res.objeto}
-                </button>`;
-        } catch(e) {
-            aiDiv.innerHTML = "❌ Error: Verifica tu API Key o conexión.";
-        }
-    }
-
-    function aprender(q, obj, aux) {
-        memoriaLocal[q.toLowerCase()] = {obj, aux};
-        localStorage.setItem('hosp_mem', JSON.stringify(memoriaLocal));
-        ejecutarBusqueda();
-        actualizarUI();
-    }
-</script>
-</body>
-</html>
+    <div id="uploadArea" class="upload-section" onclick="document.getElementById('csvInput').click()">
+        <h2>📂 Paso 1: Cargar Objet
