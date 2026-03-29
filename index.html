@@ -1593,6 +1593,28 @@
         window.closeModal = closeModal;
         window.selectWebResult = selectWebResult;
         window.confirmSelection = confirmSelection;
+
+
+// Usa localStorage para guardar:
+- Objetos de gasto cargados del CSV
+- Palabras clave personalizadas  
+- Caché de búsquedas
+- Historial de búsquedas
+
+// Flujo de búsqueda web:
+1. Usuario escribe término no encontrado → Click en "🌐 Buscar en Internet"
+2. Sistema consulta API de DuckDuckGo (gratuita) + fuentes oficiales CGN
+3. Muestra resultados con denominación, código y descripción
+4. Usuario selecciona la mejor concordancia en modal interactivo
+5. Resultado se guarda en keywords personalizadas + caché
+
+
+// Flujo de búsqueda web:
+1. Usuario escribe término no encontrado → Click en "🌐 Buscar en Internet"
+2. Sistema consulta API de DuckDuckGo (gratuita) + fuentes oficiales CGN
+3. Muestra resultados con denominación, código y descripción
+4. Usuario selecciona la mejor concordancia en modal interactivo
+5. Resultado se guarda en keywords personalizadas + caché
     </script>
 </body>
 </html>
