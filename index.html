@@ -3,24 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <title>Clasificador de Gasto</title>
+
 <style>
-body { font-family: Arial; padding:20px; }
-input { padding:10px; width:300px; }
-button { padding:10px; }
-.result { margin-top:20px; padding:15px; border:2px solid #003ca5; border-radius:10px; }
+body {
+    font-family: Arial;
+    padding: 20px;
+    background: #f5f7fb;
+}
+
+h2 {
+    color: #003ca5;
+}
+
+input {
+    padding: 12px;
+    width: 320px;
+    border-radius: 8px;
+    border: 2px solid #003ca5;
+}
+
+button {
+    padding: 12px 20px;
+    background: #003ca5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 20px;
+    border-left: 5px solid #003ca5;
+    background: white;
+    border-radius: 10px;
+}
+
 .sugerencias span {
-    background:#003ca5; color:#fff; padding:5px 10px; margin:5px;
-    display:inline-block; cursor:pointer; border-radius:5px;
+    background: #003ca5;
+    color: white;
+    padding: 6px 12px;
+    margin: 5px;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
 }
 </style>
 </head>
+
 <body>
 
 <h2>🏥 Clasificador de Objetos del Gasto</h2>
 
 <input type="file" id="csvFile"><br><br>
 
-<input type="text" id="searchInput" placeholder="Ej: carne, computadora..." onkeypress="if(event.key==='Enter') buscar()">
+<input type="text" id="searchInput" placeholder="Ej: carne, computadora..." 
+onkeypress="if(event.key==='Enter') buscar()">
+
 <button onclick="buscar()">Buscar</button>
 
 <div class="sugerencias" id="sugerencias"></div>
@@ -28,9 +68,30 @@ button { padding:10px; }
 <div id="resultado"></div>
 
 <script>
+
 let datos = [];
 
-// ================= CSV =================
+// ================= CSV ROBUSTO =================
+function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let char of line) {
+        if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+            result.push(current);
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+
+    result.push(current);
+    return result;
+}
+
 document.getElementById('csvFile').addEventListener('change', function(e){
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -40,19 +101,20 @@ document.getElementById('csvFile').addEventListener('change', function(e){
         datos = [];
 
         for(let i=1;i<lines.length;i++){
-            let cols = lines[i].split(',');
+            let cols = parseCSVLine(lines[i]);
 
             if(cols.length >= 4){
                 datos.push({
                     objeto: cols[0].trim(),
                     auxiliar: cols[1].trim(),
-                    denominacion: cols[2].trim(),
-                    descripcion: cols[3].trim()
+                    denominacion: cols[2].replace(/^"|"$/g,'').trim(),
+                    descripcion: cols[3].replace(/^"|"$/g,'').trim()
                 });
             }
         }
 
         alert("CSV cargado: " + datos.length + " registros");
+        console.log(datos.slice(0,5));
     };
 
     reader.readAsText(file);
@@ -69,24 +131,63 @@ const alimentos = [
 'pollo','pescado','verdura','fruta','comida','alimento','leche','queso','huevo'
 ];
 
-// ================= DEFINICIÓN =================
-function definicion(item){
-    return `Corresponde a un gasto utilizado para ${item.denominacion.toLowerCase()}, asociado al objeto ${item.objeto}.`;
+// ================= DEFINICIÓN INTELIGENTE =================
+function generarDefinicionInteligente(item){
+
+    const denom = (item.denominacion || '').toLowerCase();
+    const objeto = item.objeto;
+
+    let tipo = '';
+    let uso = '';
+
+    if (objeto.startsWith('0')) {
+        tipo = 'remuneración de personal';
+        uso = 'pagos salariales';
+    } 
+    else if (objeto.startsWith('1')) {
+        tipo = 'bien de consumo';
+        uso = 'insumos diarios';
+    } 
+    else if (objeto.startsWith('2')) {
+        tipo = 'servicio';
+        uso = 'servicios operativos';
+    } 
+    else if (objeto.startsWith('3')) {
+        tipo = 'bien de uso';
+        uso = 'equipamiento duradero';
+    } 
+    else {
+        tipo = 'gasto público';
+        uso = 'uso general';
+    }
+
+    if (denom.includes('medic')) uso = 'compra de medicamentos';
+    if (denom.includes('limpieza')) uso = 'higiene hospitalaria';
+    if (denom.includes('combustible')) uso = 'uso de vehículos';
+    if (objeto === '111') uso = 'compra de alimentos';
+    if (denom.includes('computadora')) uso = 'infraestructura tecnológica';
+
+    return `Corresponde a ${tipo}. Se utiliza para ${uso}.`;
 }
 
 // ================= BUSCAR =================
 function buscar(){
+
     const q = normalizar(document.getElementById('searchInput').value);
     const div = document.getElementById('resultado');
 
-    if(!q){ div.innerHTML="Escribí algo"; return; }
+    if(!q){
+        div.innerHTML = "Escribí algo";
+        return;
+    }
 
     let resultado;
 
-    // 🔥 SI ES ALIMENTO → 111 SIEMPRE
+    // 🔥 PRIORIDAD: ALIMENTOS → 111
     if(alimentos.some(a => q.includes(a))){
-        resultado = datos.find(d => d.objeto === '111');
-    } else {
+        resultado = datos.find(d => d.objeto.trim() === '111');
+    } 
+    else {
         resultado = datos
             .map(d => ({
                 ...d,
@@ -96,25 +197,32 @@ function buscar(){
     }
 
     if(!resultado){
-        div.innerHTML="No encontrado";
+        div.innerHTML = "No encontrado";
         return;
     }
+
+    const definicion = generarDefinicionInteligente(resultado);
 
     div.innerHTML = `
         <div class="result">
             <b>${resultado.objeto}/${resultado.auxiliar}</b><br><br>
+
             <b>${resultado.denominacion}</b><br><br>
+
             ${resultado.descripcion}<br><br>
-            🤖 ${definicion(resultado)}
+
+            🤖 ${definicion}
         </div>
     `;
 }
 
 // ================= SUGERENCIAS =================
-const sugerencias = ['carne','harina','computadora','limpieza','medicamento'];
+const sugerencias = ['carne','harina','computadora','medicamento','limpieza'];
 
 document.getElementById('sugerencias').innerHTML =
-    sugerencias.map(s => `<span onclick="document.getElementById('searchInput').value='${s}';buscar()">${s}</span>`).join('');
+    sugerencias.map(s => 
+        `<span onclick="document.getElementById('searchInput').value='${s}';buscar()">${s}</span>`
+    ).join('');
 
 </script>
 
