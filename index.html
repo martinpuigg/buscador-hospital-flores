@@ -3,20 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador Hospital de Flores - Integral</title>
+    <title>Buscador Hospital de Flores - Inteligencia Real</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --blue: #003ca5; --orange: #ff6b00; --green: #28a745; --bg: #f4f7f6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
         body { background: var(--bg); padding: 10px; color: #333; }
         .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .header { border-bottom: 3px solid var(--blue); margin-bottom: 20px; padding-bottom: 10px; display: flex; flex-direction: column; gap: 10px; }
-        @media (min-width: 600px) { .header { flex-direction: row; justify-content: space-between; align-items: center; } }
-        .header h1 { color: var(--blue); font-size: 1.3em; }
+        .header { border-bottom: 3px solid var(--blue); margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .ai-box { background: #f8f9fa; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
         .api-input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; margin-top: 8px; font-size: 0.9em; }
-        .search-section { background: var(--blue); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
-        @media (min-width: 600px) { .search-section { flex-direction: row; } }
+        .search-section { background: var(--blue); padding: 15px; border-radius: 10px; display: flex; gap: 10px; }
         #q { flex: 1; padding: 12px; border-radius: 6px; border: none; font-size: 1em; outline: none; }
         #b { padding: 12px 25px; background: var(--orange); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
         #b:disabled { background: #999; }
@@ -28,39 +25,35 @@
         .ia-res { display: none; background: #fff5f0; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin-top: 15px; }
         .card { border-left: 5px solid var(--blue); padding: 15px; background: white; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-radius: 6px; }
         .card .code { background: var(--blue); color: white; padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 0.85em; }
-        .keyword-item { background: white; padding: 8px; border-radius: 4px; margin-bottom: 5px; display: flex; justify-content: space-between; border: 1px solid #ddd; font-size: 0.85em; }
         .loading { text-align: center; padding: 20px; color: var(--blue); font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div>
-                <h1>🏥 Hospital de Flores</h1>
-                <p style="font-size: 0.8em; color: #666;">Buscador Inteligente Integral (011-923)</p>
-            </div>
-            <div style="font-size: 0.7em; font-weight: bold; color: var(--green);">CARGA AUTOMÁTICA ACTIVA</div>
+            <h1 style="color: var(--blue); font-size: 1.2em;">🏥 Hospital de Flores</h1>
+            <span style="font-size: 0.7em; font-weight: bold; color: var(--green);">BASE 011-923 CARGADA</span>
         </div>
 
         <div class="ai-box">
-            <label style="font-weight:bold; color:var(--orange); font-size: 0.9em;">🔑 Gemini API Key:</label>
+            <label style="font-weight:bold; color:var(--orange); font-size: 0.8em;">🔑 Gemini Key:</label>
             <input type="password" id="key" class="api-input" placeholder="Pega tu clave AIzaSy...">
         </div>
 
         <div class="search-section">
-            <input type="text" id="q" placeholder="¿Qué quieres clasificar? (Ej: 152, Atun, UTE, Suero...)" onkeypress="if(event.key==='Enter') buscar()">
+            <input type="text" id="q" placeholder="Ej: ASADO, JERINGA, UTE..." onkeypress="if(event.key==='Enter') buscar()">
             <button id="b" onclick="buscar()">ANALIZAR</button>
         </div>
 
-        <button class="toggle-btn" onclick="toggleDic()">📝 Diccionario Interno del Hospital</button>
+        <button class="toggle-btn" onclick="toggleDic()">📝 Diccionario Interno (Reglas Guardadas)</button>
         <div id="dic" class="dic-panel">
             <div class="dic-form">
                 <input type="text" id="nk" placeholder="Palabra">
                 <input type="text" id="no" placeholder="Objeto">
                 <input type="text" id="na" placeholder="Aux" value="000">
-                <button onclick="addK()" style="background:var(--green); color:white; border:none; padding:10px; border-radius:4px; font-weight:bold; cursor:pointer;">GUARDAR</button>
+                <button onclick="addK()" style="background:var(--green); color:white; border:none; padding:10px; border-radius:4px; cursor:pointer;">GUARDAR</button>
             </div>
-            <div id="klist"></div>
+            <div id="klist" style="font-size: 0.8em;"></div>
         </div>
 
         <div id="ia" class="ia-res"></div>
@@ -68,28 +61,24 @@
     </div>
 
     <script>
-        // BASE DE DATOS PRE-CARGADA (Del 011 al 923 - Principales Objetos)
+        // BASE DE DATOS LOCAL INYECTADA (011 al 923)
         const DB = [
-            ["011","000","Sueldo básico de cargos","Retribuciones personal presupuestado"],
-            ["021","000","Sueldo básico contratos","Personal contratado"],
-            ["111","000","Alimentos y bebidas","Carnes, verduras, comestibles"],
-            ["141","000","Combustibles","Gasoil, nafta para flota"],
-            ["152","000","Medicamentos","Productos farmacéuticos"],
-            ["191","000","Papelería y oficina","Útiles, resmas, bolígrafos"],
-            ["192","000","Limpieza","Jabones, detergentes, desinfectantes"],
-            ["194","000","Insumos Médicos","Gasas, jeringas, guantes, sueros"],
-            ["211","000","Comunicaciones","Teléfono, internet (ANTEL)"],
-            ["212","000","Agua","Servicio de OSE"],
-            ["213","000","Electricidad","Servicio de UTE"],
-            ["231","000","Pasajes","Boletos y traslados"],
-            ["271","000","Mantenimiento Equipos Médicos","Reparación de aparatología"],
-            ["273","000","Mantenimiento Vehículos","Reparación ambulancias"],
-            ["291","000","Servicio de Limpieza","Contratación externa"],
-            ["323","000","Maquinaria y Equipo","Computación, aire acondicionado"],
-            ["353","000","Vehículos","Compra de ambulancias"],
-            ["711","000","Intereses deuda","Gastos financieros"],
-            ["923","000","Aplicaciones financieras","Movimientos para solventar gastos"]
-        ].map(i => ({o:i[0], a:i[1], n:i[2], d:i[3]}));
+            {o:"011", a:"000", n:"Sueldo básico de cargos", d:"Personal presupuestado"},
+            {o:"111", a:"000", n:"Alimentos y bebidas", d:"Víveres, carnes, pan, leche"},
+            {o:"141", a:"000", n:"Combustibles", d:"Nafta, Gasoil"},
+            {o:"152", a:"000", n:"Medicamentos", d:"Drogas y farmacia"},
+            {o:"191", a:"000", n:"Útiles de oficina", d:"Papelería, resmas"},
+            {o:"192", a:"000", n:"Artículos de limpieza", d:"Jabón, hipoclorito"},
+            {o:"194", a:"000", n:"Insumos Médicos", d:"Jeringas, gasas, vendas"},
+            {o:"211", a:"000", n:"Comunicaciones", d:"ANTEL, Internet"},
+            {o:"212", a:"000", n:"Agua", d:"OSE"},
+            {o:"213", a:"000", n:"Electricidad", d:"UTE"},
+            {o:"231", a:"000", n:"Pasajes", d:"Traslados"},
+            {o:"271", a:"000", n:"Mantenimiento Equipos", d:"Reparación aparatología"},
+            {o:"273", a:"000", n:"Mantenimiento Vehículos", d:"Reparación ambulancia"},
+            {o:"353", a:"000", n:"Vehículos", d:"Compra ambulancia"},
+            {o:"923", a:"000", n:"Aplicaciones financieras", d:"Gastos de capital"}
+        ];
 
         let cache = JSON.parse(localStorage.getItem('h_cache') || '{}');
         let dics = JSON.parse(localStorage.getItem('h_dic') || '{}');
@@ -101,17 +90,20 @@
         };
 
         function toggleDic() { let d = document.getElementById('dic'); d.style.display = d.style.display==='block' ? 'none' : 'block'; }
+        
         function addK() {
             let k = document.getElementById('nk').value.toLowerCase().trim();
             let o = document.getElementById('no').value.trim();
             let a = document.getElementById('na').value.trim();
             if(k && o) { dics[k] = {o, a}; localStorage.setItem('h_dic', JSON.stringify(dics)); renderD(); }
         }
+
         function delK(k) { delete dics[k]; localStorage.setItem('h_dic', JSON.stringify(dics)); renderD(); }
+
         function renderD() {
             let l = document.getElementById('klist'); l.innerHTML = '';
             for(let k in dics) {
-                l.innerHTML += `<div class="keyword-item"><span><b>${k}</b> ➔ ${dics[k].o}/${dics[k].a}</span><button onclick="delK('${k}')" style="background:none;border:none;color:red;cursor:pointer;">✖</button></div>`;
+                l.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span><b>${k}</b> ➔ ${dics[k].o}</span><button onclick="delK('${k}')" style="color:red; border:none; background:none; cursor:pointer;">✖</button></div>`;
             }
         }
 
@@ -119,24 +111,42 @@
             if(busy) return;
             let q = document.getElementById('q').value.trim();
             if(q.length < 2) return;
+
             busy = true;
             let btn = document.getElementById('b');
             btn.disabled = true; btn.innerText = "⏳...";
-            let rDiv = document.getElementById('res');
-            rDiv.innerHTML = '<div class="loading">Buscando...</div>';
             
+            let iaD = document.getElementById('ia');
+            let rDiv = document.getElementById('res');
+            iaD.style.display = 'none';
+            rDiv.innerHTML = '<div class="loading">Buscando localmente...</div>';
+
             let qL = q.toLowerCase();
-            let localResults = DB.filter(i => i.n.toLowerCase().includes(qL) || i.o.includes(qL) || (dics[qL] && i.o === dics[qL].o));
 
-            consultarIA(q);
+            // LÓGICA DE PRIORIDAD
+            // 1. ¿Está en el Diccionario Interno?
+            let results = [];
+            if(dics[qL]) {
+                results = DB.filter(i => i.o === dics[qL].o);
+            } else {
+                // 2. ¿Está en la Base de Datos?
+                results = DB.filter(i => i.n.toLowerCase().includes(qL) || i.o.includes(qL));
+            }
 
-            setTimeout(() => {
-                rDiv.innerHTML = localResults.length ? '' : '<p style="text-align:center; padding:15px; color:#666;">No hay coincidencia exacta. Buscando asociación inteligente...</p>';
-                localResults.forEach(r => {
-                    rDiv.innerHTML += `<div class="card"><span class="code">${r.o} / ${r.a}</span><h3 style="margin:5px 0; color:var(--blue); font-size:1em;">${r.n}</h3><p style="font-size:0.85em; color:#666;">${r.d}</p></div>`;
-                });
-                busy = false; btn.disabled = false; btn.innerText = "ANALIZAR";
-            }, 300);
+            // 3. ¿Necesitamos a la IA? (Solo si no hay resultados locales claros)
+            if (results.length === 0) {
+                await consultarIA(q);
+            } else {
+                // Si encontramos algo local, igual consultamos IA en paralelo pero sin bloquear
+                consultarIA(q);
+            }
+
+            rDiv.innerHTML = results.length ? '' : '<p style="text-align:center; padding:15px; color:#666;">No hay coincidencia literal. Esperando asociación de la IA...</p>';
+            results.forEach(r => {
+                rDiv.innerHTML += `<div class="card"><span class="code">Objeto ${r.o} / ${r.a}</span><h3 style="margin:5px 0; color:var(--blue); font-size:1em;">${r.n}</h3><p style="font-size:0.85em; color:#666;">${r.d}</p></div>`;
+            });
+
+            busy = false; btn.disabled = false; btn.innerText = "ANALIZAR";
         }
 
         async function consultarIA(q) {
@@ -144,11 +154,18 @@
             let k = document.getElementById('key').value.trim();
             if(!k) return;
             localStorage.setItem('h_key', k);
-            if(cache[q.toLowerCase()]) { mostrarIA(cache[q.toLowerCase()]); return; }
+
+            if(cache[q.toLowerCase()]) {
+                iaD.style.display = 'block';
+                iaD.innerHTML = `<h4 style="color:var(--orange); font-size:0.9em; margin-bottom:5px;">🤖 Asociación Inteligente:</h4><p style="font-size:0.9em;">${cache[q.toLowerCase()]}</p>`;
+                return;
+            }
+
             iaD.style.display = 'block';
-            iaD.innerHTML = '<div class="loading">🤖 La IA está asociando el gasto...</div>';
+            iaD.innerHTML = '<div class="loading">🤖 La IA está asociando...</div>';
+
             try {
-                let p = `Actúa como experto contable CGN Uruguay. Clasifica: "${q}". Si no está en la lista de gastos, búscala en internet, identifica qué es y asóciala con el OBJETO DE GASTO de 3 dígitos correcto entre 011 y 923. Respuesta corta: "Se asocia al Objeto [NÚMERO] porque [EXPLICACIÓN]".`;
+                let p = `Eres experto contable CGN Uruguay. Clasifica el gasto "${q}". Si no es común, búscala en internet y asóciala al objeto de 3 dígitos (011-923). Respuesta corta: "Se asocia al Objeto XXX porque [EXPLICACIÓN]".`;
                 let r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`, {
                     method: "POST", headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({ contents: [{ parts: [{ text: p }] }] })
@@ -157,13 +174,10 @@
                 let txt = d.candidates[0].content.parts[0].text;
                 cache[q.toLowerCase()] = txt;
                 localStorage.setItem('h_cache', JSON.stringify(cache));
-                mostrarIA(txt);
-            } catch(e) { iaD.innerHTML = "⚠️ Espera 1 min para volver a consultar."; }
-        }
-
-        function mostrarIA(txt) {
-            let iaD = document.getElementById('ia'); iaD.style.display = 'block';
-            iaD.innerHTML = `<h4 style="color:var(--orange); font-size:0.9em; margin-bottom:5px;">🤖 Asociación Inteligente:</h4><p style="font-size:0.9em;">${txt}</p>`;
+                iaD.innerHTML = `<h4 style="color:var(--orange); font-size:0.9em; margin-bottom:5px;">🤖 Asociación Inteligente:</h4><p style="font-size:0.9em;">${txt}</p>`;
+            } catch(e) {
+                iaD.innerHTML = "⚠️ Límite de velocidad. Por favor, esperá un minuto.";
+            }
         }
     </script>
 </body>
