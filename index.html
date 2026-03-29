@@ -47,7 +47,8 @@
         }
         
         .ai-status {
-            background: rgba(0,60,165,0.1);            border: 2px solid #003ca5;
+            background: rgba(0,60,165,0.1);
+            border: 2px solid #003ca5;
             padding: 15px;
             border-radius: 10px;
             text-align: center;
@@ -96,7 +97,8 @@
         }
         .stat-number {
             font-size: 2em;
-            font-weight: 700;            color: #003ca5;
+            font-weight: 700;
+            color: #003ca5;
         }
         .stat-label {
             font-size: 0.9em;
@@ -145,7 +147,8 @@
             color: #ffffff;
             border: none;
             border-radius: 8px;
-            cursor: pointer;            font-weight: 600;
+            cursor: pointer;
+            font-weight: 600;
             font-family: 'Montserrat', sans-serif;
             transition: all 0.3s;
         }
@@ -194,7 +197,8 @@
             font-family: 'Montserrat', sans-serif;
             transition: all 0.3s;
         }
-        .keyword-item-delete:hover {            background: #c82333;
+        .keyword-item-delete:hover {
+            background: #c82333;
         }
         
         .search-container {
@@ -243,7 +247,8 @@
             padding: 10px 20px;
             background: #003ca5;
             color: #ffffff;
-            border: none;            border-radius: 20px;
+            border: none;
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s;
             font-family: 'Montserrat', sans-serif;
@@ -292,7 +297,8 @@
             border-left: 4px solid #003ca5;
             padding: 25px;
             border-radius: 10px;
-            transition: all 0.3s;            cursor: pointer;
+            transition: all 0.3s;
+            cursor: pointer;
             box-shadow: 0 2px 10px rgba(0,60,165,0.1);
         }
         .result-card:hover {
@@ -341,7 +347,8 @@
             background: rgba(0,60,165,0.1);
             color: #003ca5;
             padding: 5px 12px;
-            border-radius: 15px;            font-size: 0.85em;
+            border-radius: 15px;
+            font-size: 0.85em;
             margin-top: 10px;
         }
         .grupo-tag {
@@ -374,6 +381,61 @@
         }
         .no-results { text-align: center; padding: 50px; color: #666; }
         
+        .definition-panel {
+            background: rgba(0,60,165,0.05);
+            border: 2px solid #003ca5;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .definition-panel h3 {
+            color: #003ca5;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .definition-content {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #003ca5;
+        }
+        .definition-term {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #003ca5;
+            margin-bottom: 10px;
+        }
+        .definition-text {
+            color: #666;
+            line-height: 1.8;
+            font-size: 1em;
+        }
+        .definition-objects {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid rgba(0,60,165,0.2);
+        }
+        .definition-objects h4 {
+            color: #003ca5;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .object-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .object-item {
+            background: rgba(0,60,165,0.1);
+            color: #003ca5;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
         .history-section {
             display: none;
             margin-top: 30px;
@@ -390,7 +452,8 @@
             background: #ffffff;
             padding: 12px 18px;
             border-radius: 8px;
-            margin-bottom: 10px;            cursor: pointer;
+            margin-bottom: 10px;
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -434,37 +497,6 @@
             transform: scale(1.05);
         }
         
-        .internet-results {
-            display: none;
-            background: rgba(0,60,165,0.05);
-            border: 2px solid #003ca5;
-            padding: 20px;
-            border-radius: 10px;            margin-bottom: 20px;
-        }
-        .internet-results h4 {
-            color: #003ca5;
-            margin-bottom: 15px;
-        }
-        .uruguay-source {
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 3px solid #003ca5;
-        }
-        .uruguay-source h5 {
-            color: #003ca5;
-            margin-bottom: 8px;
-        }
-        .uruguay-source a {
-            color: #003ca5;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .uruguay-source a:hover {
-            text-decoration: underline;
-        }
-        
         @media (max-width: 768px) {
             .header { flex-direction: column; text-align: center; }
             .logo-container { flex-direction: column; }
@@ -488,8 +520,9 @@
                 </div>
             </div>
         </div>
-                <div class="ai-status" id="aiStatus">
-            🇺🇾 <span id="aiStatusText">Buscador Uruguay - Cargá tu archivo CSV</span> | 
+        
+        <div class="ai-status" id="aiStatus">
+            📋 <span id="aiStatusText">Sistema listo - Cargá tu archivo CSV</span> | 
             🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
             📚 Palabras personalizadas: <span id="customKeywordsCount">0</span>
         </div>
@@ -537,7 +570,8 @@
             <p style="margin-bottom: 20px; color: #666;">
                 Agregá tus propias palabras para que el buscador las reconozca y las asocie a objetos de gasto.
             </p>
-                        <div class="add-keyword-form">
+            
+            <div class="add-keyword-form">
                 <div class="form-group">
                     <label for="newKeyword">Palabra o Término:</label>
                     <input type="text" id="newKeyword" placeholder="Ej: insumos, descartables, lima...">
@@ -557,16 +591,13 @@
                 <p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>
             </div>
             
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <div class="export-import-btns" style="display: flex; gap: 10px; margin-top: 20px;">
                 <button onclick="exportCustomKeywords()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📤 Exportar Palabras</button>
                 <button onclick="document.getElementById('importFile').click()" style="background: #28a745; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📥 Importar Palabras</button>
                 <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImport(event)">
                 <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">🗑️ Limpiar Todas</button>
             </div>
         </div>
-        
-        <!-- Resultados de Internet -->
-        <div class="internet-results" id="internetResults"></div>
         
         <!-- Buscador -->
         <div class="search-container" id="searchContainer">
@@ -586,7 +617,8 @@
                 <button class="filter-btn" onclick="setLimite(100)">100 resultados</button>
                 <button class="filter-btn" onclick="filtrarGrupo('0')">Grupo 0</button>
                 <button class="filter-btn" onclick="filtrarGrupo('1')">Grupo 1</button>
-                <button class="filter-btn" onclick="filtrarGrupo('2')">Grupo 2</button>                <button class="filter-btn" onclick="filtrarGrupo('3')">Grupo 3</button>
+                <button class="filter-btn" onclick="filtrarGrupo('2')">Grupo 2</button>
+                <button class="filter-btn" onclick="filtrarGrupo('3')">Grupo 3</button>
                 <button class="filter-btn" onclick="filtrarGrupo('4')">Grupo 4</button>
                 <button class="filter-btn" onclick="filtrarGrupo('5')">Grupo 5</button>
                 <button class="filter-btn" onclick="filtrarGrupo('6')">Grupo 6</button>
@@ -601,6 +633,9 @@
                 <div class="sugerencias-grid" id="sugerenciasGrid"></div>
             </div>
         </div>
+        
+        <!-- Panel de Definición -->
+        <div id="definitionPanel" class="definition-panel" style="display: none;"></div>
         
         <div id="results" class="results-container"></div>
         
@@ -624,81 +659,121 @@
         let searchHistory = [];
         
         // ============================================
-        // 🧠 BASE DE CONOCIMIENTO - MAPEO SEMÁNTICO
+        // 📖 DICCIONARIO INTEGRADO DE DEFINICIONES
         // ============================================
-        const keywordsMap = {
-            // Alimentos (111)
-            'harina': ['111'], 'lechuga': ['111'], 'arroz': ['111'], 'carne': ['111'],
-            'aceite': ['111'], 'aceite comestible': ['111'], 'aceite de cocina': ['111'],
-            'azucar': ['111'], 'azúcar': ['111'], 'sal': ['111'], 'fideo': ['111'], 'pasta': ['111'],
-            
-            // Sueldos (011, 021, 031)
-            'sueldo': ['011', '021', '031'], 'salario': ['011', '021'],
-            
-            // Combustibles (141)            'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'],
-            'lubricante': ['141'], 'aceite motor': ['141'],
-            
-            // Medicamentos (152)
-            'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'], 'fármaco': ['152'],
-            
-            // Vehículos (353)
-            'vehiculo': ['353'], 'vehículo': ['353'], 'auto': ['353'], 'camioneta': ['353'],
-            
-            // Internación (283)
-            'internacion': ['283'], 'internación': ['283'], 'hospital': ['283'],
-            
-            // Computadoras (323)
-            'computadora': ['323'], 'laptop': ['323'], 'notebook': ['323'],
-            
-            // Limpieza (192)
-            'limpieza': ['192'], 'jabon': ['192'], 'jabón': ['192'], 'escoba': ['192'],
-            
-            // Electricidad/Agua/Teléfono (211, 212, 213)
-            'electricidad': ['213'], 'luz': ['213'], 'agua': ['212'],
-            'telefono': ['211'], 'teléfono': ['211'], 'internet': ['211'],
-            
-            // Útiles de oficina (191)
-            'regla': ['191', '176'], 'util': ['191'], 'útil': ['191'], 'oficina': ['191'],
-            'lapiz': ['191'], 'lápiz': ['191'], 'papel': ['131', '191'],
-            
-            // Viáticos/Pasajes (231, 234, 235)
-            'viatico': ['234', '235'], 'viático': ['234', '235'], 'pasaje': ['231'],
-            'alquiler': ['251'],
-            
-            // Jubilación/Becas (571, 577)
-            'jubilacion': ['571'], 'jubilación': ['571'], 'beca': ['577'],
-            
-            // Herramientas (176)
-            'herramienta': ['176'], 'ferreteria': ['176'], 'ferretería': ['176'],
-            
-            // Plomería (271, 163, 154)
-            'plomeria': ['271', '163', '154'], 'plomería': ['271', '163', '154'],
-            'cañeria': ['271', '163'], 'cañería': ['271', '163'], 'tuberia': ['271', '163'],
-            'grifo': ['271', '163'], 'canilla': ['271', '163'],
-            
-            // Material Médico (194)
-            'material medico': ['194'], 'material médico': ['194'],
-            'quirurgico': ['194'], 'quirúrgico': ['194'], 'jeringa': ['194'],
-            
-            // Capacitación (284)
-            'capacitacion': ['284'], 'capacitación': ['284'], 'curso': ['284'],
-            
-            // Vigilancia (291)
-            'vigilancia': ['291'], 'seguridad': ['291'],            
-            // Mobiliario (326)
-            'mueble': ['326'], 'escritorio': ['326'], 'silla': ['326'], 'mesa': ['326'],
-            
-            // Impuestos (263)
-            'impuesto': ['263'], 'tasa': ['263'], 'dgi': ['263'], 'bps': ['263'],
-            
-            // Construcción (387)
-            'construccion': ['387'], 'construcción': ['387'], 'cemento': ['387'], 'ladrillo': ['387'],
-            
-            // Seguros (264)
-            'seguro': ['264'], 'poliza': ['264'], 'póliza': ['264'],
-            
-            // Mantenimiento (271, 273)
-            'mantenimiento': ['271', '273'], 'reparacion': ['271', '273'], 'reparación': ['271', '273'],
+        const diccionarioDefiniciones = {
+            'harina': {
+                definicion: 'Polvo fino obtenido de la molienda de cereales, principalmente trigo. En Uruguay se usa para pan, pastas, etc.',
+                objetos: ['111']
+            },
+            'sueldo': {
+                definicion: 'Retribución económica que percibe un trabajador por sus servicios. En el sector público se clasifica según el tipo de cargo y régimen.',
+                objetos: ['011', '021', '031']
+            },
+            'combustible': {
+                definicion: 'Sustancia que se quema para producir energía. Incluye nafta, gasoil, diesel y otros derivados del petróleo.',
+                objetos: ['141']
+            },
+            'medicamento': {
+                definicion: 'Sustancia o preparado utilizado para prevenir, tratar o aliviar enfermedades. Se clasifica según uso hospitalario o ambulatorio.',
+                objetos: ['152']
+            },
+            'vehículo': {
+                definicion: 'Medio de transporte automotor. Incluye automóviles, motos, camionetas, ambulancias y otros vehículos oficiales.',
+                objetos: ['353']
+            },
+            'internación': {
+                definicion: 'Servicio de alojamiento y atención médica en establecimientos de salud para pacientes que requieren permanencia.',
+                objetos: ['283']
+            },
+            'regla': {
+                definicion: 'Instrumento de medición y dibujo. También se refiere a útiles de oficina para medición y trazado.',
+                objetos: ['191', '176']
+            },
+            'útiles': {
+                definicion: 'Elementos necesarios para el funcionamiento de oficinas. Incluye lápices, carpetas, carpetas y otros materiales de escritorio.',
+                objetos: ['191']
+            },
+            'aceite': {
+                definicion: 'Líquido graso de origen vegetal o animal. Puede ser comestible (cocina) o industrial (lubricante).',
+                objetos: ['111', '141']
+            },
+            'lima': {
+                definicion: 'Herramienta de acero con superficie rugosa para limar metales, madera u otros materiales. Se usa en mantenimiento y talleres.',
+                objetos: ['176']
+            },
+            'ferretería': {
+                definicion: 'Conjunto de herramientas y materiales para construcción, mantenimiento y reparaciones. Incluye destornilladores, martillos, etc.',
+                objetos: ['176']
+            },
+            'plomería': {
+                definicion: 'Trabajos relacionados con instalaciones de agua, desagües y cañerías. Incluye grifos, cañerías, válvulas y accesorios.',
+                objetos: ['271', '163', '154']
+            },
+            'material médico': {
+                definicion: 'Insumos y equipos utilizados en atención de salud. Incluye jeringas, gasas, vendajes y otros materiales descartables.',
+                objetos: ['194']
+            },
+            'limpieza': {
+                definicion: 'Servicios y productos para mantener la higiene de espacios. Incluye jabones, escobas, lavandinas y otros elementos de aseo.',
+                objetos: ['192', '278']
+            },
+            'electricidad': {
+                definicion: 'Energía eléctrica para alumbrado y uso en oficinas. Se factura según consumo medido.',
+                objetos: ['213']
+            },
+            'teléfono': {
+                definicion: 'Servicio de telecomunicaciones para llamadas e internet. Incluye telefonía fija, móvil y conexión a internet.',
+                objetos: ['211']
+            },
+            'viático': {
+                definicion: 'Asignación económica para gastos de alojamiento y alimentación del personal en comisión de servicio fuera de su lugar habitual.',
+                objetos: ['234', '235']
+            },
+            'alquiler': {
+                definicion: 'Pago por el uso de inmuebles contratados. Incluye oficinas, depósitos y otros locales.',
+                objetos: ['251']
+            },
+            'jubilación': {
+                definicion: 'Prestación económica que perciben las personas al cumplir el tiempo de servicio y edad reglamentaria.',
+                objetos: ['571']
+            },
+            'beca': {
+                definicion: 'Ayuda económica para estudios o capacitación que no implica relación laboral.',
+                objetos: ['577']
+            },
+            'capacitación': {
+                definicion: 'Servicios de formación y entrenamiento para funcionarios. Incluye cursos, talleres y seminarios.',
+                objetos: ['284']
+            },
+            'mantenimiento': {
+                definicion: 'Servicios para conservación y reparación de inmuebles, vehículos y equipos.',
+                objetos: ['271', '273', '275', '276']
+            },
+            'vigilancia': {
+                definicion: 'Servicios de seguridad y custodia de instalaciones y bienes.',
+                objetos: ['291']
+            },
+            'mobiliario': {
+                definicion: 'Muebles para oficinas. Incluye escritorios, sillas, mesas y otros muebles de dotación.',
+                objetos: ['326']
+            },
+            'informática': {
+                definicion: 'Equipos y servicios relacionados con computación. Incluye computadoras, laptops, software y servicios informáticos.',
+                objetos: ['323', '285']
+            },
+            'seguro': {
+                definicion: 'Contrato de seguro para protección de bienes y personas. Incluye seguros de vida, patrimoniales y otros.',
+                objetos: ['264']
+            },
+            'impuesto': {
+                definicion: 'Tributos y tasas que debe pagar el organismo. Incluye impuestos nacionales, departamentales y otros.',
+                objetos: ['263']
+            },
+            'construcción': {
+                definicion: 'Obras de construcción y reparación de inmuebles. Incluye carreteras, edificios y otras obras públicas.',
+                objetos: ['387']
+            }
         };
 
         // ============================================
@@ -733,7 +808,8 @@
             const panel = document.getElementById('customKeywordsPanel');
             const btn = document.getElementById('togglePanelBtn');
             if (panel.style.display === 'none' || panel.style.display === '') {
-                panel.style.display = 'block';                btn.textContent = '📝 Ocultar Palabras Personalizadas';
+                panel.style.display = 'block';
+                btn.textContent = '📝 Ocultar Palabras Personalizadas';
             } else {
                 panel.style.display = 'none';
                 btn.textContent = '📝 Gestionar Palabras Personalizadas';
@@ -748,16 +824,6 @@
             if (!keyword || !objeto) {
                 alert('⚠️ Por favor completá la palabra y el objeto');
                 return;
-            }
-            
-            // Validar que el objeto exista en los datos cargados
-            if (datosCompletos.length > 0) {
-                const objetoExiste = datosCompletos.some(d => d.objeto === objeto);
-                if (!objetoExiste) {
-                    if (!confirm(`⚠️ El objeto ${objeto} no existe en los datos cargados. ¿Querés agregarlo de todos modos?`)) {
-                        return;
-                    }
-                }
             }
             
             if (!customKeywords[keyword]) {
@@ -782,7 +848,8 @@
             document.getElementById('newObjeto').value = '';
             document.getElementById('newAuxiliar').value = '000';
             
-            alert('✅ ¡Palabra agregada correctamente! El buscador la reconocerá en futuras búsquedas.');        }
+            alert('✅ ¡Palabra agregada correctamente!');
+        }
 
         function deleteCustomKeyword(keyword, objeto, auxiliar) {
             if (confirm(`¿Estás seguro de eliminar "${keyword}" → ${objeto}/${auxiliar}?`)) {
@@ -832,6 +899,7 @@
             
             list.innerHTML = html;
         }
+
         function exportCustomKeywords() {
             if (Object.keys(customKeywords).length === 0) {
                 alert('⚠️ No hay palabras personalizadas para exportar');
@@ -880,56 +948,13 @@
                 }
             };
             reader.readAsText(file);
-            event.target.value = '';        }
-
-        // ============================================
-        // 🌐 BÚSQUEDA EN INTERNET (URUGUAY)
-        // ============================================
-        
-        async function buscarEnInternet(query) {
-            const internetDiv = document.getElementById('internetResults');
-            internetDiv.style.display = 'block';
-            internetDiv.innerHTML = '<div class="loading">🌐 Buscando definiciones en Uruguay...</div>';
-            
-            let html = '<h4>🇺🇾 Información de Uruguay para "<strong>' + query + '</strong>":</h4>';
-            
-            try {
-                // Búsqueda en Wikipedia
-                const wikiResponse = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query + ' Uruguay')}`);
-                const wikiData = await wikiResponse.json();
-                
-                if (wikiData && wikiData.extract && !wikiData.type) {
-                    html += `
-                        <div class="uruguay-source">
-                            <h5>📚 Wikipedia</h5>
-                            <p><strong>${wikiData.title}</strong></p>
-                            <p>${wikiData.extract.substring(0, 300)}...</p>
-                            ${wikiData.content_urls?.desktop?.page ? `<a href="${wikiData.content_urls.desktop.page}" target="_blank">Ver más en Wikipedia →</a>` : ''}
-                        </div>
-                    `;
-                }
-                
-                // Enlaces a sitios uruguayos
-                html += `
-                    <div class="uruguay-source">
-                        <h5>🏛️ Sitios Gubernamentales de Uruguay</h5>
-                        <p><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank">CGN (Contaduría General) →</a></p>
-                        <p><a href="https://www.siif.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank">SIIF Uruguay →</a></p>
-                        <p><a href="https://www.impo.com.uy/buscar/${encodeURIComponent(query)}" target="_blank">IMPO (Legislación) →</a></p>
-                    </div>
-                `;
-                
-                internetDiv.innerHTML = html;
-                
-            } catch (error) {
-                console.log('Error en búsqueda internet:', error);
-                internetDiv.innerHTML = '<div class="error">⚠️ No se pudo obtener información de internet. Verificá tu conexión.</div>';
-            }
+            event.target.value = '';
         }
 
         // ============================================
         // 📂 CARGA DEL CSV
-        // ============================================        document.getElementById('csvFile').addEventListener('change', function(e) {
+        // ============================================
+        document.getElementById('csvFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
             
@@ -951,12 +976,10 @@
                 const lineas = texto.split('\n');
                 datosCompletos = [];
                 
-                // Saltar encabezado (línea 0)
                 for (let i = 1; i < lineas.length; i++) {
                     const linea = lineas[i].trim();
                     if (!linea) continue;
                     
-                    // Parseo de CSV (maneja comillas)
                     const columnas = [];
                     let actual = '';
                     let entreComillas = false;
@@ -978,7 +1001,8 @@
                         const grupo = objeto.charAt(0);
                         
                         datosCompletos.push({
-                            objeto: objeto,                            auxiliar: columnas[1]?.trim() || '',
+                            objeto: objeto,
+                            auxiliar: columnas[1]?.trim() || '',
                             denominacion: columnas[2]?.trim() || '',
                             descripcion: columnas[3]?.trim() || '',
                             grupo: grupo,
@@ -1003,7 +1027,7 @@
                 loadCustomKeywords();
                 cargarSugerencias();
                 
-                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados (011 al 923). Ahora podés buscar.`);
+                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados.`);
                 
             } catch (error) {
                 console.error('Error procesando CSV:', error);
@@ -1027,14 +1051,18 @@
             return categorias[grupo] || 'Otros';
         }
 
-        // ============================================        // 🔍 MOTOR DE BÚSQUEDA
+        // ============================================
+        // 🔍 MOTOR DE BÚSQUEDA CON DEFINICIONES
         // ============================================
         
         function normalizar(texto) {
             if (!texto) return '';
             texto = texto.toLowerCase().trim();
-            // Quitar tildes correctamente
-            texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            texto = texto.replace(/[áàäâ]/g, 'a');
+            texto = texto.replace(/[éèëê]/g, 'e');
+            texto = texto.replace(/[íìïî]/g, 'i');
+            texto = texto.replace(/[óòöô]/g, 'o');
+            texto = texto.replace(/[úùüû]/g, 'u');
             texto = texto.replace(/ñ/g, 'n');
             return texto;
         }
@@ -1048,7 +1076,6 @@
             let score = 0;
             let keywordEncontrada = null;
             
-            // 1. Palabras personalizadas (MÁXIMA PRIORIDAD)
             if (customKeywords[queryNorm]) {
                 const mappings = customKeywords[queryNorm];
                 const coincide = mappings.some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
@@ -1058,7 +1085,6 @@
                 }
             }
             
-            // 2. Keywords mapeadas
             if (keywordsMap[queryNorm]) {
                 if (keywordsMap[queryNorm].includes(item.objeto)) {
                     score += 50;
@@ -1066,24 +1092,21 @@
                 }
             }
             
-            // 3. Coincidencia en denominación
             if (denomNorm.includes(queryNorm)) {
                 score += 40;
                 if (!keywordEncontrada) keywordEncontrada = 'denominación';
             }
             
-            // 4. Coincidencia en descripción
             if (descNorm.includes(queryNorm)) {
                 score += 30;
                 if (!keywordEncontrada) keywordEncontrada = 'descripción';
-            }            
-            // 5. Coincidencia en código
+            }
+            
             if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
                 score += 60;
                 if (!keywordEncontrada) keywordEncontrada = 'código';
             }
             
-            // 6. Búsqueda por palabras parciales
             const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
             palabrasQuery.forEach(palabra => {
                 if (textoCompleto.includes(palabra)) {
@@ -1098,34 +1121,46 @@
             };
         }
 
-        async function buscar() {
+        function buscar() {
             const query = document.getElementById('searchInput').value.trim();
             const resultsDiv = document.getElementById('results');
+            const definitionPanel = document.getElementById('definitionPanel');
             
             if (!query || query.length < 2) {
                 resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa al menos 2 caracteres para buscar</div>';
+                definitionPanel.style.display = 'none';
                 return;
             }
             
             searchCount++;
             document.getElementById('searchCount').textContent = searchCount;
             
-            // Guardar en historial
-            searchHistory.push({
-                query: query,
-                timestamp: Date.now()
-            });
-            if (searchHistory.length > 20) {
-                searchHistory = searchHistory.slice(-20);
-            }
-            renderHistory();
-            
             resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en ' + datosCompletos.length + ' objetos...</div>';
+            definitionPanel.style.display = 'none';
             
-            // Búsqueda en internet en paralelo
-            buscarEnInternet(query);
-            
-            setTimeout(() => {                let resultados = datosCompletos.map(item => {
+            setTimeout(() => {
+                const queryNorm = normalizar(query);
+                
+                // Mostrar definición si existe
+                if (diccionarioDefiniciones[queryNorm]) {
+                    const def = diccionarioDefiniciones[queryNorm];
+                    definitionPanel.innerHTML = `
+                        <h3>📖 Definición: <span style="color: #003ca5;">"${query}"</span></h3>
+                        <div class="definition-content">
+                            <div class="definition-term">${query}</div>
+                            <div class="definition-text">${def.definicion}</div>
+                            <div class="definition-objects">
+                                <h4>📌 Objetos de Gasto Relacionados:</h4>
+                                <div class="object-list">
+                                    ${def.objetos.map(obj => `<span class="object-item">Objeto ${obj}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    definitionPanel.style.display = 'block';
+                }
+                
+                let resultados = datosCompletos.map(item => {
                     const relevancia = calcularRelevancia(query, item);
                     return { 
                         ...item, 
@@ -1174,10 +1209,12 @@
                             <span class="grupo-tag">Grupo ${r.grupo}</span>
                             ${r.keywordEncontrada ? `<div class="keyword-match">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
                             ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
-                        </div>                    `;
+                        </div>
+                    `;
                 });
                 
                 resultsDiv.innerHTML = html;
+                renderHistory();
             }, 300);
         }
 
@@ -1223,7 +1260,8 @@
             filtroGrupo = grupo;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 if (btn.textContent.includes('Grupo')) {
-                    btn.classList.remove('active');                    if (btn.textContent.includes('Grupo ' + grupo)) btn.classList.add('active');
+                    btn.classList.remove('active');
+                    if (btn.textContent.includes('Grupo ' + grupo)) btn.classList.add('active');
                 }
             });
             buscar();
@@ -1238,6 +1276,7 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('results').innerHTML = '';
             document.getElementById('ultimaBusqueda').textContent = '0';
+            document.getElementById('definitionPanel').style.display = 'none';
         }
 
         function cargarSugerencias() {
@@ -1258,21 +1297,21 @@
 
         function renderHistory() {
             const historyList = document.getElementById('historyList');
+            const recentSearches = searchHistory.slice(-10).reverse();
             
-            if (searchHistory.length === 0) {
+            if (recentSearches.length === 0) {
                 historyList.innerHTML = '<p style="color: #666;">No hay historial aún.</p>';
                 return;
             }
             
-            const recentSearches = searchHistory.slice(-10).reverse();
-            
             historyList.innerHTML = recentSearches.map(s => `
                 <div class="history-item" onclick="document.getElementById('searchInput').value='${s.query}'; buscar();">
                     <span>🔍 ${s.query}</span>
-                    <span class="history-count">${new Date(s.timestamp).toLocaleTimeString()}</span>
+                    <span class="history-count">${s.resultsCount} resultados</span>
                 </div>
             `).join('');
         }
+
         function clearHistory() {
             if (confirm('¿Estás seguro de limpiar todo el historial?')) {
                 searchHistory = [];
