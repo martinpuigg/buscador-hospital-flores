@@ -168,7 +168,7 @@
                 <button onclick="addCustomKeyword()">➕ Guardar Regla</button>
             </div>
             <div class="keywords-list" id="keywordsList"></div>
-            <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 8px 15px; border: none; border-radius: 5px; cursor: margin-top: 15px; font-weight: 600;">🗑️ Limpiar Todo el Diccionario</button>
+            <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; font-weight: 600;">🗑️ Limpiar Todo el Diccionario</button>
         </div>
 
         <div class="search-container" id="searchContainer">
@@ -316,7 +316,7 @@
         }
 
         // ============================================
-        // 🤖 MOTOR DE IA CON CACHÉ (MEMORIA AUTOMÁTICA)
+        // 🤖 MOTOR DE IA OPTIMIZADO + CACHÉ
         // ============================================
         async function consultarInteligenciaArtificial(query) {
             const internetDiv = document.getElementById('internetResults');
@@ -333,13 +333,13 @@
             }
 
             // --- SISTEMA DE MEMORIA INTELIGENTE ---
-            // Si ya buscamos esta palabra antes, la traemos de la memoria sin gastar límite
+            // Si ya buscamos esta palabra antes, la traemos de la memoria sin gastar cuota de Google
             if (aiCache[queryNorm]) {
                 internetDiv.style.display = 'block';
                 const aiData = aiCache[queryNorm];
                 
                 let html = `
-                    <h4 style="color: #28a745; margin-bottom: 10px;">⚡ Recuperado de la Memoria (Rápido):</h4>
+                    <h4 style="color: #28a745; margin-bottom: 10px;">⚡ Análisis Recuperado (Memoria Rápida):</h4>
                     <div style="font-size: 1.05em; color: #333; line-height: 1.5;">
                         ${aiData.explicacion}
                     </div>
@@ -364,29 +364,8 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
 }`;
 
             try {
-                const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-                const modelsData = await modelsResponse.json();
-
-                if (!modelsResponse.ok || modelsData.error) {
-                    throw new Error(modelsData.error ? modelsData.error.message : 'La API Key fue rechazada.');
-                }
-
-                let modeloElegido = "";
-                if (modelsData.models) {
-                    const modelosValidos = modelsData.models.filter(m => 
-                        m.supportedGenerationMethods && 
-                        m.supportedGenerationMethods.includes("generateContent") &&
-                        m.name.includes("gemini")
-                    );
-                    
-                    if (modelosValidos.length === 0) throw new Error("La clave no tiene permisos para modelos de texto.");
-                    
-                    const flashModel = modelosValidos.find(m => m.name.includes("flash"));
-                    const proModel = modelosValidos.find(m => m.name.includes("pro"));
-                    modeloElegido = flashModel ? flashModel.name : (proModel ? proModel.name : modelosValidos[0].name);
-                }
-                
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modeloElegido}:generateContent?key=${apiKey}`;
+                // OPTIMIZACIÓN MÁXIMA: Directo al modelo confirmado. Evita el "auto-descubrimiento" y ahorra 50% de cuota.
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -422,20 +401,21 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             } catch (error) {
                 let mensajeAMostrar = error.message;
                 
-                // Traductor amigable de errores de cuota (Límite de velocidad gratuito)
+                // Traductor amigable de errores de cuota para el equipo de contaduría
                 if (mensajeAMostrar.toLowerCase().includes('quota') || mensajeAMostrar.toLowerCase().includes('exceeded') || mensajeAMostrar.includes('429')) {
                     internetDiv.innerHTML = `
-                        <div class="error" style="border-color: #ffeeba; background: #fff3cd; color: #856404;">
-                            ⏳ <strong>Límite de consultas rápidas alcanzado.</strong><br>
-                            Estás usando la versión gratuita y Google pide una pausa.<br>
-                            <strong>Por favor, esperá 60 segundos y volvé a intentarlo.</strong>
+                        <div class="error" style="border-color: #ffeeba; background: #fff3cd; color: #856404; padding: 20px;">
+                            <h4 style="margin-bottom: 8px;">⏳ Límite de consultas gratuitas</h4>
+                            <p style="font-size: 1.05em; margin-bottom: 8px;">Google detectó que se realizaron muchas búsquedas rápidas seguidas y ha pausado el sistema por seguridad.</p>
+                            <p style="font-weight: 600; font-size: 1.1em;">Por favor, esperá un máximo de 60 segundos y volvé a intentarlo.</p>
+                            <span style="font-size: 0.85em; color: #856404; display: block; margin-top: 10px;">(Tus búsquedas anteriores ya están guardadas en la memoria rápida)</span>
                         </div>`;
                 } else {
                     internetDiv.innerHTML = `
                         <div class="error" style="border-color: #f5c6cb; background: #f8d7da; color: #721c24;">
                             ⚠️ <strong>Falló el análisis inteligente.</strong><br>
-                            Asegurate de que la clave de Google sea correcta.<br>
-                            <span style="font-size: 0.85em; color: #999;">Error: ${mensajeAMostrar}</span>
+                            Asegurate de que la clave de Google esté correcta y no tenga espacios.<br>
+                            <span style="font-size: 0.85em; color: #999;">Detalle técnico: ${mensajeAMostrar}</span>
                         </div>`;
                 }
             }
@@ -449,7 +429,7 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             if (resultadosIA.length > 0) {
                 const isNoResults = resultsDiv.querySelector('.no-results');
                 
-                // Cambia el título si vino de internet (naranja) o si vino de la memoria rápida (verde)
+                // Cambia el color si vino de internet (naranja) o si vino de la memoria rápida (verde)
                 const tituloColor = desdeMemoria ? '#28a745' : '#ff6b00';
                 let html = isNoResults ? `<div style="margin-bottom: 20px; color: ${tituloColor}; font-weight: 700; font-size: 1.1em;">✨ Tarjeta Oficial rescatada:</div>` : resultsDiv.innerHTML;
                 
@@ -564,7 +544,7 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
         }
 
         function buscar() {
-            // FRENO ANTI-ANSIEDAD: Si ya está buscando, ignoramos el clic
+            // FRENO ANTI-ANSIEDAD: Si ya está buscando, ignoramos los clics extras
             if (isSearching) return;
 
             const query = document.getElementById('searchInput').value.trim();
@@ -572,7 +552,7 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             
             if (!query || query.length < 2) return;
 
-            // Bloquear interfaz para evitar múltiples consultas (Freno activado)
+            // Bloquear interfaz (Freno activado)
             isSearching = true;
             const btnBuscar = document.getElementById('btnBuscar');
             const inputBusqueda = document.getElementById('searchInput');
@@ -585,12 +565,12 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             
             // 1. Mandamos a la IA (Devuelve una Promesa)
             consultarInteligenciaArtificial(query).finally(() => {
-                // FRENO DESACTIVADO: Se libera la interfaz cuando la IA termina de procesar
+                // FRENO DESACTIVADO: Liberamos los botones al terminar
                 isSearching = false;
                 btnBuscar.innerHTML = '🔎 Analizar Gasto';
                 btnBuscar.disabled = false;
                 inputBusqueda.disabled = false;
-                inputBusqueda.focus(); // Devuelve el cursor al casillero
+                inputBusqueda.focus(); 
             });
 
             // 2. Búsqueda local simultánea
@@ -642,7 +622,7 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 if(b.textContent.includes('Mostrar')) b.classList.remove('active');
             });
             event.currentTarget.classList.add('active');
-            if(!isSearching) buscar(); // Solo busca si no hay freno puesto
+            if(!isSearching) buscar(); // Solo busca si el freno está apagado
         }
         
         function filtrarGrupo(grupo) { 
