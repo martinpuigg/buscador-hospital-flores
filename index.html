@@ -51,6 +51,7 @@
         .add-keyword-form button { padding: 12px 20px; background: #28a745; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif; transition: background 0.3s; }
         .keywords-list { background: #ffffff; border-radius: 8px; padding: 15px; max-height: 250px; overflow-y: auto; border: 1px solid #eee; }
         .keyword-item { background: #f8f9fa; padding: 12px 15px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #28a745; }
+        .keyword-item-delete { background: #dc3545; color: #ffffff; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif; }
         
         /* Buscador */
         .search-container { display: none; background: #ffffff; padding: 25px; border-radius: 12px; margin-bottom: 30px; border: 2px solid #003ca5; box-shadow: 0 4px 10px rgba(0,60,165,0.08); }
@@ -60,7 +61,7 @@
         .search-box button { padding: 18px 40px; background: #003ca5; color: #ffffff; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: background 0.3s; }
         .search-box button:hover { background: #002d7a; }
         
-        /* Filtros y Sugerencias */
+        /* Filtros */
         .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
         .filter-btn { padding: 8px 18px; background: #f0f4f8; color: #003ca5; border: 1px solid #003ca5; border-radius: 20px; cursor: pointer; transition: all 0.2s; font-family: 'Montserrat', sans-serif; font-size: 0.9em; font-weight: 600; }
         .filter-btn:hover, .filter-btn.active { background: #003ca5; color: #ffffff; }
@@ -74,11 +75,13 @@
         .results-container { display: grid; gap: 15px; }
         .result-card { background: #ffffff; border-left: 5px solid #003ca5; padding: 20px; border-radius: 8px; transition: all 0.2s; cursor: pointer; border-top: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee; }
         .result-card:hover { transform: translateX(5px); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .result-card.selected { border-left-color: #ff6b00; background: #fff5f0; }
         .codigo-badge { background: #003ca5; color: #ffffff; padding: 6px 15px; border-radius: 15px; font-weight: 700; font-size: 1.1em; display: inline-block; margin-bottom: 10px; }
         .relevancia-badge { background: #f0f4f8; color: #003ca5; padding: 6px 12px; border-radius: 15px; font-size: 0.85em; float: right; font-weight: 700; }
         .denominacion { font-size: 1.2em; font-weight: 700; margin: 5px 0 10px 0; color: #333; }
         .descripcion { color: #666; line-height: 1.5; font-size: 0.95em; }
         .grupo-tag { display: inline-block; background: #e9ecef; color: #495057; padding: 4px 10px; border-radius: 6px; font-size: 0.8em; margin-top: 12px; font-weight: 600; }
+        .keyword-match { display: inline-block; background: rgba(255,107,0,0.1); color: #ff6b00; padding: 4px 10px; border-radius: 8px; font-size: 0.8em; margin-top: 8px; font-weight: 600; margin-left: 10px;}
         
         /* Mensajes */
         .loading { text-align: center; padding: 30px; color: #003ca5; font-weight: 600; font-size: 1.1em; }
@@ -114,7 +117,7 @@
             
             <div class="api-key-section">
                 <label for="apiKeyInput" style="font-weight: 700; color: #ff6b00; font-size: 1.1em;">🤖 Conectar Inteligencia Artificial:</label>
-                <p style="font-size: 0.9em; color: #555;">Pegá tu clave de Google Gemini para clasificar automáticamente alimentos, herramientas e insumos.</p>
+                <p style="font-size: 0.9em; color: #555;">Pegá tu clave de Google Gemini para clasificar automáticamente alimentos, insumos y gastos atípicos.</p>
                 <input type="password" id="apiKeyInput" class="api-key-input" placeholder="Ej: AIzaSy...">
             </div>
         </div>
@@ -155,7 +158,7 @@
                     <input type="text" id="newKeyword" placeholder="Ej: resmas">
                 </div>
                 <div class="form-group">
-                    <label>Objeto:</label>
+                    <label>Objeto (3 dígitos):</label>
                     <input type="text" id="newObjeto" placeholder="Ej: 191" maxlength="3">
                 </div>
                 <div class="form-group">
@@ -165,12 +168,12 @@
                 <button onclick="addCustomKeyword()">➕ Guardar Regla</button>
             </div>
             <div class="keywords-list" id="keywordsList"></div>
-            <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; font-weight: 600;">🗑️ Limpiar Diccionario</button>
+            <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; font-weight: 600;">🗑️ Limpiar Todo el Diccionario</button>
         </div>
 
         <div class="search-container" id="searchContainer">
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Ej: atún, reparación de ambulancia, jeringas..." onkeypress="if(event.key === 'Enter') buscar()">
+                <input type="text" id="searchInput" placeholder="Ej: atún, reparación ambulancia, resmas..." onkeypress="if(event.key === 'Enter') buscar()">
                 <button onclick="buscar()">🔎 Analizar Gasto</button>
             </div>
             
@@ -200,7 +203,7 @@
         let searchCount = 0;
         let customKeywords = {};
 
-        // Base de conocimiento local ampliada para evitar tantas consultas externas
+        // Diccionario base precargado
         const keywordsMap = {
             'harina': ['111'], 'arroz': ['111'], 'carne': ['111'], 'aceite': ['111'],
             'atun': ['111'], 'atún': ['111'], 'arveja': ['111'], 'fideo': ['111'],
@@ -214,7 +217,7 @@
             'electricidad': ['213'], 'agua': ['212'], 'telefono': ['211']
         };
 
-        // Al iniciar, cargar configuraciones guardadas en el navegador
+        // Al iniciar, cargar configuraciones del navegador
         window.onload = function() {
             const savedKey = localStorage.getItem('hospital_flores_gemini_key');
             if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
@@ -267,7 +270,7 @@
             document.getElementById('newKeyword').value = ''; 
             document.getElementById('newObjeto').value = '';
             
-            // Re-ejecutar la búsqueda para aplicar la nueva regla inmediatamente
+            // Re-ejecutar la búsqueda si hay una activa
             const currentSearch = document.getElementById('searchInput').value.trim();
             if (currentSearch) buscar();
         }
@@ -279,7 +282,7 @@
         }
 
         function clearAllCustomKeywords() {
-            if (confirm('⚠️ ¿Estás seguro de borrar todas las reglas aprendidas?')) { 
+            if (confirm('⚠️ ¿Estás seguro de borrar TODAS las reglas aprendidas?')) { 
                 customKeywords = {}; 
                 saveCustomKeywords(); 
             }
@@ -308,19 +311,19 @@
             document.getElementById('newObjeto').value = objetoSugerido;
             addCustomKeyword();
             
-            // Efecto visual de confirmación
+            // Efecto visual de confirmación en el botón
             const btn = event.currentTarget;
             const originalText = btn.innerHTML;
-            btn.innerHTML = '✅ Regla Guardada con Éxito';
+            btn.innerHTML = '✅ Regla Guardada en el Diccionario';
             btn.style.background = '#28a745';
             setTimeout(() => {
                 btn.innerHTML = originalText;
                 btn.style.background = '#ff6b00';
-            }, 2000);
+            }, 2500);
         }
 
         // ============================================
-        // 🤖 MOTOR DE IA ROBUSTO (Manejo de modelos)
+        // 🤖 MOTOR DE IA CON AUTO-DESCUBRIMIENTO
         // ============================================
         async function consultarInteligenciaArtificial(query) {
             const internetDiv = document.getElementById('internetResults');
@@ -330,54 +333,69 @@
                 internetDiv.style.display = 'block';
                 internetDiv.innerHTML = `
                     <div style="background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 15px; border-radius: 8px;">
-                        ⚠️ <strong>Análisis Automático Pausado:</strong> Pegá tu clave de IA arriba para que el sistema clasifique conceptos complejos.
+                        ⚠️ <strong>IA Desactivada:</strong> Pegá tu clave arriba para clasificar conceptos atípicos automáticamente.
                     </div>`;
                 return;
             }
 
             internetDiv.style.display = 'block';
-            internetDiv.innerHTML = '<div class="loading">🤖 Analizando la naturaleza del gasto con IA...</div>';
+            internetDiv.innerHTML = '<div class="loading">🤖 Verificando servidor y conectando a la IA...</div>';
 
             const prompt = `Actúa como un experto en contabilidad pública de Uruguay y del clasificador de gastos de la CGN. El usuario quiere clasificar este gasto: "${query}".
 Devuelve un JSON con exactamente esta estructura (sin texto adicional):
 {
-  "explicacion": "Breve definición del artículo y su naturaleza de gasto en contexto hospitalario.",
+  "explicacion": "Breve definición del artículo y su naturaleza de gasto en contexto de compras públicas.",
   "objeto_sugerido": "Código numérico de 3 dígitos del objeto de gasto más probable (ej: 111, 194, 273). Pon solo los 3 números."
 }`;
 
             try {
-                // Intento primario con gemini-1.5-flash (el más moderno y rápido)
-                let apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-                let response = await fetch(apiUrl, {
+                // PASO 1: Descubrir qué modelos están permitidos para esta API KEY
+                const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+                const modelsData = await modelsResponse.json();
+
+                if (!modelsResponse.ok || modelsData.error) {
+                    throw new Error(modelsData.error ? modelsData.error.message : 'La API Key fue rechazada.');
+                }
+
+                // Filtrar modelos válidos para texto
+                let modeloElegido = "";
+                if (modelsData.models) {
+                    const modelosValidos = modelsData.models.filter(m => 
+                        m.supportedGenerationMethods && 
+                        m.supportedGenerationMethods.includes("generateContent") &&
+                        m.name.includes("gemini")
+                    );
+                    
+                    if (modelosValidos.length === 0) throw new Error("La clave no tiene permisos para modelos de texto.");
+                    
+                    // Elegir el mejor modelo disponible (prioriza flash o pro)
+                    const flashModel = modelosValidos.find(m => m.name.includes("flash"));
+                    const proModel = modelosValidos.find(m => m.name.includes("pro"));
+                    modeloElegido = flashModel ? flashModel.name : (proModel ? proModel.name : modelosValidos[0].name);
+                }
+
+                // PASO 2: Llamada a la IA con el modelo seguro
+                internetDiv.innerHTML = `<div class="loading">🤖 Analizando gasto...</div>`;
+                
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modeloElegido}:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
 
-                let data = await response.json();
+                const data = await response.json();
+                
+                if (!response.ok || data.error) throw new Error(data.error ? data.error.message : 'Error al procesar la respuesta');
 
-                // SISTEMA DE RESPALDO: Si falla porque el modelo no está habilitado en la clave, intenta con gemini-pro
-                if (!response.ok && data.error && data.error.message.includes("is not found")) {
-                    console.log("Cambiando a modelo de respaldo (gemini-pro)...");
-                    apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
-                    response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                    });
-                    data = await response.json();
-                }
-
-                if (!response.ok || data.error) throw new Error(data.error ? data.error.message : 'Error desconocido de red');
-
-                // Procesamiento y limpieza del JSON
+                // Procesamiento y renderizado del resultado de la IA
                 let aiText = data.candidates[0].content.parts[0].text;
                 aiText = aiText.replace(/```json/gi, '').replace(/```/g, '').trim();
                 const aiData = JSON.parse(aiText);
 
                 let html = `
-                    <h4 style="color: #ff6b00; margin-bottom: 10px;">🤖 Recomendación del Analista Virtual:</h4>
-                    <div style="font-size: 1.05em; color: #333;">
+                    <h4 style="color: #ff6b00; margin-bottom: 10px;">🤖 Recomendación Contable (IA):</h4>
+                    <div style="font-size: 1.05em; color: #333; line-height: 1.5;">
                         ${aiData.explicacion}
                     </div>
                 `;
@@ -386,7 +404,7 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                     const numObjeto = aiData.objeto_sugerido.substring(0, 3);
                     html += `
                         <button class="ai-save-btn" onclick="guardarSugerenciaIA('${query.replace(/'/g, "\\'")}', '${numObjeto}')">
-                            ⚡ Guardar Regla: Asociar automáticamente al Objeto ${numObjeto}
+                            ⚡ Encontré el Objeto ${numObjeto} - Clickeá para registrar la regla
                         </button>
                     `;
                 }
@@ -395,22 +413,23 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             } catch (error) {
                 internetDiv.innerHTML = `
                     <div class="error" style="border-color: #f5c6cb; background: #f8d7da; color: #721c24;">
-                        ⚠️ <strong>No se pudo conectar con la Inteligencia Artificial.</strong><br>
-                        Detalle técnico: ${error.message}
+                        ⚠️ <strong>Falló el análisis inteligente.</strong><br>
+                        Asegurate de que la clave de Google no tenga espacios o haya caducado.<br>
+                        <span style="font-size: 0.85em; color: #999;">Error: ${error.message}</span>
                     </div>`;
             }
         }
 
         // ============================================
-        // 📂 PROCESAMIENTO DEL CSV (Corrección de Acentos)
+        // 📂 LECTURA DEL CSV LOCAL (CON Ñ Y TILDES)
         // ============================================
         document.getElementById('csvFile').addEventListener('change', function(e) {
             const file = e.target.files[0]; if (!file) return;
-            document.getElementById('fileName').textContent = `✅ ${file.name} cargado correctamente`;
+            document.getElementById('fileName').textContent = `✅ Documento cargado: ${file.name}`;
             
             const reader = new FileReader();
-            // FUNDAMENTAL: ISO-8859-1 para leer las 'ñ' y tildes de los Excel de Windows
             reader.onload = function(event) { procesarCSV(event.target.result); };
+            // ISO-8859-1 es vital para leer exportaciones de Excel en español sin romper las letras
             reader.readAsText(file, 'ISO-8859-1'); 
         });
 
@@ -420,7 +439,6 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 for (let i = 1; i < lineas.length; i++) {
                     const linea = lineas[i].trim(); if (!linea) continue;
                     
-                    // Parseo inteligente para ignorar comas dentro de las descripciones
                     const columnas = []; let actual = ''; let entreComillas = false;
                     for (let char of linea) {
                         if (char === '"') entreComillas = !entreComillas;
@@ -441,7 +459,6 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                     }
                 }
                 
-                // Actualizar interfaz
                 document.getElementById('totalRegistros').textContent = datosCompletos.length;
                 document.getElementById('uploadSection').style.display = 'none';
                 document.getElementById('statsBar').style.display = 'flex';
@@ -449,12 +466,12 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 document.getElementById('searchContainer').style.display = 'block';
                 
             } catch (error) { 
-                alert('❌ Hubo un problema al leer el archivo. Asegurate de que sea el CSV de la CGN.'); 
+                alert('❌ Error de lectura. Verificá que el archivo sea un CSV separado por comas válido.'); 
             }
         }
 
         // ============================================
-        // 🔍 ALGORITMO DE BÚSQUEDA Y RELEVANCIA
+        // 🔍 BÚSQUEDA Y RENDERIZADO
         // ============================================
         function normalizar(texto) { 
             return (texto || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); 
@@ -464,18 +481,16 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             const queryNorm = normalizar(query);
             let score = 0; let keywordEncontrada = null;
 
-            // 1. Diccionario interno del hospital (Máxima prioridad)
+            // 1. Reglas manuales (Prioridad 1)
             if (customKeywords[queryNorm]) {
                 const coincide = customKeywords[queryNorm].some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
-                if (coincide) { score += 100; keywordEncontrada = `Regla de contaduría: ${queryNorm}`; }
+                if (coincide) { score += 100; keywordEncontrada = `Regla del diccionario interno`; }
             }
-            
-            // 2. Diccionario base del código
+            // 2. Base de conocimiento rápida (Prioridad 2)
             if (keywordsMap[queryNorm] && keywordsMap[queryNorm].includes(item.objeto)) {
-                score += 80; keywordEncontrada = `Asociación sugerida`;
+                score += 80; keywordEncontrada = `Sugerencia del sistema`;
             }
-            
-            // 3. Coincidencias de texto oficiales
+            // 3. Coincidencia de texto pura (Prioridad 3)
             if (normalizar(item.denominacion).includes(queryNorm)) score += 45;
             if (normalizar(item.descripcion).includes(queryNorm)) score += 35;
             if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) score += 70;
@@ -490,9 +505,9 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             if (!query || query.length < 2) return;
             
             searchCount++; document.getElementById('searchCount').textContent = searchCount;
-            resultsDiv.innerHTML = '<div class="loading">⏳ Escaneando plan de cuentas...</div>';
+            resultsDiv.innerHTML = '<div class="loading">⏳ Rastrendo código contable...</div>';
             
-            // Disparar la consulta a la Inteligencia Artificial en paralelo
+            // Llama a la IA
             consultarInteligenciaArtificial(query);
 
             setTimeout(() => {
@@ -500,7 +515,6 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 
                 if (filtroGrupo) resultados = resultados.filter(r => r.grupo === filtroGrupo);
                 
-                // Ordenar por mayor coincidencia
                 resultados.sort((a, b) => b.score - a.score);
                 resultados = resultados.slice(0, limiteResultados);
                 
@@ -509,8 +523,8 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 if (resultados.length === 0) {
                     resultsDiv.innerHTML = `
                         <div class="no-results">
-                            <h3 style="color: #333; margin-bottom: 10px;">No hay resultados exactos en el plan local</h3>
-                            <p>Revisá el análisis de la IA arriba. Si la IA encuentra el objeto, hacé clic en el botón naranja para guardar la regla.</p>
+                            <h3 style="color: #333; margin-bottom: 10px;">La palabra exacta no figura en el listado de la CGN</h3>
+                            <p>Revisá el consejo de la Inteligencia Artificial en el recuadro naranja de arriba y guardá la regla.</p>
                         </div>`;
                     return;
                 }
@@ -521,7 +535,7 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                         <div class="result-card ${index === 0 ? 'selected' : ''}" onclick="selectResult(event)">
                             <div>
                                 <span class="codigo-badge">Objeto ${r.objeto} / ${r.auxiliar}</span> 
-                                <span class="relevancia-badge">Coincidencia: ${r.score}%</span>
+                                <span class="relevancia-badge">Relevancia: ${r.score}%</span>
                             </div>
                             <div class="denominacion">${r.denominacion}</div>
                             <div class="descripcion">${r.descripcion}</div>
@@ -533,7 +547,6 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             }, 300);
         }
 
-        // Utilidades de Interfaz
         function selectResult(event) {
             document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
