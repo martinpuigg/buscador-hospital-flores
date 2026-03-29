@@ -106,39 +106,117 @@
             font-weight: 500;
         }
         
-        .internet-results {
+        /* Panel de Palabras Personalizadas */
+        .custom-keywords-panel {
             display: none;
-            background: rgba(138,43,226,0.05);
-            border: 2px solid #8a2be2;
-            padding: 20px;
-            border-radius: 10px;
+            background: rgba(40,167,69,0.1);
+            border: 2px solid #28a745;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .custom-keywords-panel h3 {
+            color: #28a745;
             margin-bottom: 20px;
         }
-        .internet-results h4 {
-            color: #8a2be2;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .add-keyword-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 15px;
+            margin-bottom: 20px;
         }
-        .internet-item {
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #003ca5;
+            font-size: 0.9em;
+        }
+        .add-keyword-form input {
+            padding: 12px 15px;
+            border: 2px solid #003ca5;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .add-keyword-form button {
+            padding: 12px 25px;
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }
+        .add-keyword-form button:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        .keywords-list {
             background: #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .keyword-item {
+            background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 10px;
-            border-left: 3px solid #8a2be2;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #28a745;
         }
-        .internet-item h5 {
-            color: #8a2be2;
-            margin-bottom: 8px;
+        .keyword-item-info {
+            flex: 1;
         }
-        .internet-item a {
+        .keyword-item-word {
+            font-weight: 700;
+            color: #28a745;
+            font-size: 1.1em;
+        }
+        .keyword-item-object {
             color: #003ca5;
-            text-decoration: none;
-            font-weight: 600;
+            font-size: 0.9em;
+            margin-top: 5px;
         }
-        .internet-item a:hover {
-            text-decoration: underline;
+        .keyword-item-delete {
+            background: #dc3545;
+            color: #ffffff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }
+        .keyword-item-delete:hover {
+            background: #c82333;
+        }
+        
+        .toggle-panel-btn {
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .toggle-panel-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
         }
         
         .search-container {
@@ -300,6 +378,25 @@
             font-size: 0.75em;
             margin-left: 10px;
         }
+        .keyword-match {
+            display: inline-block;
+            background: rgba(255,107,0,0.1);
+            color: #ff6b00;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.75em;
+            margin-top: 8px;
+        }
+        .uruguay-badge {
+            display: inline-block;
+            background: rgba(0,123,255,0.1);
+            color: #007bff;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.75em;
+            margin-top: 8px;
+            margin-left: 8px;
+        }
         
         .loading { text-align: center; padding: 50px; color: #666; }
         .error {
@@ -312,12 +409,86 @@
         }
         .no-results { text-align: center; padding: 50px; color: #666; }
         
+        .history-section {
+            display: none;
+            margin-top: 30px;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #003ca5;
+        }
+        .history-section h3 {
+            color: #003ca5;
+            margin-bottom: 15px;
+        }
+        .history-item {
+            background: #ffffff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #003ca5;
+        }
+        .history-item:hover {
+            background: #f0f4f8;
+        }
+        .history-count {
+            color: #003ca5;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .clear-btn {
+            background: #dc3545;
+            color: #ffffff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+        }
+        
+        .export-import-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .export-import-btns button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }
+        .export-import-btns button.export {
+            background: #003ca5;
+            color: #fff;
+        }
+        .export-import-btns button.import {
+            background: #28a745;
+            color: #fff;
+        }
+        .export-import-btns button.clear {
+            background: #dc3545;
+            color: #fff;
+        }
+        
         @media (max-width: 768px) {
             .header { flex-direction: column; text-align: center; }
             .logo-container { flex-direction: column; }
             .search-box { flex-direction: column; }
             .stats-bar { flex-direction: column; align-items: center; }
             .header h1 { font-size: 1.5em; }
+            .add-keyword-form {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -333,10 +504,10 @@
             </div>
         </div>
         
-        <div class="ai-status">
-            📋 <span id="aiStatusText">Lista actualizada</span> | 
-            🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
-            🌐 Internet: <span id="internetStatus">Activo</span>
+        <div class="ai-status" id="aiStatus">
+            🇺🇾 <span id="aiStatusText">Buscador Uruguay - Cargá tu archivo CSV</span> | 
+            🔍 Búsquedas: <span id="searchCount">0</span> |
+            📚 Palabras personalizadas: <span id="customKeywordsCount">0</span>
         </div>
         
         <!-- Carga de CSV -->
@@ -351,7 +522,7 @@
             </label>
             <p id="fileName" style="margin-top: 20px; color: #28a745; font-weight: 600;"></p>
             <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
-                🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
+                🔒 El archivo se procesa localmente. No se envía a ningún servidor.
             </p>
         </div>
         
@@ -371,8 +542,45 @@
             </div>
         </div>
         
-        <!-- Resultados de Internet -->
-        <div class="internet-results" id="internetResults"></div>
+        <!-- Botón para mostrar/ocultar panel de palabras personalizadas -->
+        <button class="toggle-panel-btn" onclick="toggleCustomKeywordsPanel()" id="togglePanelBtn" style="display: none;">
+            📝 Gestionar Palabras Personalizadas
+        </button>
+        
+        <!-- Panel de Palabras Personalizadas -->
+        <div class="custom-keywords-panel" id="customKeywordsPanel">
+            <h3>📝 Agregar Palabras Personalizadas</h3>
+            <p style="margin-bottom: 20px; color: #666;">
+                Agregá tus propias palabras para que el buscador las reconozca y las asocie a objetos de gasto.
+            </p>
+            
+            <div class="add-keyword-form">
+                <div class="form-group">
+                    <label for="newKeyword">Palabra o Término:</label>
+                    <input type="text" id="newKeyword" placeholder="Ej: insumos, descartables, lima...">
+                </div>
+                <div class="form-group">
+                    <label for="newObjeto">Objeto:</label>
+                    <input type="text" id="newObjeto" placeholder="Ej: 191">
+                </div>
+                <div class="form-group">
+                    <label for="newAuxiliar">Auxiliar:</label>
+                    <input type="text" id="newAuxiliar" placeholder="Ej: 000" value="000">
+                </div>
+                <button onclick="addCustomKeyword()">➕ Agregar Palabra</button>
+            </div>
+            
+            <div class="keywords-list" id="keywordsList">
+                <p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>
+            </div>
+            
+            <div class="export-import-btns">
+                <button class="export" onclick="exportCustomKeywords()">📤 Exportar Palabras</button>
+                <button class="import" onclick="document.getElementById('importFile').click()">📥 Importar Palabras</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImport(event)">
+                <button class="clear" onclick="clearAllCustomKeywords()">🗑️ Limpiar Todas</button>
+            </div>
+        </div>
         
         <!-- Buscador -->
         <div class="search-container" id="searchContainer">
@@ -410,6 +618,13 @@
         </div>
         
         <div id="results" class="results-container"></div>
+        
+        <!-- Historial -->
+        <div class="history-section" id="historySection">
+            <h3>📜 Historial de Búsquedas</h3>
+            <div id="historyList"></div>
+            <button class="clear-btn" onclick="clearHistory()">🗑️ Limpiar Historial</button>
+        </div>
     </div>
 
     <script>
@@ -420,65 +635,280 @@
         let limiteResultados = 20;
         let filtroGrupo = '';
         let searchCount = 0;
-
+        
         // ============================================
-        // 🔍 BÚSQUEDA EN INTERNET
+        // 🧠 SISTEMA DE PALABRAS PERSONALIZADAS
+        // ============================================
+        let customKeywords = {};
+        
+        // ============================================
+        // 🇺🇾 DICCIONARIO URUGUAY - DEFINICIONES LOCALES
+        // ============================================
+        const diccionarioUruguay = {
+            'harina': {
+                definicion: 'Polvo fino obtenido de la molienda de cereales, principalmente trigo. En Uruguay se usa para pan, pastas, etc.',
+                objeto: '111',
+                contexto: 'Alimentos básicos en Uruguay'
+            },
+            'aceite': {
+                definicion: 'Líquido graso de origen vegetal o animal. En Uruguay: aceite de girasol, oliva, maíz para cocina.',
+                objeto: '111',
+                contexto: 'Aceite comestible - Grupo 1 Bienes de Consumo'
+            },
+            'aceite motor': {
+                definicion: 'Lubricante para motores de vehículos. En Uruguay se usa nafta, gasoil, lubricantes para automotores.',
+                objeto: '141',
+                contexto: 'Combustibles y lubricantes - Grupo 1'
+            },
+            'lima': {
+                definicion: 'Herramienta de acero con superficie rugosa para limar metales, madera, etc. En Uruguay se usa en talleres, mantenimiento.',
+                objeto: '176',
+                contexto: 'Herramientas menores - Grupo 1'
+            },
+            'birome': {
+                definicion: 'Bolígrafo, lapicera. Término muy usado en Uruguay (por el inventor László Bíró).',
+                objeto: '191',
+                contexto: 'Útiles de oficina - Grupo 1'
+            },
+            'bondi': {
+                definicion: 'Ómnibus, autobús. Término coloquial uruguayo para transporte público.',
+                objeto: '231',
+                contexto: 'Pasajes de transporte - Grupo 2'
+            },
+            'fideo': {
+                definicion: 'Pasta alimenticia de harina. En Uruguay: tallarines, ñoquis, sorrentinos, etc.',
+                objeto: '111',
+                contexto: 'Alimentos - Grupo 1'
+            },
+            'gasoil': {
+                definicion: 'Combustible diesel. En Uruguay se usa en vehículos, calefacción, generadores.',
+                objeto: '141',
+                contexto: 'Combustibles - Grupo 1'
+            },
+            'lavandina': {
+                definicion: 'Hipoclorito de sodio, lavandina. Producto de limpieza muy usado en Uruguay.',
+                objeto: '192',
+                contexto: 'Elementos de limpieza - Grupo 1'
+            },
+            'mate': {
+                definicion: 'Infusión tradicional uruguaya de yerba mate. Infaltable en oficinas, hogares.',
+                objeto: '111',
+                contexto: 'Alimentos/Infusiones - Grupo 1'
+            },
+            'nafta': {
+                definicion: 'Gasolina para vehículos. En Uruguay nafta súper, premium.',
+                objeto: '141',
+                contexto: 'Combustibles - Grupo 1'
+            },
+            'pilas': {
+                definicion: 'Baterías eléctricas. En Uruguay: pilas AA, AAA, etc. para dispositivos.',
+                objeto: '191',
+                contexto: 'Útiles de oficina - Grupo 1'
+            },
+            'scotch': {
+                definicion: 'Cinta adhesiva. Marca registrada pero usada como término genérico en Uruguay.',
+                objeto: '191',
+                contexto: 'Útiles de oficina - Grupo 1'
+            },
+            'termo': {
+                definicion: 'Recipiente térmico para mantener bebidas calientes/frías. Muy usado en Uruguay.',
+                objeto: '191',
+                contexto: 'Útiles de oficina - Grupo 1'
+            },
+            'yerba': {
+                definicion: 'Yerba mate. Producto tradicional uruguayo para preparar mate.',
+                objeto: '111',
+                contexto: 'Alimentos/Infusiones - Grupo 1'
+            }
+        };
+        
+        // ============================================
+        // 💾 PERSISTENCIA (LocalStorage)
         // ============================================
         
-        async function buscarEnInternet(query) {
-            const internetDiv = document.getElementById('internetResults');
-            internetDiv.style.display = 'block';
-            internetDiv.innerHTML = '<div class="loading">🌐 Buscando en internet...</div>';
-            
-            let html = '<h4>🌐 Información de Internet para "<strong>' + query + '</strong>":</h4>';
-            let foundSomething = false;
-            
-            try {
-                // Búsqueda en Wikipedia
-                const wikiResponse = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
-                const wikiData = await wikiResponse.json();
-                
-                if (wikiData && wikiData.extract && !wikiData.type) {
-                    html += `
-                        <div class="internet-item">
-                            <h5>📚 Wikipedia</h5>
-                            <p><strong>${wikiData.title}</strong></p>
-                            <p>${wikiData.extract.substring(0, 300)}...</p>
-                            ${wikiData.content_urls?.desktop?.page ? `<a href="${wikiData.content_urls.desktop.page}" target="_blank">Ver más en Wikipedia →</a>` : ''}
-                        </div>
-                    `;
-                    foundSomething = true;
-                }
-                
-                // Búsqueda de sinónimos en Datamuse
-                const sinonimosResponse = await fetch(`https://api.datamuse.com/words?ml=${encodeURIComponent(query)}&max=5`);
-                const sinonimosData = await sinonimosResponse.json();
-                
-                if (sinonimosData && sinonimosData.length > 0) {
-                    const sinonimos = sinonimosData.map(s => s.word).join(', ');
-                    html += `
-                        <div class="internet-item">
-                            <h5>🔤 Sinónimos y palabras relacionadas</h5>
-                            <p>${sinonimos}</p>
-                        </div>
-                    `;
-                    foundSomething = true;
-                }
-                
-                if (foundSomething) {
-                    internetDiv.innerHTML = html;
-                } else {
-                    internetDiv.innerHTML = '<div class="error">⚠️ No se encontró información en internet</div>';
-                }
-                
-            } catch (error) {
-                console.log('Error en búsqueda internet:', error);
-                internetDiv.innerHTML = '<div class="error">⚠️ No se pudo obtener información de internet. Verificá tu conexión.</div>';
+        function loadCustomKeywords() {
+            const saved = localStorage.getItem('hospital_flores_custom_keywords');
+            if (saved) {
+                customKeywords = JSON.parse(saved);
             }
+            updateCustomKeywordsCount();
+            renderCustomKeywordsList();
+        }
+
+        function saveCustomKeywords() {
+            localStorage.setItem('hospital_flores_custom_keywords', JSON.stringify(customKeywords));
+            updateCustomKeywordsCount();
+            renderCustomKeywordsList();
+        }
+
+        function updateCustomKeywordsCount() {
+            const count = Object.keys(customKeywords).length;
+            document.getElementById('customKeywordsCount').textContent = count;
         }
 
         // ============================================
-        // 💾 CARGA DEL CSV
+        // 📝 GESTIÓN DE PALABRAS PERSONALIZADAS
+        // ============================================
+        
+        function toggleCustomKeywordsPanel() {
+            const panel = document.getElementById('customKeywordsPanel');
+            const btn = document.getElementById('togglePanelBtn');
+            if (panel.style.display === 'none' || panel.style.display === '') {
+                panel.style.display = 'block';
+                btn.textContent = '📝 Ocultar Palabras Personalizadas';
+            } else {
+                panel.style.display = 'none';
+                btn.textContent = '📝 Gestionar Palabras Personalizadas';
+            }
+        }
+
+        function addCustomKeyword() {
+            const keyword = document.getElementById('newKeyword').value.trim().toLowerCase();
+            const objeto = document.getElementById('newObjeto').value.trim();
+            const auxiliar = document.getElementById('newAuxiliar').value.trim() || '000';
+            
+            if (!keyword || !objeto) {
+                alert('⚠️ Por favor completá la palabra y el objeto');
+                return;
+            }
+            
+            // Validar que el objeto exista en los datos cargados
+            if (datosCompletos.length > 0) {
+                const objetoExiste = datosCompletos.some(d => d.objeto === objeto);
+                if (!objetoExiste) {
+                    if (!confirm(`⚠️ El objeto ${objeto} no existe en los datos cargados. ¿Querés agregarlo de todos modos?`)) {
+                        return;
+                    }
+                }
+            }
+            
+            if (!customKeywords[keyword]) {
+                customKeywords[keyword] = [];
+            }
+            
+            const yaExiste = customKeywords[keyword].some(k => k.objeto === objeto && k.auxiliar === auxiliar);
+            if (yaExiste) {
+                alert('⚠️ Esta palabra ya está asociada a este objeto');
+                return;
+            }
+            
+            customKeywords[keyword].push({
+                objeto: objeto,
+                auxiliar: auxiliar,
+                fecha: new Date().toISOString()
+            });
+            
+            saveCustomKeywords();
+            
+            document.getElementById('newKeyword').value = '';
+            document.getElementById('newObjeto').value = '';
+            document.getElementById('newAuxiliar').value = '000';
+            
+            alert('✅ ¡Palabra agregada correctamente! El buscador la reconocerá en futuras búsquedas.');
+        }
+
+        function deleteCustomKeyword(keyword, objeto, auxiliar) {
+            if (confirm(`¿Estás seguro de eliminar "${keyword}" → ${objeto}/${auxiliar}?`)) {
+                customKeywords[keyword] = customKeywords[keyword].filter(
+                    k => !(k.objeto === objeto && k.auxiliar === auxiliar)
+                );
+                
+                if (customKeywords[keyword].length === 0) {
+                    delete customKeywords[keyword];
+                }
+                
+                saveCustomKeywords();
+            }
+        }
+
+        function clearAllCustomKeywords() {
+            if (confirm('⚠️ ¿Estás seguro de eliminar TODAS las palabras personalizadas? Esta acción no se puede deshacer.')) {
+                customKeywords = {};
+                saveCustomKeywords();
+                alert('🗑️ Todas las palabras personalizadas fueron eliminadas.');
+            }
+        }
+
+        function renderCustomKeywordsList() {
+            const list = document.getElementById('keywordsList');
+            const keywords = Object.keys(customKeywords).sort();
+            
+            if (keywords.length === 0) {
+                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>';
+                return;
+            }
+            
+            let html = '';
+            keywords.forEach(keyword => {
+                customKeywords[keyword].forEach(mapping => {
+                    html += `
+                        <div class="keyword-item">
+                            <div class="keyword-item-info">
+                                <div class="keyword-item-word">📝 ${keyword}</div>
+                                <div class="keyword-item-object">→ Objeto ${mapping.objeto}/${mapping.auxiliar}</div>
+                            </div>
+                            <button class="keyword-item-delete" onclick="deleteCustomKeyword('${keyword}', '${mapping.objeto}', '${mapping.auxiliar}')">🗑️ Eliminar</button>
+                        </div>
+                    `;
+                });
+            });
+            
+            list.innerHTML = html;
+        }
+
+        function exportCustomKeywords() {
+            if (Object.keys(customKeywords).length === 0) {
+                alert('⚠️ No hay palabras personalizadas para exportar');
+                return;
+            }
+            
+            const data = JSON.stringify(customKeywords, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `palabras_personalizadas_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    
+                    Object.keys(imported).forEach(keyword => {
+                        if (!customKeywords[keyword]) {
+                            customKeywords[keyword] = [];
+                        }
+                        imported[keyword].forEach(mapping => {
+                            const yaExiste = customKeywords[keyword].some(
+                                k => k.objeto === mapping.objeto && k.auxiliar === mapping.auxiliar
+                            );
+                            if (!yaExiste) {
+                                customKeywords[keyword].push(mapping);
+                            }
+                        });
+                    });
+                    
+                    saveCustomKeywords();
+                    alert(`✅ Se importaron ${Object.keys(imported).length} palabras personalizadas`);
+                } catch (error) {
+                    alert('❌ Error al importar el archivo. Asegurate que sea un JSON válido.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ============================================
+        // 📂 CARGA DEL CSV
         // ============================================
         document.getElementById('csvFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -502,12 +932,10 @@
                 const lineas = texto.split('\n');
                 datosCompletos = [];
                 
-                // Saltar encabezado (línea 0)
                 for (let i = 1; i < lineas.length; i++) {
                     const linea = lineas[i].trim();
                     if (!linea) continue;
                     
-                    // Parseo de CSV (maneja comillas)
                     const columnas = [];
                     let actual = '';
                     let entreComillas = false;
@@ -549,11 +977,14 @@
                 
                 document.getElementById('uploadSection').style.display = 'none';
                 document.getElementById('statsBar').style.display = 'flex';
+                document.getElementById('togglePanelBtn').style.display = 'inline-block';
                 document.getElementById('searchContainer').style.display = 'block';
+                document.getElementById('historySection').style.display = 'block';
                 
+                loadCustomKeywords();
                 cargarSugerencias();
                 
-                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados (011 al 923). Ahora podés buscar.`);
+                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados. Ahora podés buscar y agregar palabras personalizadas.`);
                 
             } catch (error) {
                 console.error('Error procesando CSV:', error);
@@ -578,7 +1009,7 @@
         }
 
         // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA
+        // 🔍 MOTOR DE BÚSQUEDA CON IA
         // ============================================
         
         function normalizar(texto) {
@@ -601,26 +1032,46 @@
             
             let score = 0;
             let keywordEncontrada = null;
+            let esDiccionarioUruguay = false;
             
-            // 1. Coincidencia en código de objeto
-            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
-                score += 60;
-                keywordEncontrada = 'código';
+            // 1. Palabras personalizadas (MÁXIMA PRIORIDAD)
+            if (customKeywords[queryNorm]) {
+                const mappings = customKeywords[queryNorm];
+                const coincide = mappings.some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
+                if (coincide) {
+                    score += 100;
+                    keywordEncontrada = queryNorm;
+                }
             }
             
-            // 2. Coincidencia exacta en denominación
+            // 2. Diccionario Uruguay
+            if (diccionarioUruguay[queryNorm]) {
+                if (diccionarioUruguay[queryNorm].objeto === item.objeto) {
+                    score += 90;
+                    keywordEncontrada = queryNorm;
+                    esDiccionarioUruguay = true;
+                }
+            }
+            
+            // 3. Coincidencia en denominación
             if (denomNorm.includes(queryNorm)) {
                 score += 50;
                 if (!keywordEncontrada) keywordEncontrada = 'denominación';
             }
             
-            // 3. Coincidencia en descripción
+            // 4. Coincidencia en descripción
             if (descNorm.includes(queryNorm)) {
                 score += 40;
                 if (!keywordEncontrada) keywordEncontrada = 'descripción';
             }
             
-            // 4. Búsqueda por palabras parciales
+            // 5. Coincidencia en código
+            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
+                score += 60;
+                if (!keywordEncontrada) keywordEncontrada = 'código';
+            }
+            
+            // 6. Búsqueda por palabras parciales
             const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
             palabrasQuery.forEach(palabra => {
                 if (textoCompleto.includes(palabra)) {
@@ -631,11 +1082,12 @@
             
             return {
                 score: Math.min(score, 100),
-                keyword: keywordEncontrada
+                keyword: keywordEncontrada,
+                esDiccionarioUruguay: esDiccionarioUruguay
             };
         }
 
-        async function buscar() {
+        function buscar() {
             const query = document.getElementById('searchInput').value.trim();
             const resultsDiv = document.getElementById('results');
             
@@ -647,13 +1099,7 @@
             searchCount++;
             document.getElementById('searchCount').textContent = searchCount;
             
-            // Ocultar resultados anteriores de internet
-            document.getElementById('internetResults').style.display = 'none';
-            
             resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en ' + datosCompletos.length + ' objetos...</div>';
-            
-            // Búsqueda en internet en paralelo
-            buscarEnInternet(query);
             
             setTimeout(() => {
                 let resultados = datosCompletos.map(item => {
@@ -661,7 +1107,8 @@
                     return { 
                         ...item, 
                         relevancia: relevancia.score,
-                        keywordEncontrada: relevancia.keyword
+                        keywordEncontrada: relevancia.keyword,
+                        esDiccionarioUruguay: relevancia.esDiccionarioUruguay
                     };
                 });
                 
@@ -682,6 +1129,7 @@
                             <h2>❌ No se encontraron resultados</h2>
                             <p style="margin-top: 15px;">Intentá con otros términos o verificá la ortografía</p>
                             <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: harina, sueldo, combustible, medicamento, vehículo, regla, internación, útiles, lapiz, aceite</p>
+                            <p style="margin-top: 10px; color: #28a745;">📝 ¿No encontrás lo que buscás? Agregá tu palabra en "Gestionar Palabras Personalizadas"</p>
                         </div>
                     `;
                     return;
@@ -703,13 +1151,15 @@
                             <div class="descripcion">${r.descripcion}</div>
                             ${r.categoria ? `<div class="categoria-tag">📁 ${r.categoria}</div>` : ''}
                             <span class="grupo-tag">Grupo ${r.grupo}</span>
-                            ${r.keywordEncontrada ? `<div class="keyword-match" style="display:inline-block;background:rgba(255,107,0,0.1);color:#ff6b00;padding:4px 10px;border-radius:8px;font-size:0.75em;margin-top:8px;">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
+                            ${r.keywordEncontrada ? `<div class="keyword-match">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
+                            ${r.esDiccionarioUruguay ? `<div class="uruguay-badge">🇺🇾 Diccionario Uruguay</div>` : ''}
                             ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
                         </div>
                     `;
                 });
                 
                 resultsDiv.innerHTML = html;
+                renderHistory();
             }, 300);
         }
 
@@ -771,7 +1221,6 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('results').innerHTML = '';
             document.getElementById('ultimaBusqueda').textContent = '0';
-            document.getElementById('internetResults').style.display = 'none';
         }
 
         function cargarSugerencias() {
@@ -779,13 +1228,38 @@
                 'harina', 'sueldo', 'combustible', 'medicamento', 'vehiculo',
                 'regla', 'internacion', 'computadora', 'utiles', 'limpieza',
                 'electricidad', 'telefono', 'viatico', 'alquiler', 'jubilacion',
-                'beca', 'capacitacion', 'mantenimiento', 'lapiz', 'aceite'
+                'beca', 'capacitacion', 'mantenimiento', 'lapiz', 'aceite',
+                'birome', 'lavandina', 'mate', 'yerba', 'nafta', 'gasoil'
             ];
             
             const grid = document.getElementById('sugerenciasGrid');
             grid.innerHTML = sugerencias.map(s => 
                 `<div class="sugerencia-item" onclick="buscarCon('${s}')">${s}</div>`
             ).join('');
+        }
+
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            const recentSearches = []; // Podés implementar historial si querés
+            
+            if (recentSearches.length === 0) {
+                historyList.innerHTML = '<p style="color: #666;">No hay historial aún.</p>';
+                return;
+            }
+            
+            historyList.innerHTML = recentSearches.map(s => `
+                <div class="history-item" onclick="document.getElementById('searchInput').value='${s.query}'; buscar();">
+                    <span>🔍 ${s.query}</span>
+                    <span class="history-count">${s.resultsCount} resultados</span>
+                </div>
+            `).join('');
+        }
+
+        function clearHistory() {
+            if (confirm('¿Estás seguro de limpiar todo el historial?')) {
+                document.getElementById('historyList').innerHTML = '<p style="color: #666;">No hay historial aún.</p>';
+                alert('Historial limpiado.');
+            }
         }
 
         // ============================================
@@ -796,6 +1270,8 @@
             logoImg.onerror = function() {
                 this.style.display = 'none';
             };
+            
+            loadCustomKeywords();
         };
     </script>
 </body>
