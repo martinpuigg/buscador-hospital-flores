@@ -1,355 +1,1131 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Search, Upload, FileText, X, Info, CheckCircle2, AlertCircle, Database, LayoutDashboard, Zap } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 Hospital de Flores - Contaduría</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #003ca5;
+            --primary-dark: #002d7a;
+            --primary-light: rgba(0,60,165,0.1);
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ff6b00;
+            --bg: #ffffff;
+            --bg-alt: #f8f9fa;
+            --text: #003ca5;
+            --text-muted: #666;
+            --radius: 10px;
+            --shadow: 0 2px 10px rgba(0,60,165,0.1);
+        }
 
-const App = () => {
-  const [data, setData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [fileName, setFileName] = useState('');
-  const [error, setError] = useState(null);
-  const fileInputRef = useRef(null);
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
 
-  // Inyectar Montserrat y estilos base para asegurar la visualización en Netlify/Externos
-  useEffect(() => {
-    if (!document.getElementById('montserrat-font')) {
-      const link = document.createElement('link');
-      link.id = 'montserrat-font';
-      link.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap';
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 30px 0;
+            border-bottom: 3px solid var(--primary);
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 20px; }
+        .logo-img { max-width: 200px; height: auto; }
+        .header-text h1 { font-size: 1.8em; font-weight: 700; }        .header-text p { color: var(--text-muted); }
+
+        /* AI Status */
+        .ai-status {
+            background: var(--primary-light);
+            border: 2px solid var(--primary);
+            padding: 15px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .ai-status span { color: var(--primary); font-weight: 600; }
+        .status-dot {
+            width: 10px; height: 10px; background: var(--success);
+            border-radius: 50%; display: inline-block;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+        /* Upload Section */
+        .upload-section {
+            background: var(--bg-alt);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            border: 2px dashed var(--primary);
+            transition: all 0.3s;
+        }
+        .upload-section:hover { border-color: var(--primary-dark); }
+        .upload-section input { display: none; }
+        
+        .upload-btn {
+            background: var(--primary);
+            color: #fff;
+            padding: 20px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s;
+            border: none;
+            font-family: inherit;        }
+        .upload-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
+        .file-info { margin-top: 20px; color: var(--success); font-weight: 600; }
+        .security-note { margin-top: 15px; color: var(--text-muted); font-size: 0.9em; }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: none;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            background: var(--bg-alt);
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--primary);
+            min-width: 150px;
+        }
+        .stat-number { font-size: 2em; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 0.9em; color: var(--text-muted); }
+
+        /* Search Container */
+        .search-container {
+            display: none;
+            background: var(--bg-alt);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid var(--primary);
+        }
+        .search-box { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-box input {
+            flex: 1;
+            min-width: 250px;
+            padding: 18px 25px;
+            font-size: 18px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            background: #fff;
+            color: var(--text);
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .search-box input:focus { border-color: var(--primary-dark); box-shadow: 0 0 10px var(--primary-light); }
+        
+        .search-btn {            padding: 18px 40px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .search-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
+
+        /* Filters */
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--primary-light); }
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .filter-btn:hover, .filter-btn.active { background: var(--primary-dark); }
+        .filter-btn.danger { background: var(--danger); }
+        .filter-btn.danger:hover { background: #c82333; }
+
+        /* Suggestions */
+        .sugerencias {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            border: 2px solid var(--primary);
+        }
+        .sugerencias h3 { margin-bottom: 15px; color: var(--primary); }
+        .sugerencias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+        }
+        .sugerencia-item {
+            background: var(--primary);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+        .sugerencia-item:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        /* Results */
+        .results-container { display: grid; gap: 20px; }
+        .result-card {
+            background: #fff;
+            border-left: 4px solid var(--primary);
+            padding: 25px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+        }
+        .result-card:hover, .result-card.selected {
+            transform: translateX(10px);
+            background: var(--bg-alt);
+            border-left-color: var(--warning);
+            box-shadow: 0 4px 20px rgba(0,60,165,0.2);
+        }
+        .result-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+        
+        .codigo-badge {
+            background: var(--primary);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .copy-btn {
+            background: none; border: 1px solid #fff; color: #fff;
+            padding: 2px 8px; border-radius: 4px; cursor: pointer;
+            font-size: 0.8em; transition: all 0.2s;
+        }
+        .copy-btn:hover { background: #fff; color: var(--primary); }
+        
+        .relevancia-badge {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 5px 15px;
+            border-radius: 15px;            font-size: 0.9em;
+        }
+        
+        .denominacion { font-size: 1.3em; font-weight: 600; margin: 10px 0; color: var(--primary); }
+        .descripcion {
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-size: 0.95em;
+            background: var(--bg-alt);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .categoria-tag, .grupo-tag, .keyword-match {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 5px 12px; border-radius: 15px; font-size: 0.85em; font-weight: 500;
+        }
+        .categoria-tag { background: var(--primary-light); color: var(--primary); }
+        .grupo-tag { background: var(--bg-alt); color: var(--text-muted); }
+        .keyword-match { background: rgba(255,107,0,0.1); color: var(--warning); }
+        
+        .best-result-indicator {
+            margin-top: 10px; color: var(--warning);
+            font-weight: 600; font-size: 0.9em;
+        }
+
+        /* Custom Keywords Panel */
+        .custom-keywords-panel {
+            display: none;
+            background: rgba(40,167,69,0.1);
+            border: 2px solid var(--success);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .custom-keywords-panel h3 { color: var(--success); margin-bottom: 20px; }
+        
+        .add-keyword-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: end;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-group label { font-weight: 600; color: var(--primary); font-size: 0.9em; }
+        .add-keyword-form input {
+            padding: 12px 15px;            border: 2px solid var(--primary);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #fff;
+        }
+        .add-keyword-form input:focus { border-color: var(--primary-dark); outline: none; }
+        
+        .add-keyword-form button {
+            padding: 12px 25px;
+            background: var(--success);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .add-keyword-form button:hover { background: #218838; transform: scale(1.05); }
+        
+        .keywords-list {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--primary-light);
+        }
+        .keyword-item {
+            background: var(--bg-alt);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--success);
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .keyword-item-info { flex: 1; min-width: 200px; }
+        .keyword-item-word { font-weight: 700; color: var(--success); font-size: 1.1em; }
+        .keyword-item-object { color: var(--primary); font-size: 0.9em; margin-top: 5px; }
+        
+        .keyword-item-delete {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            padding: 8px 15px;            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .keyword-item-delete:hover { background: #c82333; }
+        
+        .keywords-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .btn-secondary {
+            padding: 12px 25px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover { background: var(--primary-dark); }
+        .btn-danger { background: var(--danger); }
+        .btn-danger:hover { background: #c82333; }
+
+        /* Internet Results */
+        .internet-results {
+            display: none;
+            background: var(--primary-light);
+            border: 2px solid var(--primary);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .internet-results h4 { color: var(--primary); margin-bottom: 15px; }
+        .uruguay-source {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--primary);
+        }
+        .uruguay-source h5 { color: var(--primary); margin-bottom: 8px; }
+        .uruguay-source a { color: var(--primary); text-decoration: none; font-weight: 600; }
+        .uruguay-source a:hover { text-decoration: underline; }
+
+        /* History */
+        .history-section {
+            display: none;
+            margin-top: 30px;
+            background: var(--bg-alt);            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+        }
+        .history-section h3 { color: var(--primary); margin-bottom: 15px; }
+        .history-list { display: flex; flex-direction: column; gap: 8px; max-height: 200px; overflow-y: auto; }
+        .history-item {
+            background: #fff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--primary-light);
+            transition: all 0.2s;
+        }
+        .history-item:hover { background: var(--primary-light); border-color: var(--primary); }
+        .history-query { font-weight: 500; color: var(--primary); }
+        .history-time { color: var(--text-muted); font-size: 0.9em; }
+        
+        .clear-btn {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: inherit;
+            font-weight: 500;
+        }
+        .clear-btn:hover { background: #c82333; }
+
+        /* Toggle Button */
+        .toggle-panel-btn {
+            background: var(--success);
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }        .toggle-panel-btn:hover { background: #218838; transform: scale(1.05); }
+
+        /* Loading/Error States */
+        .loading, .no-results, .error {
+            text-align: center;
+            padding: 50px;
+            color: var(--text-muted);
+        }
+        .loading { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .loading::after {
+            content: ""; width: 40px; height: 40px;
+            border: 4px solid var(--primary-light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .error {
+            background: rgba(220,53,69,0.1);
+            border: 2px solid var(--danger);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            color: var(--danger);
+        }
+        .no-results h2 { color: var(--primary); margin-bottom: 15px; }
+        .suggestion-hint {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            color: var(--primary);
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+        }
+        .toast {
+            background: #fff;
+            border-left: 4px solid var(--primary);
+            padding: 15px 20px;            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+        }
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.warning { border-left-color: var(--warning); }
+        
+        .toast-icon { font-size: 1.2em; }
+        .toast-message { flex: 1; font-size: 0.9em; }
+        .toast-close {
+            background: none; border: none; color: var(--text-muted);
+            cursor: pointer; padding: 5px; font-size: 1.2em;
+        }
+        .toast-close:hover { color: var(--text); }
+        
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header { flex-direction: column; text-align: center; }
+            .logo-container { flex-direction: column; }
+            .header-text h1 { font-size: 1.5em; }
+            .search-box { flex-direction: column; }
+            .search-box input { min-width: 100%; }
+            .stats-bar { flex-direction: column; align-items: center; }
+            .stat-item { width: 100%; max-width: 300px; }
+            .add-keyword-form { grid-template-columns: 1fr; }
+            .filters { justify-content: center; }
+            .sugerencias-grid { grid-template-columns: repeat(2, 1fr); }
+            .result-card { padding: 20px; }
+            .result-header { flex-direction: column; align-items: flex-start; }
+            .toast-container { left: 20px; right: 20px; }
+        }
+
+        @media (max-width: 480px) {
+            .upload-section, .search-container, .custom-keywords-panel { padding: 20px; }
+            .sugerencias-grid { grid-template-columns: 1fr 1fr; }
+            .keyword-item { flex-direction: column; align-items: flex-start; }
+            .keywords-actions { flex-direction: column; }
+            .keywords-actions button { width: 100%; justify-content: center; }
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: #fff; color: #000; }            .upload-section, .search-container, .filters, .sugerencias,
+            .custom-keywords-panel, .history-section, .internet-results,
+            .toggle-panel-btn, .toast-container { display: none !important; }
+            .result-card { break-inside: avoid; border: 1px solid #000; box-shadow: none; }
+            .result-card:hover { transform: none; }
+        }
+
+        /* Utilities */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 20px; }
+        .mb-2 { margin-bottom: 20px; }
+        .flex { display: flex; }
+        .flex-wrap { flex-wrap: wrap; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 20px; }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-container">
+                <img src="logo_hospital_flores.png" alt="Hospital de Flores" class="logo-img" id="hospitalLogo" onerror="this.style.display='none'">
+                <div class="header-text">
+                    <h1>🏥 Hospital de Flores "Edison Camacho"</h1>
+                    <p>Sector Contaduría | Clasificador de Objetos del Gasto</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- AI Status -->
+        <div class="ai-status" id="aiStatus">
+            <span class="status-dot"></span>
+            🇺🇾 <span id="aiStatusText">Buscador Uruguay - Cargá tu CSV</span> |
+            🔍 Búsquedas: <span id="searchCount">0</span> |
+            📚 Personalizadas: <span id="customKeywordsCount">0</span>
+        </div>
+
+        <!-- Upload Section -->
+        <section class="upload-section" id="uploadSection">
+            <h2 style="color:var(--primary);margin-bottom:20px">📂 Paso 1: Cargá tu archivo CSV</h2>
+            <p style="margin:20px 0;color:var(--text-muted);font-size:1.1em">
+                Seleccioná el archivo <strong>ObjetosGasto.csv</strong> de la CGN
+            </p>
+            <label class="upload-btn" for="csvFile">                📥 Seleccionar Archivo CSV
+                <input type="file" id="csvFile" accept=".csv">
+            </label>
+            <p id="fileName" class="file-info"></p>
+            <p class="security-note">🔒 Procesamiento local • Sin envío a servidores</p>
+        </section>
+
+        <!-- Stats Bar -->
+        <nav class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <div class="stat-number" id="totalRegistros">0</div>
+                <div class="stat-label">Objetos Cargados</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="totalGrupos">10</div>
+                <div class="stat-label">Grupos (0-9)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="ultimaBusqueda">0</div>
+                <div class="stat-label">Resultados</div>
+            </div>
+        </nav>
+
+        <!-- Toggle Panel Button -->
+        <button class="toggle-panel-btn" id="togglePanelBtn" style="display:none" onclick="togglePanel()">
+            📝 Gestionar Palabras Personalizadas
+        </button>
+
+        <!-- Custom Keywords Panel -->
+        <section class="custom-keywords-panel" id="customKeywordsPanel">
+            <h3>📝 Agregar Palabras Personalizadas</h3>
+            <p style="margin-bottom:20px;color:var(--text-muted)">Asociá tus términos a objetos de gasto.</p>
+            
+            <form class="add-keyword-form" onsubmit="addKeyword(event);return false">
+                <div class="form-group">
+                    <label for="newKeyword">Palabra:</label>
+                    <input type="text" id="newKeyword" placeholder="Ej: insumos" required maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label for="newObjeto">Objeto:</label>
+                    <input type="text" id="newObjeto" placeholder="Ej: 191" required pattern="\d{3}" maxlength="3">
+                </div>
+                <div class="form-group">
+                    <label for="newAuxiliar">Auxiliar:</label>
+                    <input type="text" id="newAuxiliar" value="000" pattern="\d{3}" maxlength="3">
+                </div>
+                <button type="submit">➕ Agregar</button>
+            </form>
+            
+            <div class="keywords-list" id="keywordsList">                <p style="color:var(--text-muted);text-align:center;padding:20px">Sin palabras personalizadas aún.</p>
+            </div>
+            
+            <div class="keywords-actions">
+                <button class="btn-secondary" onclick="exportKeywords()">📤 Exportar</button>
+                <button class="btn-secondary" onclick="document.getElementById('importFile').click()">📥 Importar</button>
+                <input type="file" id="importFile" accept=".json" class="hidden" onchange="importKeywords(event)">
+                <button class="btn-secondary btn-danger" onclick="clearKeywords()">🗑️ Limpiar Todo</button>
+            </div>
+        </section>
+
+        <!-- Internet Results -->
+        <section class="internet-results" id="internetResults"></section>
+
+        <!-- Search Container -->
+        <section class="search-container" id="searchContainer">
+            <div class="search-box">
+                <input type="search" id="searchInput" placeholder="Ej: harina, sueldo, combustible..." onkeypress="if(event.key==='Enter')buscar()">
+                <button class="search-btn" id="searchBtn" onclick="buscar()">🔎 Buscar</button>
+            </div>
+            
+            <div class="filters">
+                <button class="filter-btn active" onclick="setLimite(20)">20 resultados</button>
+                <button class="filter-btn" onclick="setLimite(50)">50 resultados</button>
+                <button class="filter-btn" onclick="setLimite(100)">100 resultados</button>
+                <span style="margin:0 5px;color:var(--text-muted)">|</span>
+                <button class="filter-btn" onclick="filterGroup('0')">G0</button>
+                <button class="filter-btn" onclick="filterGroup('1')">G1</button>
+                <button class="filter-btn" onclick="filterGroup('2')">G2</button>
+                <button class="filter-btn" onclick="filterGroup('3')">G3</button>
+                <button class="filter-btn" onclick="filterGroup('4')">G4</button>
+                <button class="filter-btn" onclick="filterGroup('5')">G5</button>
+                <button class="filter-btn" onclick="filterGroup('6')">G6</button>
+                <button class="filter-btn" onclick="filterGroup('7')">G7</button>
+                <button class="filter-btn" onclick="filterGroup('8')">G8</button>
+                <button class="filter-btn" onclick="filterGroup('9')">G9</button>
+                <button class="filter-btn danger" onclick="clearFilters()">🔄 Limpiar</button>
+            </div>
+            
+            <div class="sugerencias" id="sugerencias">
+                <h3>💡 Búsquedas sugeridas</h3>
+                <div class="sugerencias-grid" id="sugerenciasGrid"></div>
+            </div>
+        </section>
+
+        <!-- Results -->
+        <main>
+            <div id="results" class="results-container"></div>
+        </main>
+        <!-- History -->
+        <aside class="history-section" id="historySection">
+            <h3>📜 Historial de Búsquedas</h3>
+            <div id="historyList" class="history-list"></div>
+            <button class="clear-btn" onclick="clearHistory()">🗑️ Limpiar Historial</button>
+        </aside>
+    </div>
+
+    <script>
+    // Estado global
+    const state = {
+        datos: [],
+        limite: 20,
+        filtroGrupo: '',
+        searchCount: 0,
+        customKeywords: {},
+        searchHistory: [],
+        debounceTimer: null
+    };
+
+    // Mapeo de keywords
+    const keywordsMap = {
+        'harina':['111'],'lechuga':['111'],'arroz':['111'],'carne':['111'],
+        'aceite':['111'],'azucar':['111'],'azúcar':['111'],'sal':['111'],
+        'sueldo':['011','021','031'],'salario':['011','021'],
+        'combustible':['141'],'nafta':['141'],'gasoil':['141'],'lubricante':['141'],
+        'medicamento':['152'],'droga':['152'],'farmaco':['152'],'fármaco':['152'],
+        'vehiculo':['353'],'vehículo':['353'],'auto':['353'],
+        'internacion':['283'],'internación':['283'],'hospital':['283'],
+        'computadora':['323'],'laptop':['323'],
+        'limpieza':['192'],'jabon':['192'],'jabón':['192'],
+        'electricidad':['213'],'luz':['213'],'agua':['212'],
+        'telefono':['211'],'teléfono':['211'],'internet':['211'],
+        'regla':['191','176'],'util':['191'],'útil':['191'],'oficina':['191'],
+        'lapiz':['191'],'lápiz':['191'],'papel':['131','191'],
+        'viatico':['234','235'],'viático':['234','235'],'pasaje':['231'],
+        'jubilacion':['571'],'jubilación':['571'],'beca':['577'],
+        'herramienta':['176'],'ferreteria':['176'],
+        'plomeria':['271','163'],'plomería':['271','163'],
+        'material medico':['194'],'material médico':['194'],
+        'capacitacion':['284'],'capacitación':['284'],'curso':['284'],
+        'vigilancia':['291'],'seguridad':['291'],
+        'mueble':['326'],'escritorio':['326'],'silla':['326'],
+        'impuesto':['263'],'tasa':['263'],'dgi':['263'],'bps':['263'],
+        'construccion':['387'],'construcción':['387'],
+        'seguro':['264'],'poliza':['264'],'póliza':['264'],
+        'mantenimiento':['271','273']
+    };
+
+    // Utilidades    const Utils = {
+        normalize: (t) => t ? t.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ñ/g,'n') : '',
+        escape: (t) => { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; },
+        toast: (msg, type='success', dur=3000) => {
+            const c=document.getElementById('toastContainer');
+            const t=document.createElement('div');
+            t.className=`toast ${type}`;
+            const icons={success:'✅',error:'❌',warning:'⚠️'};
+            t.innerHTML=`<span class="toast-icon">${icons[type]}</span><span class="toast-message">${Utils.escape(msg)}</span><button class="toast-close">&times;</button>`;
+            t.querySelector('.toast-close').onclick=()=>t.remove();
+            c.appendChild(t);
+            setTimeout(()=>{if(t.parentNode){t.style.animation='fadeOut 0.3s';setTimeout(()=>t.remove(),300)}},dur);
+        }
+    };
+
+    // Persistencia
+    const Storage = {
+        load: (k,d={})=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}},
+        save: (k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+    };
+
+    // Motor de búsqueda
+    const Search = {
+        relevance: (q,item)=>{
+            const qn=Utils.normalize(q);
+            const full=Utils.normalize(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
+            let score=0, kw=null;
+            
+            if(state.customKeywords[qn]?.some(m=>m.objeto===item.objeto&&m.auxiliar===item.auxiliar)){score+=100;kw='personalizada'}
+            if(keywordsMap[qn]?.includes(item.objeto)){score+=50;kw=kw||'mapeo'}
+            if(item.objeto===qn||item.auxiliar===qn){score+=60;kw=kw||'código'}
+            if(Utils.normalize(item.denominacion).includes(qn)){score+=40;kw=kw||'denominación'}
+            if(Utils.normalize(item.descripcion).includes(qn)){score+=30;kw=kw||'descripción'}
+            
+            qn.split(/\s+/).filter(w=>w.length>2).forEach(w=>{
+                if(full.includes(w)){score+=15;kw=kw||`"${w}"`}
+            });
+            
+            return {score:Math.min(score,100), keyword:kw};
+        },
+        search: (q)=>{
+            const qn=Utils.normalize(q);
+            let r=state.datos.map(i=>({...i,...Search.relevance(qn,i)}));
+            r=r.filter(x=>x.relevancia>=15&&(!state.filtroGrupo||x.grupo===state.filtroGrupo));
+            r.sort((a,b)=>b.relevancia-a.relevancia);
+            return r.slice(0,state.limite);
+        }
+    };
+
+    // Gestión de keywords personalizadas    const CustomKW = {
+        init: ()=>{
+            state.customKeywords=Storage.load('hf_custom_kw',{});
+            CustomKW.render();
+            updateStats();
+        },
+        add: (kw,obj,aux='000')=>{
+            const kn=Utils.normalize(kw);
+            if(!kn||!obj||!/^\d{3}$/.test(obj)){Utils.toast('Verificá los datos','error');return false}
+            if(!state.customKeywords[kn])state.customKeywords[kn]=[];
+            if(state.customKeywords[kn].some(m=>m.objeto===obj&&m.auxiliar===aux)){Utils.toast('Ya existe','warning');return false}
+            state.customKeywords[kn].push({objeto:obj,auxiliar:aux,fecha:new Date().toISOString()});
+            CustomKW.save();
+            Utils.toast(`✅ "${kw}" → ${obj}/${aux}`,'success');
+            return true;
+        },
+        remove: (kw,obj,aux)=>{
+            if(!confirm(`¿Eliminar "${kw}" → ${obj}/${aux}?`))return;
+            state.customKeywords[kw]=state.customKeywords[kw]?.filter(m=>!(m.objeto===obj&&m.auxiliar===aux))||[];
+            if(!state.customKeywords[kw].length)delete state.customKeywords[kw];
+            CustomKW.save();
+            Utils.toast('🗑️ Eliminado','success');
+        },
+        clear: ()=>{
+            if(!confirm('¿Eliminar TODAS las palabras?'))return;
+            state.customKeywords={};
+            CustomKW.save();
+            Utils.toast('Todo limpiado','success');
+        },
+        save: ()=>{
+            Storage.save('hf_custom_kw',state.customKeywords);
+            CustomKW.render();
+            updateStats();
+        },
+        render: ()=>{
+            const l=document.getElementById('keywordsList');
+            const kws=Object.keys(state.customKeywords).sort();
+            if(!kws.length){l.innerHTML='<p style="color:var(--text-muted);text-align:center;padding:20px">Sin palabras personalizadas.</p>';return}
+            l.innerHTML=kws.map(k=>state.customKeywords[k].map(m=>`
+                <div class="keyword-item">
+                    <div class="keyword-item-info">
+                        <div class="keyword-item-word">📝 ${Utils.escape(k)}</div>
+                        <div class="keyword-item-object">→ ${m.objeto}/${m.auxiliar}</div>
+                    </div>
+                    <button class="keyword-item-delete" onclick="CustomKW.remove('${k}','${m.objeto}','${m.auxiliar}')">🗑️</button>
+                </div>`).join('')).join('');
+        },
+        export: ()=>{
+            if(!Object.keys(state.customKeywords).length){Utils.toast('Nada para exportar','warning');return}
+            const b=new Blob([JSON.stringify(state.customKeywords,null,2)],{type:'application/json'});            const a=document.createElement('a');a.href=URL.createObjectURL(b);
+            a.download=`palabras_${new Date().toISOString().split('T')[0]}.json`;a.click();
+            Utils.toast('📤 Exportado','success');
+        },
+        import: (file)=>{
+            const r=new FileReader();
+            r.onload=e=>{
+                try{
+                    const imp=JSON.parse(e.target.result);let c=0;
+                    Object.entries(imp).forEach(([k,ms])=>{
+                        const kn=Utils.normalize(k);
+                        if(!state.customKeywords[kn])state.customKeywords[kn]=[];
+                        ms.forEach(m=>{
+                            if(!state.customKeywords[kn].some(x=>x.objeto===m.objeto&&x.auxiliar===m.auxiliar)){
+                                state.customKeywords[kn].push(m);c++;
+                            }
+                        });
+                    });
+                    CustomKW.save();
+                    Utils.toast(`✅ ${c} importadas`,'success');
+                }catch(err){Utils.toast('❌ JSON inválido','error')}
+            };
+            r.readAsText(file);
+        }
+    };
+
+    // Búsqueda en internet
+    async function buscarInternet(q){
+        const c=document.getElementById('internetResults');
+        c.style.display='block';
+        c.innerHTML='<div class="loading">🌐 Buscando...</div>';
+        try{
+            const ctrl=new AbortController();
+            const to=setTimeout(()=>ctrl.abort(),3000);
+            const r=await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q+' Uruguay')}`,{signal:ctrl.signal});
+            clearTimeout(to);
+            const d=await r.json();
+            let h=`<h4>🇺🇾 Info para "${Utils.escape(q)}":</h4>`;
+            if(d?.extract&&!d.type){
+                h+=`<div class="uruguay-source"><h5>📚 Wikipedia</h5><p><b>${Utils.escape(d.title)}</b></p><p>${Utils.escape(d.extract.slice(0,200))}...</p>${d.content_urls?.desktop?.page?`<a href="${d.content_urls.desktop.page}" target="_blank">Ver más →</a>`:''}</div>`;
+            }
+            h+=`<div class="uruguay-source"><h5>🏛️ Sitios Uruguay</h5>
+                <p><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(q)}" target="_blank">CGN →</a></p>
+                <p><a href="https://www.siif.gub.uy/" target="_blank">SIIF →</a></p>
+                <p><a href="https://www.impo.com.uy/buscar/${encodeURIComponent(q)}" target="_blank">IMPO →</a></p></div>`;
+            c.innerHTML=h;
+        }catch(e){c.innerHTML='<div class="error">⚠️ Sin conexión externa</div>'}
     }
 
-    const style = document.createElement('style');
-    style.innerHTML = `
-      * { font-family: 'Montserrat', sans-serif !important; }
-      body { margin: 0; background-color: #f8fafc; }
-      .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-      .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    `;
-    document.head.appendChild(style);
-  }, []);
-
-  // --- MAPEO DE ASOCIACIÓN INTELIGENTE (Materiales -> Códigos) ---
-  const keywordMapping = {
-    // Alimentos y Víveres
-    "alimentos": "111", "comida": "111", "comestible": "111", "víveres": "111", 
-    "arroz": "111", "fideos": "111", "aceite": "111", "pan": "111", "leche": "111",
-    // Materiales de Construcción y PVC
-    "pvc": "141", "plastico": "141", "caño": "141", "tubo": "141", "polietileno": "141",
-    "construccion": "141", "hormigon": "141", "cemento": "141", "ladrillo": "141",
-    // Limpieza
-    "limpieza": "151", "detergente": "151", "jabón": "151", "desinfectante": "151", "lavandina": "151",
-    // Oficina
-    "oficina": "131", "papelería": "131", "papel": "131", "utiles": "131", "lapiz": "131", "resma": "131",
-    // Médico y Farmacia
-    "medicamentos": "181", "farmacia": "181", "remedios": "181", "gasas": "181", "vendas": "181", "jeringa": "181",
-    // Eléctrico
-    "eléctrico": "142", "cables": "142", "foco": "142", "lampara": "142", "enchufe": "142",
-    // Herramientas y Repuestos
-    "herramientas": "149", "ferretería": "149", "tornillo": "149", "repuestos": "149", "tuerca": "149"
-  };
-
-  const normalizeText = (text) => {
-    if (!text) return "";
-    return text.toString()
-      .toLowerCase()
-      .trim()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
-  };
-
-  const parseCSV = (text) => {
-    const lines = text.split(/\r?\n/);
-    if (lines.length < 2) return [];
-
-    const splitCSVLine = (line) => {
-      const result = [];
-      let current = '';
-      let inQuotes = false;
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        if (char === '"' && line[i + 1] === '"') {
-          current += '"';
-          i++;
-        } else if (char === '"') {
-          inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-          result.push(current);
-          current = '';
-        } else {
-          current += char;
-        }
-      }
-      result.push(current);
-      return result;
-    };
-
-    const headers = splitCSVLine(lines[0]).map(h => h.trim().replace(/"/g, ''));
-    
-    return lines.slice(1)
-      .filter(line => line.trim() !== "")
-      .map((line, index) => {
-        const values = splitCSVLine(line);
-        const entry = { id: index };
-        headers.forEach((header, i) => {
-          const val = (values[i] || "").trim().replace(/"/g, '');
-          const head = normalizeText(header);
-          if (head.includes("objeto")) entry.objeto = val;
-          else if (head.includes("auxiliar") || head.includes("subgrupo")) entry.auxiliar = val;
-          else if (head.includes("denominacion")) entry.denominacion = val;
-          else if (head.includes("desc")) entry.descripcion = val;
-        });
-        return entry;
-      });
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setFileName(file.name);
-    setError(null);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const text = event.target.result;
-        const processedData = parseCSV(text);
-        if (processedData.length > 0) {
-          setData(processedData);
-          setIsLoaded(true);
-        } else {
-          setError("El archivo no tiene el formato esperado.");
-        }
-      } catch (err) {
-        setError("Error crítico al procesar el CSV.");
-      }
-    };
-    reader.readAsText(file, "UTF-8");
-  };
-
-  // --- MOTOR DE BÚSQUEDA AVANZADO (Analiza palabra por palabra) ---
-  const filteredData = useMemo(() => {
-    const term = normalizeText(searchTerm);
-    if (!term) return data.slice(0, 100);
-
-    const searchWords = term.split(/\s+/);
-    
-    // Obtener todos los códigos asociados a las palabras ingresadas
-    const mappedCodes = searchWords
-      .map(word => keywordMapping[word])
-      .filter(code => code !== undefined);
-
-    return data.filter(item => {
-      const denom = normalizeText(item.denominacion);
-      const desc = normalizeText(item.descripcion);
-      const obj = normalizeText(item.objeto);
-      const aux = normalizeText(item.auxiliar);
-
-      // El item coincide si contiene alguna de las palabras buscadas en sus textos
-      const matchesAnyWord = searchWords.some(word => 
-        denom.includes(word) || desc.includes(word) || obj.includes(word) || aux.includes(word)
-      );
-
-      // O si el código de objeto del item empieza con alguno de los códigos mapeados
-      const matchesMappedCode = mappedCodes.some(code => obj.startsWith(code));
-
-      return matchesAnyWord || matchesMappedCode;
-    });
-  }, [data, searchTerm]);
-
-  return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col text-slate-900 overflow-x-hidden">
-      {/* Cabecera Oficial */}
-      <nav className="bg-[#003ca5] text-white shadow-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-5 flex flex-col md:flex-row md:items-center justify-between gap-2">
-          <div className="flex items-center gap-4">
-            <div className="bg-white p-2.5 rounded-2xl shadow-inner shrink-0">
-              <FileText className="text-[#003ca5] w-7 h-7 md:w-10 md:h-10" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-lg md:text-3xl font-black tracking-tight uppercase leading-tight truncate">
-                Hospital de Flores "Edison Camacho"
-              </h1>
-              <p className="text-blue-200 text-xs md:text-lg font-bold tracking-[0.1em] uppercase mt-0.5 opacity-90 truncate">
-                Contaduría • Gestión de Gastos
-              </p>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Cuerpo del Portal */}
-      <div className="flex-1 flex flex-col lg:flex-row max-w-7xl mx-auto w-full p-4 md:p-8 gap-8">
-        
-        {/* Panel Lateral de Carga */}
-        <aside className="w-full lg:w-80 flex-shrink-0 order-2 lg:order-1">
-          <div className="space-y-6 lg:sticky lg:top-32">
+    // Procesar CSV    function procesarCSV(txt){
+        try{
+            const lines=txt.split('\n').filter(l=>l.trim());
+            if(lines.length<2)throw new Error('CSV vacío');
+            state.datos=[];
+            for(let i=1;i<lines.length;i++){
+                const f=parseCSV(lines[i]);
+                if(f.length>=4&&f[0]?.match(/^\d{3}$/)){
+                    const obj=f[0].trim();
+                    state.datos.push({
+                        objeto:obj,auxiliar:f[1]?.trim()||'000',
+                        denominacion:f[2]?.trim()||'',descripcion:f[3]?.trim()||'',
+                        grupo:obj[0],categoria:getCat(obj[0])
+                    });
+                }
+            }
+            if(!state.datos.length)throw new Error('Sin datos válidos');
             
-            <div className="bg-white rounded-[2rem] shadow-sm border border-slate-200 p-6 overflow-hidden relative">
-              <div className="flex items-center gap-3 mb-6 text-slate-700">
-                <Database className="text-[#003ca5]" size={20} />
-                <h3 className="font-extrabold text-sm uppercase tracking-wider">Base de Datos</h3>
-              </div>
+            document.getElementById('totalRegistros').textContent=state.datos.length;
+            document.getElementById('uploadSection').style.display='none';
+            document.getElementById('statsBar').style.display='flex';
+            document.getElementById('togglePanelBtn').style.display='inline-flex';
+            document.getElementById('searchContainer').style.display='block';
+            document.getElementById('historySection').style.display='block';
+            
+            CustomKW.init();
+            loadSuggestions();
+            Utils.toast(`✅ ${state.datos.length} objetos cargados`,'success');
+        }catch(err){Utils.toast(`❌ ${err.message}`,'error')}
+    }
 
-              <div className="space-y-4">
-                <p className="text-[11px] text-slate-500 font-bold leading-relaxed">
-                  Suba <span className="text-[#003ca5] underline">ObjetosGasto.csv</span> para habilitar la búsqueda.
-                </p>
-                
-                <button 
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`
-                    group relative flex flex-col items-center justify-center w-full py-14 px-4 border-2 border-dashed rounded-[2rem] transition-all duration-500
-                    ${isLoaded ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 bg-slate-50 hover:border-[#003ca5] hover:bg-blue-50'}
-                    ${error ? 'border-rose-400 bg-rose-50' : ''}
-                  `}
-                >
-                  {isLoaded ? (
-                    <>
-                      <CheckCircle2 className="text-emerald-600 mb-3" size={44} />
-                      <span className="text-[11px] font-black text-emerald-700 text-center truncate w-full px-4 uppercase">
-                        {fileName}
-                      </span>
-                      <span className="text-[10px] text-emerald-500 mt-2 font-black uppercase tracking-widest bg-emerald-100/50 px-3 py-1 rounded-full">
-                        {data.length} REGISTROS
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="text-slate-400 mb-3 group-hover:text-[#003ca5] transition-all" size={44} />
-                      <span className="text-xs font-black text-slate-600 tracking-tight">SELECCIONAR CSV</span>
-                      <span className="text-[10px] text-slate-400 mt-2 font-bold italic">Compatible con móviles</span>
-                    </>
-                  )}
-                  <input type="file" ref={fileInputRef} className="hidden" accept=".csv" onChange={handleFileUpload} />
-                </button>
+    function parseCSV(line){
+        const f=[];let fld='',q=false;
+        for(let i=0;i<line.length;i++){
+            const c=line[i],n=line[i+1];
+            if(c==='"'){if(q&&n==='"'){fld+='"';i++}else q=!q}
+            else if(c===','&&!q){f.push(fld.trim());fld=''}
+            else fld+=c;
+        }
+        f.push(fld.trim());
+        return f.map(x=>x.replace(/^"|"$/g,''));
+    }
 
-                {error && (
-                  <div className="flex items-center gap-2 text-rose-600 bg-rose-50 p-4 rounded-2xl border border-rose-100">
-                    <AlertCircle size={16} />
-                    <p className="text-[10px] font-black uppercase">{error}</p>
-                  </div>
-                )}
-              </div>
+    function getCat(g){
+        const c={'0':'Serv.Personales','1':'Bienes Consumo','2':'Serv.No Personales','3':'Bienes Uso','4':'Financiero','5':'Transferencias','6':'Deuda Pública','7':'Otros','8':'Amortización','9':'Figurativos'};
+        return c[g]||'Otros';
+    }
+
+    // Búsqueda principal
+    async function buscar(){        const inp=document.getElementById('searchInput');
+        const q=inp.value.trim();
+        const res=document.getElementById('results');
+        const btn=document.getElementById('searchBtn');
+        
+        if(q.length<2){res.innerHTML='<div class="error">⚠️ Mínimo 2 caracteres</div>';inp.focus();return}
+        
+        state.searchCount++;
+        updateStats();
+        addHistory(q);
+        
+        btn.disabled=true;btn.innerHTML='🔍 Buscando...';
+        res.innerHTML='<div class="loading"></div>';
+        
+        try{
+            buscarInternet(q).catch(()=>{});
+            await new Promise(r=>setTimeout(r,100));
+            const results=Search.search(q);
+            document.getElementById('ultimaBusqueda').textContent=results.length;
+            
+            if(!results.length){
+                res.innerHTML=`<div class="no-results"><h2>❌ Sin resultados</h2><p>Probá con: harina, sueldo, combustible, medicamento</p><div class="suggestion-hint">💡 Usá términos específicos</div></div>`;
+            }else{
+                res.innerHTML=`<div style="margin-bottom:20px;color:var(--primary);font-weight:600">✅ <b>${results.length}</b> resultados</div>`+
+                    results.map((r,i)=>renderCard(r,i)).join('');
+            }
+        }catch(e){res.innerHTML='<div class="error">❌ Error en búsqueda</div>'}
+        finally{btn.disabled=false;btn.innerHTML='🔎 Buscar'}
+    }
+
+    function renderCard(r,i){
+        const best=i===0;
+        return `<div class="result-card ${best?'selected':''}" onclick="selectResult('${r.objeto}','${r.auxiliar}',this)" tabindex="${best?0:-1}">
+            <div class="result-header">
+                <span class="codigo-badge">${r.objeto}/${r.auxiliar}
+                    <button class="copy-btn" onclick="event.stopPropagation();copiar('${r.objeto}/${r.auxiliar}')">📋</button>
+                </span>
+                <span class="relevancia-badge">📊 ${r.relevancia}%</span>
             </div>
-
-            {/* Tarjeta Informativa de Relaciones */}
-            <div className="bg-[#003ca5] rounded-[2rem] shadow-xl p-6 text-white relative overflow-hidden group">
-              <Zap className="absolute -right-4 -top-4 w-24 h-24 text-white/5 group-hover:rotate-12 transition-transform duration-700" />
-              <div className="flex items-center gap-2 mb-4">
-                <Info size={18} className="text-blue-200" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Relaciones Automáticas</span>
-              </div>
-              <ul className="text-[11px] space-y-4 font-bold text-blue-100">
-                <li className="flex gap-3 items-start">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-300 mt-1.5 flex-shrink-0"></div>
-                  <span>Al escribir <b>PVC</b> o <b>tubo</b> se mostrará todo el grupo <b>141</b>.</span>
-                </li>
-                <li className="flex gap-3 items-start">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-300 mt-1.5 flex-shrink-0"></div>
-                  <span>Al buscar <b>aceite</b> o <b>comida</b> se vinculará al objeto <b>111</b>.</span>
-                </li>
-              </ul>
+            <h3 class="denominacion">${highlight(r.denominacion,document.getElementById('searchInput').value)}</h3>
+            ${r.desc?<p class="descripcion">${highlight(r.descripcion,document.getElementById('searchInput').value)}</p>':''}
+            <div class="tags-container">
+                ${r.categoria?`<span class="categoria-tag">📁 ${r.categoria}</span>`:''}
+                <span class="grupo-tag">Grupo ${r.grupo}</span>
+                ${r.keywordEncontrada?`<span class="keyword-match">🏷️ ${r.keywordEncontrada}</span>`:''}
             </div>
-          </div>
-        </aside>
+            ${best?'<div class="best-result-indicator">⭐ Mejor resultado</div>':''}
+        </div>`;
+    }
+    function highlight(txt,q){
+        if(!q||q.length<2)return Utils.escape(txt);
+        const n=Utils.normalize(q);
+        const re=new RegExp(`(${n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi');
+        return Utils.escape(txt).replace(re,'<mark style="background:var(--primary-light);color:var(--primary);padding:0 3px;border-radius:3px">$1</mark>');
+    }
 
-        {/* CONTENIDO CENTRAL DE BÚSQUEDA */}
-        <main className="flex-1 flex flex-col order-1 lg:order-2 min-w-0">
-          
-          <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 p-6 mb-8 sticky top-28 lg:top-36 z-40">
-            <div className="relative">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={28} />
-              <input
-                type="text"
-                placeholder="Busque por material (PVC), categoría (aceite) o código..."
-                className="w-full pl-16 pr-14 py-6 bg-slate-50 border border-slate-200 rounded-[2rem] focus:outline-none focus:ring-8 focus:ring-[#003ca5]/5 focus:border-[#003ca5] transition-all text-slate-800 font-bold placeholder:text-slate-400 text-lg md:text-xl shadow-inner"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                disabled={!isLoaded}
-              />
-              {searchTerm && (
-                <button onClick={() => setSearchTerm('')} className="absolute right-6 top-1/2 -translate-y-1/2 p-2.5 hover:bg-slate-200 rounded-full text-slate-400">
-                  <X size={24} />
-                </button>
-              )}
-            </div>
-            <div className="mt-5 px-3 flex justify-between items-center text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
-              <span>{isLoaded ? `Resultados: ${filteredData.length}` : 'Cargue el archivo para buscar'}</span>
-            </div>
-          </div>
+    function selectResult(obj,aux,el){
+        document.querySelectorAll('.result-card.selected').forEach(c=>{c.classList.remove('selected');c.tabIndex=-1});
+        el.classList.add('selected');el.tabIndex=0;el.focus();
+        Utils.toast(`✅ ${obj}/${aux} seleccionado`,'success');
+    }
 
-          <div className="space-y-4 pb-12">
-            {isLoaded ? (
-              filteredData.length > 0 ? (
-                filteredData.map((item) => (
-                  <div key={item.id} className="bg-white rounded-[2.5rem] border border-slate-200 p-6 md:p-10 hover:border-[#003ca5] hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group relative">
-                    <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-3">
-                           <LayoutDashboard size={14} className="text-[#003ca5]" />
-                           <span className="text-[9px] font-black text-[#003ca5] uppercase tracking-[0.2em]">Registro Oficial</span>
-                        </div>
-                        <h4 className="font-black text-slate-800 text-lg md:text-2xl leading-tight group-hover:text-[#003ca5] transition-colors uppercase tracking-tighter break-words">
-                          {item.denominacion || 'SIN DENOMINACIÓN'}
-                        </h4>
-                      </div>
-                      
-                      <div className="flex gap-4 flex-shrink-0 w-full md:w-auto">
-                        <div className="flex-1 md:flex-initial bg-[#003ca5] p-4 rounded-[1.5rem] shadow-xl shadow-blue-200 text-center min-w-[120px]">
-                          <p className="text-[9px] font-black text-blue-200 uppercase mb-1.5 tracking-widest opacity-80">Objeto</p>
-                          <p className="text-white text-lg font-black font-mono">{item.objeto}</p>
-                        </div>
-                        <div className="flex-1 md:flex-initial bg-slate-100 border border-slate-200 p-4 rounded-[1.5rem] text-center min-w-[120px]">
-                          <p className="text-[9px] font-black text-slate-400 uppercase mb-1.5 tracking-widest opacity-80">Auxiliar</p>
-                          <p className="text-slate-700 text-lg font-black font-mono">{item.auxiliar}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-8 bg-slate-50 p-6 rounded-[1.5rem] border border-slate-100 shadow-inner">
-                      <p className="text-sm md:text-base text-slate-600 font-semibold italic opacity-70 leading-relaxed">
-                        {item.descripcion || 'Sin descripción disponible.'}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="bg-white rounded-[4rem] border-4 border-dashed border-slate-100 py-32 text-center px-12">
-                  <Search size={54} className="text-slate-200 mx-auto mb-6" />
-                  <h3 className="text-2xl font-black text-slate-400 uppercase tracking-tighter">Sin resultados</h3>
-                  <p className="text-slate-300 font-bold mt-2">Pruebe con otros términos o códigos.</p>
-                </div>
-              )
-            ) : (
-              <div className="bg-white rounded-[4rem] border border-slate-200 py-44 flex flex-col items-center justify-center text-center px-8 shadow-sm">
-                <Upload size={54} className="text-[#003ca5] mb-8 animate-bounce" />
-                <h3 className="text-3xl font-black text-slate-800 mb-4 uppercase tracking-tight">Sistema Desconectado</h3>
-                <p className="text-slate-400 max-w-sm text-lg font-bold uppercase tracking-tighter opacity-60">
-                  Cargue el archivo CSV para sincronizar la base de datos.
-                </p>
-              </div>
-            )}
-          </div>
-        </main>
-      </div>
+    async function copiar(txt){
+        try{await navigator.clipboard.writeText(txt);Utils.toast('📋 Copiado','success',1500)}
+        catch{const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);Utils.toast('📋 Copiado','success',1500)}
+    }
 
-      <footer className="bg-white border-t border-slate-200 py-12 px-8 mt-auto">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
-          <div className="text-center md:text-left">
-            <p className="text-[11px] text-slate-400 font-black uppercase tracking-[0.4em]">
-              Hospital de Flores "Edison Camacho"
-            </p>
-            <p className="text-[10px] text-slate-300 font-black uppercase mt-3 tracking-widest">
-              Sector Contaduría • 2026
-            </p>
-          </div>
-          <div className="text-[11px] font-black text-slate-300 uppercase tracking-widest">
-            v4.8 Advanced Search Fix
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
-};
+    // Controles
+    function setupEvents(){
+        const inp=document.getElementById('searchInput');
+        inp.addEventListener('input',e=>{
+            clearTimeout(state.debounceTimer);
+            state.debounceTimer=setTimeout(()=>{if(e.target.value.trim().length>=2)buscar()},300);
+        });
+        inp.addEventListener('keypress',e=>{if(e.key==='Enter'){e.preventDefault();buscar()}});
+        
+        document.addEventListener('keydown',e=>{
+            if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();inp.focus()}
+            if(e.key==='Escape'){inp.value='';document.getElementById('results').innerHTML=''}
+        });
+        
+        document.getElementById('csvFile').addEventListener('change',e=>{
+            const f=e.target.files[0];if(!f)return;
+            if(!f.name.endsWith('.csv')){Utils.toast('❌ Solo CSV','error');return}
+            if(f.size>10*1024*1024){Utils.toast('❌ Máx 10MB','error');return}
+            document.getElementById('fileName').textContent=`✅ ${f.name}`;
+            const r=new FileReader();
+            r.onload=ev=>procesarCSV(ev.target.result);
+            r.onerror=()=>Utils.toast('❌ Error al leer','error');
+            r.readAsText(f,'UTF-8');
+        });
+    }
 
-export default App;
+    function setLimite(l){
+        state.limite=l;
+        document.querySelectorAll('.filter-btn').forEach(b=>{
+            const isL=b.textContent.includes('resultados');
+            b.classList.toggle('active',isL&&b.textContent.includes(l));
+        });        if(document.getElementById('results').children.length)buscar();
+    }
 
+    function filterGroup(g){
+        state.filtroGrupo=state.filtroGrupo===g?'':g;
+        document.querySelectorAll('.filter-btn').forEach(b=>{
+            if(b.textContent.startsWith('G'))b.classList.toggle('active',b.textContent===`G${g}`&&state.filtroGrupo===g);
+        });
+        buscar();
+    }
+
+    function clearFilters(){
+        state.filtroGrupo='';state.limite=20;
+        document.getElementById('searchInput').value='';
+        document.getElementById('results').innerHTML='';
+        document.getElementById('ultimaBusqueda').textContent='0';
+        document.querySelectorAll('.filter-btn').forEach(b=>{
+            b.classList.toggle('active',b.textContent.includes('20 resultados'));
+        });
+        document.getElementById('searchInput').focus();
+    }
+
+    function loadSuggestions(){
+        const s=['harina','sueldo','combustible','medicamento','vehículo','regla','internación','computadora','útiles','limpieza','electricidad','teléfono','viático','jubilación'];
+        document.getElementById('sugerenciasGrid').innerHTML=s.map(x=>`<button class="sugerencia-item" onclick="document.getElementById('searchInput').value='${x}';buscar()">${x}</button>`).join('');
+    }
+
+    // Historial
+    function addHistory(q){
+        const last=state.searchHistory[state.searchHistory.length-1];
+        if(last?.query.toLowerCase()===q.toLowerCase())return;
+        state.searchHistory.push({query:q,timestamp:Date.now()});
+        if(state.searchHistory.length>20)state.searchHistory.shift();
+        Storage.save('hf_history',state.searchHistory);
+        renderHistory();
+    }
+
+    function renderHistory(){
+        const l=document.getElementById('historyList');
+        if(!state.searchHistory.length){l.innerHTML='<p style="color:var(--text-muted);font-style:italic">Sin búsquedas recientes</p>';return}
+        l.innerHTML=state.searchHistory.slice(-10).reverse().map(h=>`
+            <button class="history-item" onclick="document.getElementById('searchInput').value='${Utils.escape(h.query)}';buscar()">
+                <span class="history-query">🔍 ${Utils.escape(h.query)}</span>
+                <span class="history-time">${new Date(h.timestamp).toLocaleTimeString('es-UY',{hour:'2-digit',minute:'2-digit'})}</span>
+            </button>`).join('');
+    }
+
+    function clearHistory(){
+        if(!confirm('¿Limpiar historial?'))return;
+        state.searchHistory=[];Storage.save('hf_history',[]);renderHistory();        Utils.toast('🗑️ Historial limpiado','success');
+    }
+
+    // Panel keywords
+    function togglePanel(){
+        const p=document.getElementById('customKeywordsPanel');
+        const b=document.getElementById('togglePanelBtn');
+        const h=p.style.display==='none'||!p.style.display;
+        p.style.display=h?'block':'none';
+        b.textContent=h?'📝 Ocultar Panel':'📝 Gestionar Palabras';
+        if(h)document.getElementById('newKeyword')?.focus();
+    }
+
+    function addKeyword(e){
+        e?.preventDefault();
+        const kw=document.getElementById('newKeyword').value;
+        const obj=document.getElementById('newObjeto').value;
+        const aux=document.getElementById('newAuxiliar').value||'000';
+        if(CustomKW.add(kw,obj,aux)){
+            e.target.reset();document.getElementById('newAuxiliar').value='000';
+            document.getElementById('newKeyword').focus();
+        }
+    }
+
+    function exportKeywords(){CustomKW.export()}
+    function importKeywords(e){const f=e.target.files[0];if(f)CustomKW.import(f);e.target.value=''}
+    function clearKeywords(){CustomKW.clear()}
+
+    function updateStats(){
+        document.getElementById('searchCount').textContent=state.searchCount;
+        document.getElementById('customKeywordsCount').textContent=Object.keys(state.customKeywords).length;
+    }
+
+    // Init
+    function init(){
+        state.searchHistory=Storage.load('hf_history',[]);
+        setupEvents();
+        renderHistory();
+        console.log('🏥 Buscador inicializado');
+    }
+
+    // Exponer funciones globales
+    window.buscar=buscar;window.selectResult=selectResult;window.setLimite=setLimite;
+    window.filterGroup=filterGroup;window.clearFilters=clearFilters;
+    window.togglePanel=togglePanel;window.addKeyword=addKeyword;
+    window.exportKeywords=exportKeywords;window.importKeywords=importKeywords;
+    window.clearKeywords=clearKeywords;window.clearHistory=clearHistory;
+
+    // Ejecutar
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);    else init();
+    </script>
+</body>
+</html>
