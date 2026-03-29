@@ -3,181 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buscador Hospital de Flores - Inteligencia Real</title>
+    <title>Buscador Hospital de Flores - IA TOTAL</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --blue: #003ca5; --orange: #ff6b00; --green: #28a745; --bg: #f4f7f6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
         body { background: var(--bg); padding: 10px; color: #333; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .header { border-bottom: 3px solid var(--blue); margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        
+        .header { border-bottom: 3px solid var(--blue); margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .header h1 { color: var(--blue); font-size: 1.2em; }
+
         .ai-box { background: #f8f9fa; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
         .api-input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; margin-top: 8px; font-size: 0.9em; }
-        .search-section { background: var(--blue); padding: 15px; border-radius: 10px; display: flex; gap: 10px; }
+
+        .search-section { background: var(--blue); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
+        @media (min-width: 600px) { .search-section { flex-direction: row; } }
         #q { flex: 1; padding: 12px; border-radius: 6px; border: none; font-size: 1em; outline: none; }
         #b { padding: 12px 25px; background: var(--orange); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
         #b:disabled { background: #999; }
-        .toggle-btn { width: 100%; padding: 10px; background: var(--green); color: white; border: none; border-radius: 6px; margin: 15px 0; font-weight: 600; cursor: pointer; }
+
+        .toggle-btn { width: 100%; padding: 10px; background: var(--green); color: white; border: none; border-radius: 6px; margin: 10px 0; font-weight: 600; cursor: pointer; }
         .dic-panel { display: none; background: #f0fff4; border: 2px solid var(--green); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-        .dic-form { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 15px; }
-        @media (min-width: 600px) { .dic-form { grid-template-columns: 2fr 1fr 1fr auto; align-items: end; } }
-        .dic-form input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        .ia-res { display: none; background: #fff5f0; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin-top: 15px; }
-        .card { border-left: 5px solid var(--blue); padding: 15px; background: white; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-radius: 6px; }
-        .card .code { background: var(--blue); color: white; padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 0.85em; }
-        .loading { text-align: center; padding: 20px; color: var(--blue); font-weight: bold; }
+        
+        .ia-status-msg { display: none; background: #fff5f0; border: 1px solid var(--orange); padding: 10px; border-radius: 8px; margin-top: 15px; font-size: 0.9em; color: #d35400; }
+        
+        .card { border-left: 6px solid var(--blue); padding: 15px; background: white; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 6px; animation: fadeIn 0.3s; }
+        .card.ia-found { border-left-color: var(--orange); background: #fffaf5; }
+        .code-badge { background: var(--blue); color: white; padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 0.8em; }
+        .ia-label { background: var(--orange); color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7em; font-weight: bold; margin-left: 10px; }
+
+        .loading { text-align: center; padding: 20px; font-weight: bold; color: var(--blue); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1 style="color: var(--blue); font-size: 1.2em;">🏥 Hospital de Flores</h1>
-            <span style="font-size: 0.7em; font-weight: bold; color: var(--green);">BASE 011-923 CARGADA</span>
+            <h1>🏥 Hospital de Flores</h1>
+            <div style="font-size: 0.7em; color: var(--green); font-weight: bold;">MODO CEREBRO ACTIVO (011-923)</div>
         </div>
 
         <div class="ai-box">
-            <label style="font-weight:bold; color:var(--orange); font-size: 0.8em;">🔑 Gemini Key:</label>
+            <label style="font-weight:bold; color:var(--orange); font-size: 0.8em;">🔑 Clave API de Google Gemini:</label>
             <input type="password" id="key" class="api-input" placeholder="Pega tu clave AIzaSy...">
         </div>
 
         <div class="search-section">
-            <input type="text" id="q" placeholder="Ej: ASADO, JERINGA, UTE..." onkeypress="if(event.key==='Enter') buscar()">
+            <input type="text" id="q" placeholder="Ej: Atún, Jeringas, Repuesto de motor..." onkeypress="if(event.key==='Enter') buscar()">
             <button id="b" onclick="buscar()">ANALIZAR</button>
         </div>
 
-        <button class="toggle-btn" onclick="toggleDic()">📝 Diccionario Interno (Reglas Guardadas)</button>
+        <button class="toggle-btn" onclick="toggleDic()">📝 Diccionario de Reglas Propias</button>
         <div id="dic" class="dic-panel">
-            <div class="dic-form">
-                <input type="text" id="nk" placeholder="Palabra">
-                <input type="text" id="no" placeholder="Objeto">
-                <input type="text" id="na" placeholder="Aux" value="000">
-                <button onclick="addK()" style="background:var(--green); color:white; border:none; padding:10px; border-radius:4px; cursor:pointer;">GUARDAR</button>
+            <div style="display: grid; gap: 5px; margin-bottom: 10px;">
+                <input type="text" id="nk" placeholder="Palabra (ej: Asado)">
+                <input type="text" id="no" placeholder="Objeto (ej: 111)">
+                <button onclick="addK()" style="background:var(--green); color:white; border:none; padding:8px; border-radius:4px; font-weight:bold;">GUARDAR REGLA</button>
             </div>
             <div id="klist" style="font-size: 0.8em;"></div>
         </div>
 
-        <div id="ia" class="ia-res"></div>
-        <div id="res"></div>
+        <div id="iaStatus" class="ia-status-msg"></div>
+        <div id="results"></div>
     </div>
 
     <script>
-        // BASE DE DATOS LOCAL INYECTADA (011 al 923)
-        const DB = [
-            {o:"011", a:"000", n:"Sueldo básico de cargos", d:"Personal presupuestado"},
-            {o:"111", a:"000", n:"Alimentos y bebidas", d:"Víveres, carnes, pan, leche"},
-            {o:"141", a:"000", n:"Combustibles", d:"Nafta, Gasoil"},
-            {o:"152", a:"000", n:"Medicamentos", d:"Drogas y farmacia"},
-            {o:"191", a:"000", n:"Útiles de oficina", d:"Papelería, resmas"},
-            {o:"192", a:"000", n:"Artículos de limpieza", d:"Jabón, hipoclorito"},
-            {o:"194", a:"000", n:"Insumos Médicos", d:"Jeringas, gasas, vendas"},
-            {o:"211", a:"000", n:"Comunicaciones", d:"ANTEL, Internet"},
-            {o:"212", a:"000", n:"Agua", d:"OSE"},
-            {o:"213", a:"000", n:"Electricidad", d:"UTE"},
-            {o:"231", a:"000", n:"Pasajes", d:"Traslados"},
-            {o:"271", a:"000", n:"Mantenimiento Equipos", d:"Reparación aparatología"},
-            {o:"273", a:"000", n:"Mantenimiento Vehículos", d:"Reparación ambulancia"},
-            {o:"353", a:"000", n:"Vehículos", d:"Compra ambulancia"},
-            {o:"923", a:"000", n:"Aplicaciones financieras", d:"Gastos de capital"}
+        // BASE DE DATOS INYECTADA (Los objetos principales que cubren del 011 al 923)
+        const DB_CGN = [
+            {o:"011", n:"Sueldo básico de cargos", d:"Personal presupuestado"},
+            {o:"111", n:"Alimentos y bebidas", d:"Carnes, verduras, frutas, víveres secos"},
+            {o:"141", n:"Combustibles", d:"Nafta, gasoil, leña"},
+            {o:"152", n:"Medicamentos", d:"Drogas y productos farmacéuticos"},
+            {o:"191", n:"Útiles de oficina", d:"Papelería, resmas, bolígrafos"},
+            {o:"192", n:"Artículos de limpieza", d:"Jabón, detergente, hipoclorito"},
+            {o:"194", n:"Insumos Médicos", d:"Gasa, jeringas, guantes, sueros"},
+            {o:"211", n:"Comunicaciones", d:"ANTEL, Teléfono, Internet"},
+            {o:"212", n:"Agua", d:"Servicio de OSE"},
+            {o:"213", n:"Electricidad", d:"Servicio de UTE"},
+            {o:"271", n:"Mantenimiento Maquinaria", d:"Reparación de equipos médicos o de oficina"},
+            {o:"273", n:"Mantenimiento Vehículos", d:"Reparación de ambulancias y flota"},
+            {o:"353", n:"Vehículos", d:"Compra de ambulancias o rodados"},
+            {o:"923", n:"Gastos de Capital", d:"Aplicaciones financieras y otros gastos"}
         ];
 
         let cache = JSON.parse(localStorage.getItem('h_cache') || '{}');
         let dics = JSON.parse(localStorage.getItem('h_dic') || '{}');
-        let busy = false;
+        let isWorking = false;
 
-        window.onload = () => {
-            document.getElementById('key').value = localStorage.getItem('h_key') || '';
-            renderD();
-        };
+        window.onload = () => { document.getElementById('key').value = localStorage.getItem('h_key') || ''; renderD(); };
 
         function toggleDic() { let d = document.getElementById('dic'); d.style.display = d.style.display==='block' ? 'none' : 'block'; }
         
         function addK() {
             let k = document.getElementById('nk').value.toLowerCase().trim();
             let o = document.getElementById('no').value.trim();
-            let a = document.getElementById('na').value.trim();
-            if(k && o) { dics[k] = {o, a}; localStorage.setItem('h_dic', JSON.stringify(dics)); renderD(); }
+            if(k && o) { dics[k] = o; localStorage.setItem('h_dic', JSON.stringify(dics)); renderD(); }
         }
-
-        function delK(k) { delete dics[k]; localStorage.setItem('h_dic', JSON.stringify(dics)); renderD(); }
 
         function renderD() {
             let l = document.getElementById('klist'); l.innerHTML = '';
-            for(let k in dics) {
-                l.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span><b>${k}</b> ➔ ${dics[k].o}</span><button onclick="delK('${k}')" style="color:red; border:none; background:none; cursor:pointer;">✖</button></div>`;
-            }
+            for(let k in dics) { l.innerHTML += `<div><b>${k}</b> ➔ ${dics[k]}</div>`; }
         }
 
         async function buscar() {
-            if(busy) return;
-            let q = document.getElementById('q').value.trim();
-            if(q.length < 2) return;
+            if(isWorking) return;
+            const query = document.getElementById('q').value.trim();
+            if(query.length < 2) return;
 
-            busy = true;
-            let btn = document.getElementById('b');
-            btn.disabled = true; btn.innerText = "⏳...";
+            isWorking = true;
+            const btn = document.getElementById('b');
+            const resDiv = document.getElementById('results');
+            const statusDiv = document.getElementById('iaStatus');
             
-            let iaD = document.getElementById('ia');
-            let rDiv = document.getElementById('res');
-            iaD.style.display = 'none';
-            rDiv.innerHTML = '<div class="loading">Buscando localmente...</div>';
+            btn.disabled = true; btn.innerText = "⏳...";
+            resDiv.innerHTML = '<div class="loading">Buscando...</div>';
+            statusDiv.style.display = 'none';
 
-            let qL = q.toLowerCase();
+            let queryL = query.toLowerCase();
 
-            // LÓGICA DE PRIORIDAD
-            // 1. ¿Está en el Diccionario Interno?
-            let results = [];
-            if(dics[qL]) {
-                results = DB.filter(i => i.o === dics[qL].o);
+            // 1. PRIORIDAD: ¿Está en tu Diccionario?
+            let targetCode = dics[queryL] || null;
+
+            // 2. BUSCAR LOCALMENTE
+            let matches = DB_CGN.filter(i => i.n.toLowerCase().includes(queryL) || i.o === query || i.o === targetCode);
+
+            if (matches.length > 0) {
+                mostrarResultados(matches, false);
+                liberar();
             } else {
-                // 2. ¿Está en la Base de Datos?
-                results = DB.filter(i => i.n.toLowerCase().includes(qL) || i.o.includes(qL));
+                // 3. LA INTELIGENCIA ARTIFICIAL SE CONECTA A LA WEB
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = `🤖 No encontré "${query}" en la lista. Consultando a la red...`;
+                
+                let aiResultCode = await consultarIA(query);
+                
+                if (aiResultCode) {
+                    // La IA nos dio un número, ahora buscamos ese número en el Excel
+                    let aiMatches = DB_CGN.filter(i => i.o === aiResultCode);
+                    if (aiMatches.length > 0) {
+                        statusDiv.innerHTML = `✨ IA identificó "${query}" como Objeto ${aiResultCode}`;
+                        mostrarResultados(aiMatches, true, query);
+                    } else {
+                        resDiv.innerHTML = `<div class="card ia-found"><h3>Sugerencia IA: Objeto ${aiResultCode}</h3><p>La IA asocia este gasto al código ${aiResultCode}, pero no está en la lista corta precargada.</p></div>`;
+                    }
+                } else {
+                    resDiv.innerHTML = '<p style="text-align:center; padding:20px;">No se pudo clasificar el gasto.</p>';
+                }
+                liberar();
             }
-
-            // 3. ¿Necesitamos a la IA? (Solo si no hay resultados locales claros)
-            if (results.length === 0) {
-                await consultarIA(q);
-            } else {
-                // Si encontramos algo local, igual consultamos IA en paralelo pero sin bloquear
-                consultarIA(q);
-            }
-
-            rDiv.innerHTML = results.length ? '' : '<p style="text-align:center; padding:15px; color:#666;">No hay coincidencia literal. Esperando asociación de la IA...</p>';
-            results.forEach(r => {
-                rDiv.innerHTML += `<div class="card"><span class="code">Objeto ${r.o} / ${r.a}</span><h3 style="margin:5px 0; color:var(--blue); font-size:1em;">${r.n}</h3><p style="font-size:0.85em; color:#666;">${r.d}</p></div>`;
-            });
-
-            busy = false; btn.disabled = false; btn.innerText = "ANALIZAR";
         }
 
         async function consultarIA(q) {
-            let iaD = document.getElementById('ia');
-            let k = document.getElementById('key').value.trim();
-            if(!k) return;
-            localStorage.setItem('h_key', k);
+            const key = document.getElementById('key').value.trim();
+            if (!key) return null;
+            localStorage.setItem('h_key', key);
 
-            if(cache[q.toLowerCase()]) {
-                iaD.style.display = 'block';
-                iaD.innerHTML = `<h4 style="color:var(--orange); font-size:0.9em; margin-bottom:5px;">🤖 Asociación Inteligente:</h4><p style="font-size:0.9em;">${cache[q.toLowerCase()]}</p>`;
-                return;
-            }
-
-            iaD.style.display = 'block';
-            iaD.innerHTML = '<div class="loading">🤖 La IA está asociando...</div>';
+            if(cache[q.toLowerCase()]) return cache[q.toLowerCase()];
 
             try {
-                let p = `Eres experto contable CGN Uruguay. Clasifica el gasto "${q}". Si no es común, búscala en internet y asóciala al objeto de 3 dígitos (011-923). Respuesta corta: "Se asocia al Objeto XXX porque [EXPLICACIÓN]".`;
-                let r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${k}`, {
-                    method: "POST", headers: {"Content-Type": "application/json"},
+                // El prompt obliga a la IA a dar solo el número de 3 dígitos
+                const p = `Actúa como experto contable de Uruguay. Analiza el gasto "${q}". ¿A qué OBJETO DE GASTO de la CGN (011-923) pertenece? Responde ÚNICAMENTE con los 3 dígitos del código. Ejemplo: si es comida responde 111, si es medicina 152.`;
+                
+                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({ contents: [{ parts: [{ text: p }] }] })
                 });
-                let d = await r.json();
-                let txt = d.candidates[0].content.parts[0].text;
-                cache[q.toLowerCase()] = txt;
-                localStorage.setItem('h_cache', JSON.stringify(cache));
-                iaD.innerHTML = `<h4 style="color:var(--orange); font-size:0.9em; margin-bottom:5px;">🤖 Asociación Inteligente:</h4><p style="font-size:0.9em;">${txt}</p>`;
-            } catch(e) {
-                iaD.innerHTML = "⚠️ Límite de velocidad. Por favor, esperá un minuto.";
-            }
+                const d = await r.json();
+                const code = d.candidates[0].content.parts[0].text.trim().substring(0,3);
+                
+                if (!isNaN(code)) {
+                    cache[q.toLowerCase()] = code;
+                    localStorage.setItem('h_cache', JSON.stringify(cache));
+                    return code;
+                }
+            } catch (e) { console.error(e); }
+            return null;
+        }
+
+        function mostrarResultados(items, esIA, originalQuery) {
+            const resDiv = document.getElementById('results');
+            resDiv.innerHTML = esIA ? `<p style="font-size:0.8em; font-weight:bold; color:var(--orange);">RESULTADO POR ASOCIACIÓN INTELIGENTE:</p>` : '';
+            items.forEach(r => {
+                resDiv.innerHTML += `
+                    <div class="card ${esIA ? 'ia-found' : ''}">
+                        <span class="code-badge">OBJETO ${r.o}</span>
+                        ${esIA ? `<span class="ia-label">ASOCIADO A "${originalQuery.toUpperCase()}"</span>` : ''}
+                        <h3 style="margin:10px 0 5px 0; color:var(--blue);">${r.n}</h3>
+                        <p style="color:#666; font-size:0.85em;">${r.d}</p>
+                    </div>`;
+            });
+        }
+
+        function liberar() {
+            isWorking = false;
+            const btn = document.getElementById('b');
+            btn.disabled = false; btn.innerText = "ANALIZAR";
         }
     </script>
 </body>
