@@ -103,7 +103,7 @@
         </div>
 
         <div class="ai-status" id="aiStatus">
-            🇺🇾 <span id="aiStatusText">Buscador Local - Cargá tu archivo CSV</span> | 
+            🇺🇾 <span id="aiStatusText">Buscador Integrado - Cargá tu archivo CSV</span> | 
             🔍 Búsquedas: <span id="searchCount">0</span> | 
             📚 Reglas Personalizadas: <span id="customKeywordsCount">0</span>
         </div>
@@ -378,44 +378,61 @@
         }
 
         // ============================================
-        // 🌐 BÚSQUEDA EN INTERNET (WIKIPEDIA / GUB.UY)
+        // 🌐 BÚSQUEDA EN INTERNET (DICCIONARIO LIBRE)
         // ============================================
         async function buscarEnInternet(query) {
             const internetDiv = document.getElementById('internetResults');
             internetDiv.style.display = 'block';
-            internetDiv.innerHTML = '<div class="loading">🌐 Buscando definiciones y normativas en internet...</div>';
+            internetDiv.innerHTML = '<div class="loading">📖 Buscando en el diccionario web...</div>';
             
             try {
-                // Búsqueda en Wikipedia
-                const wikiResponse = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query + ' Uruguay')}`);
-                const wikiData = await wikiResponse.json();
+                // Buscamos solo la primera palabra clave para evitar errores en frases largas
+                const palabraClave = query.split(' ')[0].toLowerCase();
                 
-                let html = `<h4>🇺🇾 Información en la web para "<strong>${query}</strong>":</h4>`;
+                // Consultamos a la API gratuita de diccionario en español
+                const dictResponse = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/es/${encodeURIComponent(palabraClave)}`);
                 
-                if (wikiData && wikiData.extract && !wikiData.type) {
+                let html = `<h4>🌐 Resultados en la web para "<strong>${query}</strong>":</h4>`;
+                
+                if (dictResponse.ok) {
+                    const dictData = await dictResponse.json();
+                    if (dictData && dictData.length > 0 && dictData[0].meanings.length > 0) {
+                        const definicion = dictData[0].meanings[0].definitions[0].definition;
+                        html += `
+                        <div class="uruguay-source" style="background: #f0f7ff; border-left: 3px solid #0056b3;">
+                            <h5 style="color: #0056b3;">📖 Definición del Diccionario</h5>
+                            <p style="font-size: 1.05em; color: #333; margin-top: 8px;"><strong>${palabraClave}:</strong> ${definicion}</p>
+                        </div>
+                        `;
+                    }
+                } else {
                     html += `
-                    <div class="uruguay-source">
-                        <h5>📚 Definición Wikipedia</h5>
-                        <p><strong>${wikiData.title}</strong></p>
-                        <p>${wikiData.extract.substring(0, 300)}...</p>
-                        ${wikiData.content_urls?.desktop?.page ? `<a href="${wikiData.content_urls.desktop.page}" target="_blank">Leer más en Wikipedia →</a>` : ''}
+                    <div class="uruguay-source" style="background: #fff3cd; border-left: 3px solid #ffc107;">
+                        <p style="color: #856404; margin: 0; font-size: 0.9em;">⚠️ No se encontró una definición exacta en el diccionario para esta palabra.</p>
                     </div>
                     `;
                 }
                 
-                // Enlaces rápidos gubernamentales
+                // Mantenemos siempre los botones directos que sirven para contaduría
                 html += `
-                <div class="uruguay-source">
-                    <h5>🏛️ Accesos Directos Estado Uruguayo</h5>
-                    <p><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank">🔍 Buscar "${query}" en CGN →</a></p>
+                <div class="uruguay-source" style="border-left: 3px solid #28a745; margin-top: 15px;">
+                    <h5 style="color: #28a745;">🏛️ Accesos Directos al Estado</h5>
+                    <p style="margin-top: 10px;"><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank">🔍 Buscar "${query}" en el portal de la CGN →</a></p>
                     <p><a href="https://www.impo.com.uy/buscar/${encodeURIComponent(query)}" target="_blank">📜 Buscar normativa en IMPO →</a></p>
                 </div>
                 `;
                 
                 internetDiv.innerHTML = html;
             } catch (error) {
-                console.error('Error buscando en internet:', error);
-                internetDiv.innerHTML = '<div class="error">⚠️ No se pudo cargar la información adicional de internet. (Verificá tu conexión)</div>';
+                // Falla silenciosa: si se cae el internet, muestra solo los enlaces
+                internetDiv.innerHTML = `
+                <h4>🌐 Resultados en la web para "<strong>${query}</strong>":</h4>
+                <div class="uruguay-source" style="border-left: 3px solid #28a745;">
+                    <h5 style="color: #28a745;">🏛️ Accesos Directos al Estado</h5>
+                    <p style="margin-top: 10px;"><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank">🔍 Buscar "${query}" en CGN →</a></p>
+                    <p><a href="https://www.impo.com.uy/buscar/${encodeURIComponent(query)}" target="_blank">📜 Buscar normativa en IMPO →</a></p>
+                </div>
+                `;
             }
         }
 
@@ -426,8 +443,10 @@
             const file = e.target.files[0]; if (!file) return;
             document.getElementById('fileName').textContent = `✅ Archivo cargado: ${file.name}`;
             const reader = new FileReader();
+            
+            // Lector configurado para español (ISO-8859-1) para no romper las tildes ni las ñ
             reader.onload = function(event) { procesarCSV(event.target.result); };
-            reader.readAsText(file, 'UTF-8');
+            reader.readAsText(file, 'ISO-8859-1'); 
         });
 
         function procesarCSV(texto) {
@@ -518,7 +537,7 @@
 
             resultsDiv.innerHTML = '<div class="loading">⏳ Buscando coincidencias en el CSV...</div>';
             
-            // Disparamos la búsqueda en internet en paralelo
+            // Llama a la búsqueda de internet en paralelo
             buscarEnInternet(query);
 
             setTimeout(() => {
@@ -534,7 +553,7 @@
                 document.getElementById('ultimaBusqueda').textContent = resultados.length;
 
                 if (resultados.length === 0) {
-                    resultsDiv.innerHTML = `<div class="no-results"><h2>❌ No se encontraron resultados locales</h2><p>Agregá el término desde el botón verde de arriba ("Gestionar Palabras Personalizadas") para que el sistema aprenda.</p></div>`;
+                    resultsDiv.innerHTML = `<div class="no-results"><h2>❌ No se encontraron resultados en el archivo local</h2><p>Revisá los resultados de internet arriba, o agregá el término desde el botón verde ("Gestionar Palabras Personalizadas") para que el sistema aprenda.</p></div>`;
                     return;
                 }
 
