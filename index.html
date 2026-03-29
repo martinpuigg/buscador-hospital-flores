@@ -58,8 +58,10 @@
         .search-box { display: flex; gap: 15px; margin-bottom: 20px; }
         .search-box input { flex: 1; padding: 18px 25px; font-size: 1.1em; border: 2px solid #ccc; border-radius: 8px; font-family: 'Montserrat', sans-serif; transition: border 0.3s; }
         .search-box input:focus { border-color: #003ca5; }
-        .search-box button { padding: 18px 40px; background: #003ca5; color: #ffffff; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: background 0.3s; }
-        .search-box button:hover { background: #002d7a; }
+        .search-box input:disabled { background: #f0f0f0; cursor: not-allowed; }
+        .search-box button { padding: 18px 40px; background: #003ca5; color: #ffffff; border: none; border-radius: 8px; font-size: 1.1em; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: background 0.3s; min-width: 220px; }
+        .search-box button:hover:not(:disabled) { background: #002d7a; }
+        .search-box button:disabled { background: #8ba4d5; cursor: not-allowed; }
         
         /* Filtros */
         .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
@@ -166,13 +168,13 @@
                 <button onclick="addCustomKeyword()">➕ Guardar Regla</button>
             </div>
             <div class="keywords-list" id="keywordsList"></div>
-            <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; font-weight: 600;">🗑️ Limpiar Todo el Diccionario</button>
+            <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 8px 15px; border: none; border-radius: 5px; cursor: margin-top: 15px; font-weight: 600;">🗑️ Limpiar Todo el Diccionario</button>
         </div>
 
         <div class="search-container" id="searchContainer">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="Ej: atún, reparación ambulancia, resmas..." onkeypress="if(event.key === 'Enter') buscar()">
-                <button onclick="buscar()">🔎 Analizar Gasto</button>
+                <button id="btnBuscar" onclick="buscar()">🔎 Analizar Gasto</button>
             </div>
             
             <div class="filters">
@@ -200,6 +202,10 @@
         let filtroGrupo = '';
         let searchCount = 0;
         let customKeywords = {};
+        
+        // Variables nuevas para el escudo de consultas
+        let isSearching = false; 
+        let aiCache = {}; // Memoria Inteligente
 
         // Diccionario base precargado
         const keywordsMap = {
@@ -219,6 +225,11 @@
         window.onload = function() {
             const savedKey = localStorage.getItem('hospital_flores_gemini_key');
             if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
+            
+            // Cargar memoria inteligente si existe
+            const savedCache = localStorage.getItem('hospital_flores_ai_cache');
+            if (savedCache) aiCache = JSON.parse(savedCache);
+
             loadCustomKeywords();
         };
 
@@ -305,11 +316,12 @@
         }
 
         // ============================================
-        // 🤖 MOTOR DE IA CON AUTO-DESCUBRIMIENTO E INYECCIÓN DE TARJETA
+        // 🤖 MOTOR DE IA CON CACHÉ (MEMORIA AUTOMÁTICA)
         // ============================================
         async function consultarInteligenciaArtificial(query) {
             const internetDiv = document.getElementById('internetResults');
             const apiKey = document.getElementById('apiKeyInput').value.trim();
+            const queryNorm = normalizar(query); // Normalizamos para buscar en la memoria
 
             if (!apiKey) {
                 internetDiv.style.display = 'block';
@@ -319,6 +331,27 @@
                     </div>`;
                 return;
             }
+
+            // --- SISTEMA DE MEMORIA INTELIGENTE ---
+            // Si ya buscamos esta palabra antes, la traemos de la memoria sin gastar límite
+            if (aiCache[queryNorm]) {
+                internetDiv.style.display = 'block';
+                const aiData = aiCache[queryNorm];
+                
+                let html = `
+                    <h4 style="color: #28a745; margin-bottom: 10px;">⚡ Recuperado de la Memoria (Rápido):</h4>
+                    <div style="font-size: 1.05em; color: #333; line-height: 1.5;">
+                        ${aiData.explicacion}
+                    </div>
+                `;
+                internetDiv.innerHTML = html;
+
+                if (aiData.objeto_sugerido && aiData.objeto_sugerido.length >= 3) {
+                    mostrarObjetoDesdeIA(aiData.objeto_sugerido.substring(0, 3), query, true); // true indica que vino de memoria
+                }
+                return; // Salimos de la función sin conectarnos a Google
+            }
+            // ----------------------------------------
 
             internetDiv.style.display = 'block';
             internetDiv.innerHTML = '<div class="loading">🤖 Analizando la naturaleza del gasto con IA...</div>';
@@ -368,7 +401,11 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 aiText = aiText.replace(/```json/gi, '').replace(/```/g, '').trim();
                 const aiData = JSON.parse(aiText);
 
-                // Solo muestra la explicación (sin botón naranja)
+                // --- GUARDAR EN MEMORIA PARA EL FUTURO ---
+                aiCache[queryNorm] = aiData;
+                localStorage.setItem('hospital_flores_ai_cache', JSON.stringify(aiCache));
+                // ----------------------------------------
+
                 let html = `
                     <h4 style="color: #ff6b00; margin-bottom: 10px;">🤖 Recomendación Contable (IA):</h4>
                     <div style="font-size: 1.05em; color: #333; line-height: 1.5;">
@@ -378,57 +415,65 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
 
                 internetDiv.innerHTML = html;
 
-                // INYECCIÓN DE TARJETA: Si la IA encuentra el número, muestra la tarjeta de la CGN en la lista de abajo
                 if (aiData.objeto_sugerido && aiData.objeto_sugerido.length >= 3) {
-                    const numObjeto = aiData.objeto_sugerido.substring(0, 3);
-                    mostrarObjetoDesdeIA(numObjeto, query);
+                    mostrarObjetoDesdeIA(aiData.objeto_sugerido.substring(0, 3), query, false);
                 }
 
             } catch (error) {
-                internetDiv.innerHTML = `
-                    <div class="error" style="border-color: #f5c6cb; background: #f8d7da; color: #721c24;">
-                        ⚠️ <strong>Falló el análisis inteligente.</strong><br>
-                        Asegurate de que la clave de Google no tenga espacios o haya caducado.<br>
-                        <span style="font-size: 0.85em; color: #999;">Error: ${error.message}</span>
-                    </div>`;
+                let mensajeAMostrar = error.message;
+                
+                // Traductor amigable de errores de cuota (Límite de velocidad gratuito)
+                if (mensajeAMostrar.toLowerCase().includes('quota') || mensajeAMostrar.toLowerCase().includes('exceeded') || mensajeAMostrar.includes('429')) {
+                    internetDiv.innerHTML = `
+                        <div class="error" style="border-color: #ffeeba; background: #fff3cd; color: #856404;">
+                            ⏳ <strong>Límite de consultas rápidas alcanzado.</strong><br>
+                            Estás usando la versión gratuita y Google pide una pausa.<br>
+                            <strong>Por favor, esperá 60 segundos y volvé a intentarlo.</strong>
+                        </div>`;
+                } else {
+                    internetDiv.innerHTML = `
+                        <div class="error" style="border-color: #f5c6cb; background: #f8d7da; color: #721c24;">
+                            ⚠️ <strong>Falló el análisis inteligente.</strong><br>
+                            Asegurate de que la clave de Google sea correcta.<br>
+                            <span style="font-size: 0.85em; color: #999;">Error: ${mensajeAMostrar}</span>
+                        </div>`;
+                }
             }
         }
 
-        // Función que rescata el objeto de la base local si la IA lo adivina
-        function mostrarObjetoDesdeIA(numObjeto, query) {
+        // Función que rescata el objeto de la base local si la IA (o la memoria) lo adivina
+        function mostrarObjetoDesdeIA(numObjeto, query, desdeMemoria = false) {
             const resultsDiv = document.getElementById('results');
-            
             let resultadosIA = datosCompletos.filter(item => item.objeto === numObjeto);
             
             if (resultadosIA.length > 0) {
-                // Verificamos si la pantalla estaba mostrando "No hay resultados"
                 const isNoResults = resultsDiv.querySelector('.no-results');
                 
-                // Si estaba vacía, arrancamos limpio; si ya tenía tarjetas, las agregamos al principio
-                let html = isNoResults ? `<div style="margin-bottom: 20px; color: #ff6b00; font-weight: 700; font-size: 1.1em;">✨ Tarjeta Oficial rescatada por la IA:</div>` : resultsDiv.innerHTML;
+                // Cambia el título si vino de internet (naranja) o si vino de la memoria rápida (verde)
+                const tituloColor = desdeMemoria ? '#28a745' : '#ff6b00';
+                let html = isNoResults ? `<div style="margin-bottom: 20px; color: ${tituloColor}; font-weight: 700; font-size: 1.1em;">✨ Tarjeta Oficial rescatada:</div>` : resultsDiv.innerHTML;
                 
                 let tarjetasNuevas = '';
                 resultadosIA.slice(0, 5).forEach((r) => {
                     tarjetasNuevas += `
-                        <div class="result-card" onclick="selectResult(event)" style="border-left-color: #ff6b00; background: #fffaf5;">
+                        <div class="result-card" onclick="selectResult(event)" style="border-left-color: ${tituloColor}; background: #fffaf5;">
                             <div>
-                                <span class="codigo-badge" style="background: #ff6b00;">Objeto ${r.objeto} / ${r.auxiliar}</span> 
-                                <span class="relevancia-badge" style="color: #ff6b00; background: rgba(255,107,0,0.1);">Sugerencia de IA</span>
+                                <span class="codigo-badge" style="background: ${tituloColor};">Objeto ${r.objeto} / ${r.auxiliar}</span> 
+                                <span class="relevancia-badge" style="color: ${tituloColor}; background: rgba(0,0,0,0.05);">${desdeMemoria ? 'Memoria' : 'Sugerencia de IA'}</span>
                             </div>
                             <div class="denominacion">${r.denominacion}</div>
                             <div class="descripcion">${r.descripcion}</div>
                             <span class="grupo-tag">Grupo ${r.grupo}</span>
-                            <div class="keyword-match">🤖 La IA clasificó "${query}" en esta categoría</div>
+                            <div class="keyword-match" style="color: ${tituloColor}; background: rgba(0,0,0,0.05);">🤖 Analizado como: "${query}"</div>
                         </div>`;
                 });
 
-                // Reemplazamos si estaba vacío, o inyectamos arriba de todo si había otras cosas
                 resultsDiv.innerHTML = isNoResults ? html + tarjetasNuevas : tarjetasNuevas + html;
             }
         }
 
         // ============================================
-        // 📂 LECTURA DEL CSV LOCAL (CON Ñ Y TILDES) Y SEPARADORES FLEXIBLES
+        // 📂 LECTURA DEL CSV LOCAL (CON Ñ Y TILDES)
         // ============================================
         document.getElementById('csvFile').addEventListener('change', function(e) {
             const file = e.target.files[0]; if (!file) return;
@@ -443,9 +488,7 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             try {
                 let separador = ',';
                 const primeraLinea = texto.split('\n')[0];
-                if (primeraLinea.includes(';')) {
-                    separador = ';';
-                }
+                if (primeraLinea.includes(';')) separador = ';';
 
                 const lineas = texto.split(/\r?\n/); 
                 datosCompletos = [];
@@ -481,8 +524,7 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 }
                 
                 if (datosCompletos.length === 0) {
-                    alert('⚠️ El archivo se leyó, pero parece estar vacío o tener un formato irreconocible.');
-                    return;
+                    alert('⚠️ El archivo se leyó, pero parece estar vacío.'); return;
                 }
                 
                 document.getElementById('totalRegistros').textContent = datosCompletos.length;
@@ -492,12 +534,12 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 document.getElementById('searchContainer').style.display = 'block';
                 
             } catch (error) { 
-                alert('❌ Error de lectura. Verificá que el archivo sea un CSV separado por comas válido.'); 
+                alert('❌ Error de lectura. Verificá el formato del CSV.'); 
             }
         }
 
         // ============================================
-        // 🔍 BÚSQUEDA Y RENDERIZADO
+        // 🔍 BÚSQUEDA Y RENDERIZADO CON FRENO
         // ============================================
         function normalizar(texto) { 
             return (texto || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); 
@@ -509,10 +551,10 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
 
             if (customKeywords[queryNorm]) {
                 const coincide = customKeywords[queryNorm].some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
-                if (coincide) { score += 100; keywordEncontrada = `Regla del diccionario interno`; }
+                if (coincide) { score += 100; keywordEncontrada = `Regla interna`; }
             }
             if (keywordsMap[queryNorm] && keywordsMap[queryNorm].includes(item.objeto)) {
-                score += 80; keywordEncontrada = `Sugerencia del sistema`;
+                score += 80; keywordEncontrada = `Sugerencia básica`;
             }
             if (normalizar(item.denominacion).includes(queryNorm)) score += 45;
             if (normalizar(item.descripcion).includes(queryNorm)) score += 35;
@@ -522,17 +564,36 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
         }
 
         function buscar() {
+            // FRENO ANTI-ANSIEDAD: Si ya está buscando, ignoramos el clic
+            if (isSearching) return;
+
             const query = document.getElementById('searchInput').value.trim();
             const resultsDiv = document.getElementById('results');
             
             if (!query || query.length < 2) return;
+
+            // Bloquear interfaz para evitar múltiples consultas (Freno activado)
+            isSearching = true;
+            const btnBuscar = document.getElementById('btnBuscar');
+            const inputBusqueda = document.getElementById('searchInput');
+            btnBuscar.innerHTML = '⏳ Espere...';
+            btnBuscar.disabled = true;
+            inputBusqueda.disabled = true;
             
             searchCount++; document.getElementById('searchCount').textContent = searchCount;
             resultsDiv.innerHTML = '<div class="loading">⏳ Rastreando código contable...</div>';
             
-            // Llama a la IA
-            consultarInteligenciaArtificial(query);
+            // 1. Mandamos a la IA (Devuelve una Promesa)
+            consultarInteligenciaArtificial(query).finally(() => {
+                // FRENO DESACTIVADO: Se libera la interfaz cuando la IA termina de procesar
+                isSearching = false;
+                btnBuscar.innerHTML = '🔎 Analizar Gasto';
+                btnBuscar.disabled = false;
+                inputBusqueda.disabled = false;
+                inputBusqueda.focus(); // Devuelve el cursor al casillero
+            });
 
+            // 2. Búsqueda local simultánea
             setTimeout(() => {
                 let resultados = datosCompletos.map(item => ({ ...item, ...calcularRelevancia(query, item) })).filter(r => r.score >= 15);
                 
@@ -543,12 +604,11 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 
                 document.getElementById('ultimaBusqueda').textContent = resultados.length;
 
-                // Mensaje temporal de espera (La IA lo va a sobreescribir al terminar)
                 if (resultados.length === 0) {
                     resultsDiv.innerHTML = `
                         <div class="no-results">
                             <h3 style="color: #333; margin-bottom: 10px;">La palabra exacta no figura en el listado oficial</h3>
-                            <p>⏳ Esperando clasificación de la Inteligencia Artificial...</p>
+                            <p>⏳ Esperando clasificación automática...</p>
                         </div>`;
                     return;
                 }
@@ -582,21 +642,21 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 if(b.textContent.includes('Mostrar')) b.classList.remove('active');
             });
             event.currentTarget.classList.add('active');
-            buscar(); 
+            if(!isSearching) buscar(); // Solo busca si no hay freno puesto
         }
         
         function filtrarGrupo(grupo) { 
             filtroGrupo = grupo; 
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             event.currentTarget.classList.add('active');
-            buscar(); 
+            if(!isSearching) buscar();
         }
         
         function limpiarFiltros() { 
             filtroGrupo = ''; 
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             document.querySelector('.filter-btn').classList.add('active');
-            buscar(); 
+            if(!isSearching) buscar();
         }
     </script>
 </body>
