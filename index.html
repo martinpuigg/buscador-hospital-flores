@@ -1,228 +1,355 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Hospital de Flores - Clasificador Inteligente</title>
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { Search, Upload, FileText, X, Info, CheckCircle2, AlertCircle, Database, LayoutDashboard, Zap } from 'lucide-react';
 
-<style>
-body {
-    font-family: Arial;
-    background: #f4f7fb;
-    padding: 20px;
-    color: #003ca5;
-}
+const App = () => {
+  const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [fileName, setFileName] = useState('');
+  const [error, setError] = useState(null);
+  const fileInputRef = useRef(null);
 
-.header {
-    display:flex;
-    align-items:center;
-    gap:20px;
-    border-bottom:3px solid #003ca5;
-    margin-bottom:20px;
-}
-
-.logo {
-    height:60px;
-}
-
-input {
-    padding:12px;
-    border:2px solid #003ca5;
-    border-radius:8px;
-    width:300px;
-}
-
-button {
-    padding:12px 20px;
-    background:#003ca5;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-.result {
-    margin-top:20px;
-    background:white;
-    padding:20px;
-    border-left:5px solid #003ca5;
-    border-radius:10px;
-}
-
-.sugerencias span {
-    background:#003ca5;
-    color:white;
-    padding:6px 12px;
-    margin:5px;
-    display:inline-block;
-    cursor:pointer;
-    border-radius:6px;
-}
-
-.panel {
-    margin-top:20px;
-    background:white;
-    padding:15px;
-    border-radius:10px;
-    border:2px solid #003ca5;
-}
-</style>
-</head>
-
-<body>
-
-<div class="header">
-    <img src="logo_hospital_flores.png" class="logo" onerror="this.style.display='none'">
-    <h2>🏥 Clasificador Inteligente - Contaduría</h2>
-</div>
-
-<input type="file" id="csvFile"><br><br>
-
-<input type="text" id="searchInput" placeholder="Ej: carne, insumos..."
-onkeypress="if(event.key==='Enter') buscar()">
-
-<button onclick="buscar()">Buscar</button>
-
-<div class="sugerencias" id="sugerencias"></div>
-
-<div id="resultado"></div>
-
-<!-- 🔥 PANEL PALABRAS -->
-<div class="panel">
-    <h3>➕ Agregar palabra personalizada</h3>
-    <input id="palabra" placeholder="Ej: insumos">
-    <input id="objeto" placeholder="Objeto (ej: 191)">
-    <button onclick="guardarPalabra()">Guardar</button>
-</div>
-
-<script>
-
-let datos = [];
-let memoria = JSON.parse(localStorage.getItem('memoria') || '{}');
-let palabras = JSON.parse(localStorage.getItem('palabras') || '{}');
-
-// ================= CSV =================
-function parseCSVLine(line){
-    let r=[],c='',q=false;
-    for(let ch of line){
-        if(ch=='"') q=!q;
-        else if(ch==','&&!q){ r.push(c); c=''; }
-        else c+=ch;
-    }
-    r.push(c);
-    return r;
-}
-
-document.getElementById('csvFile').addEventListener('change', function(e){
-    const reader = new FileReader();
-    reader.onload = function(e){
-        const lines = e.target.result.split('\n');
-        datos=[];
-
-        for(let i=1;i<lines.length;i++){
-            let c = parseCSVLine(lines[i]);
-            if(c.length>=4){
-                datos.push({
-                    objeto:c[0].trim(),
-                    auxiliar:c[1].trim(),
-                    denominacion:c[2].replace(/^"|"$/g,'').trim(),
-                    descripcion:c[3].replace(/^"|"$/g,'').trim()
-                });
-            }
-        }
-        alert("CSV cargado");
-    };
-    reader.readAsText(e.target.files[0]);
-});
-
-// ================= NORMALIZAR =================
-function norm(t){
-    return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-}
-
-// ================= DEFINICIÓN =================
-function definicion(item){
-    return `Objeto ${item.objeto}: ${item.denominacion}`;
-}
-
-// ================= GUARDAR PALABRAS =================
-function guardarPalabra(){
-    const p = norm(document.getElementById('palabra').value);
-    const o = document.getElementById('objeto').value.trim();
-
-    if(!p || !o) return alert("Completar datos");
-
-    palabras[p] = o;
-    localStorage.setItem('palabras', JSON.stringify(palabras));
-
-    alert("Guardado");
-}
-
-// ================= BUSCAR =================
-function buscar(){
-
-    const q = norm(document.getElementById('searchInput').value);
-    const div = document.getElementById('resultado');
-
-    if(!q){ div.innerHTML="Escribí algo"; return; }
-
-    let resultado;
-
-    // 1. MEMORIA
-    if(memoria[q]){
-        resultado = datos.find(d =>
-            d.objeto === memoria[q].objeto &&
-            d.auxiliar === memoria[q].auxiliar
-        );
+  // Inyectar Montserrat y estilos base para asegurar la visualización en Netlify/Externos
+  useEffect(() => {
+    if (!document.getElementById('montserrat-font')) {
+      const link = document.createElement('link');
+      link.id = 'montserrat-font';
+      link.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap';
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
     }
 
-    // 2. PALABRAS PERSONALIZADAS
-    if(!resultado && palabras[q]){
-        resultado = datos.find(d => d.objeto === palabras[q]);
-    }
-
-    // 3. REGLA ALIMENTOS
-    if(!resultado && ['carne','arroz','harina','pan','leche'].some(a=>q.includes(a))){
-        resultado = datos.find(d => d.objeto === '111');
-    }
-
-    // 4. BÚSQUEDA SIMPLE
-    if(!resultado){
-        resultado = datos.find(d =>
-            norm(d.denominacion + d.descripcion).includes(q)
-        );
-    }
-
-    if(!resultado){
-        div.innerHTML="No encontrado";
-        return;
-    }
-
-    // 🔥 CONFIRMAR APRENDIZAJE
-    if(confirm("¿Este resultado es correcto?")){
-        memoria[q] = {
-            objeto: resultado.objeto,
-            auxiliar: resultado.auxiliar
-        };
-        localStorage.setItem('memoria', JSON.stringify(memoria));
-    }
-
-    div.innerHTML = `
-        <div class="result">
-            <b>${resultado.objeto}/${resultado.auxiliar}</b><br><br>
-            <b>${resultado.denominacion}</b><br><br>
-            ${resultado.descripcion}<br><br>
-            🤖 ${definicion(resultado)}
-        </div>
+    const style = document.createElement('style');
+    style.innerHTML = `
+      * { font-family: 'Montserrat', sans-serif !important; }
+      body { margin: 0; background-color: #f8fafc; }
+      .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     `;
-}
+    document.head.appendChild(style);
+  }, []);
 
-// ================= SUGERENCIAS =================
-const sug = ['carne','insumos','medicamento','limpieza'];
+  // --- MAPEO DE ASOCIACIÓN INTELIGENTE (Materiales -> Códigos) ---
+  const keywordMapping = {
+    // Alimentos y Víveres
+    "alimentos": "111", "comida": "111", "comestible": "111", "víveres": "111", 
+    "arroz": "111", "fideos": "111", "aceite": "111", "pan": "111", "leche": "111",
+    // Materiales de Construcción y PVC
+    "pvc": "141", "plastico": "141", "caño": "141", "tubo": "141", "polietileno": "141",
+    "construccion": "141", "hormigon": "141", "cemento": "141", "ladrillo": "141",
+    // Limpieza
+    "limpieza": "151", "detergente": "151", "jabón": "151", "desinfectante": "151", "lavandina": "151",
+    // Oficina
+    "oficina": "131", "papelería": "131", "papel": "131", "utiles": "131", "lapiz": "131", "resma": "131",
+    // Médico y Farmacia
+    "medicamentos": "181", "farmacia": "181", "remedios": "181", "gasas": "181", "vendas": "181", "jeringa": "181",
+    // Eléctrico
+    "eléctrico": "142", "cables": "142", "foco": "142", "lampara": "142", "enchufe": "142",
+    // Herramientas y Repuestos
+    "herramientas": "149", "ferretería": "149", "tornillo": "149", "repuestos": "149", "tuerca": "149"
+  };
 
-document.getElementById('sugerencias').innerHTML =
-    sug.map(s=>`<span onclick="document.getElementById('searchInput').value='${s}';buscar()">${s}</span>`).join('');
+  const normalizeText = (text) => {
+    if (!text) return "";
+    return text.toString()
+      .toLowerCase()
+      .trim()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  };
 
-</script>
+  const parseCSV = (text) => {
+    const lines = text.split(/\r?\n/);
+    if (lines.length < 2) return [];
 
-</body>
-</html>
+    const splitCSVLine = (line) => {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"' && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          result.push(current);
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      result.push(current);
+      return result;
+    };
+
+    const headers = splitCSVLine(lines[0]).map(h => h.trim().replace(/"/g, ''));
+    
+    return lines.slice(1)
+      .filter(line => line.trim() !== "")
+      .map((line, index) => {
+        const values = splitCSVLine(line);
+        const entry = { id: index };
+        headers.forEach((header, i) => {
+          const val = (values[i] || "").trim().replace(/"/g, '');
+          const head = normalizeText(header);
+          if (head.includes("objeto")) entry.objeto = val;
+          else if (head.includes("auxiliar") || head.includes("subgrupo")) entry.auxiliar = val;
+          else if (head.includes("denominacion")) entry.denominacion = val;
+          else if (head.includes("desc")) entry.descripcion = val;
+        });
+        return entry;
+      });
+  };
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setFileName(file.name);
+    setError(null);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target.result;
+        const processedData = parseCSV(text);
+        if (processedData.length > 0) {
+          setData(processedData);
+          setIsLoaded(true);
+        } else {
+          setError("El archivo no tiene el formato esperado.");
+        }
+      } catch (err) {
+        setError("Error crítico al procesar el CSV.");
+      }
+    };
+    reader.readAsText(file, "UTF-8");
+  };
+
+  // --- MOTOR DE BÚSQUEDA AVANZADO (Analiza palabra por palabra) ---
+  const filteredData = useMemo(() => {
+    const term = normalizeText(searchTerm);
+    if (!term) return data.slice(0, 100);
+
+    const searchWords = term.split(/\s+/);
+    
+    // Obtener todos los códigos asociados a las palabras ingresadas
+    const mappedCodes = searchWords
+      .map(word => keywordMapping[word])
+      .filter(code => code !== undefined);
+
+    return data.filter(item => {
+      const denom = normalizeText(item.denominacion);
+      const desc = normalizeText(item.descripcion);
+      const obj = normalizeText(item.objeto);
+      const aux = normalizeText(item.auxiliar);
+
+      // El item coincide si contiene alguna de las palabras buscadas en sus textos
+      const matchesAnyWord = searchWords.some(word => 
+        denom.includes(word) || desc.includes(word) || obj.includes(word) || aux.includes(word)
+      );
+
+      // O si el código de objeto del item empieza con alguno de los códigos mapeados
+      const matchesMappedCode = mappedCodes.some(code => obj.startsWith(code));
+
+      return matchesAnyWord || matchesMappedCode;
+    });
+  }, [data, searchTerm]);
+
+  return (
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col text-slate-900 overflow-x-hidden">
+      {/* Cabecera Oficial */}
+      <nav className="bg-[#003ca5] text-white shadow-xl sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-5 flex flex-col md:flex-row md:items-center justify-between gap-2">
+          <div className="flex items-center gap-4">
+            <div className="bg-white p-2.5 rounded-2xl shadow-inner shrink-0">
+              <FileText className="text-[#003ca5] w-7 h-7 md:w-10 md:h-10" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-lg md:text-3xl font-black tracking-tight uppercase leading-tight truncate">
+                Hospital de Flores "Edison Camacho"
+              </h1>
+              <p className="text-blue-200 text-xs md:text-lg font-bold tracking-[0.1em] uppercase mt-0.5 opacity-90 truncate">
+                Contaduría • Gestión de Gastos
+              </p>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Cuerpo del Portal */}
+      <div className="flex-1 flex flex-col lg:flex-row max-w-7xl mx-auto w-full p-4 md:p-8 gap-8">
+        
+        {/* Panel Lateral de Carga */}
+        <aside className="w-full lg:w-80 flex-shrink-0 order-2 lg:order-1">
+          <div className="space-y-6 lg:sticky lg:top-32">
+            
+            <div className="bg-white rounded-[2rem] shadow-sm border border-slate-200 p-6 overflow-hidden relative">
+              <div className="flex items-center gap-3 mb-6 text-slate-700">
+                <Database className="text-[#003ca5]" size={20} />
+                <h3 className="font-extrabold text-sm uppercase tracking-wider">Base de Datos</h3>
+              </div>
+
+              <div className="space-y-4">
+                <p className="text-[11px] text-slate-500 font-bold leading-relaxed">
+                  Suba <span className="text-[#003ca5] underline">ObjetosGasto.csv</span> para habilitar la búsqueda.
+                </p>
+                
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`
+                    group relative flex flex-col items-center justify-center w-full py-14 px-4 border-2 border-dashed rounded-[2rem] transition-all duration-500
+                    ${isLoaded ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 bg-slate-50 hover:border-[#003ca5] hover:bg-blue-50'}
+                    ${error ? 'border-rose-400 bg-rose-50' : ''}
+                  `}
+                >
+                  {isLoaded ? (
+                    <>
+                      <CheckCircle2 className="text-emerald-600 mb-3" size={44} />
+                      <span className="text-[11px] font-black text-emerald-700 text-center truncate w-full px-4 uppercase">
+                        {fileName}
+                      </span>
+                      <span className="text-[10px] text-emerald-500 mt-2 font-black uppercase tracking-widest bg-emerald-100/50 px-3 py-1 rounded-full">
+                        {data.length} REGISTROS
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="text-slate-400 mb-3 group-hover:text-[#003ca5] transition-all" size={44} />
+                      <span className="text-xs font-black text-slate-600 tracking-tight">SELECCIONAR CSV</span>
+                      <span className="text-[10px] text-slate-400 mt-2 font-bold italic">Compatible con móviles</span>
+                    </>
+                  )}
+                  <input type="file" ref={fileInputRef} className="hidden" accept=".csv" onChange={handleFileUpload} />
+                </button>
+
+                {error && (
+                  <div className="flex items-center gap-2 text-rose-600 bg-rose-50 p-4 rounded-2xl border border-rose-100">
+                    <AlertCircle size={16} />
+                    <p className="text-[10px] font-black uppercase">{error}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Tarjeta Informativa de Relaciones */}
+            <div className="bg-[#003ca5] rounded-[2rem] shadow-xl p-6 text-white relative overflow-hidden group">
+              <Zap className="absolute -right-4 -top-4 w-24 h-24 text-white/5 group-hover:rotate-12 transition-transform duration-700" />
+              <div className="flex items-center gap-2 mb-4">
+                <Info size={18} className="text-blue-200" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Relaciones Automáticas</span>
+              </div>
+              <ul className="text-[11px] space-y-4 font-bold text-blue-100">
+                <li className="flex gap-3 items-start">
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-300 mt-1.5 flex-shrink-0"></div>
+                  <span>Al escribir <b>PVC</b> o <b>tubo</b> se mostrará todo el grupo <b>141</b>.</span>
+                </li>
+                <li className="flex gap-3 items-start">
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-300 mt-1.5 flex-shrink-0"></div>
+                  <span>Al buscar <b>aceite</b> o <b>comida</b> se vinculará al objeto <b>111</b>.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+
+        {/* CONTENIDO CENTRAL DE BÚSQUEDA */}
+        <main className="flex-1 flex flex-col order-1 lg:order-2 min-w-0">
+          
+          <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 p-6 mb-8 sticky top-28 lg:top-36 z-40">
+            <div className="relative">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={28} />
+              <input
+                type="text"
+                placeholder="Busque por material (PVC), categoría (aceite) o código..."
+                className="w-full pl-16 pr-14 py-6 bg-slate-50 border border-slate-200 rounded-[2rem] focus:outline-none focus:ring-8 focus:ring-[#003ca5]/5 focus:border-[#003ca5] transition-all text-slate-800 font-bold placeholder:text-slate-400 text-lg md:text-xl shadow-inner"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                disabled={!isLoaded}
+              />
+              {searchTerm && (
+                <button onClick={() => setSearchTerm('')} className="absolute right-6 top-1/2 -translate-y-1/2 p-2.5 hover:bg-slate-200 rounded-full text-slate-400">
+                  <X size={24} />
+                </button>
+              )}
+            </div>
+            <div className="mt-5 px-3 flex justify-between items-center text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+              <span>{isLoaded ? `Resultados: ${filteredData.length}` : 'Cargue el archivo para buscar'}</span>
+            </div>
+          </div>
+
+          <div className="space-y-4 pb-12">
+            {isLoaded ? (
+              filteredData.length > 0 ? (
+                filteredData.map((item) => (
+                  <div key={item.id} className="bg-white rounded-[2.5rem] border border-slate-200 p-6 md:p-10 hover:border-[#003ca5] hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group relative">
+                    <div className="flex flex-col md:flex-row justify-between items-start gap-8">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-3">
+                           <LayoutDashboard size={14} className="text-[#003ca5]" />
+                           <span className="text-[9px] font-black text-[#003ca5] uppercase tracking-[0.2em]">Registro Oficial</span>
+                        </div>
+                        <h4 className="font-black text-slate-800 text-lg md:text-2xl leading-tight group-hover:text-[#003ca5] transition-colors uppercase tracking-tighter break-words">
+                          {item.denominacion || 'SIN DENOMINACIÓN'}
+                        </h4>
+                      </div>
+                      
+                      <div className="flex gap-4 flex-shrink-0 w-full md:w-auto">
+                        <div className="flex-1 md:flex-initial bg-[#003ca5] p-4 rounded-[1.5rem] shadow-xl shadow-blue-200 text-center min-w-[120px]">
+                          <p className="text-[9px] font-black text-blue-200 uppercase mb-1.5 tracking-widest opacity-80">Objeto</p>
+                          <p className="text-white text-lg font-black font-mono">{item.objeto}</p>
+                        </div>
+                        <div className="flex-1 md:flex-initial bg-slate-100 border border-slate-200 p-4 rounded-[1.5rem] text-center min-w-[120px]">
+                          <p className="text-[9px] font-black text-slate-400 uppercase mb-1.5 tracking-widest opacity-80">Auxiliar</p>
+                          <p className="text-slate-700 text-lg font-black font-mono">{item.auxiliar}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-8 bg-slate-50 p-6 rounded-[1.5rem] border border-slate-100 shadow-inner">
+                      <p className="text-sm md:text-base text-slate-600 font-semibold italic opacity-70 leading-relaxed">
+                        {item.descripcion || 'Sin descripción disponible.'}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="bg-white rounded-[4rem] border-4 border-dashed border-slate-100 py-32 text-center px-12">
+                  <Search size={54} className="text-slate-200 mx-auto mb-6" />
+                  <h3 className="text-2xl font-black text-slate-400 uppercase tracking-tighter">Sin resultados</h3>
+                  <p className="text-slate-300 font-bold mt-2">Pruebe con otros términos o códigos.</p>
+                </div>
+              )
+            ) : (
+              <div className="bg-white rounded-[4rem] border border-slate-200 py-44 flex flex-col items-center justify-center text-center px-8 shadow-sm">
+                <Upload size={54} className="text-[#003ca5] mb-8 animate-bounce" />
+                <h3 className="text-3xl font-black text-slate-800 mb-4 uppercase tracking-tight">Sistema Desconectado</h3>
+                <p className="text-slate-400 max-w-sm text-lg font-bold uppercase tracking-tighter opacity-60">
+                  Cargue el archivo CSV para sincronizar la base de datos.
+                </p>
+              </div>
+            )}
+          </div>
+        </main>
+      </div>
+
+      <footer className="bg-white border-t border-slate-200 py-12 px-8 mt-auto">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
+          <div className="text-center md:text-left">
+            <p className="text-[11px] text-slate-400 font-black uppercase tracking-[0.4em]">
+              Hospital de Flores "Edison Camacho"
+            </p>
+            <p className="text-[10px] text-slate-300 font-black uppercase mt-3 tracking-widest">
+              Sector Contaduría • 2026
+            </p>
+          </div>
+          <div className="text-[11px] font-black text-slate-300 uppercase tracking-widest">
+            v4.8 Advanced Search Fix
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default App;
+
