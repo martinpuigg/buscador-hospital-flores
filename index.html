@@ -47,7 +47,8 @@
         }
         
         .ai-status {
-            background: rgba(0,60,165,0.1);            border: 2px solid #003ca5;
+            background: rgba(0,60,165,0.1);            
+            border: 2px solid #003ca5;
             padding: 15px;
             border-radius: 10px;
             text-align: center;
@@ -96,7 +97,8 @@
         }
         .stat-number {
             font-size: 2em;
-            font-weight: 700;            color: #003ca5;
+            font-weight: 700;            
+            color: #003ca5;
         }
         .stat-label {
             font-size: 0.9em;
@@ -145,7 +147,8 @@
             color: #ffffff;
             border: none;
             border-radius: 8px;
-            cursor: pointer;            font-weight: 600;
+            cursor: pointer;            
+            font-weight: 600;
             font-family: 'Montserrat', sans-serif;
             transition: all 0.3s;
         }
@@ -194,7 +197,8 @@
         }
         .keyword-item-delete:hover { background: #c82333; }
         
-        .search-container {            display: none;
+        .search-container {            
+            display: none;
             background: #f8f9fa;
             padding: 30px;
             border-radius: 15px;
@@ -243,7 +247,8 @@
             background: #003ca5;
             color: #ffffff;
             border: none;
-            border-radius: 20px;            cursor: pointer;
+            border-radius: 20px;            
+            cursor: pointer;
             transition: all 0.3s;
             font-family: 'Montserrat', sans-serif;
             font-weight: 500;
@@ -292,7 +297,8 @@
             position: relative;
         }
         .result-card:hover {
-            transform: translateX(10px);            background: #f8f9fa;
+            transform: translateX(10px);            
+            background: #f8f9fa;
             box-shadow: 0 4px 20px rgba(0,60,165,0.2);
         }
         .result-card.selected {
@@ -341,7 +347,8 @@
             color: #003ca5;
             padding: 5px 12px;
             border-radius: 15px;
-            font-size: 0.85em;            margin-top: 10px;
+            font-size: 0.85em;            
+            margin-top: 10px;
         }
         .grupo-tag {
             display: inline-block;
@@ -390,7 +397,8 @@
             max-width: 800px;
             width: 90%;
             max-height: 80vh;
-            overflow-y: auto;            border: 3px solid #003ca5;
+            overflow-y: auto;            
+            border: 3px solid #003ca5;
         }
         .modal-header {
             display: flex;
@@ -439,7 +447,8 @@
         }
         .modal-btn {
             padding: 12px 30px;
-            border: none;            border-radius: 8px;
+            border: none;            
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             font-family: 'Montserrat', sans-serif;
@@ -488,7 +497,8 @@
             border: 2px solid #003ca5;
         }
         .history-section h3 { color: #003ca5; margin-bottom: 15px; }
-        .history-item {            background: #ffffff;
+        .history-item {            
+            background: #ffffff;
             padding: 12px 18px;
             border-radius: 8px;
             margin-bottom: 10px;
@@ -537,7 +547,8 @@
             border: 2px solid #6f42c1;
             padding: 10px 15px;
             border-radius: 8px;
-            font-size: 0.9em;            margin-top: 10px;
+            font-size: 0.9em;            
+            margin-top: 10px;
             color: #6f42c1;
         }
         
@@ -586,7 +597,8 @@
                 🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
             </p>
             <button id="clearDataBtn" class="clear-btn" style="display:none; margin-top:15px;">
-                🗑️ Limpiar datos y recargar            </button>
+                🗑️ Limpiar datos y recargar
+            </button>
         </div>
         
         <!-- Estadísticas -->
@@ -635,7 +647,8 @@
             
             <div class="keywords-list" id="keywordsList">
                 <!-- Keywords dinámicas aquí -->
-            </div>        </div>
+            </div>
+        </div>
         
         <!-- Búsqueda -->
         <div class="search-container" id="searchContainer">
@@ -684,7 +697,8 @@
                 <div class="web-results-list" id="webResultsList">
                     <!-- Opciones de resultados web -->
                 </div>
-                <div class="cache-info" id="cacheInfo">                    💾 Los resultados se guardarán en caché para futuras búsquedas
+                <div class="cache-info" id="cacheInfo">
+                    💾 Los resultados se guardarán en caché para futuras búsquedas
                 </div>
                 <div class="modal-actions">
                     <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancelar</button>
@@ -706,14 +720,9 @@
                 searchHistory: 'hospital_flores_search_history',
                 lastUpdate: 'hospital_flores_last_update'
             },
-            cacheExpiration: 7 * 24 * 60 * 60 * 1000, // 7 días en milisegundos
+            cacheExpiration: 7 * 24 * 60 * 60 * 1000, // 7 días
             maxHistoryItems: 50,
-            webSearchAPI: 'https://api.duckduckgo.com/?q=', // API pública gratuita
-            fallbackSources: [
-                'https://www.cgn.gub.uy/clasificador',
-                'https://www.gub.uy/ministerio-economia-finanzas',
-                'https://normas.gub.uy'
-            ]
+            webSearchAPI: 'https://api.duckduckgo.com/?q='
         };
 
         // ============================================
@@ -725,6 +734,8 @@
             searchCache: {},
             searchHistory: [],
             currentFilter: 'all',
+            lastSearchResults: [],      // ← NUEVO: para filtros funcionales
+            lastSearchTerm: '',
             selectedWebResult: null,
             pendingSearchTerm: null
         };
@@ -733,7 +744,8 @@
         // INICIALIZACIÓN
         // ============================================
         document.addEventListener('DOMContentLoaded', async () => {
-            await loadDataFromStorage();            updateUI();
+            await loadDataFromStorage();
+            updateUI();
             setupEventListeners();
             
             // Si ya hay datos cargados, mostrar interfaz de búsqueda
@@ -751,54 +763,39 @@
         // ============================================
         async function loadDataFromStorage() {
             try {
-                // Cargar objetos de gasto
                 const storedObjetos = localStorage.getItem(CONFIG.localStorageKeys.objetosGasto);
-                if (storedObjetos) {
-                    appState.objetosGasto = JSON.parse(storedObjetos);
-                }
+                if (storedObjetos) appState.objetosGasto = JSON.parse(storedObjetos);
                 
-                // Cargar keywords personalizadas
                 const storedKeywords = localStorage.getItem(CONFIG.localStorageKeys.customKeywords);
-                if (storedKeywords) {
-                    appState.customKeywords = JSON.parse(storedKeywords);
-                }
+                if (storedKeywords) appState.customKeywords = JSON.parse(storedKeywords);
                 
-                // Cargar caché de búsquedas
                 const storedCache = localStorage.getItem(CONFIG.localStorageKeys.searchCache);
                 if (storedCache) {
                     const cache = JSON.parse(storedCache);
-                    // Filtrar caché expirado
                     const now = Date.now();
                     appState.searchCache = Object.fromEntries(
-                        Object.entries(cache).filter(([key, value]) => 
+                        Object.entries(cache).filter(([_, value]) => 
                             now - value.timestamp < CONFIG.cacheExpiration
                         )
                     );
                 }
                 
-                // Cargar historial
                 const storedHistory = localStorage.getItem(CONFIG.localStorageKeys.searchHistory);
-                if (storedHistory) {
-                    appState.searchHistory = JSON.parse(storedHistory);
-                }
+                if (storedHistory) appState.searchHistory = JSON.parse(storedHistory);
                 
-                console.log('✅ Datos cargados desde almacenamiento local');            } catch (error) {
+                console.log('✅ Datos cargados desde almacenamiento local');
+            } catch (error) {
                 console.error('❌ Error cargando datos:', error);
             }
         }
 
         function saveDataToStorage() {
             try {
-                localStorage.setItem(CONFIG.localStorageKeys.objetosGasto, 
-                    JSON.stringify(appState.objetosGasto));
-                localStorage.setItem(CONFIG.localStorageKeys.customKeywords, 
-                    JSON.stringify(appState.customKeywords));
-                localStorage.setItem(CONFIG.localStorageKeys.searchCache, 
-                    JSON.stringify(appState.searchCache));
-                localStorage.setItem(CONFIG.localStorageKeys.searchHistory, 
-                    JSON.stringify(appState.searchHistory.slice(0, CONFIG.maxHistoryItems)));
-                localStorage.setItem(CONFIG.localStorageKeys.lastUpdate, 
-                    Date.now().toString());
+                localStorage.setItem(CONFIG.localStorageKeys.objetosGasto, JSON.stringify(appState.objetosGasto));
+                localStorage.setItem(CONFIG.localStorageKeys.customKeywords, JSON.stringify(appState.customKeywords));
+                localStorage.setItem(CONFIG.localStorageKeys.searchCache, JSON.stringify(appState.searchCache));
+                localStorage.setItem(CONFIG.localStorageKeys.searchHistory, JSON.stringify(appState.searchHistory.slice(0, CONFIG.maxHistoryItems)));
+                localStorage.setItem(CONFIG.localStorageKeys.lastUpdate, Date.now().toString());
                 console.log('✅ Datos guardados en almacenamiento local');
             } catch (error) {
                 console.error('❌ Error guardando datos:', error);
@@ -814,8 +811,7 @@
             
             const reader = new FileReader();
             reader.onload = function(event) {
-                const csvData = event.target.result;
-                parseCSV(csvData);
+                parseCSV(event.target.result);
             };
             reader.readAsText(file, 'UTF-8');
             
@@ -824,20 +820,21 @@
 
         function parseCSV(csvText) {
             const lines = csvText.split('\n').filter(line => line.trim());
-            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+            if (lines.length < 1) return;
+            
+            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
             
             appState.objetosGasto = [];
             
             for (let i = 1; i < lines.length; i++) {
-                // Manejar comas dentro de comillas
                 const values = parseCSVLine(lines[i]);
-                if (values.length < headers.length) continue;                
+                if (values.length < headers.length) continue;
+                
                 const obj = {};
                 headers.forEach((header, index) => {
-                    obj[header.toLowerCase()] = values[index]?.replace(/^"|"$/g, '').trim() || '';
+                    obj[header] = values[index]?.replace(/^"|"$/g, '').trim() || '';
                 });
                 
-                // Estructura esperada: codigo, denominacion, descripcion, grupo, categoria
                 if (obj.codigo || obj.código) {
                     appState.objetosGasto.push({
                         codigo: obj.codigo || obj.código || '',
@@ -880,7 +877,8 @@
                     current += char;
                 }
             }
-            result.push(current);            return result;
+            result.push(current);
+            return result;
         }
 
         // ============================================
@@ -890,8 +888,8 @@
             const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
             if (!searchTerm) return;
             
-            // Verificar caché primero
-            if (appState.searchCache[searchTerm] && !appState.searchCache[searchTerm].expired) {
+            // Verificar caché
+            if (appState.searchCache[searchTerm]) {
                 displayResults(appState.searchCache[searchTerm].results, searchTerm, true);
                 addToHistory(searchTerm);
                 return;
@@ -900,23 +898,17 @@
             const results = [];
             const terms = searchTerm.split(' ').filter(t => t.length > 2);
             
-            // Búsqueda en objetos locales
             for (const objeto of appState.objetosGasto) {
                 const searchText = `${objeto.codigo} ${objeto.denominacion} ${objeto.descripcion} ${objeto.grupo}`.toLowerCase();
                 const keywordMatch = appState.customKeywords.find(k => 
-                    k.palabra.toLowerCase() === searchTerm && 
-                    k.objeto === objeto.codigo
+                    k.palabra.toLowerCase() === searchTerm && k.objeto === objeto.codigo
                 );
                 
                 let score = 0;
                 
-                // Coincidencia exacta de código
                 if (objeto.codigo.toLowerCase() === searchTerm) score += 100;
-                
-                // Coincidencia de keywords personalizadas
                 if (keywordMatch) score += 80;
                 
-                // Coincidencia de palabras
                 for (const term of terms) {
                     if (objeto.codigo.toLowerCase().includes(term)) score += 50;
                     if (objeto.denominacion.toLowerCase().includes(term)) score += 30;
@@ -928,21 +920,18 @@
                     results.push({
                         ...objeto,
                         score,
-                        matchedTerms: terms.filter(t => 
-                            searchText.includes(t)                        ),
+                        matchedTerms: terms.filter(t => searchText.includes(t)),
                         source: keywordMatch ? 'custom' : 'local'
                     });
                 }
             }
             
-            // Ordenar por relevancia
             results.sort((a, b) => b.score - a.score);
             
             // Guardar en caché
             appState.searchCache[searchTerm] = {
                 results: results.slice(0, 20),
-                timestamp: Date.now(),
-                expired: false
+                timestamp: Date.now()
             };
             
             saveDataToStorage();
@@ -952,7 +941,7 @@
         }
 
         // ============================================
-        // BÚSQUEDA EN INTERNET
+        // BÚSQUEDA EN INTERNET (sin cambios relevantes)
         // ============================================
         async function performWebSearch() {
             const searchTerm = document.getElementById('searchInput').value.trim();
@@ -961,9 +950,8 @@
                 return;
             }
             
-            // Verificar caché web primero
             const cacheKey = `web_${searchTerm.toLowerCase()}`;
-            if (appState.searchCache[cacheKey] && !appState.searchCache[cacheKey].expired) {
+            if (appState.searchCache[cacheKey]) {
                 showSelectionModal(appState.searchCache[cacheKey].results, searchTerm);
                 return;
             }
@@ -971,26 +959,16 @@
             document.getElementById('aiStatusText').textContent = '🌐 Buscando en internet...';
             
             try {
-                // Intentar con API de DuckDuckGo (gratuita, sin CORS issues via proxy)
                 const results = await fetchWebResults(searchTerm);
                 
                 if (results.length > 0) {
-                    // Guardar en caché
-                    appState.searchCache[cacheKey] = {
-                        results,
-                        timestamp: Date.now(),                        expired: false
-                    };
+                    appState.searchCache[cacheKey] = { results, timestamp: Date.now() };
                     saveDataToStorage();
                     showSelectionModal(results, searchTerm);
                 } else {
-                    // Fallback: búsqueda simulada con fuentes oficiales
                     const fallbackResults = await performFallbackSearch(searchTerm);
                     if (fallbackResults.length > 0) {
-                        appState.searchCache[cacheKey] = {
-                            results: fallbackResults,
-                            timestamp: Date.now(),
-                            expired: false
-                        };
+                        appState.searchCache[cacheKey] = { results: fallbackResults, timestamp: Date.now() };
                         saveDataToStorage();
                         showSelectionModal(fallbackResults, searchTerm);
                     } else {
@@ -999,26 +977,20 @@
                 }
             } catch (error) {
                 console.error('Error en búsqueda web:', error);
-                alert('⚠️ No se pudo conectar con los servicios de búsqueda. Mostrando resultados de respaldo.');
-                
-                // Resultados de respaldo basados en términos comunes
                 const fallbackResults = generateFallbackResults(searchTerm);
                 showSelectionModal(fallbackResults, searchTerm);
             }
         }
 
         async function fetchWebResults(query) {
-            // Usar un proxy CORS-free para DuckDuckGo API
             const proxy = 'https://api.allorigins.win/raw?url=';
             const apiUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query + ' clasificador objetos gasto Uruguay')}&format=json`;
             
             try {
                 const response = await fetch(proxy + encodeURIComponent(apiUrl));
                 const data = await response.json();
-                
                 const results = [];
                 
-                // Procesar resultados de la API
                 if (data.AbstractText) {
                     results.push({
                         codigo: 'WEB-001',
@@ -1027,11 +999,11 @@
                         grupo: 'Búsqueda Internet',
                         categoria: 'Referencia',
                         source: 'web',
-                        url: data.AbstractURL,                        relevance: 90
+                        url: data.AbstractURL,
+                        relevance: 90
                     });
                 }
                 
-                // Procesar resultados relacionados
                 if (data.RelatedTopics && Array.isArray(data.RelatedTopics)) {
                     data.RelatedTopics.slice(0, 5).forEach((topic, index) => {
                         if (topic.Text) {
@@ -1049,7 +1021,6 @@
                         }
                     });
                 }
-                
                 return results.filter(r => r.denominacion && r.codigo);
             } catch (error) {
                 console.warn('Error fetch DuckDuckGo:', error);
@@ -1058,11 +1029,6 @@
         }
 
         async function performFallbackSearch(query) {
-            // Búsqueda simulada usando extracción de páginas oficiales
-            const sources = CONFIG.fallbackSources;
-            const results = [];
-            
-            // Simular búsqueda inteligente basada en términos comunes del clasificador uruguayo
             const commonObjects = [
                 { codigo: '111', denominacion: 'Personal permanente', descripcion: 'Sueldos y salarios del personal de planta' },
                 { codigo: '112', denominacion: 'Personal transitorio', descripcion: 'Contrataciones temporarias y suplencias' },
@@ -1076,9 +1042,11 @@
                 { codigo: '232', denominacion: 'Mantenimiento y reparaciones', descripcion: 'Servicios técnicos y arreglos' },
                 { codigo: '251', denominacion: 'Servicios de terceros', descripcion: 'Contratación externa de servicios' },
                 { codigo: '311', denominacion: 'Equipamiento médico', descripcion: 'Adquisición de equipos para atención' },
-                { codigo: '312', denominacion: 'Mobiliario y enseres', descripcion: 'Muebles y equipamiento de oficinas' }            ];
+                { codigo: '312', denominacion: 'Mobiliario y enseres', descripcion: 'Muebles y equipamiento de oficinas' }
+            ];
             
             const queryLower = query.toLowerCase();
+            const results = [];
             
             for (const obj of commonObjects) {
                 const searchText = `${obj.codigo} ${obj.denominacion} ${obj.descripcion}`.toLowerCase();
@@ -1094,28 +1062,25 @@
                 }
             }
             
-            // Si no hay coincidencias, generar resultados genéricos
             if (results.length === 0) {
                 results.push({
                     codigo: 'XXX',
                     denominacion: `Búsqueda: "${query}"`,
-                    descripcion: 'No se encontró coincidencia exacta. Verificá la ortografía o contactá con Contaduría para registrar este término.',
+                    descripcion: 'No se encontró coincidencia exacta. Verificá la ortografía o contactá con Contaduría.',
                     grupo: 'Sin clasificar',
                     categoria: 'Revisión necesaria',
                     source: 'web',
                     relevance: 50
                 });
             }
-            
             return results;
         }
 
         function generateFallbackResults(query) {
-            // Generar resultados de respaldo cuando todo falla
             return [{
                 codigo: 'CONSULTAR',
                 denominacion: `Término no registrado: "${query}"`,
-                descripcion: 'Este término no está en la base local ni en fuentes web. Por favor: 1) Verificá la ortografía, 2) Buscá sinónimos, 3) Contactá con Contaduría para registrar este objeto de gasto.',
+                descripcion: 'Este término no está en la base local ni en fuentes web. Contactá con Contaduría.',
                 grupo: 'Pendiente',
                 categoria: 'Requiere validación',
                 source: 'web',
@@ -1124,8 +1089,9 @@
         }
 
         // ============================================
-        // MODAL DE SELECCIÓN DE CONCORDANCIA
-        // ============================================        function showSelectionModal(results, searchTerm) {
+        // MODAL DE SELECCIÓN
+        // ============================================
+        function showSelectionModal(results, searchTerm) {
             appState.pendingSearchTerm = searchTerm;
             appState.selectedWebResult = null;
             
@@ -1149,7 +1115,6 @@
                     ${result.url ? `<span class="web-source">🔗 ${new URL(result.url).hostname}</span>` : ''}
                     <span class="relevancia-badge">Relevancia: ${result.relevance || 0}%</span>
                 `;
-                
                 resultsList.appendChild(option);
             });
             
@@ -1158,8 +1123,6 @@
 
         function selectWebResult(index, results) {
             appState.selectedWebResult = results[index];
-            
-            // Actualizar UI de selección
             document.querySelectorAll('.web-result-option').forEach((el, i) => {
                 el.classList.toggle('selected', i === index);
             });
@@ -1174,14 +1137,9 @@
             const result = appState.selectedWebResult;
             const searchTerm = appState.pendingSearchTerm;
             
-            // Agregar el resultado seleccionado a keywords personalizadas            addCustomKeywordFromWeb(searchTerm, result.codigo, result.auxiliar || '000');
-            
-            // Mostrar el resultado como si fuera una búsqueda normal
+            addCustomKeywordFromWeb(searchTerm, result.codigo, result.auxiliar || '000');
             displayResults([result], searchTerm, true);
-            
-            // Agregar a historial
             addToHistory(searchTerm);
-            
             closeModal();
         }
 
@@ -1191,11 +1149,10 @@
             appState.selectedWebResult = null;
         }
 
-        // Cerrar modal con tecla Escape o click fuera
+        // Cerrar modal con Escape o click fuera
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeModal();
         });
-        
         document.getElementById('selectionModal').addEventListener('click', (e) => {
             if (e.target.id === 'selectionModal') closeModal();
         });
@@ -1205,7 +1162,7 @@
         // ============================================
         function toggleCustomKeywordsPanel() {
             const panel = document.getElementById('customKeywordsPanel');
-            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            panel.style.display = panel.style.display === 'none' || panel.style.display === '' ? 'block' : 'none';
             if (panel.style.display === 'block') renderKeywordsList();
         }
 
@@ -1219,11 +1176,10 @@
                 return;
             }
             
-            // Verificar si ya existe
             const exists = appState.customKeywords.some(k => 
                 k.palabra.toLowerCase() === palabra.toLowerCase() && k.objeto === objeto
             );
-                        if (exists) {
+            if (exists) {
                 alert('⚠️ Esta palabra ya está asociada a este objeto');
                 return;
             }
@@ -1231,13 +1187,11 @@
             appState.customKeywords.push({ palabra, objeto, auxiliar, timestamp: Date.now() });
             saveDataToStorage();
             
-            // Limpiar formulario y actualizar UI
             document.getElementById('newKeyword').value = '';
             document.getElementById('newObjeto').value = '';
             renderKeywordsList();
             updateUI();
             
-            // Feedback visual
             document.getElementById('aiStatusText').textContent = '✅ Palabra personalizada agregada';
             setTimeout(() => updateStatusText(), 2000);
         }
@@ -1246,7 +1200,6 @@
             const exists = appState.customKeywords.some(k => 
                 k.palabra.toLowerCase() === palabra.toLowerCase() && k.objeto === objeto
             );
-            
             if (!exists) {
                 appState.customKeywords.push({ 
                     palabra, 
@@ -1272,19 +1225,17 @@
 
         function renderKeywordsList() {
             const container = document.getElementById('keywordsList');
-            container.innerHTML = '';            
+            container.innerHTML = '';
+            
             if (appState.customKeywords.length === 0) {
                 container.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">No hay palabras personalizadas aún</p>';
                 return;
             }
             
-            // Ordenar por fecha (más recientes primero)
             const sorted = [...appState.customKeywords].sort((a, b) => b.timestamp - a.timestamp);
             
-            sorted.forEach((keyword, originalIndex) => {
-                // Encontrar índice real en el array original
+            sorted.forEach((keyword) => {
                 const realIndex = appState.customKeywords.indexOf(keyword);
-                
                 const item = document.createElement('div');
                 item.className = 'keyword-item';
                 item.innerHTML = `
@@ -1299,12 +1250,19 @@
         }
 
         // ============================================
-        // MOSTRAR RESULTADOS
+        // MOSTRAR RESULTADOS (CORREGIDO)
         // ============================================
         function displayResults(results, searchTerm, fromCache = false) {
+            appState.lastSearchResults = [...results];
+            appState.lastSearchTerm = searchTerm;
+            renderResults(results, searchTerm, fromCache);
+        }
+
+        // Nueva función para renderizar (permite filtros sin perder resultados originales)
+        function renderResults(resultsToShow, searchTerm, fromCache = false) {
             const container = document.getElementById('resultsContainer');
             
-            if (results.length === 0) {
+            if (resultsToShow.length === 0) {
                 container.innerHTML = `
                     <div class="no-results">
                         <h3>😕 No se encontraron resultados</h3>
@@ -1321,16 +1279,21 @@
             
             const cacheBadge = fromCache ? '<span style="background:#28a745;color:white;padding:3px 10px;border-radius:10px;font-size:0.8em;margin-left:10px;">💾 Caché</span>' : '';
             
-            container.innerHTML = `                <h3 style="margin-bottom:20px;color:#003ca5;">
+            container.innerHTML = `
+                <h3 style="margin-bottom:20px;color:#003ca5;">
                     📋 Resultados para "${searchTerm}" ${cacheBadge}
-                    <span style="font-size:0.9em;color:#666;font-weight:400;">(${results.length} encontrados)</span>
+                    <span style="font-size:0.9em;color:#666;font-weight:400;">(${resultsToShow.length} encontrados)</span>
                 </h3>
             `;
             
-            results.forEach(result => {
+            resultsToShow.forEach(result => {
                 const card = document.createElement('div');
                 card.className = `result-card ${result.source === 'web' ? 'web-result' : ''}`;
-                card.onclick = () => selectResult(result);
+                
+                // CORRECCIÓN: uso de addEventListener con event para evitar error "event is not defined"
+                card.addEventListener('click', (e) => {
+                    selectResult(result, e.currentTarget);
+                });
                 
                 const matchedTerms = result.matchedTerms?.length > 0 
                     ? result.matchedTerms.map(t => `<span class="keyword-match">🎯 ${t}</span>`).join(' ') 
@@ -1341,22 +1304,20 @@
                     ${result.source === 'web' ? '<span class="relevancia-badge">🌐 Internet</span>' : ''}
                     <div class="denominacion">${result.denominacion}</div>
                     <div class="descripcion">${result.descripcion || 'Sin descripción disponible'}</div>
-                    ${result.categoria ? `<span class="categoria-tag">${result.categoria}</span>` : ''}
-                    ${result.grupo ? `<span class="grupo-tag">${result.grupo}</span>` : ''}
+                    \( {result.categoria ? `<span class="categoria-tag"> \){result.categoria}</span>` : ''}
+                    \( {result.grupo ? `<span class="grupo-tag"> \){result.grupo}</span>` : ''}
                     ${matchedTerms}
-                    ${result.url ? `<div style="margin-top:10px"><a href="${result.url}" target="_blank" style="color:#003ca5;font-size:0.9em;" onclick="event.stopPropagation()">🔗 Ver fuente original</a></div>` : ''}
+                    \( {result.url ? `<div style="margin-top:10px"><a href=" \){result.url}" target="_blank" style="color:#003ca5;font-size:0.9em;" onclick="event.stopPropagation()">🔗 Ver fuente original</a></div>` : ''}
                 `;
                 
                 container.appendChild(card);
             });
         }
 
-        function selectResult(result) {
-            // Resaltar tarjeta seleccionada
+        function selectResult(result, cardElement) {
             document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
+            if (cardElement) cardElement.classList.add('selected');
             
-            // Feedback y posible acción futura (copiar código, etc.)
             navigator.clipboard?.writeText(result.codigo).then(() => {
                 document.getElementById('aiStatusText').textContent = `✅ Código ${result.codigo} copiado`;
                 setTimeout(() => updateStatusText(), 2000);
@@ -1366,34 +1327,36 @@
         }
 
         // ============================================
-        // FILTROS Y SUGERENCIAS
+        // FILTROS (AHORA FUNCIONALES)
         // ============================================
         function filterResults(type, btn) {
             appState.currentFilter = type;
-                        // Actualizar botones
+            
+            // Actualizar botones activos
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             
-            // Re-filtrar resultados si los hay
-            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-            if (searchTerm) {
-                performSearch();
-            }
+            if (!appState.lastSearchResults || appState.lastSearchResults.length === 0) return;
+            
+            const filteredResults = appState.lastSearchResults.filter(result => {
+                if (type === 'all') return true;
+                return result.source === type;
+            });
+            
+            renderResults(filteredResults, appState.lastSearchTerm, true);
         }
 
+        // ============================================
+        // SUGERENCIAS
+        // ============================================
         function generateSuggestions() {
             const container = document.getElementById('sugerenciasGrid');
             container.innerHTML = '';
             
-            // Obtener términos frecuentes de keywords y descripciones
             const suggestions = new Set();
             
-            // De keywords personalizadas
-            appState.customKeywords.slice(0, 5).forEach(k => {
-                suggestions.add(k.palabra);
-            });
+            appState.customKeywords.slice(0, 5).forEach(k => suggestions.add(k.palabra));
             
-            // De objetos más comunes
             const commonTerms = ['insumos', 'medicamentos', 'personal', 'mantenimiento', 'servicios', 'equipamiento', 'oficina', 'combustible'];
             commonTerms.forEach(term => {
                 if (appState.objetosGasto.some(o => 
@@ -1404,12 +1367,8 @@
                 }
             });
             
-            // De búsquedas recientes
-            appState.searchHistory.slice(0, 3).forEach(h => {
-                suggestions.add(h.term);
-            });
+            appState.searchHistory.slice(0, 3).forEach(h => suggestions.add(h.term));
             
-            // Mostrar sugerencias
             Array.from(suggestions).slice(0, 8).forEach(suggestion => {
                 const item = document.createElement('div');
                 item.className = 'sugerencia-item';
@@ -1419,30 +1378,20 @@
                     performSearch();
                 };
                 container.appendChild(item);
-            });            
+            });
+            
             if (suggestions.size === 0) {
                 container.innerHTML = '<p style="color:#666;grid-column:1/-1;">Cargá datos para ver sugerencias</p>';
             }
         }
 
         // ============================================
-        // HISTORIAL DE BÚSQUEDAS
+        // HISTORIAL
         // ============================================
         function addToHistory(term) {
-            // Remover si ya existe
             appState.searchHistory = appState.searchHistory.filter(h => h.term.toLowerCase() !== term.toLowerCase());
-            
-            // Agregar al inicio
-            appState.searchHistory.unshift({
-                term,
-                timestamp: Date.now(),
-                count: 1
-            });
-            
-            // Limitar cantidad
-            if (appState.searchHistory.length > CONFIG.maxHistoryItems) {
-                appState.searchHistory.pop();
-            }
+            appState.searchHistory.unshift({ term, timestamp: Date.now(), count: 1 });
+            if (appState.searchHistory.length > CONFIG.maxHistoryItems) appState.searchHistory.pop();
             
             saveDataToStorage();
             renderHistory();
@@ -1460,7 +1409,7 @@
             section.style.display = 'block';
             container.innerHTML = '';
             
-            appState.searchHistory.slice(0, 10).forEach((item, index) => {
+            appState.searchHistory.slice(0, 10).forEach(item => {
                 const historyItem = document.createElement('div');
                 historyItem.className = 'history-item';
                 historyItem.onclick = () => {
@@ -1468,7 +1417,8 @@
                     performSearch();
                 };
                 historyItem.innerHTML = `
-                    <span>🔍 ${item.term}</span>                    <span class="history-count">${new Date(item.timestamp).toLocaleDateString()}</span>
+                    <span>🔍 ${item.term}</span>
+                    <span class="history-count">${new Date(item.timestamp).toLocaleDateString()}</span>
                 `;
                 container.appendChild(historyItem);
             });
@@ -1483,29 +1433,26 @@
         }
 
         // ============================================
-        // ACTUALIZACIÓN DE UI Y ESTADÍSTICAS
+        // ACTUALIZACIÓN DE UI
         // ============================================
         function updateUI() {
-            // Actualizar contadores
             document.getElementById('customKeywordsCount').textContent = appState.customKeywords.length;
             document.getElementById('cacheCount').textContent = Object.keys(appState.searchCache).length;
             
-            // Actualizar estadísticas si hay datos
             if (appState.objetosGasto.length > 0) {
                 const uniqueObjetos = new Set(appState.objetosGasto.map(o => o.codigo)).size;
                 document.getElementById('totalRegistros').textContent = appState.objetosGasto.length;
                 document.getElementById('totalObjetos').textContent = uniqueObjetos;
             }
             
-            // Renderizar listas
             renderKeywordsList();
             renderHistory();
         }
 
         function updateStats(resultsCount) {
             document.getElementById('ultimaBusqueda').textContent = resultsCount;
-            document.getElementById('searchCount').textContent = 
-                parseInt(document.getElementById('searchCount').textContent) + 1;
+            const countEl = document.getElementById('searchCount');
+            countEl.textContent = parseInt(countEl.textContent) + 1;
         }
 
         function updateStatusText() {
@@ -1517,34 +1464,41 @@
         // ============================================
         // EVENT LISTENERS
         // ============================================
-        function setupEventListeners() {            // Búsqueda con Enter
+        function setupEventListeners() {
+            // Búsqueda con Enter
             document.getElementById('searchInput').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') performSearch();
             });
             
-            // Autocompletado simple
-            document.getElementById('searchInput').addEventListener('input', debounce((e) => {
-                const value = e.target.value.toLowerCase();
-                if (value.length >= 3) {
-                    // Mostrar sugerencias dinámicas (opcional)
-                }
-            }, 300));
-            
             // Botón limpiar datos
             document.getElementById('clearDataBtn').addEventListener('click', () => {
                 if (confirm('⚠️ ¿Confirmás eliminar todos los datos cargados y comenzar de nuevo?')) {
-                    Object.values(CONFIG.localStorageKeys).forEach(key => {
-                        localStorage.removeItem(key);
-                    });
+                    Object.values(CONFIG.localStorageKeys).forEach(key => localStorage.removeItem(key));
                     location.reload();
                 }
             });
             
-            // Auto-guardado periódico
+            // Auto-guardado
             setInterval(saveDataToStorage, 30000);
+            
+            // Limpiar caché expirada
+            setInterval(() => {
+                const now = Date.now();
+                let cleared = 0;
+                for (const [key, value] of Object.entries(appState.searchCache)) {
+                    if (now - value.timestamp > CONFIG.cacheExpiration) {
+                        delete appState.searchCache[key];
+                        cleared++;
+                    }
+                }
+                if (cleared > 0) {
+                    saveDataToStorage();
+                    updateUI();
+                }
+            }, 60 * 60 * 1000);
         }
 
-        // Utilidad: debounce para input
+        // Utilidad debounce (no se usa actualmente pero se mantiene)
         function debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
@@ -1557,32 +1511,7 @@
             };
         }
 
-        // ============================================
-        // GESTIÓN DE CACHE
-        // ============================================
-        function clearExpiredCache() {
-            const now = Date.now();
-            let cleared = 0;
-            
-            for (const [key, value] of Object.entries(appState.searchCache)) {
-                if (now - value.timestamp > CONFIG.cacheExpiration) {
-                    delete appState.searchCache[key];                    cleared++;
-                }
-            }
-            
-            if (cleared > 0) {
-                saveDataToStorage();
-                console.log(`🧹 Cache limpiada: ${cleared} items expirados`);
-                updateUI();
-            }
-        }
-        
-        // Limpiar caché expirada cada hora
-        setInterval(clearExpiredCache, 60 * 60 * 1000);
-
-        // ============================================
-        // FUNCIONES DE UTILIDAD
-        // ============================================
+        // Exponer funciones globales para los onclick del HTML
         window.toggleCustomKeywordsPanel = toggleCustomKeywordsPanel;
         window.addCustomKeyword = addCustomKeyword;
         window.deleteCustomKeyword = deleteCustomKeyword;
@@ -1593,28 +1522,6 @@
         window.closeModal = closeModal;
         window.selectWebResult = selectWebResult;
         window.confirmSelection = confirmSelection;
-
-
-// Usa localStorage para guardar:
-- Objetos de gasto cargados del CSV
-- Palabras clave personalizadas  
-- Caché de búsquedas
-- Historial de búsquedas
-
-// Flujo de búsqueda web:
-1. Usuario escribe término no encontrado → Click en "🌐 Buscar en Internet"
-2. Sistema consulta API de DuckDuckGo (gratuita) + fuentes oficiales CGN
-3. Muestra resultados con denominación, código y descripción
-4. Usuario selecciona la mejor concordancia en modal interactivo
-5. Resultado se guarda en keywords personalizadas + caché
-
-
-// Flujo de búsqueda web:
-1. Usuario escribe término no encontrado → Click en "🌐 Buscar en Internet"
-2. Sistema consulta API de DuckDuckGo (gratuita) + fuentes oficiales CGN
-3. Muestra resultados con denominación, código y descripción
-4. Usuario selecciona la mejor concordancia en modal interactivo
-5. Resultado se guarda en keywords personalizadas + caché
     </script>
 </body>
 </html>
