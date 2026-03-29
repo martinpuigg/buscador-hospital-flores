@@ -1,231 +1,187 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Clasificador Inteligente - Hospital de Flores</title>
-
-<style>
-body { font-family: Arial; background:#f4f4f4; padding:20px; }
-.container { max-width:900px; margin:auto; background:#fff; padding:20px; border-radius:10px; }
-
-input, button { padding:10px; margin:5px; }
-button { cursor:pointer; }
-
-.result-card {
-    border:1px solid #ddd;
-    padding:10px;
-    margin-top:10px;
-    border-left:5px solid #003ca5;
-}
-
-.ai-box {
-    background:#fff5f0;
-    border:2px solid orange;
-    padding:15px;
-    margin-top:15px;
-}
-</style>
-</head>
-
-<body>
-<div class="container">
-
-<h2>🏥 Clasificador de Gastos</h2>
-
-<input type="password" id="apiKey" placeholder="API Key Gemini">
-<br>
-
-<input type="file" id="csvFile">
-<br><br>
-
-<input type="text" id="searchInput" placeholder="Ej: jeringas, arroz...">
-<button onclick="buscar()">Buscar</button>
-
-<div id="results"></div>
-<div id="ia"></div>
-
-</div>
-
 <script>
+let datosCompletos = [];
+let limiteResultados = 20;
+let filtroGrupo = '';
+let searchCount = 0;
+let customKeywords = {};
 
-// ================= VARIABLES =================
-let datos = [];
-let cacheIA = {};
+const keywordsMap = {
+    'harina': ['111'], 'arroz': ['111'], 'carne': ['111'],
+    'jeringa': ['194'], 'gasa': ['194'], 'guante': ['194'],
+    'medicamento': ['152'], 'suero': ['194'],
+    'limpieza': ['192'], 'jabon': ['192'],
+    'papel': ['191'], 'resma': ['191'],
+    'sueldo': ['011'], 'combustible': ['141'],
+    'ambulancia': ['353'], 'reparacion': ['271'],
+    'electricidad': ['213'], 'agua': ['212']
+};
 
-// ================= CSV =================
-document.getElementById("csvFile").addEventListener("change", function(e){
-    const file = e.target.files[0];
-    const reader = new FileReader();
+// ================= IA OPTIMIZADA =================
+async function consultarInteligenciaArtificial(query) {
+    const internetDiv = document.getElementById('internetResults');
+    const apiKey = document.getElementById('apiKeyInput').value.trim();
 
-    reader.onload = function(evt){
-        const lines = evt.target.result.split("\n");
-
-        for(let i=1;i<lines.length;i++){
-            let cols = lines[i].split(",");
-            if(cols.length >= 4){
-                datos.push({
-                    objeto: cols[0],
-                    aux: cols[1],
-                    den: cols[2],
-                    desc: cols[3]
-                });
-            }
-        }
-
-        alert("CSV cargado: " + datos.length);
-    };
-
-    reader.readAsText(file, "ISO-8859-1");
-});
-
-// ================= NORMALIZAR =================
-function norm(t){
-    return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-
-// ================= SCORE =================
-function score(q, item){
-    let s = 0;
-    if(norm(item.den).includes(q)) s += 40;
-    if(norm(item.desc).includes(q)) s += 30;
-    return s;
-}
-
-// ================= BUSCAR =================
-function buscar(){
-    const query = norm(document.getElementById("searchInput").value);
-    const div = document.getElementById("results");
-    const iaDiv = document.getElementById("ia");
-
-    iaDiv.innerHTML = "";
-
-    let res = datos.map(d => ({...d, s: score(query, d)}))
-        .filter(r => r.s > 10)
-        .sort((a,b)=>b.s-a.s)
-        .slice(0,10);
-
-    if(res.length){
-        div.innerHTML = res.map(r=>`
-            <div class="result-card">
-                <b>${r.objeto}</b> - ${r.den}<br>
-                <small>${r.desc}</small><br>
-                Score: ${r.s}
-            </div>
-        `).join("");
-    } else {
-        div.innerHTML = "Sin resultados";
-    }
-
-    // 🔥 IA solo si no hay buena coincidencia
-    if(res.length === 0 || res[0].s < 40){
-        consultarIA(query);
-    }
-}
-
-// ================= VALIDAR CSV =================
-function validarObjeto(obj){
-    return datos.find(d => d.objeto === obj);
-}
-
-// ================= IA =================
-async function consultarIA(query){
-
-    const apiKey = document.getElementById("apiKey").value;
-    const div = document.getElementById("ia");
-
-    if(!apiKey){
-        div.innerHTML = "Sin API Key";
-        return;
-    }
+    if (!apiKey) return;
 
     // 🔥 CACHE
-    if(cacheIA[query]){
-        renderIA(cacheIA[query], query);
+    const cacheKey = "ia_cache_" + query.toLowerCase();
+    const cache = localStorage.getItem(cacheKey);
+    if (cache) {
+        renderIA(JSON.parse(cache), query);
         return;
     }
 
-    div.innerHTML = "Analizando con IA...";
+    internetDiv.style.display = 'block';
+    internetDiv.innerHTML = '<div class="loading">🤖 Analizando...</div>';
 
-    const prompt = `
-Clasificá este gasto hospitalario en Uruguay: "${query}"
-
+    const prompt = `Clasificá este gasto hospitalario en Uruguay: "${query}".
 Devolver JSON:
 {
  "explicacion": "...",
  "objeto_sugerido": "111"
-}
-`;
+}`;
 
-    try{
-
-        const res = await fetch(
+    try {
+        const response = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
             {
-                method:"POST",
-                headers:{ "Content-Type":"application/json" },
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents:[{ parts:[{ text: prompt }] }]
+                    contents: [{ parts: [{ text: prompt }] }]
                 })
             }
         );
 
-        const data = await res.json();
+        const data = await response.json();
 
-        if(!res.ok){
-            throw new Error(data.error.message);
+        if (!response.ok) {
+            throw new Error(data.error?.message || "Error API");
         }
 
-        let text = data.candidates[0].content.parts[0].text;
-        text = text.replace(/```json|```/g,"").trim();
+        let aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!aiText) throw new Error("Respuesta vacía");
 
-        const json = JSON.parse(text);
+        aiText = aiText.replace(/```json|```/g, '').trim();
+        const aiData = JSON.parse(aiText);
 
-        // VALIDAR
-        const match = validarObjeto(json.objeto_sugerido);
+        // 💾 GUARDAR CACHE
+        localStorage.setItem(cacheKey, JSON.stringify(aiData));
 
-        if(!match){
-            div.innerHTML = "IA devolvió objeto inválido";
-            return;
-        }
+        renderIA(aiData, query);
 
-        cacheIA[query] = {json, match};
-
-        renderIA({json, match}, query);
-
-    }catch(e){
-        div.innerHTML = "Error IA: " + e.message;
+    } catch (error) {
+        internetDiv.innerHTML = `
+        <div class="error">
+            ⚠️ IA no disponible<br>
+            ${error.message}
+        </div>`;
     }
 }
 
-// ================= RENDER IA =================
-function renderIA(data, query){
+// Render IA
+function renderIA(aiData, query) {
+    const internetDiv = document.getElementById('internetResults');
 
-    const div = document.getElementById("ia");
-
-    div.innerHTML = `
-    <div class="ai-box">
-        <b>🤖 IA sugiere:</b><br><br>
-
-        ${data.json.explicacion}<br><br>
-
-        <b>Objeto ${data.match.objeto}</b><br>
-        ${data.match.den}<br>
-        <small>${data.match.desc}</small><br><br>
-
-        <button onclick="guardar('${query}','${data.match.objeto}')">
-        Guardar regla
-        </button>
-    </div>
+    let html = `
+        <h4 style="color:#ff6b00;">🤖 Sugerencia IA</h4>
+        <p>${aiData.explicacion}</p>
     `;
+
+    if (aiData.objeto_sugerido) {
+        html += `
+        <button class="ai-save-btn"
+        onclick="guardarSugerenciaIA('${query}', '${aiData.objeto_sugerido}')">
+        Guardar como regla (${aiData.objeto_sugerido})
+        </button>`;
+    }
+
+    internetDiv.innerHTML = html;
 }
 
-// ================= GUARDAR =================
-function guardar(q,obj){
-    localStorage.setItem("reg_"+q,obj);
-    alert("Guardado");
+// ================= CSV =================
+document.getElementById('csvFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        const lineas = event.target.result.split('\n');
+        datosCompletos = [];
+
+        for (let i = 1; i < lineas.length; i++) {
+            const cols = lineas[i].split(',');
+
+            if (cols.length >= 4) {
+                datosCompletos.push({
+                    objeto: cols[0],
+                    auxiliar: cols[1],
+                    denominacion: cols[2],
+                    descripcion: cols[3],
+                    grupo: cols[0].charAt(0)
+                });
+            }
+        }
+
+        document.getElementById('searchContainer').style.display = 'block';
+    };
+
+    reader.readAsText(file, 'ISO-8859-1');
+});
+
+// ================= BÚSQUEDA =================
+function normalizar(t) {
+    return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
+function calcularRelevancia(query, item) {
+    const q = normalizar(query);
+    let score = 0;
+
+    if (keywordsMap[q]?.includes(item.objeto)) score += 80;
+    if (normalizar(item.denominacion).includes(q)) score += 40;
+    if (normalizar(item.descripcion).includes(q)) score += 30;
+
+    return score;
+}
+
+function buscar() {
+    const query = document.getElementById('searchInput').value.trim();
+    const resultsDiv = document.getElementById('results');
+
+    if (!query) return;
+
+    let resultados = datosCompletos
+        .map(i => ({ ...i, score: calcularRelevancia(query, i) }))
+        .filter(r => r.score > 10)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, limiteResultados);
+
+    // 🔥 IA SOLO SI ES NECESARIA
+    if (resultados.length < 3 || resultados[0]?.score < 50) {
+        consultarInteligenciaArtificial(query);
+    }
+
+    if (resultados.length === 0) {
+        resultsDiv.innerHTML = `<div class="no-results">Sin resultados</div>`;
+        return;
+    }
+
+    let html = '';
+    resultados.forEach(r => {
+        html += `
+        <div class="result-card">
+            <strong>${r.objeto}</strong> - ${r.denominacion}
+            <div>${r.descripcion}</div>
+            <small>Score: ${r.score}</small>
+        </div>`;
+    });
+
+    resultsDiv.innerHTML = html;
+}
+
+// ================= GUARDAR REGLA =================
+function guardarSugerenciaIA(keyword, objeto) {
+    localStorage.setItem("regla_" + keyword, objeto);
+    alert("Regla guardada");
+}
 </script>
-
-</body>
-</html>
