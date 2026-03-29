@@ -1,354 +1,223 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Search, Upload, FileText, X, Info, CheckCircle2, AlertCircle, Database, LayoutDashboard, Zap } from 'lucide-react';
-
-const App = () => {
-  const [data, setData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [fileName, setFileName] = useState('');
-  const [error, setError] = useState(null);
-  const fileInputRef = useRef(null);
-
-  // Inyectar Montserrat y estilos base para asegurar la visualización en Netlify/Externos
-  useEffect(() => {
-    if (!document.getElementById('montserrat-font')) {
-      const link = document.createElement('link');
-      link.id = 'montserrat-font';
-      link.href = 'https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap';
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-    }
-
-    const style = document.createElement('style');
-    style.innerHTML = `
-      * { font-family: 'Montserrat', sans-serif !important; }
-      body { margin: 0; background-color: #f8fafc; }
-      .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-      .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    `;
-    document.head.appendChild(style);
-  }, []);
-
-  // --- MAPEO DE ASOCIACIÓN INTELIGENTE (Materiales -> Códigos) ---
-  const keywordMapping = {
-    // Alimentos y Víveres
-    "alimentos": "111", "comida": "111", "comestible": "111", "víveres": "111", 
-    "arroz": "111", "fideos": "111", "aceite": "111", "pan": "111", "leche": "111",
-    // Materiales de Construcción y PVC
-    "pvc": "141", "plastico": "141", "caño": "141", "tubo": "141", "polietileno": "141",
-    "construccion": "141", "hormigon": "141", "cemento": "141", "ladrillo": "141",
-    // Limpieza
-    "limpieza": "151", "detergente": "151", "jabón": "151", "desinfectante": "151", "lavandina": "151",
-    // Oficina
-    "oficina": "131", "papelería": "131", "papel": "131", "utiles": "131", "lapiz": "131", "resma": "131",
-    // Médico y Farmacia
-    "medicamentos": "181", "farmacia": "181", "remedios": "181", "gasas": "181", "vendas": "181", "jeringa": "181",
-    // Eléctrico
-    "eléctrico": "142", "cables": "142", "foco": "142", "lampara": "142", "enchufe": "142",
-    // Herramientas y Repuestos
-    "herramientas": "149", "ferretería": "149", "tornillo": "149", "repuestos": "149", "tuerca": "149"
-  };
-
-  const normalizeText = (text) => {
-    if (!text) return "";
-    return text.toString()
-      .toLowerCase()
-      .trim()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
-  };
-
-  const parseCSV = (text) => {
-    const lines = text.split(/\r?\n/);
-    if (lines.length < 2) return [];
-
-    const splitCSVLine = (line) => {
-      const result = [];
-      let current = '';
-      let inQuotes = false;
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        if (char === '"' && line[i + 1] === '"') {
-          current += '"';
-          i++;
-        } else if (char === '"') {
-          inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-          result.push(current);
-          current = '';
-        } else {
-          current += char;
-        }
-      }
-      result.push(current);
-      return result;
-    };
-
-    const headers = splitCSVLine(lines[0]).map(h => h.trim().replace(/"/g, ''));
-    
-    return lines.slice(1)
-      .filter(line => line.trim() !== "")
-      .map((line, index) => {
-        const values = splitCSVLine(line);
-        const entry = { id: index };
-        headers.forEach((header, i) => {
-          const val = (values[i] || "").trim().replace(/"/g, '');
-          const head = normalizeText(header);
-          if (head.includes("objeto")) entry.objeto = val;
-          else if (head.includes("auxiliar") || head.includes("subgrupo")) entry.auxiliar = val;
-          else if (head.includes("denominacion")) entry.denominacion = val;
-          else if (head.includes("desc")) entry.descripcion = val;
-        });
-        return entry;
-      });
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setFileName(file.name);
-    setError(null);
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const text = event.target.result;
-        const processedData = parseCSV(text);
-        if (processedData.length > 0) {
-          setData(processedData);
-          setIsLoaded(true);
-        } else {
-          setError("El archivo no tiene el formato esperado.");
-        }
-      } catch (err) {
-        setError("Error crítico al procesar el CSV.");
-      }
-    };
-    reader.readAsText(file, "UTF-8");
-  };
-
-  // --- MOTOR DE BÚSQUEDA AVANZADO (Analiza palabra por palabra) ---
-  const filteredData = useMemo(() => {
-    const term = normalizeText(searchTerm);
-    if (!term) return data.slice(0, 100);
-
-    const searchWords = term.split(/\s+/);
-    
-    // Obtener todos los códigos asociados a las palabras ingresadas
-    const mappedCodes = searchWords
-      .map(word => keywordMapping[word])
-      .filter(code => code !== undefined);
-
-    return data.filter(item => {
-      const denom = normalizeText(item.denominacion);
-      const desc = normalizeText(item.descripcion);
-      const obj = normalizeText(item.objeto);
-      const aux = normalizeText(item.auxiliar);
-
-      // El item coincide si contiene alguna de las palabras buscadas en sus textos
-      const matchesAnyWord = searchWords.some(word => 
-        denom.includes(word) || desc.includes(word) || obj.includes(word) || aux.includes(word)
-      );
-
-      // O si el código de objeto del item empieza con alguno de los códigos mapeados
-      const matchesMappedCode = mappedCodes.some(code => obj.startsWith(code));
-
-      return matchesAnyWord || matchesMappedCode;
-    });
-  }, [data, searchTerm]);
-
-  return (
-    <div className="min-h-screen bg-[#f8fafc] flex flex-col text-slate-900 overflow-x-hidden">
-      {/* Cabecera Oficial */}
-      <nav className="bg-[#003ca5] text-white shadow-xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-5 flex flex-col md:flex-row md:items-center justify-between gap-2">
-          <div className="flex items-center gap-4">
-            <div className="bg-white p-2.5 rounded-2xl shadow-inner shrink-0">
-              <FileText className="text-[#003ca5] w-7 h-7 md:w-10 md:h-10" />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-lg md:text-3xl font-black tracking-tight uppercase leading-tight truncate">
-                Hospital de Flores "Edison Camacho"
-              </h1>
-              <p className="text-blue-200 text-xs md:text-lg font-bold tracking-[0.1em] uppercase mt-0.5 opacity-90 truncate">
-                Contaduría • Gestión de Gastos
-              </p>
-            </div>
-          </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificador Hospital de Flores - Anti-Trancazos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --blue: #003ca5; --orange: #ff6b00; --green: #28a745; --bg: #f4f7f6; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        body { background: var(--bg); padding: 10px; color: #333; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .header { border-bottom: 3px solid var(--blue); margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { color: var(--blue); font-size: 1.2em; }
+        #uploadSection { background: #eef2f7; padding: 30px; border-radius: 10px; text-align: center; border: 2px dashed var(--blue); margin-bottom: 20px; }
+        .btn-file { background: var(--blue); color: white; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-block; }
+        .ai-box { background: #f8f9fa; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .api-input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; margin-top: 8px; }
+        .search-area { background: var(--blue); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
+        @media (min-width: 600px) { .search-area { flex-direction: row; } }
+        #q { flex: 1; padding: 12px; border-radius: 6px; border: none; font-size: 1em; outline: none; }
+        #b { padding: 12px 25px; background: var(--orange); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; min-width: 150px; }
+        #b:disabled { background: #999; cursor: not-allowed; }
+        .toggle-btn { width: 100%; padding: 10px; background: var(--green); color: white; border: none; border-radius: 6px; margin: 15px 0; font-weight: 600; cursor: pointer; }
+        .dic-panel { display: none; background: #f0fff4; border: 2px solid var(--green); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .ia-status-msg { display: none; background: #fff5f0; border: 1px solid var(--orange); padding: 15px; border-radius: 8px; margin-top: 15px; color: #d35400; font-size: 0.95em; }
+        .card { border-left: 6px solid var(--blue); padding: 15px; background: white; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 6px; }
+        .card.ia-found { border-left-color: var(--orange); background: #fffaf5; }
+        .code-badge { background: var(--blue); color: white; padding: 4px 12px; border-radius: 15px; font-weight: bold; font-size: 0.85em; }
+        .loading { text-align: center; padding: 20px; font-weight: bold; color: var(--blue); }
+        .reset-db { font-size: 0.7em; color: #999; cursor: pointer; text-decoration: underline; margin-top: 30px; display: block; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Hospital de Flores</h1>
+            <div id="dbStatus" style="font-size: 0.7em; font-weight: bold;">ESPERANDO BASE DE DATOS...</div>
         </div>
-      </nav>
 
-      {/* Cuerpo del Portal */}
-      <div className="flex-1 flex flex-col lg:flex-row max-w-7xl mx-auto w-full p-4 md:p-8 gap-8">
-        
-        {/* Panel Lateral de Carga */}
-        <aside className="w-full lg:w-80 flex-shrink-0 order-2 lg:order-1">
-          <div className="space-y-6 lg:sticky lg:top-32">
-            
-            <div className="bg-white rounded-[2rem] shadow-sm border border-slate-200 p-6 overflow-hidden relative">
-              <div className="flex items-center gap-3 mb-6 text-slate-700">
-                <Database className="text-[#003ca5]" size={20} />
-                <h3 className="font-extrabold text-sm uppercase tracking-wider">Base de Datos</h3>
-              </div>
+        <div id="uploadSection">
+            <h2 style="color: var(--blue); font-size: 1.2em;">📂 Carga de Objetos</h2>
+            <label class="btn-file"> SELECCIONAR CSV <input type="file" id="csvFile" accept=".csv" style="display:none;"></label>
+        </div>
 
-              <div className="space-y-4">
-                <p className="text-[11px] text-slate-500 font-bold leading-relaxed">
-                  Suba <span className="text-[#003ca5] underline">ObjetosGasto.csv</span> para habilitar la búsqueda.
-                </p>
-                
-                <button 
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`
-                    group relative flex flex-col items-center justify-center w-full py-14 px-4 border-2 border-dashed rounded-[2rem] transition-all duration-500
-                    ${isLoaded ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 bg-slate-50 hover:border-[#003ca5] hover:bg-blue-50'}
-                    ${error ? 'border-rose-400 bg-rose-50' : ''}
-                  `}
-                >
-                  {isLoaded ? (
-                    <>
-                      <CheckCircle2 className="text-emerald-600 mb-3" size={44} />
-                      <span className="text-[11px] font-black text-emerald-700 text-center truncate w-full px-4 uppercase">
-                        {fileName}
-                      </span>
-                      <span className="text-[10px] text-emerald-500 mt-2 font-black uppercase tracking-widest bg-emerald-100/50 px-3 py-1 rounded-full">
-                        {data.length} REGISTROS
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="text-slate-400 mb-3 group-hover:text-[#003ca5] transition-all" size={44} />
-                      <span className="text-xs font-black text-slate-600 tracking-tight">SELECCIONAR CSV</span>
-                      <span className="text-[10px] text-slate-400 mt-2 font-bold italic">Compatible con móviles</span>
-                    </>
-                  )}
-                  <input type="file" ref={fileInputRef} className="hidden" accept=".csv" onChange={handleFileUpload} />
-                </button>
-
-                {error && (
-                  <div className="flex items-center gap-2 text-rose-600 bg-rose-50 p-4 rounded-2xl border border-rose-100">
-                    <AlertCircle size={16} />
-                    <p className="text-[10px] font-black uppercase">{error}</p>
-                  </div>
-                )}
-              </div>
+        <div id="mainApp" style="display:none;">
+            <div class="ai-box">
+                <label style="font-weight:bold; color:var(--orange); font-size: 0.8em;">🤖 Gemini API Key:</label>
+                <input type="password" id="key" class="api-input" placeholder="Pega tu clave AIzaSy...">
             </div>
 
-            {/* Tarjeta Informativa de Relaciones */}
-            <div className="bg-[#003ca5] rounded-[2rem] shadow-xl p-6 text-white relative overflow-hidden group">
-              <Zap className="absolute -right-4 -top-4 w-24 h-24 text-white/5 group-hover:rotate-12 transition-transform duration-700" />
-              <div className="flex items-center gap-2 mb-4">
-                <Info size={18} className="text-blue-200" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Relaciones Automáticas</span>
-              </div>
-              <ul className="text-[11px] space-y-4 font-bold text-blue-100">
-                <li className="flex gap-3 items-start">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-300 mt-1.5 flex-shrink-0"></div>
-                  <span>Al escribir <b>PVC</b> o <b>tubo</b> se mostrará todo el grupo <b>141</b>.</span>
-                </li>
-                <li className="flex gap-3 items-start">
-                  <div className="w-1.5 h-1.5 rounded-full bg-blue-300 mt-1.5 flex-shrink-0"></div>
-                  <span>Al buscar <b>aceite</b> o <b>comida</b> se vinculará al objeto <b>111</b>.</span>
-                </li>
-              </ul>
+            <div class="search-area">
+                <input type="text" id="q" placeholder="Ej: Atun, Jeringa, 111..." onkeypress="if(event.key==='Enter') buscar()">
+                <button id="b" onclick="buscar()">ANALIZAR</button>
             </div>
-          </div>
-        </aside>
 
-        {/* CONTENIDO CENTRAL DE BÚSQUEDA */}
-        <main className="flex-1 flex flex-col order-1 lg:order-2 min-w-0">
-          
-          <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 p-6 mb-8 sticky top-28 lg:top-36 z-40">
-            <div className="relative">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-300" size={28} />
-              <input
-                type="text"
-                placeholder="Busque por material (PVC), categoría (aceite) o código..."
-                className="w-full pl-16 pr-14 py-6 bg-slate-50 border border-slate-200 rounded-[2rem] focus:outline-none focus:ring-8 focus:ring-[#003ca5]/5 focus:border-[#003ca5] transition-all text-slate-800 font-bold placeholder:text-slate-400 text-lg md:text-xl shadow-inner"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                disabled={!isLoaded}
-              />
-              {searchTerm && (
-                <button onClick={() => setSearchTerm('')} className="absolute right-6 top-1/2 -translate-y-1/2 p-2.5 hover:bg-slate-200 rounded-full text-slate-400">
-                  <X size={24} />
-                </button>
-              )}
-            </div>
-            <div className="mt-5 px-3 flex justify-between items-center text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
-              <span>{isLoaded ? `Resultados: ${filteredData.length}` : 'Cargue el archivo para buscar'}</span>
-            </div>
-          </div>
-
-          <div className="space-y-4 pb-12">
-            {isLoaded ? (
-              filteredData.length > 0 ? (
-                filteredData.map((item) => (
-                  <div key={item.id} className="bg-white rounded-[2.5rem] border border-slate-200 p-6 md:p-10 hover:border-[#003ca5] hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 group relative">
-                    <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-3">
-                           <LayoutDashboard size={14} className="text-[#003ca5]" />
-                           <span className="text-[9px] font-black text-[#003ca5] uppercase tracking-[0.2em]">Registro Oficial</span>
-                        </div>
-                        <h4 className="font-black text-slate-800 text-lg md:text-2xl leading-tight group-hover:text-[#003ca5] transition-colors uppercase tracking-tighter break-words">
-                          {item.denominacion || 'SIN DENOMINACIÓN'}
-                        </h4>
-                      </div>
-                      
-                      <div className="flex gap-4 flex-shrink-0 w-full md:w-auto">
-                        <div className="flex-1 md:flex-initial bg-[#003ca5] p-4 rounded-[1.5rem] shadow-xl shadow-blue-200 text-center min-w-[120px]">
-                          <p className="text-[9px] font-black text-blue-200 uppercase mb-1.5 tracking-widest opacity-80">Objeto</p>
-                          <p className="text-white text-lg font-black font-mono">{item.objeto}</p>
-                        </div>
-                        <div className="flex-1 md:flex-initial bg-slate-100 border border-slate-200 p-4 rounded-[1.5rem] text-center min-w-[120px]">
-                          <p className="text-[9px] font-black text-slate-400 uppercase mb-1.5 tracking-widest opacity-80">Auxiliar</p>
-                          <p className="text-slate-700 text-lg font-black font-mono">{item.auxiliar}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-8 bg-slate-50 p-6 rounded-[1.5rem] border border-slate-100 shadow-inner">
-                      <p className="text-sm md:text-base text-slate-600 font-semibold italic opacity-70 leading-relaxed">
-                        {item.descripcion || 'Sin descripción disponible.'}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="bg-white rounded-[4rem] border-4 border-dashed border-slate-100 py-32 text-center px-12">
-                  <Search size={54} className="text-slate-200 mx-auto mb-6" />
-                  <h3 className="text-2xl font-black text-slate-400 uppercase tracking-tighter">Sin resultados</h3>
-                  <p className="text-slate-300 font-bold mt-2">Pruebe con otros términos o códigos.</p>
+            <button class="toggle-btn" onclick="toggleDic()">📝 Diccionario de Reglas</button>
+            <div id="dic" class="dic-panel">
+                <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                    <input type="text" id="nk" placeholder="Palabra" style="flex:2; padding:8px;">
+                    <input type="text" id="no" placeholder="Objeto" style="flex:1; padding:8px;">
+                    <button onclick="addK()" style="background:var(--green); color:white; border:none; padding:8px 15px; border-radius:5px; font-weight:bold;">OK</button>
                 </div>
-              )
-            ) : (
-              <div className="bg-white rounded-[4rem] border border-slate-200 py-44 flex flex-col items-center justify-center text-center px-8 shadow-sm">
-                <Upload size={54} className="text-[#003ca5] mb-8 animate-bounce" />
-                <h3 className="text-3xl font-black text-slate-800 mb-4 uppercase tracking-tight">Sistema Desconectado</h3>
-                <p className="text-slate-400 max-w-sm text-lg font-bold uppercase tracking-tighter opacity-60">
-                  Cargue el archivo CSV para sincronizar la base de datos.
-                </p>
-              </div>
-            )}
-          </div>
-        </main>
-      </div>
+                <div id="klist" style="font-size: 0.8em; max-height: 150px; overflow-y: auto;"></div>
+            </div>
 
-      <footer className="bg-white border-t border-slate-200 py-12 px-8 mt-auto">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
-          <div className="text-center md:text-left">
-            <p className="text-[11px] text-slate-400 font-black uppercase tracking-[0.4em]">
-              Hospital de Flores "Edison Camacho"
-            </p>
-            <p className="text-[10px] text-slate-300 font-black uppercase mt-3 tracking-widest">
-              Sector Contaduría • 2026
-            </p>
-          </div>
-          <div className="text-[11px] font-black text-slate-300 uppercase tracking-widest">
-            v4.8 Advanced Search Fix
-          </div>
+            <div id="iaStatus" class="ia-status-msg"></div>
+            <div id="results"></div>
+            <span class="reset-db" onclick="resetDatabase()">⚠️ Borrar datos guardados</span>
         </div>
-      </footer>
     </div>
-  );
-};
 
-export default App;
+    <script>
+        let DB_LOCAL = [];
+        let dics = JSON.parse(localStorage.getItem('h_dic') || '{}');
+        let cacheIA = JSON.parse(localStorage.getItem('h_cache_ia') || '{}');
+        let isBusy = false;
+
+        window.onload = () => {
+            document.getElementById('key').value = localStorage.getItem('h_key') || '';
+            renderD();
+            checkDatabase();
+        };
+
+        function checkDatabase() {
+            const saved = localStorage.getItem('hospital_db');
+            if (saved) {
+                DB_LOCAL = JSON.parse(saved);
+                document.getElementById('uploadSection').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('dbStatus').innerText = `✅ ${DB_LOCAL.length} OBJETOS LISTOS`;
+                document.getElementById('dbStatus').style.color = "var(--green)";
+            }
+        }
+
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => procesarCSV(event.target.result);
+            reader.readAsText(file, 'ISO-8859-1');
+        });
+
+        function procesarCSV(texto) {
+            const lineas = texto.split(/\r?\n/);
+            const dataProcesada = [];
+            for (let i = 1; i < lineas.length; i++) {
+                const col = lineas[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                if (col.length >= 3) {
+                    dataProcesada.push({
+                        o: col[0].replace(/"/g, '').trim(),
+                        a: col[1].replace(/"/g, '').trim() || "000",
+                        n: col[2].replace(/"/g, '').trim(),
+                        d: (col[3] || "").replace(/"/g, '').trim()
+                    });
+                }
+            }
+            if (dataProcesada.length > 0) {
+                localStorage.setItem('hospital_db', JSON.stringify(dataProcesada));
+                checkDatabase();
+            }
+        }
+
+        function resetDatabase() { if(confirm("¿Borrar todo?")) { localStorage.removeItem('hospital_db'); location.reload(); } }
+        function toggleDic() { let d = document.getElementById('dic'); d.style.display = d.style.display==='block' ? 'none' : 'block'; }
+        function addK() {
+            let k = document.getElementById('nk').value.toLowerCase().trim();
+            let o = document.getElementById('no').value.trim();
+            if(k && o) { dics[k] = {o, a:"000"}; localStorage.setItem('h_dic', JSON.stringify(dics)); renderD(); }
+        }
+        function delK(k) { delete dics[k]; localStorage.setItem('h_dic', JSON.stringify(dics)); renderD(); }
+        function renderD() {
+            let l = document.getElementById('klist'); l.innerHTML = '';
+            for(let k in dics) l.innerHTML += `<div style="display:flex; justify-content:space-between; padding:3px 0; border-bottom:1px solid #eee;"><span><b>${k}</b> ➔ ${dics[k].o}</span><span onclick="delK('${k}')" style="color:red; cursor:pointer;">✖</span></div>`;
+        }
+
+        async function buscar() {
+            if(isBusy) return;
+            const query = document.getElementById('q').value.trim();
+            if(query.length < 2) return;
+
+            isBusy = true;
+            const btn = document.getElementById('b');
+            const resDiv = document.getElementById('results');
+            const statusDiv = document.getElementById('iaStatus');
+            
+            btn.innerText = "⏳..."; btn.disabled = true;
+            resDiv.innerHTML = '<div class="loading">Buscando...</div>';
+            statusDiv.style.display = 'none';
+
+            let qL = query.toLowerCase();
+            let targetCode = dics[qL] ? dics[qL].o : null;
+            let matches = DB_LOCAL.filter(i => i.n.toLowerCase().includes(qL) || i.o === query || i.o === targetCode);
+
+            if (matches.length > 0) {
+                mostrarCards(matches, false, query);
+                liberar();
+            } else {
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = `🤖 No está en el Excel. Consultando a Google...`;
+                
+                try {
+                    let aiCode = await consultarIA(query);
+                    if (aiCode) {
+                        let aiMatches = DB_LOCAL.filter(i => i.o === aiCode);
+                        if (aiMatches.length > 0) {
+                            statusDiv.innerHTML = `✨ IA identificó "${query}" como Objeto ${aiCode}`;
+                            mostrarCards(aiMatches, true, query);
+                        } else {
+                            resDiv.innerHTML = `<div class="card ia-found"><h3>Sugerencia IA: Objeto ${aiCode}</h3><p>Asociado a "${query}". Este código no está en tu archivo.</p></div>`;
+                        }
+                    } else {
+                        resDiv.innerHTML = '<p style="text-align:center; padding:20px;">Sin resultados.</p>';
+                    }
+                } catch (err) {
+                    statusDiv.innerHTML = `⚠️ La IA tardó demasiado o falló el internet.`;
+                } finally {
+                    liberar();
+                }
+            }
+        }
+
+        async function consultarIA(q) {
+            const key = document.getElementById('key').value.trim();
+            if (!key) return null;
+            localStorage.setItem('h_key', key);
+            if(cacheIA[q.toLowerCase()]) return cacheIA[q.toLowerCase()];
+
+            // CONFIGURACIÓN DE TIEMPO LÍMITE (15 segundos)
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+            try {
+                const prompt = `Actúa como experto contable de Uruguay. Analiza: "${q}". ¿A qué OBJETO DE GASTO (011-923) pertenece? Responde SOLO el número de 3 dígitos.`;
+                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                    method: "POST", 
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                const d = await r.json();
+                const code = d.candidates[0].content.parts[0].text.trim().substring(0,3);
+                if (!isNaN(code)) {
+                    cacheIA[q.toLowerCase()] = code;
+                    localStorage.setItem('h_cache_ia', JSON.stringify(cacheIA));
+                    return code;
+                }
+            } catch (e) { return null; }
+        }
+
+        function mostrarCards(items, esIA, qOrig) {
+            const resDiv = document.getElementById('results');
+            resDiv.innerHTML = esIA ? `<p style="font-size:0.7em; font-weight:bold; color:var(--orange); margin:15px 0 5px 0;">ASOCIADO POR INTELIGENCIA ARTIFICIAL:</p>` : '';
+            items.slice(0, 30).forEach(r => {
+                resDiv.innerHTML += `<div class="card ${esIA ? 'ia-found' : ''}"><span class="code-badge">OBJETO ${r.o} / ${r.a}</span><h3 style="margin:8px 0 4px 0; color:var(--blue); font-size:1em;">${r.n}</h3><p style="color:#666; font-size:0.8em; line-height:1.4;">${r.d}</p></div>`;
+            });
+        }
+
+        function liberar() { isBusy = false; const b = document.getElementById('b'); b.innerText = "ANALIZAR"; b.disabled = false; }
+    </script>
+</body>
+</html>
