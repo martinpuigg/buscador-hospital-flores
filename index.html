@@ -305,7 +305,7 @@
         }
 
         // ============================================
-        // 🤖 MOTOR DE IA CON AUTO-DESCUBRIMIENTO
+        // 🤖 MOTOR DE IA CON AUTO-DESCUBRIMIENTO E INYECCIÓN DE TARJETA
         // ============================================
         async function consultarInteligenciaArtificial(query) {
             const internetDiv = document.getElementById('internetResults');
@@ -321,16 +321,16 @@
             }
 
             internetDiv.style.display = 'block';
-            internetDiv.innerHTML = '<div class="loading">🤖 Verificando servidor y conectando a la IA...</div>';
+            internetDiv.innerHTML = '<div class="loading">🤖 Analizando la naturaleza del gasto con IA...</div>';
 
             const prompt = `Actúa como un experto en contabilidad pública de Uruguay y del clasificador de gastos de la CGN. El usuario quiere clasificar este gasto: "${query}".
 Devuelve un JSON con exactamente esta estructura (sin texto adicional):
 {
-  "explicacion": "Breve definición del artículo y su naturaleza de gasto en contexto de compras públicas, sugiriendo el objeto de gasto (ej: 111, 194, 273) dentro de la misma explicación."
+  "explicacion": "Breve definición del artículo y su naturaleza de gasto en contexto de compras públicas, sugiriendo el objeto de gasto (ej: 111, 194, 273) dentro de la misma explicación.",
+  "objeto_sugerido": "Código numérico de 3 dígitos del objeto de gasto más probable (ej: 111). Pon solo los 3 números."
 }`;
 
             try {
-                // PASO 1: Descubrir qué modelos están permitidos para esta API KEY
                 const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
                 const modelsData = await modelsResponse.json();
 
@@ -338,7 +338,6 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                     throw new Error(modelsData.error ? modelsData.error.message : 'La API Key fue rechazada.');
                 }
 
-                // Filtrar modelos válidos para texto
                 let modeloElegido = "";
                 if (modelsData.models) {
                     const modelosValidos = modelsData.models.filter(m => 
@@ -349,14 +348,10 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                     
                     if (modelosValidos.length === 0) throw new Error("La clave no tiene permisos para modelos de texto.");
                     
-                    // Elegir el mejor modelo disponible (prioriza flash o pro)
                     const flashModel = modelosValidos.find(m => m.name.includes("flash"));
                     const proModel = modelosValidos.find(m => m.name.includes("pro"));
                     modeloElegido = flashModel ? flashModel.name : (proModel ? proModel.name : modelosValidos[0].name);
                 }
-
-                // PASO 2: Llamada a la IA con el modelo seguro
-                internetDiv.innerHTML = `<div class="loading">🤖 Analizando gasto...</div>`;
                 
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modeloElegido}:generateContent?key=${apiKey}`;
                 const response = await fetch(apiUrl, {
@@ -369,12 +364,11 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 
                 if (!response.ok || data.error) throw new Error(data.error ? data.error.message : 'Error al procesar la respuesta');
 
-                // Procesamiento y renderizado del resultado de la IA
                 let aiText = data.candidates[0].content.parts[0].text;
                 aiText = aiText.replace(/```json/gi, '').replace(/```/g, '').trim();
                 const aiData = JSON.parse(aiText);
 
-                // Resultado final sin botón adicional
+                // Solo muestra la explicación (sin botón naranja)
                 let html = `
                     <h4 style="color: #ff6b00; margin-bottom: 10px;">🤖 Recomendación Contable (IA):</h4>
                     <div style="font-size: 1.05em; color: #333; line-height: 1.5;">
@@ -384,6 +378,12 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
 
                 internetDiv.innerHTML = html;
 
+                // INYECCIÓN DE TARJETA: Si la IA encuentra el número, muestra la tarjeta de la CGN en la lista de abajo
+                if (aiData.objeto_sugerido && aiData.objeto_sugerido.length >= 3) {
+                    const numObjeto = aiData.objeto_sugerido.substring(0, 3);
+                    mostrarObjetoDesdeIA(numObjeto, query);
+                }
+
             } catch (error) {
                 internetDiv.innerHTML = `
                     <div class="error" style="border-color: #f5c6cb; background: #f8d7da; color: #721c24;">
@@ -391,6 +391,39 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                         Asegurate de que la clave de Google no tenga espacios o haya caducado.<br>
                         <span style="font-size: 0.85em; color: #999;">Error: ${error.message}</span>
                     </div>`;
+            }
+        }
+
+        // Función que rescata el objeto de la base local si la IA lo adivina
+        function mostrarObjetoDesdeIA(numObjeto, query) {
+            const resultsDiv = document.getElementById('results');
+            
+            let resultadosIA = datosCompletos.filter(item => item.objeto === numObjeto);
+            
+            if (resultadosIA.length > 0) {
+                // Verificamos si la pantalla estaba mostrando "No hay resultados"
+                const isNoResults = resultsDiv.querySelector('.no-results');
+                
+                // Si estaba vacía, arrancamos limpio; si ya tenía tarjetas, las agregamos al principio
+                let html = isNoResults ? `<div style="margin-bottom: 20px; color: #ff6b00; font-weight: 700; font-size: 1.1em;">✨ Tarjeta Oficial rescatada por la IA:</div>` : resultsDiv.innerHTML;
+                
+                let tarjetasNuevas = '';
+                resultadosIA.slice(0, 5).forEach((r) => {
+                    tarjetasNuevas += `
+                        <div class="result-card" onclick="selectResult(event)" style="border-left-color: #ff6b00; background: #fffaf5;">
+                            <div>
+                                <span class="codigo-badge" style="background: #ff6b00;">Objeto ${r.objeto} / ${r.auxiliar}</span> 
+                                <span class="relevancia-badge" style="color: #ff6b00; background: rgba(255,107,0,0.1);">Sugerencia de IA</span>
+                            </div>
+                            <div class="denominacion">${r.denominacion}</div>
+                            <div class="descripcion">${r.descripcion}</div>
+                            <span class="grupo-tag">Grupo ${r.grupo}</span>
+                            <div class="keyword-match">🤖 La IA clasificó "${query}" en esta categoría</div>
+                        </div>`;
+                });
+
+                // Reemplazamos si estaba vacío, o inyectamos arriba de todo si había otras cosas
+                resultsDiv.innerHTML = isNoResults ? html + tarjetasNuevas : tarjetasNuevas + html;
             }
         }
 
@@ -403,7 +436,6 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             
             const reader = new FileReader();
             reader.onload = function(event) { procesarCSV(event.target.result); };
-            // ISO-8859-1 es vital para leer exportaciones de Excel en español sin romper las letras
             reader.readAsText(file, 'ISO-8859-1'); 
         });
 
@@ -475,16 +507,13 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             const queryNorm = normalizar(query);
             let score = 0; let keywordEncontrada = null;
 
-            // 1. Reglas manuales (Prioridad 1)
             if (customKeywords[queryNorm]) {
                 const coincide = customKeywords[queryNorm].some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
                 if (coincide) { score += 100; keywordEncontrada = `Regla del diccionario interno`; }
             }
-            // 2. Base de conocimiento rápida (Prioridad 2)
             if (keywordsMap[queryNorm] && keywordsMap[queryNorm].includes(item.objeto)) {
                 score += 80; keywordEncontrada = `Sugerencia del sistema`;
             }
-            // 3. Coincidencia de texto pura (Prioridad 3)
             if (normalizar(item.denominacion).includes(queryNorm)) score += 45;
             if (normalizar(item.descripcion).includes(queryNorm)) score += 35;
             if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) score += 70;
@@ -499,7 +528,7 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
             if (!query || query.length < 2) return;
             
             searchCount++; document.getElementById('searchCount').textContent = searchCount;
-            resultsDiv.innerHTML = '<div class="loading">⏳ Rastrendo código contable...</div>';
+            resultsDiv.innerHTML = '<div class="loading">⏳ Rastreando código contable...</div>';
             
             // Llama a la IA
             consultarInteligenciaArtificial(query);
@@ -514,11 +543,12 @@ Devuelve un JSON con exactamente esta estructura (sin texto adicional):
                 
                 document.getElementById('ultimaBusqueda').textContent = resultados.length;
 
+                // Mensaje temporal de espera (La IA lo va a sobreescribir al terminar)
                 if (resultados.length === 0) {
                     resultsDiv.innerHTML = `
                         <div class="no-results">
-                            <h3 style="color: #333; margin-bottom: 10px;">La palabra exacta no figura en el listado de la CGN</h3>
-                            <p>Revisá el consejo de la Inteligencia Artificial en el recuadro naranja de arriba.</p>
+                            <h3 style="color: #333; margin-bottom: 10px;">La palabra exacta no figura en el listado oficial</h3>
+                            <p>⏳ Esperando clasificación de la Inteligencia Artificial...</p>
                         </div>`;
                     return;
                 }
