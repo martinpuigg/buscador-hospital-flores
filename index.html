@@ -2,23 +2,78 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Clasificador Inteligente</title>
+<title>Hospital de Flores - Clasificador Inteligente</title>
 
 <style>
-body { font-family: Arial; padding:20px; background:#f5f7fb; }
-input { padding:10px; width:300px; }
-button { padding:10px; }
-.result { margin-top:20px; padding:15px; border-left:5px solid #003ca5; background:white; }
+body {
+    font-family: Arial;
+    background: #f4f7fb;
+    padding: 20px;
+    color: #003ca5;
+}
+
+.header {
+    display:flex;
+    align-items:center;
+    gap:20px;
+    border-bottom:3px solid #003ca5;
+    margin-bottom:20px;
+}
+
+.logo {
+    height:60px;
+}
+
+input {
+    padding:12px;
+    border:2px solid #003ca5;
+    border-radius:8px;
+    width:300px;
+}
+
+button {
+    padding:12px 20px;
+    background:#003ca5;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.result {
+    margin-top:20px;
+    background:white;
+    padding:20px;
+    border-left:5px solid #003ca5;
+    border-radius:10px;
+}
+
 .sugerencias span {
-    background:#003ca5; color:#fff; padding:5px 10px; margin:5px;
-    display:inline-block; cursor:pointer; border-radius:5px;
+    background:#003ca5;
+    color:white;
+    padding:6px 12px;
+    margin:5px;
+    display:inline-block;
+    cursor:pointer;
+    border-radius:6px;
+}
+
+.panel {
+    margin-top:20px;
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    border:2px solid #003ca5;
 }
 </style>
 </head>
 
 <body>
 
-<h2>🏥 Clasificador Inteligente</h2>
+<div class="header">
+    <img src="logo_hospital_flores.png" class="logo" onerror="this.style.display='none'">
+    <h2>🏥 Clasificador Inteligente - Contaduría</h2>
+</div>
 
 <input type="file" id="csvFile"><br><br>
 
@@ -28,35 +83,44 @@ onkeypress="if(event.key==='Enter') buscar()">
 <button onclick="buscar()">Buscar</button>
 
 <div class="sugerencias" id="sugerencias"></div>
+
 <div id="resultado"></div>
+
+<!-- 🔥 PANEL PALABRAS -->
+<div class="panel">
+    <h3>➕ Agregar palabra personalizada</h3>
+    <input id="palabra" placeholder="Ej: insumos">
+    <input id="objeto" placeholder="Objeto (ej: 191)">
+    <button onclick="guardarPalabra()">Guardar</button>
+</div>
 
 <script>
 
 let datos = [];
 let memoria = JSON.parse(localStorage.getItem('memoria') || '{}');
+let palabras = JSON.parse(localStorage.getItem('palabras') || '{}');
 
 // ================= CSV =================
-function parseCSVLine(line) {
-    let result=[], current='', inQuotes=false;
-    for (let char of line) {
-        if (char === '"') inQuotes = !inQuotes;
-        else if (char === ',' && !inQuotes) {
-            result.push(current); current='';
-        } else current += char;
+function parseCSVLine(line){
+    let r=[],c='',q=false;
+    for(let ch of line){
+        if(ch=='"') q=!q;
+        else if(ch==','&&!q){ r.push(c); c=''; }
+        else c+=ch;
     }
-    result.push(current);
-    return result;
+    r.push(c);
+    return r;
 }
 
 document.getElementById('csvFile').addEventListener('change', function(e){
     const reader = new FileReader();
     reader.onload = function(e){
         const lines = e.target.result.split('\n');
-        datos = [];
+        datos=[];
 
         for(let i=1;i<lines.length;i++){
             let c = parseCSVLine(lines[i]);
-            if(c.length >= 4){
+            if(c.length>=4){
                 datos.push({
                     objeto:c[0].trim(),
                     auxiliar:c[1].trim(),
@@ -65,7 +129,6 @@ document.getElementById('csvFile').addEventListener('change', function(e){
                 });
             }
         }
-
         alert("CSV cargado");
     };
     reader.readAsText(e.target.files[0]);
@@ -73,15 +136,25 @@ document.getElementById('csvFile').addEventListener('change', function(e){
 
 // ================= NORMALIZAR =================
 function norm(t){
-    return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 }
-
-// ================= REGLA ALIMENTOS =================
-const alimentos = ['carne','arroz','harina','pan','leche','queso','pollo','pescado'];
 
 // ================= DEFINICIÓN =================
 function definicion(item){
     return `Objeto ${item.objeto}: ${item.denominacion}`;
+}
+
+// ================= GUARDAR PALABRAS =================
+function guardarPalabra(){
+    const p = norm(document.getElementById('palabra').value);
+    const o = document.getElementById('objeto').value.trim();
+
+    if(!p || !o) return alert("Completar datos");
+
+    palabras[p] = o;
+    localStorage.setItem('palabras', JSON.stringify(palabras));
+
+    alert("Guardado");
 }
 
 // ================= BUSCAR =================
@@ -94,7 +167,7 @@ function buscar(){
 
     let resultado;
 
-    // 🔥 1. MEMORIA (PRIORIDAD MÁXIMA)
+    // 1. MEMORIA
     if(memoria[q]){
         resultado = datos.find(d =>
             d.objeto === memoria[q].objeto &&
@@ -102,12 +175,17 @@ function buscar(){
         );
     }
 
-    // 🔥 2. REGLA ALIMENTOS
-    if(!resultado && alimentos.some(a=>q.includes(a))){
+    // 2. PALABRAS PERSONALIZADAS
+    if(!resultado && palabras[q]){
+        resultado = datos.find(d => d.objeto === palabras[q]);
+    }
+
+    // 3. REGLA ALIMENTOS
+    if(!resultado && ['carne','arroz','harina','pan','leche'].some(a=>q.includes(a))){
         resultado = datos.find(d => d.objeto === '111');
     }
 
-    // 🔥 3. BÚSQUEDA NORMAL
+    // 4. BÚSQUEDA SIMPLE
     if(!resultado){
         resultado = datos.find(d =>
             norm(d.denominacion + d.descripcion).includes(q)
@@ -119,31 +197,30 @@ function buscar(){
         return;
     }
 
-    // 🔥 GUARDAR APRENDIZAJE
-    memoria[q] = {
-        objeto: resultado.objeto,
-        auxiliar: resultado.auxiliar
-    };
-    localStorage.setItem('memoria', JSON.stringify(memoria));
+    // 🔥 CONFIRMAR APRENDIZAJE
+    if(confirm("¿Este resultado es correcto?")){
+        memoria[q] = {
+            objeto: resultado.objeto,
+            auxiliar: resultado.auxiliar
+        };
+        localStorage.setItem('memoria', JSON.stringify(memoria));
+    }
 
     div.innerHTML = `
         <div class="result">
             <b>${resultado.objeto}/${resultado.auxiliar}</b><br><br>
             <b>${resultado.denominacion}</b><br><br>
             ${resultado.descripcion}<br><br>
-            🤖 ${definicion(resultado)}<br><br>
-            📚 Aprendido para: "${q}"
+            🤖 ${definicion(resultado)}
         </div>
     `;
 }
 
 // ================= SUGERENCIAS =================
-const sugerencias = ['carne','harina','insumos','medicamento','limpieza'];
+const sug = ['carne','insumos','medicamento','limpieza'];
 
 document.getElementById('sugerencias').innerHTML =
-    sugerencias.map(s =>
-        `<span onclick="document.getElementById('searchInput').value='${s}';buscar()">${s}</span>`
-    ).join('');
+    sug.map(s=>`<span onclick="document.getElementById('searchInput').value='${s}';buscar()">${s}</span>`).join('');
 
 </script>
 
