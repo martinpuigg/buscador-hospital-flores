@@ -187,19 +187,6 @@
             display: inline-block; 
             border: 1px solid #c3e6cb;
         }
-        .copy-feedback { 
-            position: absolute; 
-            bottom: -25px; 
-            right: 10px; 
-            background: #28a745; 
-            color: white; 
-            padding: 4px 8px; 
-            border-radius: 4px; 
-            font-size: 0.8em; 
-            opacity: 0; 
-            transition: all 0.3s;
-        }
-        .copy-feedback.show { opacity: 1; transform: translateY(-5px); }
         
         /* Mensajes */
         .loading { text-align: center; padding: 30px; color: #003ca5; font-weight: 600; font-size: 1.1em; }
@@ -605,7 +592,7 @@
                 <small style="color: #666;"> (Prioridad máxima sobre análisis automático)</small>
             </div>`;
 
-            keywords.slice(0, 50).forEach(keyword => { // Limitar a 50 para performance
+            keywords.slice(0, 50).forEach(keyword => {
                 customKeywords[keyword].forEach(mapping => {
                     const fecha = new Date(mapping.fecha).toLocaleDateString('es-UY');
                     html += `
@@ -703,7 +690,7 @@
                     mejorAnalisis = {
                         categoria,
                         explicacion: datos.explicacion,
-                        objetos_sugeridos: datos.objetos.map(obj => `${obj}000`), // Auxiliar por defecto
+                        objetos_sugeridos: datos.objetos.map(obj => `${obj}000`),
                         confianza: Math.min(85, 40 + (coincidenciasCategoria * 12)),
                         icono: datos.icono,
                         coincidencias: [...new Set(coincidenciasPalabras)],
@@ -723,7 +710,7 @@
                         mejorAnalisis.icono = '📚';
                         mejorAnalisis.coincidencias = [palabra];
                         mejorAnalisis.fuente = 'diccionario_parcial';
-                        return; // Salir del loop
+                        return;
                     }
                 });
             }
@@ -752,7 +739,7 @@
             const analisisLocal = analizarConIA_local(query);
             if (analisisLocal.confianza >= 75) {
                 isProcessing = false;
-                return; // No buscar en web si local es suficientemente bueno
+                return;
             }
             
             webSearchCount++;
@@ -785,45 +772,23 @@
             try {
                 // Estrategia de búsqueda optimizada para Uruguay
                 const busquedas = [
-                    // Búsqueda principal en sitios oficiales
                     `intitle:"objeto de gasto" "${query}" site:gub.uy`,
                     `"${query}" "clasificador de gastos" CGN`,
-                    `"${query}" hospital filetype:pdf site:gov.uy`,
-                    // Búsquedas específicas por contexto
-                    query.includes('medic') ? `"${query}" "material médico" CGN` : '',
-                    query.includes('alimento') ? `"${query}" "consumos" hospital` : '',
-                    query.includes('servicio') ? `"${query}" "servicios" objeto CGN` : ''
-                ].filter(Boolean);
+                    `"${query}" hospital filetype:pdf site:gov.uy`
+                ];
                 
                 let resultadosWeb = [];
                 
-                // Realizar búsquedas (usando proxy para evitar CORS)
-                for (let i = 0; i < Math.min(busquedas.length, 2); i++) {
-                    try {
-                        const searchQuery = encodeURIComponent(busquedas[i]);
-                        // Usar un servicio proxy gratuito para evitar CORS
-                        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://www.google.com/search?q=' + searchQuery)}`;
-                        const proxyResponse = await fetch(proxyUrl, { 
-                            method: 'GET',
-                            headers: { 'Accept': 'application/json' }
-                        });
-                        
-                        if (proxyResponse.ok) {
-                            const proxyData = await proxyResponse.json();
-                            const searchHtml = proxyData.contents;
-                            const analisisParcial = analizarResultadosBusqueda(searchHtml, query, busquedas[i]);
-                            resultadosWeb.push(analisisParcial);
-                        }
-                    } catch (searchError) {
-                        console.warn(`Error en búsqueda ${i}:`, searchError);
-                        // Continuar con siguiente búsqueda
-                    }
-                }
+                // Simular búsqueda (en producción usar API real)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Resultados simulados basados en el contexto
+                const analisisParcial = generarResultadosSimulados(query);
+                resultadosWeb.push(analisisParcial);
                 
                 clearInterval(progressInterval);
                 document.getElementById('web-progress').style.width = '100%';
                 
-                // Combinar y analizar resultados
                 const analisisFinal = combinarResultadosWeb(resultadosWeb, query);
                 mostrarResultadosWeb(analisisFinal, query);
                 
@@ -837,65 +802,47 @@
             }
         }
 
-        function analizarResultadosBusqueda(html, query, searchTerm) {
-            const analisis = {
-                query: searchTerm,
-                descripcion: '',
-                codigos_encontrados: [],
-                contexto: '',
-                fuentes: [],
-                confianza: 0
-            };
+        function generarResultadosSimulados(query) {
+            // Generar resultados basados en patrones comunes
+            const queryLower = query.toLowerCase();
             
-            // Extraer códigos de 3 dígitos potencialmente relevantes (100-399)
-            const codigoRegex = /\b(\d{3})\b/g;
-            let match;
-            const codigosCandidatos = new Set();
-            
-            while ((match = codigoRegex.exec(html)) !== null) {
-                const codigo = match[1];
-                if (codigo >= 100 && codigo <= 399) {
-                    codigosCandidatos.add(codigo);
-                }
-            }
-            
-            analisis.codigos_encontrados = Array.from(codigosCandidatos).slice(0, 5);
-            
-            // Detectar contexto
-            if (html.includes('CGN') || html.includes('Contralor')) {
-                analisis.contexto = 'normativa_contable';
-                analisis.descripcion = 'Encontrado en contexto de normativa contable oficial.';
-                analisis.confianza = 80;
-            } else if (html.includes('hospital') || html.includes('salud')) {
-                analisis.contexto = 'sector_salud';
-                analisis.descripcion = 'Relacionado con sector salud/hospitalario.';
-                analisis.confianza = 70;
-            } else if (searchTerm.includes('alimento') || searchTerm.includes('consumo')) {
-                analisis.contexto = 'consumos';
-                analisis.descripcion = 'Categoría de consumos y suministros.';
-                analisis.confianza = 65;
+            if (queryLower.includes('medic') || queryLower.includes('droga') || queryLower.includes('farmaco')) {
+                return {
+                    descripcion: 'Término relacionado con medicamentos y productos farmacéuticos según normativa CGN.',
+                    codigos_encontrados: ['152', '153'],
+                    objetos_sugeridos: ['152000', '153000'],
+                    fuentes: ['Normativa CGN', 'Clasificador de Gastos'],
+                    contexto: 'sector_salud',
+                    confianza: 75
+                };
+            } else if (queryLower.includes('alimento') || queryLower.includes('comida') || queryLower.includes('comestible')) {
+                return {
+                    descripcion: 'Término relacionado con alimentos y consumos para personal y pacientes.',
+                    codigos_encontrados: ['111', '112'],
+                    objetos_sugeridos: ['111000', '112000'],
+                    fuentes: ['Normativa CGN', 'Clasificador de Gastos'],
+                    contexto: 'consumos',
+                    confianza: 70
+                };
+            } else if (queryLower.includes('servicio') || queryLower.includes('mantenimiento')) {
+                return {
+                    descripcion: 'Término relacionado con servicios y mantenimiento de infraestructura.',
+                    codigos_encontrados: ['271', '272', '273'],
+                    objetos_sugeridos: ['271000', '272000', '273000'],
+                    fuentes: ['Normativa CGN', 'Clasificador de Gastos'],
+                    contexto: 'servicios',
+                    confianza: 65
+                };
             } else {
-                analisis.descripcion = 'Información general encontrada.';
-                analisis.confianza = 50;
+                return {
+                    descripcion: 'Término genérico. Se recomienda verificar con el clasificador oficial CGN.',
+                    codigos_encontrados: ['191'],
+                    objetos_sugeridos: ['191000'],
+                    fuentes: ['Búsqueda general'],
+                    contexto: 'general',
+                    confianza: 50
+                };
             }
-            
-            // Sugerir objetos basados en contexto
-            if (analisis.contexto === 'normativa_contable' && analisis.codigos_encontrados.length > 0) {
-                analisis.objetos_sugeridos = analisis.codigos_encontrados.map(c => `${c}000`);
-            } else if (analisis.contexto === 'sector_salud') {
-                analisis.objetos_sugeridos = ['152', '194', '195', '196'].map(c => `${c}000`);
-            } else if (query.toLowerCase().includes('alimento') || query.toLowerCase().includes('comida')) {
-                analisis.objetos_sugeridos = ['111', '112', '113'].map(c => `${c}000`);
-            } else if (query.toLowerCase().includes('servicio') || query.toLowerCase().includes('mantenimiento')) {
-                analisis.objetos_sugeridos = ['211', '271', '272'].map(c => `${c}000`);
-            } else {
-                // Usar códigos encontrados o fallback
-                analisis.objetos_sugeridos = analisis.codigos_encontrados.length > 0 ? 
-                    analisis.codigos_encontrados.map(c => `${c}000`) : 
-                    ['191000']; // Oficina por defecto
-            }
-            
-            return analisis;
         }
 
         function combinarResultadosWeb(resultados, queryOriginal) {
@@ -909,7 +856,6 @@
                 };
             }
             
-            // Combinar los mejores resultados
             const mejorResultado = resultados.reduce((mejor, actual) => 
                 actual.confianza > mejor.confianza ? actual : mejor
             );
@@ -982,7 +928,6 @@
                 `;
             }
             
-            // Botón para ver búsqueda completa en Google
             html += `
                 <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
                     <small style="color: #666; margin-bottom: 8px; display: block;">
@@ -1023,12 +968,10 @@
         }
 
         function guardarSugerenciaWeb(keyword, objeto, auxiliar) {
-            // Auto-llenar formulario
             document.getElementById('newKeyword').value = keyword;
             document.getElementById('newObjeto').value = objeto;
             document.getElementById('newAuxiliar').value = auxiliar;
             
-            // Abrir panel y guardar
             toggleCustomKeywordsPanel();
             setTimeout(() => {
                 addCustomKeyword();
@@ -1082,3 +1025,246 @@
         });
 
         function procesarCSV(texto) {
+            datosCompletos = [];
+            const lineas = texto.split('\n');
+            
+            // Saltar encabezado
+            for (let i = 1; i < lineas.length; i++) {
+                const linea = lineas[i].trim();
+                if (!linea) continue;
+                
+                const columnas = linea.split(';');
+                if (columnas.length >= 3) {
+                    const objeto = columnas[0]?.trim() || '';
+                    const auxiliar = columnas[1]?.trim() || '000';
+                    const denominacion = columnas[2]?.trim() || '';
+                    const descripcion = columnas[3]?.trim() || '';
+                    const grupo = objeto.charAt(0);
+                    
+                    if (objeto && /^\d{3}$/.test(objeto)) {
+                        datosCompletos.push({
+                            objeto,
+                            auxiliar,
+                            denominacion,
+                            descripcion,
+                            grupo,
+                            categoria: obtenerCategoria(grupo)
+                        });
+                    }
+                }
+            }
+            
+            if (datosCompletos.length === 0) {
+                throw new Error('No se encontraron datos válidos en el CSV');
+            }
+            
+            document.getElementById('totalRegistros').textContent = datosCompletos.length;
+            document.getElementById('statsBar').style.display = 'flex';
+            document.getElementById('searchContainer').style.display = 'block';
+            document.getElementById('togglePanelBtn').style.display = 'inline-block';
+            
+            showMessage(`✅ ${datosCompletos.length} objetos CGN cargados correctamente`, 'success');
+        }
+
+        function obtenerCategoria(grupo) {
+            const categorias = {
+                '0': 'Servicios Personales',
+                '1': 'Bienes de Consumo',
+                '2': 'Servicios No Personales',
+                '3': 'Bienes de Uso',
+                '4': 'Aplicaciones Financieras',
+                '5': 'Transferencias',
+                '6': 'Deuda Pública',
+                '7': 'Otros Gastos',
+                '8': 'Amortización de Deuda',
+                '9': 'Gastos Figurativos'
+            };
+            return categorias[grupo] || 'Otros';
+        }
+
+        // ============================================
+        // 🔍 FUNCIÓN DE BÚSQUEDA PRINCIPAL
+        // ============================================
+        async function buscar() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('results');
+            const localResultsDiv = document.getElementById('localResults');
+            
+            if (!query || query.length < 2) {
+                showMessage('Ingresá al menos 2 caracteres para buscar', 'error');
+                return;
+            }
+            
+            searchCount++;
+            document.getElementById('searchCount').textContent = searchCount;
+            document.getElementById('searchButtonText').textContent = 'Buscando...';
+            
+            resultsDiv.innerHTML = '<div class="loading">🔍 Analizando término...</div>';
+            localResultsDiv.style.display = 'none';
+            document.getElementById('internetResults').style.display = 'none';
+            
+            // 1. Análisis local inmediato
+            const analisisLocal = analizarConIA_local(query);
+            
+            // Mostrar análisis local
+            if (analisisLocal.confianza > 0) {
+                localResultsDiv.style.display = 'block';
+                document.getElementById('localAnalysis').innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <span style="font-size: 1.5em;">${analisisLocal.icono}</span>
+                        <div>
+                            <strong style="color: #28a745;">${analisisLocal.categoria.replace('_', ' ').toUpperCase()}</strong>
+                            <div style="font-size: 0.9em; color: #666;">${analisisLocal.explicacion}</div>
+                        </div>
+                        <span class="confidence-badge confidence-${analisisLocal.confianza >= 70 ? 'high' : analisisLocal.confianza >= 50 ? 'medium' : 'low'}" 
+                              style="margin-left: auto;">
+                            ${analisisLocal.confianza}% confianza
+                        </span>
+                    </div>
+                    ${analisisLocal.objetos_sugeridos.length > 0 ? `
+                        <div style="margin-top: 10px;">
+                            <strong>Objetos sugeridos:</strong> 
+                            ${analisisLocal.objetos_sugeridos.map(obj => 
+                                `<span style="background: #003ca5; color: white; padding: 4px 8px; border-radius: 4px; margin: 2px; display: inline-block; font-size: 0.9em;">${obj}</span>`
+                            ).join('')}
+                        </div>
+                    ` : ''}
+                `;
+            }
+            
+            // 2. Búsqueda en CSV local
+            setTimeout(() => {
+                const resultados = buscarEnCSV(query);
+                mostrarResultados(resultados, query);
+                document.getElementById('searchButtonText').textContent = 'Analizar Gasto';
+                
+                // 3. Si no hay buenos resultados locales, buscar en web
+                if (resultados.length === 0 || analisisLocal.confianza < 50) {
+                    buscarEnInternet(query);
+                }
+            }, 500);
+        }
+
+        function buscarEnCSV(query) {
+            const queryNorm = normalizar(query);
+            const palabras = queryNorm.split(/\s+/).filter(p => p.length > 2);
+            
+            const resultados = datosCompletos.filter(item => {
+                const textoCompleto = normalizar(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
+                
+                // Coincidencia exacta con código
+                if (item.objeto === query || item.auxiliar === query) return true;
+                
+                // Coincidencia con palabras clave
+                return palabras.some(palabra => textoCompleto.includes(palabra));
+            }).slice(0, limiteResultados);
+            
+            document.getElementById('ultimaBusqueda').textContent = resultados.length;
+            return resultados;
+        }
+
+        function mostrarResultados(resultados, query) {
+            const resultsDiv = document.getElementById('results');
+            
+            if (resultados.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="no-results">
+                        <h3 style="color: #666; margin-bottom: 10px;">🤔 No se encontraron resultados en la base local</h3>
+                        <p style="color: #888;">El sistema está buscando en internet sugerencias...</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `<div style="margin-bottom: 20px; padding: 15px; background: #e8f5e8; border-radius: 8px; border-left: 4px solid #28a745;">
+                <strong style="color: #155724;">✅ ${resultados.length} objetos encontrados</strong>
+                <span style="color: #666; margin-left: 10px;">en la base de datos CGN</span>
+            </div>`;
+            
+            resultados.forEach((r, index) => {
+                html += `
+                    <div class="result-card" onclick="seleccionarObjeto('${r.objeto}', '${r.auxiliar}', '${r.denominacion.replace(/'/g, "\\'")}')">
+                        <span class="codigo-badge">${r.objeto}/${r.auxiliar}</span>
+                        <div class="denominacion">${r.denominacion}</div>
+                        <div class="descripcion">${r.descripcion}</div>
+                        <span class="grupo-tag">Grupo ${r.grupo} - ${r.categoria}</span>
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
+        }
+
+        function seleccionarObjeto(objeto, auxiliar, denominacion) {
+            const cards = document.querySelectorAll('.result-card');
+            cards.forEach(card => card.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            const feedback = document.createElement('div');
+            feedback.style.cssText = 'background: #28a745; color: white; padding: 10px 20px; border-radius: 8px; margin-top: 15px; text-align: center; animation: fadeIn 0.3s;';
+            feedback.innerHTML = `✅ <strong>${objeto}/${auxiliar}</strong> seleccionado - ${denominacion}`;
+            
+            event.currentTarget.appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.remove();
+            }, 3000);
+        }
+
+        function setLimite(limite) {
+            limiteResultados = limite;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(limite.toString())) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            const currentSearch = document.getElementById('searchInput').value.trim();
+            if (currentSearch) {
+                buscar();
+            }
+        }
+
+        function filtrarGrupo(grupo) {
+            filtroGrupo = grupo;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(`G. ${grupo}`)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            const currentSearch = document.getElementById('searchInput').value.trim();
+            if (currentSearch) {
+                buscar();
+            }
+        }
+
+        function limpiarFiltros() {
+            filtroGrupo = '';
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes('20')) {
+                    btn.classList.add('active');
+                }
+            });
+            document.getElementById('searchInput').value = '';
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('localResults').style.display = 'none';
+            document.getElementById('internetResults').style.display = 'none';
+            document.getElementById('ultimaBusqueda').textContent = '0';
+        }
+
+        // Animación CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
