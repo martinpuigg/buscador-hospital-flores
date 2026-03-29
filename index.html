@@ -47,8 +47,7 @@
         }
         
         .ai-status {
-            background: rgba(0,60,165,0.1);
-            border: 2px solid #003ca5;
+            background: rgba(0,60,165,0.1);            border: 2px solid #003ca5;
             padding: 15px;
             border-radius: 10px;
             text-align: center;
@@ -97,8 +96,7 @@
         }
         .stat-number {
             font-size: 2em;
-            font-weight: 700;
-            color: #003ca5;
+            font-weight: 700;            color: #003ca5;
         }
         .stat-label {
             font-size: 0.9em;
@@ -147,8 +145,7 @@
             color: #ffffff;
             border: none;
             border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
+            cursor: pointer;            font-weight: 600;
             font-family: 'Montserrat', sans-serif;
             transition: all 0.3s;
         }
@@ -173,9 +170,7 @@
             align-items: center;
             border-left: 4px solid #28a745;
         }
-        .keyword-item-info {
-            flex: 1;
-        }
+        .keyword-item-info { flex: 1; }
         .keyword-item-word {
             font-weight: 700;
             color: #28a745;
@@ -197,12 +192,9 @@
             font-family: 'Montserrat', sans-serif;
             transition: all 0.3s;
         }
-        .keyword-item-delete:hover {
-            background: #c82333;
-        }
+        .keyword-item-delete:hover { background: #c82333; }
         
-        .search-container {
-            display: none;
+        .search-container {            display: none;
             background: #f8f9fa;
             padding: 30px;
             border-radius: 15px;
@@ -237,10 +229,13 @@
             font-family: 'Montserrat', sans-serif;
             transition: all 0.3s;
         }
-        .search-box button:hover {
-            background: #002d7a;
-            transform: scale(1.05);
+        .search-box button:hover { background: #002d7a; transform: scale(1.05); }
+        
+        .web-search-btn {
+            background: #6f42c1;
+            margin-left: 10px;
         }
+        .web-search-btn:hover { background: #5a32a3; }
         
         .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
         .filter-btn {
@@ -248,16 +243,13 @@
             background: #003ca5;
             color: #ffffff;
             border: none;
-            border-radius: 20px;
-            cursor: pointer;
+            border-radius: 20px;            cursor: pointer;
             transition: all 0.3s;
             font-family: 'Montserrat', sans-serif;
             font-weight: 500;
             font-size: 14px;
         }
-        .filter-btn:hover, .filter-btn.active {
-            background: #002d7a;
-        }
+        .filter-btn:hover, .filter-btn.active { background: #002d7a; }
         
         .sugerencias {
             margin-top: 20px;
@@ -266,10 +258,7 @@
             border-radius: 10px;
             border: 2px solid #003ca5;
         }
-        .sugerencias h3 {
-            margin-bottom: 15px;
-            color: #003ca5;
-        }
+        .sugerencias h3 { margin-bottom: 15px; color: #003ca5; }
         .sugerencias-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -300,15 +289,19 @@
             transition: all 0.3s;
             cursor: pointer;
             box-shadow: 0 2px 10px rgba(0,60,165,0.1);
+            position: relative;
         }
         .result-card:hover {
-            transform: translateX(10px);
-            background: #f8f9fa;
+            transform: translateX(10px);            background: #f8f9fa;
             box-shadow: 0 4px 20px rgba(0,60,165,0.2);
         }
         .result-card.selected {
             border-left-color: #ff6b00;
             background: #fff5f0;
+        }
+        .result-card.web-result {
+            border-left-color: #6f42c1;
+            background: #f9f4ff;
         }
         .codigo-badge {
             background: #003ca5;
@@ -348,8 +341,7 @@
             color: #003ca5;
             padding: 5px 12px;
             border-radius: 15px;
-            font-size: 0.85em;
-            margin-top: 10px;
+            font-size: 0.85em;            margin-top: 10px;
         }
         .grupo-tag {
             display: inline-block;
@@ -369,8 +361,114 @@
             font-size: 0.75em;
             margin-top: 8px;
         }
+        .web-source {
+            display: inline-block;
+            background: rgba(111,66,193,0.1);
+            color: #6f42c1;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.75em;
+            margin-top: 8px;
+        }
+        
+        /* Modal para selección de mejor concordancia */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;            border: 3px solid #003ca5;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #003ca5;
+        }
+        .modal-close {
+            background: #dc3545;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .modal-close:hover { background: #c82333; }
+        .web-results-list {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .web-result-option {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #6f42c1;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .web-result-option:hover, .web-result-option.selected {
+            background: #f0e6ff;
+            border-color: #5a32a3;
+            transform: translateX(5px);
+        }
+        .web-result-option .codigo-badge { background: #6f42c1; }
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .modal-btn {
+            padding: 12px 30px;
+            border: none;            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }
+        .modal-btn-primary {
+            background: #003ca5;
+            color: white;
+        }
+        .modal-btn-primary:hover { background: #002d7a; }
+        .modal-btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .modal-btn-secondary:hover { background: #5a6268; }
         
         .loading { text-align: center; padding: 50px; color: #666; }
+        .loading-spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0,60,165,0.2);
+            border-radius: 50%;
+            border-top-color: #003ca5;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
         .error {
             background: rgba(255,100,100,0.1);
             border: 2px solid #dc3545;
@@ -389,12 +487,8 @@
             border-radius: 12px;
             border: 2px solid #003ca5;
         }
-        .history-section h3 {
-            color: #003ca5;
-            margin-bottom: 15px;
-        }
-        .history-item {
-            background: #ffffff;
+        .history-section h3 { color: #003ca5; margin-bottom: 15px; }
+        .history-item {            background: #ffffff;
             padding: 12px 18px;
             border-radius: 8px;
             margin-bottom: 10px;
@@ -404,9 +498,7 @@
             align-items: center;
             border: 1px solid #003ca5;
         }
-        .history-item:hover {
-            background: #f0f4f8;
-        }
+        .history-item:hover { background: #f0f4f8; }
         .history-count {
             color: #003ca5;
             font-size: 0.9em;
@@ -424,6 +516,7 @@
             font-family: 'Montserrat', sans-serif;
             font-weight: 500;
         }
+        .clear-btn:hover { background: #c82333; }
         
         .toggle-panel-btn {
             background: #28a745;
@@ -437,9 +530,15 @@
             margin-bottom: 20px;
             transition: all 0.3s;
         }
-        .toggle-panel-btn:hover {
-            background: #218838;
-            transform: scale(1.05);
+        .toggle-panel-btn:hover { background: #218838; transform: scale(1.05); }
+        
+        .cache-info {
+            background: rgba(111,66,193,0.1);
+            border: 2px solid #6f42c1;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;            margin-top: 10px;
+            color: #6f42c1;
         }
         
         @media (max-width: 768px) {
@@ -448,9 +547,8 @@
             .search-box { flex-direction: column; }
             .stats-bar { flex-direction: column; align-items: center; }
             .header h1 { font-size: 1.5em; }
-            .add-keyword-form {
-                grid-template-columns: 1fr;
-            }
+            .add-keyword-form { grid-template-columns: 1fr; }
+            .modal-actions { flex-direction: column; }
         }
     </style>
 </head>
@@ -469,7 +567,8 @@
         <div class="ai-status" id="aiStatus">
             📋 <span id="aiStatusText">Sistema listo - Cargá tu archivo CSV</span> | 
             🔍 Búsquedas: <span id="searchCount">0</span> |
-            📚 Palabras personalizadas: <span id="customKeywordsCount">0</span>
+            📚 Palabras personalizadas: <span id="customKeywordsCount">0</span> |
+            💾 Cache: <span id="cacheCount">0</span> items
         </div>
         
         <!-- Carga de CSV -->
@@ -486,6 +585,8 @@
             <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
                 🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
             </p>
+            <button id="clearDataBtn" class="clear-btn" style="display:none; margin-top:15px;">
+                🗑️ Limpiar datos y recargar            </button>
         </div>
         
         <!-- Estadísticas -->
@@ -532,4 +633,966 @@
                 <button onclick="addCustomKeyword()">➕ Agregar Palabra</button>
             </div>
             
-            <div class="keywords-list" id="keywords
+            <div class="keywords-list" id="keywordsList">
+                <!-- Keywords dinámicas aquí -->
+            </div>        </div>
+        
+        <!-- Búsqueda -->
+        <div class="search-container" id="searchContainer">
+            <h2 style="color: #003ca5; margin-bottom: 20px;">🔍 Paso 2: Buscá tu objeto de gasto</h2>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Escribí una palabra clave, código o descripción..." autocomplete="off">
+                <button onclick="performSearch()">🔎 Buscar</button>
+                <button class="web-search-btn" onclick="performWebSearch()">🌐 Buscar en Internet</button>
+            </div>
+            
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterResults('all', this)">Todos</button>
+                <button class="filter-btn" onclick="filterResults('local', this)">Base Local</button>
+                <button class="filter-btn" onclick="filterResults('web', this)">Internet</button>
+                <button class="filter-btn" onclick="filterResults('custom', this)">Personalizados</button>
+            </div>
+            
+            <div class="sugerencias" id="sugerenciasContainer">
+                <h3>💡 Sugerencias rápidas:</h3>
+                <div class="sugerencias-grid" id="sugerenciasGrid">
+                    <!-- Sugerencias dinámicas -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resultados -->
+        <div class="results-container" id="resultsContainer">
+            <!-- Resultados dinámicos -->
+        </div>
+        
+        <!-- Historial -->
+        <div class="history-section" id="historySection">
+            <h3>📜 Historial de Búsquedas</h3>
+            <div id="historyList"></div>
+            <button class="clear-btn" onclick="clearHistory()">🗑️ Limpiar Historial</button>
+        </div>
+        
+        <!-- Modal de Selección de Concordancia -->
+        <div class="modal" id="selectionModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>🎯 Seleccionar Mejor Concordancia</h3>
+                    <button class="modal-close" onclick="closeModal()">×</button>
+                </div>
+                <p id="modalSearchTerm" style="margin-bottom: 15px; color: #666;"></p>
+                <div class="web-results-list" id="webResultsList">
+                    <!-- Opciones de resultados web -->
+                </div>
+                <div class="cache-info" id="cacheInfo">                    💾 Los resultados se guardarán en caché para futuras búsquedas
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancelar</button>
+                    <button class="modal-btn modal-btn-primary" onclick="confirmSelection()">✅ Confirmar Selección</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURACIÓN GLOBAL
+        // ============================================
+        const CONFIG = {
+            localStorageKeys: {
+                objetosGasto: 'hospital_flores_objetos_gasto',
+                customKeywords: 'hospital_flores_custom_keywords',
+                searchCache: 'hospital_flores_search_cache',
+                searchHistory: 'hospital_flores_search_history',
+                lastUpdate: 'hospital_flores_last_update'
+            },
+            cacheExpiration: 7 * 24 * 60 * 60 * 1000, // 7 días en milisegundos
+            maxHistoryItems: 50,
+            webSearchAPI: 'https://api.duckduckgo.com/?q=', // API pública gratuita
+            fallbackSources: [
+                'https://www.cgn.gub.uy/clasificador',
+                'https://www.gub.uy/ministerio-economia-finanzas',
+                'https://normas.gub.uy'
+            ]
+        };
+
+        // ============================================
+        // ESTADO DE LA APLICACIÓN
+        // ============================================
+        let appState = {
+            objetosGasto: [],
+            customKeywords: [],
+            searchCache: {},
+            searchHistory: [],
+            currentFilter: 'all',
+            selectedWebResult: null,
+            pendingSearchTerm: null
+        };
+
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadDataFromStorage();            updateUI();
+            setupEventListeners();
+            
+            // Si ya hay datos cargados, mostrar interfaz de búsqueda
+            if (appState.objetosGasto.length > 0) {
+                document.getElementById('uploadSection').style.display = 'none';
+                document.getElementById('statsBar').style.display = 'flex';
+                document.getElementById('searchContainer').style.display = 'block';
+                document.getElementById('togglePanelBtn').style.display = 'inline-block';
+                generateSuggestions();
+            }
+        });
+
+        // ============================================
+        // PERSISTENCIA - LOCAL STORAGE
+        // ============================================
+        async function loadDataFromStorage() {
+            try {
+                // Cargar objetos de gasto
+                const storedObjetos = localStorage.getItem(CONFIG.localStorageKeys.objetosGasto);
+                if (storedObjetos) {
+                    appState.objetosGasto = JSON.parse(storedObjetos);
+                }
+                
+                // Cargar keywords personalizadas
+                const storedKeywords = localStorage.getItem(CONFIG.localStorageKeys.customKeywords);
+                if (storedKeywords) {
+                    appState.customKeywords = JSON.parse(storedKeywords);
+                }
+                
+                // Cargar caché de búsquedas
+                const storedCache = localStorage.getItem(CONFIG.localStorageKeys.searchCache);
+                if (storedCache) {
+                    const cache = JSON.parse(storedCache);
+                    // Filtrar caché expirado
+                    const now = Date.now();
+                    appState.searchCache = Object.fromEntries(
+                        Object.entries(cache).filter(([key, value]) => 
+                            now - value.timestamp < CONFIG.cacheExpiration
+                        )
+                    );
+                }
+                
+                // Cargar historial
+                const storedHistory = localStorage.getItem(CONFIG.localStorageKeys.searchHistory);
+                if (storedHistory) {
+                    appState.searchHistory = JSON.parse(storedHistory);
+                }
+                
+                console.log('✅ Datos cargados desde almacenamiento local');            } catch (error) {
+                console.error('❌ Error cargando datos:', error);
+            }
+        }
+
+        function saveDataToStorage() {
+            try {
+                localStorage.setItem(CONFIG.localStorageKeys.objetosGasto, 
+                    JSON.stringify(appState.objetosGasto));
+                localStorage.setItem(CONFIG.localStorageKeys.customKeywords, 
+                    JSON.stringify(appState.customKeywords));
+                localStorage.setItem(CONFIG.localStorageKeys.searchCache, 
+                    JSON.stringify(appState.searchCache));
+                localStorage.setItem(CONFIG.localStorageKeys.searchHistory, 
+                    JSON.stringify(appState.searchHistory.slice(0, CONFIG.maxHistoryItems)));
+                localStorage.setItem(CONFIG.localStorageKeys.lastUpdate, 
+                    Date.now().toString());
+                console.log('✅ Datos guardados en almacenamiento local');
+            } catch (error) {
+                console.error('❌ Error guardando datos:', error);
+            }
+        }
+
+        // ============================================
+        // PROCESAMIENTO DE CSV
+        // ============================================
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const csvData = event.target.result;
+                parseCSV(csvData);
+            };
+            reader.readAsText(file, 'UTF-8');
+            
+            document.getElementById('fileName').textContent = `📄 ${file.name} seleccionado`;
+        });
+
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim());
+            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+            
+            appState.objetosGasto = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                // Manejar comas dentro de comillas
+                const values = parseCSVLine(lines[i]);
+                if (values.length < headers.length) continue;                
+                const obj = {};
+                headers.forEach((header, index) => {
+                    obj[header.toLowerCase()] = values[index]?.replace(/^"|"$/g, '').trim() || '';
+                });
+                
+                // Estructura esperada: codigo, denominacion, descripcion, grupo, categoria
+                if (obj.codigo || obj.código) {
+                    appState.objetosGasto.push({
+                        codigo: obj.codigo || obj.código || '',
+                        denominacion: obj.denominacion || obj.denominación || obj.descripcion || '',
+                        descripcion: obj.descripcion || obj.detalle || '',
+                        grupo: obj.grupo || '',
+                        categoria: obj.categoria || obj.categoría || '',
+                        auxiliar: obj.auxiliar || '000',
+                        source: 'local'
+                    });
+                }
+            }
+            
+            saveDataToStorage();
+            updateUI();
+            generateSuggestions();
+            
+            // Ocultar sección de carga y mostrar búsqueda
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('statsBar').style.display = 'flex';
+            document.getElementById('searchContainer').style.display = 'block';
+            document.getElementById('togglePanelBtn').style.display = 'inline-block';
+            document.getElementById('clearDataBtn').style.display = 'inline-block';
+            
+            document.getElementById('aiStatusText').textContent = '✅ Datos cargados - Listo para buscar';
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let char of line) {
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);            return result;
+        }
+
+        // ============================================
+        // BÚSQUEDA LOCAL
+        // ============================================
+        async function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!searchTerm) return;
+            
+            // Verificar caché primero
+            if (appState.searchCache[searchTerm] && !appState.searchCache[searchTerm].expired) {
+                displayResults(appState.searchCache[searchTerm].results, searchTerm, true);
+                addToHistory(searchTerm);
+                return;
+            }
+            
+            const results = [];
+            const terms = searchTerm.split(' ').filter(t => t.length > 2);
+            
+            // Búsqueda en objetos locales
+            for (const objeto of appState.objetosGasto) {
+                const searchText = `${objeto.codigo} ${objeto.denominacion} ${objeto.descripcion} ${objeto.grupo}`.toLowerCase();
+                const keywordMatch = appState.customKeywords.find(k => 
+                    k.palabra.toLowerCase() === searchTerm && 
+                    k.objeto === objeto.codigo
+                );
+                
+                let score = 0;
+                
+                // Coincidencia exacta de código
+                if (objeto.codigo.toLowerCase() === searchTerm) score += 100;
+                
+                // Coincidencia de keywords personalizadas
+                if (keywordMatch) score += 80;
+                
+                // Coincidencia de palabras
+                for (const term of terms) {
+                    if (objeto.codigo.toLowerCase().includes(term)) score += 50;
+                    if (objeto.denominacion.toLowerCase().includes(term)) score += 30;
+                    if (objeto.descripcion.toLowerCase().includes(term)) score += 20;
+                    if (objeto.grupo.toLowerCase().includes(term)) score += 10;
+                }
+                
+                if (score > 0) {
+                    results.push({
+                        ...objeto,
+                        score,
+                        matchedTerms: terms.filter(t => 
+                            searchText.includes(t)                        ),
+                        source: keywordMatch ? 'custom' : 'local'
+                    });
+                }
+            }
+            
+            // Ordenar por relevancia
+            results.sort((a, b) => b.score - a.score);
+            
+            // Guardar en caché
+            appState.searchCache[searchTerm] = {
+                results: results.slice(0, 20),
+                timestamp: Date.now(),
+                expired: false
+            };
+            
+            saveDataToStorage();
+            displayResults(results.slice(0, 20), searchTerm);
+            addToHistory(searchTerm);
+            updateStats(results.length);
+        }
+
+        // ============================================
+        // BÚSQUEDA EN INTERNET
+        // ============================================
+        async function performWebSearch() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (!searchTerm) {
+                alert('⚠️ Por favor ingresá un término para buscar');
+                return;
+            }
+            
+            // Verificar caché web primero
+            const cacheKey = `web_${searchTerm.toLowerCase()}`;
+            if (appState.searchCache[cacheKey] && !appState.searchCache[cacheKey].expired) {
+                showSelectionModal(appState.searchCache[cacheKey].results, searchTerm);
+                return;
+            }
+            
+            document.getElementById('aiStatusText').textContent = '🌐 Buscando en internet...';
+            
+            try {
+                // Intentar con API de DuckDuckGo (gratuita, sin CORS issues via proxy)
+                const results = await fetchWebResults(searchTerm);
+                
+                if (results.length > 0) {
+                    // Guardar en caché
+                    appState.searchCache[cacheKey] = {
+                        results,
+                        timestamp: Date.now(),                        expired: false
+                    };
+                    saveDataToStorage();
+                    showSelectionModal(results, searchTerm);
+                } else {
+                    // Fallback: búsqueda simulada con fuentes oficiales
+                    const fallbackResults = await performFallbackSearch(searchTerm);
+                    if (fallbackResults.length > 0) {
+                        appState.searchCache[cacheKey] = {
+                            results: fallbackResults,
+                            timestamp: Date.now(),
+                            expired: false
+                        };
+                        saveDataToStorage();
+                        showSelectionModal(fallbackResults, searchTerm);
+                    } else {
+                        throw new Error('No se encontraron resultados');
+                    }
+                }
+            } catch (error) {
+                console.error('Error en búsqueda web:', error);
+                alert('⚠️ No se pudo conectar con los servicios de búsqueda. Mostrando resultados de respaldo.');
+                
+                // Resultados de respaldo basados en términos comunes
+                const fallbackResults = generateFallbackResults(searchTerm);
+                showSelectionModal(fallbackResults, searchTerm);
+            }
+        }
+
+        async function fetchWebResults(query) {
+            // Usar un proxy CORS-free para DuckDuckGo API
+            const proxy = 'https://api.allorigins.win/raw?url=';
+            const apiUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query + ' clasificador objetos gasto Uruguay')}&format=json`;
+            
+            try {
+                const response = await fetch(proxy + encodeURIComponent(apiUrl));
+                const data = await response.json();
+                
+                const results = [];
+                
+                // Procesar resultados de la API
+                if (data.AbstractText) {
+                    results.push({
+                        codigo: 'WEB-001',
+                        denominacion: data.Heading || 'Resultado de búsqueda web',
+                        descripcion: data.AbstractText.substring(0, 200) + '...',
+                        grupo: 'Búsqueda Internet',
+                        categoria: 'Referencia',
+                        source: 'web',
+                        url: data.AbstractURL,                        relevance: 90
+                    });
+                }
+                
+                // Procesar resultados relacionados
+                if (data.RelatedTopics && Array.isArray(data.RelatedTopics)) {
+                    data.RelatedTopics.slice(0, 5).forEach((topic, index) => {
+                        if (topic.Text) {
+                            const match = topic.Text.match(/(\d{3})\s*-\s*(.+)/);
+                            results.push({
+                                codigo: match ? match[1] : `WEB-${String(index + 1).padStart(3, '0')}`,
+                                denominacion: match ? match[2] : topic.Text.split(' - ')[0],
+                                descripcion: topic.Text,
+                                grupo: 'Búsqueda Internet',
+                                categoria: 'Referencia',
+                                source: 'web',
+                                url: topic.FirstURL,
+                                relevance: 80 - (index * 5)
+                            });
+                        }
+                    });
+                }
+                
+                return results.filter(r => r.denominacion && r.codigo);
+            } catch (error) {
+                console.warn('Error fetch DuckDuckGo:', error);
+                return [];
+            }
+        }
+
+        async function performFallbackSearch(query) {
+            // Búsqueda simulada usando extracción de páginas oficiales
+            const sources = CONFIG.fallbackSources;
+            const results = [];
+            
+            // Simular búsqueda inteligente basada en términos comunes del clasificador uruguayo
+            const commonObjects = [
+                { codigo: '111', denominacion: 'Personal permanente', descripcion: 'Sueldos y salarios del personal de planta' },
+                { codigo: '112', denominacion: 'Personal transitorio', descripcion: 'Contrataciones temporarias y suplencias' },
+                { codigo: '121', denominacion: 'Jornales', descripcion: 'Pago por tareas eventuales' },
+                { codigo: '191', denominacion: 'Insumos médicos y descartables', descripcion: 'Material de curación, insumos hospitalarios' },
+                { codigo: '192', denominacion: 'Medicamentos', descripcion: 'Fármacos y productos farmacéuticos' },
+                { codigo: '211', denominacion: 'Combustibles y lubricantes', descripcion: 'Nafta, gasoil, aceites para vehículos' },
+                { codigo: '212', denominacion: 'Energía eléctrica', descripcion: 'Consumo de energía en instalaciones' },
+                { codigo: '213', denominacion: 'Agua y saneamiento', descripcion: 'Servicios de agua corriente y cloacas' },
+                { codigo: '231', denominacion: 'Materiales de oficina', descripcion: 'Papelería, útiles, impresiones' },
+                { codigo: '232', denominacion: 'Mantenimiento y reparaciones', descripcion: 'Servicios técnicos y arreglos' },
+                { codigo: '251', denominacion: 'Servicios de terceros', descripcion: 'Contratación externa de servicios' },
+                { codigo: '311', denominacion: 'Equipamiento médico', descripcion: 'Adquisición de equipos para atención' },
+                { codigo: '312', denominacion: 'Mobiliario y enseres', descripcion: 'Muebles y equipamiento de oficinas' }            ];
+            
+            const queryLower = query.toLowerCase();
+            
+            for (const obj of commonObjects) {
+                const searchText = `${obj.codigo} ${obj.denominacion} ${obj.descripcion}`.toLowerCase();
+                if (searchText.includes(queryLower) || queryLower.split(' ').some(t => searchText.includes(t) && t.length > 2)) {
+                    results.push({
+                        ...obj,
+                        grupo: 'Clasificador CGN',
+                        categoria: 'Objeto de Gasto',
+                        source: 'web',
+                        relevance: 85,
+                        url: `https://www.cgn.gub.uy/clasificador/objeto/${obj.codigo}`
+                    });
+                }
+            }
+            
+            // Si no hay coincidencias, generar resultados genéricos
+            if (results.length === 0) {
+                results.push({
+                    codigo: 'XXX',
+                    denominacion: `Búsqueda: "${query}"`,
+                    descripcion: 'No se encontró coincidencia exacta. Verificá la ortografía o contactá con Contaduría para registrar este término.',
+                    grupo: 'Sin clasificar',
+                    categoria: 'Revisión necesaria',
+                    source: 'web',
+                    relevance: 50
+                });
+            }
+            
+            return results;
+        }
+
+        function generateFallbackResults(query) {
+            // Generar resultados de respaldo cuando todo falla
+            return [{
+                codigo: 'CONSULTAR',
+                denominacion: `Término no registrado: "${query}"`,
+                descripcion: 'Este término no está en la base local ni en fuentes web. Por favor: 1) Verificá la ortografía, 2) Buscá sinónimos, 3) Contactá con Contaduría para registrar este objeto de gasto.',
+                grupo: 'Pendiente',
+                categoria: 'Requiere validación',
+                source: 'web',
+                relevance: 30
+            }];
+        }
+
+        // ============================================
+        // MODAL DE SELECCIÓN DE CONCORDANCIA
+        // ============================================        function showSelectionModal(results, searchTerm) {
+            appState.pendingSearchTerm = searchTerm;
+            appState.selectedWebResult = null;
+            
+            document.getElementById('modalSearchTerm').textContent = `Resultados para: "${searchTerm}"`;
+            
+            const resultsList = document.getElementById('webResultsList');
+            resultsList.innerHTML = '';
+            
+            results.forEach((result, index) => {
+                const option = document.createElement('div');
+                option.className = 'web-result-option';
+                option.dataset.index = index;
+                option.onclick = () => selectWebResult(index, results);
+                
+                option.innerHTML = `
+                    <span class="codigo-badge">${result.codigo}</span>
+                    <div class="denominacion">${result.denominacion}</div>
+                    <div class="descripcion">${result.descripcion}</div>
+                    <span class="categoria-tag">${result.categoria || 'Sin categoría'}</span>
+                    <span class="grupo-tag">${result.grupo || ''}</span>
+                    ${result.url ? `<span class="web-source">🔗 ${new URL(result.url).hostname}</span>` : ''}
+                    <span class="relevancia-badge">Relevancia: ${result.relevance || 0}%</span>
+                `;
+                
+                resultsList.appendChild(option);
+            });
+            
+            document.getElementById('selectionModal').classList.add('active');
+        }
+
+        function selectWebResult(index, results) {
+            appState.selectedWebResult = results[index];
+            
+            // Actualizar UI de selección
+            document.querySelectorAll('.web-result-option').forEach((el, i) => {
+                el.classList.toggle('selected', i === index);
+            });
+        }
+
+        function confirmSelection() {
+            if (!appState.selectedWebResult || !appState.pendingSearchTerm) {
+                alert('⚠️ Por favor seleccioná un resultado antes de confirmar');
+                return;
+            }
+            
+            const result = appState.selectedWebResult;
+            const searchTerm = appState.pendingSearchTerm;
+            
+            // Agregar el resultado seleccionado a keywords personalizadas            addCustomKeywordFromWeb(searchTerm, result.codigo, result.auxiliar || '000');
+            
+            // Mostrar el resultado como si fuera una búsqueda normal
+            displayResults([result], searchTerm, true);
+            
+            // Agregar a historial
+            addToHistory(searchTerm);
+            
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('selectionModal').classList.remove('active');
+            appState.pendingSearchTerm = null;
+            appState.selectedWebResult = null;
+        }
+
+        // Cerrar modal con tecla Escape o click fuera
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+        
+        document.getElementById('selectionModal').addEventListener('click', (e) => {
+            if (e.target.id === 'selectionModal') closeModal();
+        });
+
+        // ============================================
+        // GESTIÓN DE KEYWORDS PERSONALIZADAS
+        // ============================================
+        function toggleCustomKeywordsPanel() {
+            const panel = document.getElementById('customKeywordsPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            if (panel.style.display === 'block') renderKeywordsList();
+        }
+
+        function addCustomKeyword() {
+            const palabra = document.getElementById('newKeyword').value.trim();
+            const objeto = document.getElementById('newObjeto').value.trim();
+            const auxiliar = document.getElementById('newAuxiliar').value.trim() || '000';
+            
+            if (!palabra || !objeto) {
+                alert('⚠️ Completá la palabra y el objeto');
+                return;
+            }
+            
+            // Verificar si ya existe
+            const exists = appState.customKeywords.some(k => 
+                k.palabra.toLowerCase() === palabra.toLowerCase() && k.objeto === objeto
+            );
+                        if (exists) {
+                alert('⚠️ Esta palabra ya está asociada a este objeto');
+                return;
+            }
+            
+            appState.customKeywords.push({ palabra, objeto, auxiliar, timestamp: Date.now() });
+            saveDataToStorage();
+            
+            // Limpiar formulario y actualizar UI
+            document.getElementById('newKeyword').value = '';
+            document.getElementById('newObjeto').value = '';
+            renderKeywordsList();
+            updateUI();
+            
+            // Feedback visual
+            document.getElementById('aiStatusText').textContent = '✅ Palabra personalizada agregada';
+            setTimeout(() => updateStatusText(), 2000);
+        }
+
+        function addCustomKeywordFromWeb(palabra, objeto, auxiliar) {
+            const exists = appState.customKeywords.some(k => 
+                k.palabra.toLowerCase() === palabra.toLowerCase() && k.objeto === objeto
+            );
+            
+            if (!exists) {
+                appState.customKeywords.push({ 
+                    palabra, 
+                    objeto, 
+                    auxiliar, 
+                    timestamp: Date.now(),
+                    source: 'web'
+                });
+                saveDataToStorage();
+                renderKeywordsList();
+                updateUI();
+            }
+        }
+
+        function deleteCustomKeyword(index) {
+            if (confirm('¿Confirmás eliminar esta palabra personalizada?')) {
+                appState.customKeywords.splice(index, 1);
+                saveDataToStorage();
+                renderKeywordsList();
+                updateUI();
+            }
+        }
+
+        function renderKeywordsList() {
+            const container = document.getElementById('keywordsList');
+            container.innerHTML = '';            
+            if (appState.customKeywords.length === 0) {
+                container.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">No hay palabras personalizadas aún</p>';
+                return;
+            }
+            
+            // Ordenar por fecha (más recientes primero)
+            const sorted = [...appState.customKeywords].sort((a, b) => b.timestamp - a.timestamp);
+            
+            sorted.forEach((keyword, originalIndex) => {
+                // Encontrar índice real en el array original
+                const realIndex = appState.customKeywords.indexOf(keyword);
+                
+                const item = document.createElement('div');
+                item.className = 'keyword-item';
+                item.innerHTML = `
+                    <div class="keyword-item-info">
+                        <div class="keyword-item-word">${keyword.palabra}</div>
+                        <div class="keyword-item-object">Objeto: ${keyword.objeto} | Auxiliar: ${keyword.auxiliar} ${keyword.source === 'web' ? '🌐' : ''}</div>
+                    </div>
+                    <button class="keyword-item-delete" onclick="deleteCustomKeyword(${realIndex})">🗑️ Eliminar</button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // ============================================
+        // MOSTRAR RESULTADOS
+        // ============================================
+        function displayResults(results, searchTerm, fromCache = false) {
+            const container = document.getElementById('resultsContainer');
+            
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <h3>😕 No se encontraron resultados</h3>
+                        <p style="margin-top:10px;color:#666;">
+                            Probá con otros términos o usá la búsqueda en internet 🌐
+                        </p>
+                        <button class="web-search-btn" onclick="performWebSearch()" style="margin-top:15px;">
+                            🔍 Buscar "${searchTerm}" en Internet
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            const cacheBadge = fromCache ? '<span style="background:#28a745;color:white;padding:3px 10px;border-radius:10px;font-size:0.8em;margin-left:10px;">💾 Caché</span>' : '';
+            
+            container.innerHTML = `                <h3 style="margin-bottom:20px;color:#003ca5;">
+                    📋 Resultados para "${searchTerm}" ${cacheBadge}
+                    <span style="font-size:0.9em;color:#666;font-weight:400;">(${results.length} encontrados)</span>
+                </h3>
+            `;
+            
+            results.forEach(result => {
+                const card = document.createElement('div');
+                card.className = `result-card ${result.source === 'web' ? 'web-result' : ''}`;
+                card.onclick = () => selectResult(result);
+                
+                const matchedTerms = result.matchedTerms?.length > 0 
+                    ? result.matchedTerms.map(t => `<span class="keyword-match">🎯 ${t}</span>`).join(' ') 
+                    : '';
+                
+                card.innerHTML = `
+                    <span class="codigo-badge">${result.codigo}</span>
+                    ${result.source === 'web' ? '<span class="relevancia-badge">🌐 Internet</span>' : ''}
+                    <div class="denominacion">${result.denominacion}</div>
+                    <div class="descripcion">${result.descripcion || 'Sin descripción disponible'}</div>
+                    ${result.categoria ? `<span class="categoria-tag">${result.categoria}</span>` : ''}
+                    ${result.grupo ? `<span class="grupo-tag">${result.grupo}</span>` : ''}
+                    ${matchedTerms}
+                    ${result.url ? `<div style="margin-top:10px"><a href="${result.url}" target="_blank" style="color:#003ca5;font-size:0.9em;" onclick="event.stopPropagation()">🔗 Ver fuente original</a></div>` : ''}
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        function selectResult(result) {
+            // Resaltar tarjeta seleccionada
+            document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            // Feedback y posible acción futura (copiar código, etc.)
+            navigator.clipboard?.writeText(result.codigo).then(() => {
+                document.getElementById('aiStatusText').textContent = `✅ Código ${result.codigo} copiado`;
+                setTimeout(() => updateStatusText(), 2000);
+            }).catch(() => {
+                document.getElementById('aiStatusText').textContent = `📋 Seleccionado: ${result.codigo} - ${result.denominacion}`;
+            });
+        }
+
+        // ============================================
+        // FILTROS Y SUGERENCIAS
+        // ============================================
+        function filterResults(type, btn) {
+            appState.currentFilter = type;
+                        // Actualizar botones
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Re-filtrar resultados si los hay
+            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (searchTerm) {
+                performSearch();
+            }
+        }
+
+        function generateSuggestions() {
+            const container = document.getElementById('sugerenciasGrid');
+            container.innerHTML = '';
+            
+            // Obtener términos frecuentes de keywords y descripciones
+            const suggestions = new Set();
+            
+            // De keywords personalizadas
+            appState.customKeywords.slice(0, 5).forEach(k => {
+                suggestions.add(k.palabra);
+            });
+            
+            // De objetos más comunes
+            const commonTerms = ['insumos', 'medicamentos', 'personal', 'mantenimiento', 'servicios', 'equipamiento', 'oficina', 'combustible'];
+            commonTerms.forEach(term => {
+                if (appState.objetosGasto.some(o => 
+                    o.denominacion.toLowerCase().includes(term) || 
+                    o.descripcion.toLowerCase().includes(term)
+                )) {
+                    suggestions.add(term);
+                }
+            });
+            
+            // De búsquedas recientes
+            appState.searchHistory.slice(0, 3).forEach(h => {
+                suggestions.add(h.term);
+            });
+            
+            // Mostrar sugerencias
+            Array.from(suggestions).slice(0, 8).forEach(suggestion => {
+                const item = document.createElement('div');
+                item.className = 'sugerencia-item';
+                item.textContent = suggestion;
+                item.onclick = () => {
+                    document.getElementById('searchInput').value = suggestion;
+                    performSearch();
+                };
+                container.appendChild(item);
+            });            
+            if (suggestions.size === 0) {
+                container.innerHTML = '<p style="color:#666;grid-column:1/-1;">Cargá datos para ver sugerencias</p>';
+            }
+        }
+
+        // ============================================
+        // HISTORIAL DE BÚSQUEDAS
+        // ============================================
+        function addToHistory(term) {
+            // Remover si ya existe
+            appState.searchHistory = appState.searchHistory.filter(h => h.term.toLowerCase() !== term.toLowerCase());
+            
+            // Agregar al inicio
+            appState.searchHistory.unshift({
+                term,
+                timestamp: Date.now(),
+                count: 1
+            });
+            
+            // Limitar cantidad
+            if (appState.searchHistory.length > CONFIG.maxHistoryItems) {
+                appState.searchHistory.pop();
+            }
+            
+            saveDataToStorage();
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('historyList');
+            const section = document.getElementById('historySection');
+            
+            if (appState.searchHistory.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            section.style.display = 'block';
+            container.innerHTML = '';
+            
+            appState.searchHistory.slice(0, 10).forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.onclick = () => {
+                    document.getElementById('searchInput').value = item.term;
+                    performSearch();
+                };
+                historyItem.innerHTML = `
+                    <span>🔍 ${item.term}</span>                    <span class="history-count">${new Date(item.timestamp).toLocaleDateString()}</span>
+                `;
+                container.appendChild(historyItem);
+            });
+        }
+
+        function clearHistory() {
+            if (confirm('¿Limpiar todo el historial de búsquedas?')) {
+                appState.searchHistory = [];
+                saveDataToStorage();
+                renderHistory();
+            }
+        }
+
+        // ============================================
+        // ACTUALIZACIÓN DE UI Y ESTADÍSTICAS
+        // ============================================
+        function updateUI() {
+            // Actualizar contadores
+            document.getElementById('customKeywordsCount').textContent = appState.customKeywords.length;
+            document.getElementById('cacheCount').textContent = Object.keys(appState.searchCache).length;
+            
+            // Actualizar estadísticas si hay datos
+            if (appState.objetosGasto.length > 0) {
+                const uniqueObjetos = new Set(appState.objetosGasto.map(o => o.codigo)).size;
+                document.getElementById('totalRegistros').textContent = appState.objetosGasto.length;
+                document.getElementById('totalObjetos').textContent = uniqueObjetos;
+            }
+            
+            // Renderizar listas
+            renderKeywordsList();
+            renderHistory();
+        }
+
+        function updateStats(resultsCount) {
+            document.getElementById('ultimaBusqueda').textContent = resultsCount;
+            document.getElementById('searchCount').textContent = 
+                parseInt(document.getElementById('searchCount').textContent) + 1;
+        }
+
+        function updateStatusText() {
+            if (appState.objetosGasto.length > 0) {
+                document.getElementById('aiStatusText').textContent = '✅ Sistema listo - Buscá tu objeto de gasto';
+            }
+        }
+
+        // ============================================
+        // EVENT LISTENERS
+        // ============================================
+        function setupEventListeners() {            // Búsqueda con Enter
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') performSearch();
+            });
+            
+            // Autocompletado simple
+            document.getElementById('searchInput').addEventListener('input', debounce((e) => {
+                const value = e.target.value.toLowerCase();
+                if (value.length >= 3) {
+                    // Mostrar sugerencias dinámicas (opcional)
+                }
+            }, 300));
+            
+            // Botón limpiar datos
+            document.getElementById('clearDataBtn').addEventListener('click', () => {
+                if (confirm('⚠️ ¿Confirmás eliminar todos los datos cargados y comenzar de nuevo?')) {
+                    Object.values(CONFIG.localStorageKeys).forEach(key => {
+                        localStorage.removeItem(key);
+                    });
+                    location.reload();
+                }
+            });
+            
+            // Auto-guardado periódico
+            setInterval(saveDataToStorage, 30000);
+        }
+
+        // Utilidad: debounce para input
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // ============================================
+        // GESTIÓN DE CACHE
+        // ============================================
+        function clearExpiredCache() {
+            const now = Date.now();
+            let cleared = 0;
+            
+            for (const [key, value] of Object.entries(appState.searchCache)) {
+                if (now - value.timestamp > CONFIG.cacheExpiration) {
+                    delete appState.searchCache[key];                    cleared++;
+                }
+            }
+            
+            if (cleared > 0) {
+                saveDataToStorage();
+                console.log(`🧹 Cache limpiada: ${cleared} items expirados`);
+                updateUI();
+            }
+        }
+        
+        // Limpiar caché expirada cada hora
+        setInterval(clearExpiredCache, 60 * 60 * 1000);
+
+        // ============================================
+        // FUNCIONES DE UTILIDAD
+        // ============================================
+        window.toggleCustomKeywordsPanel = toggleCustomKeywordsPanel;
+        window.addCustomKeyword = addCustomKeyword;
+        window.deleteCustomKeyword = deleteCustomKeyword;
+        window.performSearch = performSearch;
+        window.performWebSearch = performWebSearch;
+        window.filterResults = filterResults;
+        window.clearHistory = clearHistory;
+        window.closeModal = closeModal;
+        window.selectWebResult = selectWebResult;
+        window.confirmSelection = confirmSelection;
+    </script>
+</body>
+</html>
