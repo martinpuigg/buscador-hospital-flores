@@ -10,41 +10,22 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
         body { background: var(--gray); padding: 20px; color: #333; }
         .container { max-width: 1100px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        
-        /* Header */
-        .header { border-bottom: 3px solid var(--blue); margin-bottom: 25px; padding-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .header { border-bottom: 3px solid var(--blue); margin-bottom: 25px; padding-bottom: 15px; }
         .header h1 { color: var(--blue); font-size: 1.6em; }
-        
-        /* Status & AI Panel */
-        .status-panel { background: #eef2f7; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #d1d9e6; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px; }
+        .status-panel { background: #eef2f7; padding: 15px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-around; flex-wrap: wrap; border: 1px solid #d1d9e6; }
         .stat-badge { font-weight: 600; font-size: 0.9em; color: var(--blue); }
         .api-input-group { margin: 20px 0; text-align: center; background: #fff5f0; padding: 15px; border-radius: 10px; border: 1px dashed var(--orange); }
-        input[type="password"] { padding: 10px; width: 300px; border: 2px solid #ddd; border-radius: 5px; outline: none; }
-        
-        /* Main UI */
-        .upload-zone { border: 3px dashed var(--blue); padding: 40px; text-align: center; border-radius: 15px; cursor: pointer; transition: 0.3s; }
-        .upload-zone:hover { background: #f0f4ff; }
-        
+        input[type="password"], input[type="text"] { padding: 10px; border: 2px solid #ddd; border-radius: 5px; outline: none; }
+        .upload-zone { border: 3px dashed var(--blue); padding: 40px; text-align: center; border-radius: 15px; cursor: pointer; }
         .search-section { display: none; margin-top: 20px; }
         .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
         .search-bar input { flex: 1; padding: 15px; font-size: 1.1em; border: 2px solid var(--blue); border-radius: 8px; }
         .search-bar button { padding: 15px 30px; background: var(--blue); color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; }
-
-        /* AI Result Card */
-        #aiOutput { display: none; background: #fff8f0; border: 2px solid var(--orange); padding: 20px; border-radius: 12px; margin-bottom: 20px; animation: slideIn 0.4s ease-out; }
-        @keyframes slideIn { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
-        
+        #aiOutput { display: none; background: #fff8f0; border: 2px solid var(--orange); padding: 20px; border-radius: 12px; margin-bottom: 20px; }
         .ai-confirm-btn { background: var(--green); color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: 600; width: 100%; }
-
-        /* Results Table */
         .results-grid { display: grid; gap: 15px; }
-        .card { background: white; padding: 20px; border-radius: 10px; border: 1px solid #eee; border-left: 6px solid var(--blue); transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .card:hover { transform: scale(1.01); }
-        .card .code { font-weight: 800; color: var(--blue); font-size: 1.2em; }
-        .card .title { font-weight: 700; margin: 5px 0; display: block; }
-        .card .desc { font-size: 0.9em; color: #666; }
+        .card { background: white; padding: 20px; border-radius: 10px; border: 1px solid #eee; border-left: 6px solid var(--blue); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .match-badge { background: #e8f5e9; color: var(--green); padding: 4px 8px; border-radius: 5px; font-size: 0.8em; float: right; font-weight: bold; }
-
         .hidden { display: none !important; }
     </style>
 </head>
@@ -52,36 +33,32 @@
 
 <div class="container">
     <div class="header">
-        <div>
-            <h1>🏥 Hospital de Flores "Edison Camacho"</h1>
-            <p>Contaduría - Clasificador con Memoria IA</p>
-        </div>
+        <h1>🏥 Hospital de Flores "Edison Camacho"</h1>
+        <p>Contaduría - Clasificador con IA Gemini 1.5 Flash</p>
     </div>
 
     <div class="status-panel">
-        <div class="stat-badge">📊 Memoria Local: <span id="memCount">0</span> reglas</div>
-        <div class="stat-badge">🤖 Consultas IA hoy: <span id="aiUsage">0</span>/100</div>
-        <div class="stat-badge">📂 Base CGN: <span id="cgnCount">0</span> objetos</div>
+        <div class="stat-badge">📊 Memoria: <span id="memCount">0</span> reglas</div>
+        <div class="stat-badge">🤖 IA Hoy: <span id="aiUsage">0</span>/100</div>
+        <div class="stat-badge">📂 Base: <span id="cgnCount">0</span> objetos</div>
     </div>
 
     <div class="api-input-group">
-        <label>🔑 API Key de Gemini: </label>
-        <input type="password" id="apiKey" placeholder="Pega tu clave aquí...">
-        <p style="font-size: 0.8em; color: #666; margin-top: 5px;">(Tu clave se guarda localmente en este navegador)</p>
+        <label>🔑 API Key: </label>
+        <input type="password" id="apiKey" placeholder="AIzaSy...">
+        <button onclick="guardarKey()" style="padding: 10px; cursor:pointer;">Guardar</button>
     </div>
 
     <div id="uploadSection" class="upload-zone" onclick="document.getElementById('csvFile').click()">
-        <h2>📥 Haz clic para cargar ObjetosGasto.csv</h2>
-        <p>Necesario para inicializar la base de datos oficial</p>
+        <h2>📥 Cargar ObjetosGasto.csv</h2>
         <input type="file" id="csvFile" class="hidden" accept=".csv">
     </div>
 
     <div id="mainUI" class="search-section">
         <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Ej: Atún en trozos, Reparación motor, Gasas..." onkeypress="if(event.key==='Enter') ejecutarBusqueda()">
-            <button onclick="ejecutarBusqueda()">ANALIZAR GASTO</button>
+            <input type="text" id="searchInput" placeholder="¿Qué quieres clasificar?" onkeypress="if(event.key==='Enter') ejecutarBusqueda()">
+            <button onclick="ejecutarBusqueda()">ANALIZAR</button>
         </div>
-
         <div id="aiOutput"></div>
         <div id="resultsList" class="results-grid"></div>
     </div>
@@ -89,21 +66,17 @@
 
 <script>
     let baseDatos = [];
-    let memoriaLocal = JSON.parse(localStorage.getItem('hosp_flores_memoria') || '{}');
-    let usoDia = parseInt(localStorage.getItem('hosp_flores_uso_ia') || '0');
-    let fechaUso = localStorage.getItem('hosp_flores_fecha') || new Date().toDateString();
+    let memoriaLocal = JSON.parse(localStorage.getItem('hosp_mem') || '{}');
+    let usoDia = parseInt(localStorage.getItem('hosp_uso') || '0');
 
-    // Inicialización
+    function guardarKey() {
+        const key = document.getElementById('apiKey').value.trim();
+        localStorage.setItem('hosp_key', key);
+        alert("Clave guardada");
+    }
+
     window.onload = () => {
-        const savedKey = localStorage.getItem('hosp_flores_key');
-        if(savedKey) document.getElementById('apiKey').value = savedKey;
-        
-        // Resetear contador si es un nuevo día
-        if(fechaUso !== new Date().toDateString()) {
-            usoDia = 0;
-            localStorage.setItem('hosp_flores_uso_ia', '0');
-            localStorage.setItem('hosp_flores_fecha', new Date().toDateString());
-        }
+        document.getElementById('apiKey').value = localStorage.getItem('hosp_key') || '';
         actualizarUI();
     };
 
@@ -113,98 +86,65 @@
         document.getElementById('cgnCount').innerText = baseDatos.length;
     }
 
-    // 📂 Procesamiento de CSV
     document.getElementById('csvFile').addEventListener('change', function(e) {
-        const file = e.target.files[0];
         const reader = new FileReader();
         reader.onload = (ev) => {
             const lineas = ev.target.result.split('\n');
-            baseDatos = lineas.slice(1).map(linea => {
-                const col = linea.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); // Split por coma ignorando comas en comillas
-                return { 
-                    obj: col[0]?.replace(/"/g,'').trim(), 
-                    aux: col[1]?.replace(/"/g,'').trim(), 
-                    nom: col[2]?.replace(/"/g,'').trim(), 
-                    desc: col[3]?.replace(/"/g,'').trim() 
-                };
+            baseDatos = lineas.slice(1).map(l => {
+                const c = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                return { obj: c[0]?.replace(/"/g,'').trim(), aux: c[1]?.replace(/"/g,'').trim(), nom: c[2]?.replace(/"/g,'').trim(), desc: c[3]?.replace(/"/g,'').trim() };
             }).filter(i => i.obj);
-            
-            document.getElementById('uploadSection').classList.add('hidden');
+            document.getElementById('uploadSection').style.display = 'none';
             document.getElementById('mainUI').style.display = 'block';
             actualizarUI();
         };
-        reader.readAsText(file, 'ISO-8859-1');
+        reader.readAsText(e.target.files[0], 'ISO-8859-1');
     });
 
-    // 🔍 Lógica de Búsqueda
     async function ejecutarBusqueda() {
         const q = document.getElementById('searchInput').value.trim().toLowerCase();
         if(!q) return;
 
         const resultsDiv = document.getElementById('resultsList');
         const aiDiv = document.getElementById('aiOutput');
-        resultsDiv.innerHTML = "buscando...";
         aiDiv.style.display = 'none';
 
-        // 1. ¿Está en la memoria aprendida? (Gratis e Instantáneo)
+        // 1. Memoria
         if(memoriaLocal[q]) {
-            const item = baseDatos.find(i => i.obj === memoriaLocal[q].obj && i.aux === memoriaLocal[q].aux);
+            const item = baseDatos.find(i => i.obj === memoriaLocal[q].obj);
             renderResultados(item ? [item] : [], true);
             return;
         }
 
-        // 2. Búsqueda Tradicional en CSV
-        const filtrados = baseDatos.filter(i => 
-            i.nom.toLowerCase().includes(q) || i.desc.toLowerCase().includes(q) || i.obj.includes(q)
-        ).slice(0, 10);
-
+        // 2. Local
+        const filtrados = baseDatos.filter(i => i.nom.toLowerCase().includes(q) || i.obj.includes(q)).slice(0, 5);
         renderResultados(filtrados, false);
 
-        // 3. Consultar IA si no hay coincidencias claras o es un término complejo
-        if(filtrados.length < 2) {
-            consultarIA(q);
-        }
+        // 3. IA
+        if(filtrados.length === 0) consultarIA(q);
     }
 
-    function renderResultados(lista, esMemoria) {
-        const resultsDiv = document.getElementById('resultsList');
-        if(lista.length === 0) {
-            resultsDiv.innerHTML = "<p style='text-align:center; padding:20px;'>No se encontraron coincidencias exactas en el CSV local.</p>";
-            return;
-        }
-        resultsDiv.innerHTML = lista.map(i => `
+    function renderResultados(lista, esMem) {
+        document.getElementById('resultsList').innerHTML = lista.map(i => `
             <div class="card">
-                ${esMemoria ? '<span class="match-badge">REGLA APRENDIDA</span>' : ''}
-                <div class="code">Objeto ${i.obj} / ${i.aux}</div>
-                <div class="title">${i.nom}</div>
-                <div class="desc">${i.desc}</div>
+                ${esMem ? '<span class="match-badge">APRENDIDO</span>' : ''}
+                <strong>Objeto ${i.obj} / ${i.aux}</strong><br>${i.nom}<br>
+                <small style="color: #666">${i.desc}</small>
             </div>
         `).join('');
     }
 
-    // 🤖 IA con Definiciones CGN Uruguay y Límites
     async function consultarIA(query) {
-        const key = document.getElementById('apiKey').value;
+        const key = localStorage.getItem('hosp_key');
+        if(!key || usoDia >= 100) return;
+
         const aiDiv = document.getElementById('aiOutput');
-        
-        if(!key) {
-            aiDiv.innerHTML = "⚠️ Ingrese API Key para analizar con IA.";
-            aiDiv.style.display = 'block';
-            return;
-        }
-
-        if(usoDia >= 100) {
-            aiDiv.innerHTML = "⚠️ Límite de IA diario alcanzado (100).";
-            aiDiv.style.display = 'block';
-            return;
-        }
-
-        aiDiv.innerHTML = "⏳ La IA está analizando la naturaleza del gasto...";
+        aiDiv.innerHTML = "⏳ Analizando con Gemini 1.5 Flash...";
         aiDiv.style.display = 'block';
 
-        const prompt = `Actúa como contador experto en CGN Uruguay. Clasifica el gasto: "${query}". 
-        Definiciones: Grupo 1 (Bienes consumo: comida, medicina, repuestos), Grupo 2 (Servicios: luz, reparaciones, fletes), Grupo 3 (Activos).
-        Responde estrictamente en JSON: {"explicacion":"...", "objeto":"3 digitos", "auxiliar":"3 digitos"}`;
+        const prompt = `Como contador de ASSE Uruguay, clasifica: "${query}". 
+        Grupo 1: Bienes. Grupo 2: Servicios. Grupo 3: Inversiones.
+        Responde SOLO JSON: {"explicacion":"...", "objeto":"3 digitos", "auxiliar":"3 digitos"}`;
 
         try {
             const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
@@ -213,32 +153,28 @@
                 body: JSON.stringify({contents: [{parts: [{text: prompt}]}]})
             });
             const data = await resp.json();
-            const resIA = JSON.parse(data.candidates[0].content.parts[0].text.replace(/```json|```/g, ''));
+            const res = JSON.parse(data.candidates[0].content.parts[0].text.replace(/```json|```/g, ''));
             
             usoDia++;
-            localStorage.setItem('hosp_flores_uso_ia', usoDia);
-            localStorage.setItem('hosp_flores_key', key);
+            localStorage.setItem('hosp_uso', usoDia);
             actualizarUI();
 
             aiDiv.innerHTML = `
-                <strong>🤖 Sugerencia de la IA:</strong><br>${resIA.explicacion}<br>
-                <button class="ai-confirm-btn" onclick="aprender('${query}', '${resIA.objeto}', '${resIA.auxiliar}')">
-                    CONFIRMAR OBJETO ${resIA.objeto} (Guardar en memoria para siempre)
-                </button>
-            `;
+                <strong>Sugerencia IA:</strong> ${res.explicacion}<br>
+                <button class="ai-confirm-btn" onclick="aprender('${query}', '${res.objeto}', '${res.auxiliar}')">
+                    CONFIRMAR OBJETO ${res.objeto}
+                </button>`;
         } catch(e) {
-            aiDiv.innerHTML = "❌ Error al conectar con la IA.";
+            aiDiv.innerHTML = "❌ Error: Verifica tu API Key o conexión.";
         }
     }
 
     function aprender(q, obj, aux) {
         memoriaLocal[q.toLowerCase()] = {obj, aux};
-        localStorage.setItem('hosp_flores_memoria', JSON.stringify(memoriaLocal));
-        document.getElementById('aiOutput').style.display = 'none';
+        localStorage.setItem('hosp_mem', JSON.stringify(memoriaLocal));
         ejecutarBusqueda();
         actualizarUI();
     }
 </script>
-
 </body>
 </html>
