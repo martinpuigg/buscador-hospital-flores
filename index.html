@@ -47,8 +47,7 @@
         }
         
         .ai-status {
-            background: rgba(0,60,165,0.1);
-            border: 2px solid #003ca5;
+            background: rgba(0,60,165,0.1);            border: 2px solid #003ca5;
             padding: 15px;
             border-radius: 10px;
             text-align: center;
@@ -97,13 +96,123 @@
         }
         .stat-number {
             font-size: 2em;
-            font-weight: 700;
-            color: #003ca5;
+            font-weight: 700;            color: #003ca5;
         }
         .stat-label {
             font-size: 0.9em;
             color: #666;
             font-weight: 500;
+        }
+        
+        /* Panel de Palabras Personalizadas */
+        .custom-keywords-panel {
+            display: none;
+            background: rgba(40,167,69,0.1);
+            border: 2px solid #28a745;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .custom-keywords-panel h3 {
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .add-keyword-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #003ca5;
+            font-size: 0.9em;
+        }
+        .add-keyword-form input {
+            padding: 12px 15px;
+            border: 2px solid #003ca5;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .add-keyword-form button {
+            padding: 12px 25px;
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }
+        .add-keyword-form button:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        .keywords-list {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .keyword-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #28a745;
+        }
+        .keyword-item-info {
+            flex: 1;
+        }
+        .keyword-item-word {
+            font-weight: 700;
+            color: #28a745;
+            font-size: 1.1em;
+        }
+        .keyword-item-object {
+            color: #003ca5;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .keyword-item-delete {
+            background: #dc3545;
+            color: #ffffff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }        .keyword-item-delete:hover {
+            background: #c82333;
+        }
+        
+        .toggle-panel-btn {
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .toggle-panel-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
         }
         
         .search-container {
@@ -134,8 +243,7 @@
             padding: 18px 40px;
             background: #003ca5;
             color: #ffffff;
-            border: none;
-            border-radius: 10px;
+            border: none;            border-radius: 10px;
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
@@ -184,8 +292,7 @@
             background: #003ca5;
             color: #ffffff;
             padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
+            border-radius: 8px;            cursor: pointer;
             transition: all 0.3s;
             text-align: center;
             font-family: 'Montserrat', sans-serif;
@@ -234,8 +341,7 @@
         .descripcion {
             color: #666;
             line-height: 1.6;
-            font-size: 0.95em;
-            background: #f8f9fa;
+            font-size: 0.95em;            background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
         }
@@ -277,42 +383,6 @@
         }
         .no-results { text-align: center; padding: 50px; color: #666; }
         
-        /* Internet Results Panel */
-        .internet-results {
-            display: none;
-            background: rgba(138,43,226,0.05);
-            border: 2px solid #8a2be2;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .internet-results h4 {
-            color: #8a2be2;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .internet-item {
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 3px solid #8a2be2;
-        }
-        .internet-item h5 {
-            color: #8a2be2;
-            margin-bottom: 8px;
-        }
-        .internet-item a {
-            color: #003ca5;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .internet-item a:hover {
-            text-decoration: underline;
-        }
-        
         .history-section {
             display: none;
             margin-top: 30px;
@@ -320,8 +390,7 @@
             padding: 25px;
             border-radius: 12px;
             border: 2px solid #003ca5;
-        }
-        .history-section h3 {
+        }        .history-section h3 {
             color: #003ca5;
             margin-bottom: 15px;
         }
@@ -360,6 +429,9 @@
             .search-box { flex-direction: column; }
             .stats-bar { flex-direction: column; align-items: center; }
             .header h1 { font-size: 1.5em; }
+            .add-keyword-form {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -367,8 +439,7 @@
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="logo_hospital_flores.png" alt="Hospital de Flores ASSE" class="logo-img" id="hospitalLogo" onerror="this.style.display='none'">
-                <div class="header-text">
+                <img src="logo_hospital_flores.png" alt="Hospital de Flores ASSE" class="logo-img" id="hospitalLogo" onerror="this.style.display='none'">                <div class="header-text">
                     <h1>🏥 Hospital de Flores "Edison Camacho"</h1>
                     <p>Sector Contaduría | Clasificador de Objetos del Gasto</p>
                 </div>
@@ -376,9 +447,9 @@
         </div>
         
         <div class="ai-status">
-            📋 <span id="aiStatusText">Lista actualizada</span> | 
-            🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
-            🌐 Internet: <span id="internetStatus">Activo</span>
+            🤖 <span id="aiStatusText">IA lista - Cargá tu archivo CSV</span> | 
+            🔍 Búsquedas: <span id="searchCount">0</span> |
+            📚 Palabras personalizadas: <span id="customKeywordsCount">0</span>
         </div>
         
         <!-- Carga de CSV -->
@@ -404,8 +475,8 @@
                 <div class="stat-label">Objetos Cargados</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number" id="totalAuxiliares">0</div>
-                <div class="stat-label">Auxiliares</div>
+                <div class="stat-number" id="totalObjetos">0</div>
+                <div class="stat-label">Objetos Únicos</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number" id="ultimaBusqueda">0</div>
@@ -413,8 +484,44 @@
             </div>
         </div>
         
-        <!-- Resultados de Internet -->
-        <div class="internet-results" id="internetResults"></div>
+        <!-- Botón para mostrar/ocultar panel de palabras personalizadas -->
+        <button class="toggle-panel-btn" onclick="toggleCustomKeywordsPanel()" id="togglePanelBtn" style="display: none;">
+            📝 Gestionar Palabras Personalizadas
+        </button>
+                <!-- Panel de Palabras Personalizadas -->
+        <div class="custom-keywords-panel" id="customKeywordsPanel">
+            <h3>📝 Agregar Palabras Personalizadas</h3>
+            <p style="margin-bottom: 20px; color: #666;">
+                Agregá tus propias palabras para que la IA las reconozca en futuras búsquedas.
+            </p>
+            
+            <div class="add-keyword-form">
+                <div class="form-group">
+                    <label for="newKeyword">Palabra o Término:</label>
+                    <input type="text" id="newKeyword" placeholder="Ej: insumos, descartables, lima...">
+                </div>
+                <div class="form-group">
+                    <label for="newObjeto">Objeto:</label>
+                    <input type="text" id="newObjeto" placeholder="Ej: 191">
+                </div>
+                <div class="form-group">
+                    <label for="newAuxiliar">Auxiliar:</label>
+                    <input type="text" id="newAuxiliar" placeholder="Ej: 000" value="000">
+                </div>
+                <button onclick="addCustomKeyword()">➕ Agregar Palabra</button>
+            </div>
+            
+            <div class="keywords-list" id="keywordsList">
+                <p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="exportCustomKeywords()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📤 Exportar Palabras</button>
+                <button onclick="document.getElementById('importFile').click()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📥 Importar Palabras</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImport(event)">
+                <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">🗑️ Limpiar Todas</button>
+            </div>
+        </div>
         
         <!-- Buscador -->
         <div class="search-container" id="searchContainer">
@@ -422,7 +529,7 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lapiz, aceite..."
+                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lapiz, aceite, lima, ferreteria, plomeria..."
                     onkeypress="if(event.key === 'Enter') buscar()"
                 >
                 <button onclick="buscar()">🔎 Buscar Objeto</button>
@@ -430,13 +537,17 @@
             
             <div class="filters">
                 <button class="filter-btn active" onclick="setLimite(20)">20 resultados</button>
-                <button class="filter-btn" onclick="setLimite(50)">50 resultados</button>
-                <button class="filter-btn" onclick="setLimite(100)">100 resultados</button>
+                <button class="filter-btn" onclick="setLimite(50)">50 resultados</button>                <button class="filter-btn" onclick="setLimite(100)">100 resultados</button>
                 <button class="filter-btn" onclick="filtrarGrupo('0')">Grupo 0</button>
                 <button class="filter-btn" onclick="filtrarGrupo('1')">Grupo 1</button>
                 <button class="filter-btn" onclick="filtrarGrupo('2')">Grupo 2</button>
                 <button class="filter-btn" onclick="filtrarGrupo('3')">Grupo 3</button>
+                <button class="filter-btn" onclick="filtrarGrupo('4')">Grupo 4</button>
                 <button class="filter-btn" onclick="filtrarGrupo('5')">Grupo 5</button>
+                <button class="filter-btn" onclick="filtrarGrupo('6')">Grupo 6</button>
+                <button class="filter-btn" onclick="filtrarGrupo('7')">Grupo 7</button>
+                <button class="filter-btn" onclick="filtrarGrupo('8')">Grupo 8</button>
+                <button class="filter-btn" onclick="filtrarGrupo('9')">Grupo 9</button>
                 <button class="filter-btn" onclick="limpiarFiltros()">🔄 Limpiar</button>
             </div>
             
@@ -464,77 +575,195 @@
         let limiteResultados = 20;
         let filtroGrupo = '';
         let searchCount = 0;
-        let searchHistory = [];
         
         // ============================================
-        // 🧠 BASE DE CONOCIMIENTO - MAPEO SEMÁNTICO
+        // 🧠 SISTEMA DE PALABRAS PERSONALIZADAS
         // ============================================
-        const keywordsMap = {
-            'sueldo': ['011', '021', '031'],
-            'salario': ['011', '021'],
-            'harina': ['111'],
-            'lechuga': ['111'],
-            'arroz': ['111'],
-            'carne': ['111'],
-            'aceite': ['111'],
-            'aceite comestible': ['111'],
-            'aceite de cocina': ['111'],
-            'combustible': ['141'],
-            'nafta': ['141'],
-            'gasoil': ['141'],
-            'lubricante': ['141'],
-            'aceite motor': ['141'],
-            'medicamento': ['152'],
-            'droga': ['152'],
-            'farmaco': ['152'],
-            'vehiculo': ['353'],
-            'auto': ['353'],
-            'camioneta': ['353'],
-            'internacion': ['283'],
-            'hospital': ['283'],
-            'sanatorio': ['283'],
-            'computadora': ['323'],
-            'laptop': ['323'],
-            'notebook': ['323'],
-            'limpieza': ['192'],
-            'jabon': ['192'],
-            'escoba': ['192'],
-            'electricidad': ['213'],
-            'luz': ['213'],
-            'agua': ['212'],
-            'telefono': ['211'],
-            'internet': ['211'],
-            'regla': ['191'],
-            'util': ['191'],
-            'oficina': ['191'],
-            'papel': ['131'],
-            'lapiz': ['191'],
-            'viatico': ['234'],
-            'pasaje': ['231'],
-            'alquiler': ['251'],
-            'jubilacion': ['571'],
-            'beca': ['577'],
-            'capacitacion': ['284'],
-            'curso': ['284'],
-            'mantenimiento': ['271'],
-            'reparacion': ['271'],
-            'vigilancia': ['291'],
-            'seguridad': ['291'],
-            'mueble': ['326'],
-            'escritorio': ['326'],
-            'silla': ['326'],
-            'mesa': ['326'],
-            'ferreteria': ['176'],
-            'herramienta': ['176'],
-            'plomeria': ['271'],
-            'cañeria': ['271'],
-            'tuberia': ['271'],
-            'grifo': ['271'],
-            'canilla': ['271']
-        };
+        let customKeywords = {};
+        
+        // ============================================
+        // 💾 CARGAR/GUARDAR DATOS
+        // ============================================
+        
+        function loadCustomKeywords() {
+            const saved = localStorage.getItem('hospital_flores_custom_keywords');            if (saved) {
+                customKeywords = JSON.parse(saved);
+            }
+            updateCustomKeywordsCount();
+            renderCustomKeywordsList();
+        }
+
+        function saveCustomKeywords() {
+            localStorage.setItem('hospital_flores_custom_keywords', JSON.stringify(customKeywords));
+            updateCustomKeywordsCount();
+            renderCustomKeywordsList();
+        }
+
+        function updateCustomKeywordsCount() {
+            const count = Object.keys(customKeywords).length;
+            document.getElementById('customKeywordsCount').textContent = count;
+        }
 
         // ============================================
-        // 💾 CARGA DEL CSV
+        // 📝 GESTIÓN DE PALABRAS PERSONALIZADAS
+        // ============================================
+        
+        function toggleCustomKeywordsPanel() {
+            const panel = document.getElementById('customKeywordsPanel');
+            const btn = document.getElementById('togglePanelBtn');
+            if (panel.style.display === 'none' || panel.style.display === '') {
+                panel.style.display = 'block';
+                btn.textContent = '📝 Ocultar Palabras Personalizadas';
+            } else {
+                panel.style.display = 'none';
+                btn.textContent = '📝 Gestionar Palabras Personalizadas';
+            }
+        }
+
+        function addCustomKeyword() {
+            const keyword = document.getElementById('newKeyword').value.trim().toLowerCase();
+            const objeto = document.getElementById('newObjeto').value.trim();
+            const auxiliar = document.getElementById('newAuxiliar').value.trim() || '000';
+            
+            if (!keyword || !objeto) {
+                alert('⚠️ Por favor completá la palabra y el objeto');
+                return;
+            }
+            
+            // Validar que el objeto exista en los datos cargados
+            if (datosCompletos.length > 0) {
+                const objetoExiste = datosCompletos.some(d => d.objeto === objeto);
+                if (!objetoExiste) {
+                    if (!confirm(`⚠️ El objeto ${objeto} no existe en los datos cargados. ¿Querés agregarlo de todos modos?`)) {
+                        return;                    }
+                }
+            }
+            
+            if (!customKeywords[keyword]) {
+                customKeywords[keyword] = [];
+            }
+            
+            const yaExiste = customKeywords[keyword].some(k => k.objeto === objeto && k.auxiliar === auxiliar);
+            if (yaExiste) {
+                alert('⚠️ Esta palabra ya está asociada a este objeto');
+                return;
+            }
+            
+            customKeywords[keyword].push({
+                objeto: objeto,
+                auxiliar: auxiliar,
+                fecha: new Date().toISOString()
+            });
+            
+            saveCustomKeywords();
+            
+            document.getElementById('newKeyword').value = '';
+            document.getElementById('newObjeto').value = '';
+            document.getElementById('newAuxiliar').value = '000';
+            
+            alert('✅ ¡Palabra agregada correctamente! La IA la reconocerá en futuras búsquedas.');
+        }
+
+        function deleteCustomKeyword(keyword, objeto, auxiliar) {
+            if (confirm(`¿Estás seguro de eliminar "${keyword}" → ${objeto}/${auxiliar}?`)) {
+                customKeywords[keyword] = customKeywords[keyword].filter(
+                    k => !(k.objeto === objeto && k.auxiliar === auxiliar)
+                );
+                
+                if (customKeywords[keyword].length === 0) {
+                    delete customKeywords[keyword];
+                }
+                
+                saveCustomKeywords();
+            }
+        }
+
+        function clearAllCustomKeywords() {
+            if (confirm('⚠️ ¿Estás seguro de eliminar TODAS las palabras personalizadas? Esta acción no se puede deshacer.')) {
+                customKeywords = {};
+                saveCustomKeywords();
+                alert('🗑️ Todas las palabras personalizadas fueron eliminadas.');
+            }
+        }
+        function renderCustomKeywordsList() {
+            const list = document.getElementById('keywordsList');
+            const keywords = Object.keys(customKeywords).sort();
+            
+            if (keywords.length === 0) {
+                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>';
+                return;
+            }
+            
+            let html = '';
+            keywords.forEach(keyword => {
+                customKeywords[keyword].forEach(mapping => {
+                    html += `
+                        <div class="keyword-item">
+                            <div class="keyword-item-info">
+                                <div class="keyword-item-word">📝 ${keyword}</div>
+                                <div class="keyword-item-object">→ Objeto ${mapping.objeto}/${mapping.auxiliar}</div>
+                            </div>
+                            <button class="keyword-item-delete" onclick="deleteCustomKeyword('${keyword}', '${mapping.objeto}', '${mapping.auxiliar}')">🗑️ Eliminar</button>
+                        </div>
+                    `;
+                });
+            });
+            
+            list.innerHTML = html;
+        }
+
+        function exportCustomKeywords() {
+            if (Object.keys(customKeywords).length === 0) {
+                alert('⚠️ No hay palabras personalizadas para exportar');
+                return;
+            }
+            
+            const data = JSON.stringify(customKeywords, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `palabras_personalizadas_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+                        const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    
+                    Object.keys(imported).forEach(keyword => {
+                        if (!customKeywords[keyword]) {
+                            customKeywords[keyword] = [];
+                        }
+                        imported[keyword].forEach(mapping => {
+                            const yaExiste = customKeywords[keyword].some(
+                                k => k.objeto === mapping.objeto && k.auxiliar === mapping.auxiliar
+                            );
+                            if (!yaExiste) {
+                                customKeywords[keyword].push(mapping);
+                            }
+                        });
+                    });
+                    
+                    saveCustomKeywords();
+                    alert(`✅ Se importaron ${Object.keys(imported).length} palabras personalizadas`);
+                } catch (error) {
+                    alert('❌ Error al importar el archivo. Asegurate que sea un JSON válido.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ============================================
+        // 📂 CARGA DEL CSV
         // ============================================
         document.getElementById('csvFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -553,8 +782,7 @@
             reader.readAsText(file, 'UTF-8');
         });
 
-        function procesarCSV(texto) {
-            try {
+        function procesarCSV(texto) {            try {
                 const lineas = texto.split('\n');
                 datosCompletos = [];
                 
@@ -599,13 +827,14 @@
                 }
                 
                 document.getElementById('totalRegistros').textContent = datosCompletos.length;
-                document.getElementById('totalAuxiliares').textContent = [...new Set(datosCompletos.map(d => `${d.objeto}/${d.auxiliar}`))].length;
+                document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
                 
                 document.getElementById('uploadSection').style.display = 'none';
                 document.getElementById('statsBar').style.display = 'flex';
-                document.getElementById('searchContainer').style.display = 'block';
+                document.getElementById('togglePanelBtn').style.display = 'inline-block';                document.getElementById('searchContainer').style.display = 'block';
                 document.getElementById('historySection').style.display = 'block';
                 
+                loadCustomKeywords();
                 cargarSugerencias();
                 
                 alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados.`);
@@ -633,56 +862,7 @@
         }
 
         // ============================================
-        // 🌐 BÚSQUEDA EN INTERNET (Wikipedia + Sinónimos)
-        // ============================================
-        
-        async function buscarEnInternet(query) {
-            const internetDiv = document.getElementById('internetResults');
-            internetDiv.style.display = 'block';
-            internetDiv.innerHTML = '<div class="loading">🌐 Buscando en internet...</div>';
-            
-            let html = '<h4>🌐 Información de Internet para "<strong>' + query + '</strong>":</h4>';
-            
-            try {
-                // Búsqueda en Wikipedia
-                const wikiResponse = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
-                const wikiData = await wikiResponse.json();
-                
-                if (wikiData && wikiData.extract && !wikiData.type) {
-                    html += `
-                        <div class="internet-item">
-                            <h5>📚 Wikipedia</h5>
-                            <p><strong>${wikiData.title}</strong></p>
-                            <p>${wikiData.extract.substring(0, 300)}...</p>
-                            ${wikiData.content_urls?.desktop?.page ? `<a href="${wikiData.content_urls.desktop.page}" target="_blank">Ver más en Wikipedia →</a>` : ''}
-                        </div>
-                    `;
-                }
-                
-                // Búsqueda de sinónimos en Datamuse
-                const sinonimosResponse = await fetch(`https://api.datamuse.com/words?ml=${encodeURIComponent(query)}&max=5`);
-                const sinonimosData = await sinonimosResponse.json();
-                
-                if (sinonimosData && sinonimosData.length > 0) {
-                    const sinonimos = sinonimosData.map(s => s.word).join(', ');
-                    html += `
-                        <div class="internet-item">
-                            <h5>🔤 Sinónimos y palabras relacionadas</h5>
-                            <p>${sinonimos}</p>
-                        </div>
-                    `;
-                }
-                
-                internetDiv.innerHTML = html;
-                
-            } catch (error) {
-                console.log('Error en búsqueda internet:', error);
-                internetDiv.innerHTML = '<div class="error">⚠️ No se pudo obtener información de internet. Verificá tu conexión.</div>';
-            }
-        }
-
-        // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA
+        // 🔍 MOTOR DE BÚSQUEDA CON IA
         // ============================================
         
         function normalizar(texto) {
@@ -700,34 +880,42 @@
         function calcularRelevancia(query, item) {
             const queryNorm = normalizar(query);
             const textoCompleto = normalizar(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
-            const denomNorm = normalizar(item.denominacion);
-            const descNorm = normalizar(item.descripcion);
+            const denomNorm = normalizar(item.denominacion);            const descNorm = normalizar(item.descripcion);
             
             let score = 0;
             let keywordEncontrada = null;
+            let esPersonalizada = false;
             
-            if (keywordsMap[queryNorm]) {
-                if (keywordsMap[queryNorm].includes(item.objeto)) {
-                    score += 50;
+            // 1. Palabras personalizadas (MÁXIMA PRIORIDAD)
+            if (customKeywords[queryNorm]) {
+                const mappings = customKeywords[queryNorm];
+                const coincide = mappings.some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
+                if (coincide) {
+                    score += 100;
                     keywordEncontrada = queryNorm;
+                    esPersonalizada = true;
                 }
             }
             
+            // 2. Coincidencia en denominación
             if (denomNorm.includes(queryNorm)) {
                 score += 40;
                 if (!keywordEncontrada) keywordEncontrada = 'denominación';
             }
             
+            // 3. Coincidencia en descripción
             if (descNorm.includes(queryNorm)) {
                 score += 30;
                 if (!keywordEncontrada) keywordEncontrada = 'descripción';
             }
             
+            // 4. Coincidencia en código
             if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
                 score += 60;
                 if (!keywordEncontrada) keywordEncontrada = 'código';
             }
             
+            // 5. Búsqueda por palabras parciales
             const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
             palabrasQuery.forEach(palabra => {
                 if (textoCompleto.includes(palabra)) {
@@ -738,11 +926,11 @@
             
             return {
                 score: Math.min(score, 100),
-                keyword: keywordEncontrada
+                keyword: keywordEncontrada,
+                esPersonalizada: esPersonalizada
             };
         }
-
-        async function buscar() {
+        function buscar() {
             const query = document.getElementById('searchInput').value.trim();
             const resultsDiv = document.getElementById('results');
             
@@ -754,18 +942,7 @@
             searchCount++;
             document.getElementById('searchCount').textContent = searchCount;
             
-            // Guardar en historial
-            searchHistory.unshift({ query, timestamp: Date.now() });
-            if (searchHistory.length > 10) searchHistory = searchHistory.slice(0, 10);
-            renderHistory();
-            
-            // Ocultar resultados anteriores de internet
-            document.getElementById('internetResults').style.display = 'none';
-            
             resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en ' + datosCompletos.length + ' objetos...</div>';
-            
-            // Búsqueda en internet en paralelo
-            buscarEnInternet(query);
             
             setTimeout(() => {
                 let resultados = datosCompletos.map(item => {
@@ -773,7 +950,8 @@
                     return { 
                         ...item, 
                         relevancia: relevancia.score,
-                        keywordEncontrada: relevancia.keyword
+                        keywordEncontrada: relevancia.keyword,
+                        esPersonalizada: relevancia.esPersonalizada
                     };
                 });
                 
@@ -800,8 +978,7 @@
                 }
                 
                 let html = `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; font-weight: 600;">
-                    ✅ <strong>${resultados.length}</strong> resultados encontrados 
-                    (de ${datosCompletos.length} objetos totales)
+                    ✅ <strong>${resultados.length}</strong> resultados encontrados                     (de ${datosCompletos.length} objetos totales)
                 </div>`;
                 
                 resultados.forEach((r, index) => {
@@ -815,13 +992,14 @@
                             <div class="descripcion">${r.descripcion}</div>
                             ${r.categoria ? `<div class="categoria-tag">📁 ${r.categoria}</div>` : ''}
                             <span class="grupo-tag">Grupo ${r.grupo}</span>
-                            ${r.keywordEncontrada ? `<div class="keyword-match" style="display:inline-block;background:rgba(255,107,0,0.1);color:#ff6b00;padding:4px 10px;border-radius:8px;font-size:0.75em;margin-top:8px;">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
+                            ${r.esPersonalizada ? `<div class="keyword-match" style="background:rgba(40,167,69,0.1);color:#28a745;padding:4px 10px;border-radius:8px;font-size:0.75em;margin-top:8px;">⭐ Palabra Personalizada</div>` : ''}
                             ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
                         </div>
                     `;
                 });
                 
                 resultsDiv.innerHTML = html;
+                renderHistory();
             }, 300);
         }
 
@@ -849,8 +1027,7 @@
         // ============================================
         
         function buscarCon(termino) {
-            document.getElementById('searchInput').value = termino;
-            buscar();
+            document.getElementById('searchInput').value = termino;            buscar();
         }
 
         function setLimite(limite) {
@@ -888,7 +1065,7 @@
         function cargarSugerencias() {
             const sugerencias = [
                 'harina', 'sueldo', 'combustible', 'medicamento', 'vehiculo',
-                'regla', 'internacion', 'computadora', 'limpieza',
+                'regla', 'internacion', 'computadora', 'utiles', 'limpieza',
                 'electricidad', 'telefono', 'viatico', 'alquiler', 'jubilacion',
                 'beca', 'capacitacion', 'mantenimiento', 'lapiz', 'aceite'
             ];
@@ -899,25 +1076,27 @@
             ).join('');
         }
 
-        function renderHistory() {
-            const historyList = document.getElementById('historyList');
+        function renderHistory() {            const historyList = document.getElementById('historyList');
+            const recentSearches = []; // Podés implementar historial si querés
             
-            if (searchHistory.length === 0) {
+            if (recentSearches.length === 0) {
                 historyList.innerHTML = '<p style="color: #999;">No hay historial aún.</p>';
                 return;
             }
             
-            historyList.innerHTML = searchHistory.map(s => `
+            historyList.innerHTML = recentSearches.map(s => `
                 <div class="history-item" onclick="document.getElementById('searchInput').value='${s.query}'; buscar();">
                     <span>🔍 ${s.query}</span>
-                    <span class="history-count">${new Date(s.timestamp).toLocaleTimeString()}</span>
+                    <span class="history-count">${s.resultsCount} resultados</span>
                 </div>
             `).join('');
         }
 
         function clearHistory() {
-            searchHistory = [];
-            renderHistory();
+            if (confirm('¿Estás seguro de limpiar todo el historial?')) {
+                document.getElementById('historyList').innerHTML = '<p style="color: #999;">No hay historial aún.</p>';
+                alert('Historial limpiado.');
+            }
         }
 
         // ============================================
@@ -928,6 +1107,8 @@
             logoImg.onerror = function() {
                 this.style.display = 'none';
             };
+            
+            loadCustomKeywords();
         };
     </script>
 </body>
