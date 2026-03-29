@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏥 Hospital de Flores "Edison Camacho" - Sector Contaduría</title>
+    <title>🏥 Hospital de Flores "Edison Camacho" - Buscador IA</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -55,30 +55,6 @@
         }
         .ai-status span { color: #003ca5; font-weight: 600; }
         
-        .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        .stat-item {
-            background: #f8f9fa;
-            padding: 15px 25px;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid #003ca5;
-        }
-        .stat-number {
-            font-size: 2em;
-            font-weight: 700;
-            color: #003ca5;
-        }
-        .stat-label {
-            font-size: 0.9em;
-            color: #666;
-        }
-        
         .search-container {
             background: #f8f9fa;
             padding: 30px;
@@ -96,7 +72,9 @@
             background: #ffffff;
             color: #003ca5;
             outline: none;
-        }        .search-box input:focus {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .search-box input:focus {
             border-color: #002d7a;
             box-shadow: 0 0 10px rgba(0,60,165,0.2);
         }
@@ -109,14 +87,18 @@
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
             transition: all 0.3s;
         }
         .search-box button:hover {
             background: #002d7a;
             transform: scale(1.05);
         }
+        .search-box button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;        }
         
-        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
         .filter-btn {
             padding: 10px 20px;
             background: #003ca5;
@@ -145,7 +127,8 @@
         }
         .result-card:hover {
             transform: translateX(10px);
-            background: #f8f9fa;            box-shadow: 0 4px 20px rgba(0,60,165,0.2);
+            background: #f8f9fa;
+            box-shadow: 0 4px 20px rgba(0,60,165,0.2);
         }
         .result-card.selected {
             border-left-color: #ff6b00;
@@ -162,8 +145,7 @@
             margin-bottom: 10px;
         }
         .denominacion {
-            font-size: 1.3em;
-            font-weight: 600;
+            font-size: 1.3em;            font-weight: 600;
             margin: 10px 0;
             color: #003ca5;
         }
@@ -174,8 +156,6 @@
             background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
-            max-height: 200px;
-            overflow-y: auto;
         }
         .relevancia-badge {
             background: rgba(0,60,165,0.1);
@@ -194,7 +174,8 @@
             font-size: 0.85em;
             margin-top: 10px;
         }
-        .grupo-tag {            display: inline-block;
+        .grupo-tag {
+            display: inline-block;
             background: #f8f9fa;
             color: #666;
             padding: 3px 10px;
@@ -213,8 +194,17 @@
         }
         .custom-keyword-badge {
             display: inline-block;
-            background: rgba(40,167,69,0.1);
-            color: #28a745;
+            background: rgba(40,167,69,0.1);            color: #28a745;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.75em;
+            margin-top: 8px;
+            margin-left: 8px;
+        }
+        .internet-badge {
+            display: inline-block;
+            background: rgba(138,43,226,0.1);
+            color: #8a2be2;
             padding: 4px 10px;
             border-radius: 8px;
             font-size: 0.75em;
@@ -233,35 +223,30 @@
         }
         .no-results { text-align: center; padding: 50px; color: #666; }
         
-        .sugerencias {
-            margin-top: 20px;
-            padding: 20px;
-            background: #ffffff;
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px 25px;
             border-radius: 10px;
+            text-align: center;
             border: 2px solid #003ca5;
         }
-        .sugerencias h3 {
-            margin-bottom: 15px;
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
             color: #003ca5;
-        }        .sugerencias-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
         }
-        .sugerencia-item {
-            background: #003ca5;
-            color: #ffffff;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-        }
-        .sugerencia-item:hover {
-            background: #002d7a;
-            transform: translateY(-2px);
+        .stat-label {
+            font-size: 0.9em;            color: #666;
         }
         
+        /* Panel de Palabras Personalizadas */
         .custom-keywords-panel {
             display: none;
             background: rgba(40,167,69,0.1);
@@ -292,8 +277,10 @@
         }
         .add-keyword-form input {
             padding: 12px 15px;
-            border: 2px solid #003ca5;            border-radius: 8px;
+            border: 2px solid #003ca5;
+            border-radius: 8px;
             font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
         }
         .add-keyword-form button {
             padding: 12px 25px;
@@ -303,9 +290,9 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
             transition: all 0.3s;
-        }
-        .add-keyword-form button:hover {
+        }        .add-keyword-form button:hover {
             background: #218838;
             transform: scale(1.05);
         }
@@ -326,6 +313,19 @@
             align-items: center;
             border-left: 4px solid #28a745;
         }
+        .keyword-item-info {
+            flex: 1;
+        }
+        .keyword-item-word {
+            font-weight: 700;
+            color: #28a745;
+            font-size: 1.1em;
+        }
+        .keyword-item-object {
+            color: #003ca5;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
         .keyword-item-delete {
             background: #dc3545;
             color: #ffffff;
@@ -334,15 +334,21 @@
             border-radius: 5px;
             cursor: pointer;
             font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }
+        .keyword-item-delete:hover {
+            background: #c82333;
         }
         
-        .toggle-panel-btn {
-            background: #28a745;
+        .toggle-panel-btn {            background: #28a745;
             color: #ffffff;
             border: none;
             padding: 15px 30px;
-            border-radius: 10px;            cursor: pointer;
+            border-radius: 10px;
+            cursor: pointer;
             font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
             margin-bottom: 20px;
             transition: all 0.3s;
         }
@@ -351,12 +357,77 @@
             transform: scale(1.05);
         }
         
+        /* Panel de Configuración de API */
+        .api-settings-panel {
+            display: none;
+            background: rgba(138,43,226,0.1);
+            border: 2px solid #8a2be2;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .api-settings-panel h3 {
+            color: #8a2be2;
+            margin-bottom: 20px;
+        }
+        .api-key-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #8a2be2;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 15px;
+        }
+        
+        /* Panel de Resultados de Internet */
+        .internet-results {
+            background: rgba(138,43,226,0.05);
+            border: 1px solid rgba(138,43,226,0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .internet-results h4 {
+            color: #8a2be2;
+            margin-bottom: 15px;        }
+        .internet-item {
+            background: rgba(255,255,255,0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .internet-item h5 {
+            color: #8a2be2;
+            margin-bottom: 8px;
+        }
+        .internet-item p {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        
+        .clear-btn {
+            background: #dc3545;
+            color: #ffffff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+        }
+        
         @media (max-width: 768px) {
             .header { flex-direction: column; text-align: center; }
             .logo-container { flex-direction: column; }
             .search-box { flex-direction: column; }
             .stats-bar { flex-direction: column; align-items: center; }
-            .add-keyword-form { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.5em; }
+            .add-keyword-form {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -367,39 +438,64 @@
                 <img src="logo_hospital_flores.png" alt="Hospital de Flores ASSE" class="logo-img" id="hospitalLogo" onerror="this.style.display='none'">
                 <div class="header-text">
                     <h1>🏥 Hospital de Flores "Edison Camacho"</h1>
-                    <p>Sector Contaduría | Clasificador de Objetos del Gasto</p>
-                </div>
-            </div>
+                    <p>Sector Contaduría | Buscador de Objetos del Gasto con IA</p>
+                </div>            </div>
         </div>
         
         <div class="ai-status">
-            🤖 <span id="aiStatusText">IA lista - Todos los objetos cargados</span> | 
+            🤖 <span id="aiStatusText">IA lista - Búsqueda rápida activada</span> | 
             🔍 Búsquedas: <span id="searchCount">0</span> |
-            📚 Palabras personalizadas: <span id="customKeywordsCount">0</span>
+            📦 Registros: <span id="totalRegistros">0</span> |
+            📚 Palabras personalizadas: <span id="customKeywordsCount">0</span> |
+            🌐 Internet: <span id="internetStatus">✅ Activo</span>
         </div>
         
         <div class="stats-bar">
             <div class="stat-item">
-                <div class="stat-number" id="totalRegistros">0</div>
-                <div class="stat-label">Objetos Cargados</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" id="totalGrupos">10</div>
-                <div class="stat-label">Grupos (0-9)</div>
+                <div class="stat-number" id="totalObjetos">0</div>
+                <div class="stat-label">Objetos Únicos</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number" id="ultimaBusqueda">0</div>
                 <div class="stat-label">Resultados</div>
-            </div>            <div class="stat-item">
+            </div>
+            <div class="stat-item">
                 <div class="stat-number" id="searchTime">0ms</div>
                 <div class="stat-label">Tiempo Búsqueda</div>
             </div>
         </div>
         
-        <button class="toggle-panel-btn" onclick="toggleCustomKeywordsPanel()">
+        <!-- Botón para mostrar/ocultar panel de palabras personalizadas -->
+        <button class="toggle-panel-btn" onclick="toggleCustomKeywordsPanel()" id="togglePanelBtn">
             📝 Gestionar Palabras Personalizadas
         </button>
         
+        <!-- Botón para configuración de API -->
+        <button class="toggle-panel-btn" onclick="toggleApiSettingsPanel()" style="background: #8a2be2;">
+            🔑 Configurar API Keys (Opcional)
+        </button>
+        
+        <!-- Panel de Configuración de API -->
+        <div class="api-settings-panel" id="apiSettingsPanel">
+            <h3>🔑 Configuración de APIs de Internet</h3>
+            <p style="margin-bottom: 20px; color: #666;">
+                Estas APIs son OPCIONALES. El buscador funciona sin ellas usando APIs gratuitas.
+            </p>
+            
+            <div class="form-group">
+                <label for="googleApiKey">Google Custom Search API Key (Opcional):</label>
+                <input type="text" id="googleApiKey" class="api-key-input" placeholder="Dejá vacío para usar APIs gratuitas">
+            </div>
+            
+            <div class="form-group">
+                <label for="googleCx">Google Custom Search Engine ID (Opcional):</label>                <input type="text" id="googleCx" class="api-key-input" placeholder="Dejá vacío para usar APIs gratuitas">
+            </div>
+            
+            <button onclick="saveApiSettings()" style="background: #8a2be2; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">💾 Guardar Configuración</button>
+            <button onclick="clearApiSettings()" style="background: #dc3545; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif; margin-left: 10px;">🗑️ Limpiar</button>
+        </div>
+        
+        <!-- Panel de Palabras Personalizadas -->
         <div class="custom-keywords-panel" id="customKeywordsPanel">
             <h3>📝 Agregar Palabras Personalizadas</h3>
             <p style="margin-bottom: 20px; color: #666;">
@@ -427,21 +523,22 @@
             </div>
             
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button onclick="exportCustomKeywords()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">📤 Exportar Palabras</button>
-                <button onclick="document.getElementById('importFile').click()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">📥 Importar Palabras</button>
+                <button onclick="exportCustomKeywords()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📤 Exportar Palabras</button>
+                <button onclick="document.getElementById('importFile').click()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📥 Importar Palabras</button>
                 <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImport(event)">
-                <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">🗑️ Limpiar Todas</button>
+                <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">🗑️ Limpiar Todas</button>
             </div>
         </div>
         
+        <!-- Buscador -->
         <div class="search-container">
             <div class="search-box">
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Ej: sueldo, harina, combustible, medicamento, vehículo, regla, internación, útiles, lapiz, aceite, lima, ferreteria, plomeria..."                    onkeypress="if(event.key === 'Enter') buscar()"
-                >
-                <button onclick="buscar()">🔎 Buscar con IA</button>
+                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lechuga, lapiz, aceite, lima..."
+                    onkeypress="if(event.key === 'Enter') buscar()"                >
+                <button onclick="buscar()" id="searchBtn">🔎 Buscar con IA</button>
             </div>
             
             <div class="filters">
@@ -460,24 +557,18 @@
                 <button class="filter-btn" onclick="filtrarGrupo('9')">Grupo 9</button>
                 <button class="filter-btn" onclick="limpiarFiltros()">🔄 Limpiar</button>
             </div>
-            
-            <div class="sugerencias">
-                <h3>💡 Búsquedas sugeridas</h3>
-                <div class="sugerencias-grid" id="sugerenciasGrid"></div>
-            </div>
         </div>
         
+        <div id="internetResults" class="internet-results" style="display: none;"></div>
         <div id="results" class="results-container"></div>
     </div>
 
     <script>
         // ============================================
-        // 📊 TODOS LOS DATOS DEL CSV INTEGRADOS
+        // 📊 DATOS DEL CSV - INTEGRAR ACÁ TODOS TUS DATOS
         // ============================================
-        const datosCompletos = [
+        const datosCSV = [
             {"objeto":"011","auxiliar":"000","denominacion":"Sueldo básico de cargos","descripcion":"Codifica retrib. del personal q/ocupa cargos presupuestados permanentes...","grupo":"0"},
-            {"objeto":"011","auxiliar":"001","denominacion":"Sueldo básico Reservistas","descripcion":"Art 111 Decreto-Ley 14.157.","grupo":"0"},
-            {"objeto":"011","auxiliar":"300","denominacion":"Sueldo del grado","descripcion":"Corresponde a la retribución asignada al cargo para cada grado...","grupo":"0"},
             {"objeto":"021","auxiliar":"000","denominacion":"Sueldo básico de funciones contratadas","descripcion":"Codifica las retribuciones del personal contratado permanente...","grupo":"0"},
             {"objeto":"031","auxiliar":"000","denominacion":"Retribuciones zafrales y temporales","descripcion":"Codifica las retribuciones del personal contratado directamente...","grupo":"0"},
             {"objeto":"042","auxiliar":"000","denominacion":"Compensaciones","descripcion":"Clasifica los auxiliares correspondientes a retribuciones complementarias...","grupo":"0"},
@@ -487,41 +578,49 @@
             {"objeto":"141","auxiliar":"000","denominacion":"Combustibles derivados del petróleo","descripcion":"Combustibles y lubricantes derivados del petróleo, nafta, gasoil, diesel...","grupo":"1"},
             {"objeto":"152","auxiliar":"000","denominacion":"Productos medicinales y farmacéuticos","descripcion":"Drogas y Medicamentos utilizados en hospitales, clínicas y policlínicas...","grupo":"1"},
             {"objeto":"176","auxiliar":"000","denominacion":"Herramientas menores","descripcion":"Herramientas menores tales como: destornilladores, hachas, alicates, martillos, palas, reglas...","grupo":"1"},
-            {"objeto":"191","auxiliar":"000","denominacion":"Útiles de oficina","descripcion":"Elementos necesarios para el funcionamiento normal de las oficinas, lápices, reglas, carpetas...","grupo":"1"},
-            {"objeto":"192","auxiliar":"000","denominacion":"Elementos de limpieza y de aseo","descripcion":"Materiales para limpieza, jabones, escobas, lavandinas...","grupo":"1"},            {"objeto":"194","auxiliar":"000","denominacion":"Artículos menores médico quirúrgicos","descripcion":"Utiles menores y elementos descartables médico-quirúrgicos, jeringas, agujas, gasas...","grupo":"1"},
+            {"objeto":"191","auxiliar":"000","denominacion":"Útiles de oficina","descripcion":"Elementos necesarios para el funcionamiento normal de las oficinas, lápices, reglas, carpetas, útiles para escritorio...","grupo":"1"},
+            {"objeto":"192","auxiliar":"000","denominacion":"Elementos de limpieza y de aseo","descripcion":"Materiales para limpieza, jabones, escobas, lavandinas...","grupo":"1"},
+            {"objeto":"194","auxiliar":"000","denominacion":"Artículos menores médico quirúrgicos","descripcion":"Utiles menores y elementos descartables médico-quirúrgicos, jeringas, agujas, gasas, vendajes...","grupo":"1"},
             {"objeto":"211","auxiliar":"000","denominacion":"Teléfono, telégrafo y similares","descripcion":"Gastos por concepto de llamadas telefónicas, internet, wifi...","grupo":"2"},
             {"objeto":"212","auxiliar":"000","denominacion":"Agua","descripcion":"Gastos por los servicios de agua potable y sanitario.","grupo":"2"},
-            {"objeto":"213","auxiliar":"000","denominacion":"Electricidad","descripcion":"Gastos por consumo de energía eléctrica para alumbrado...","grupo":"2"},
-            {"objeto":"234","auxiliar":"000","denominacion":"Viáticos dentro del país","descripcion":"Erogaciones para atender gastos de alojamiento y alimentación...","grupo":"2"},
+            {"objeto":"213","auxiliar":"000","denominacion":"Electricidad","descripcion":"Gastos por consumo de energía eléctrica para alumbrado y uso en labores de oficina...","grupo":"2"},
+            {"objeto":"234","auxiliar":"000","denominacion":"Viáticos dentro del país","descripcion":"Erogaciones para atender gastos de alojamiento y alimentación del personal...","grupo":"2"},
             {"objeto":"251","auxiliar":"000","denominacion":"De inmuebles contratados dentro del país","descripcion":"Erogaciones por concepto de alquileres de inmuebles...","grupo":"2"},
-            {"objeto":"271","auxiliar":"000","denominacion":"De inmuebles e instalaciones","descripcion":"Servicios contratados para mantenimiento, reparaciones...","grupo":"2"},
-            {"objeto":"273","auxiliar":"000","denominacion":"De automotores","descripcion":"Servicios contratados para mantenimiento de vehículos...","grupo":"2"},
+            {"objeto":"271","auxiliar":"000","denominacion":"De inmuebles e instalaciones","descripcion":"Servicios contratados para mantenimiento, reparaciones menores y limpieza de edificios...","grupo":"2"},            {"objeto":"273","auxiliar":"000","denominacion":"De automotores","descripcion":"Servicios contratados para mantenimiento, reparaciones menores y limpieza de vehículos...","grupo":"2"},
             {"objeto":"283","auxiliar":"000","denominacion":"Servicios médicos, sanitarios y sociales","descripcion":"Servicios médicos y sanitarios de carácter extraordinario...","grupo":"2"},
-            {"objeto":"283","auxiliar":"007","denominacion":"Serv. internación en sanatorios y hospitales-Sector Salud","descripcion":"Auxiliar solicitado por ASSE para internación...","grupo":"2"},
-            {"objeto":"284","auxiliar":"000","denominacion":"Servicios de capacitación","descripcion":"Erogaciones destinadas a atender programas y cursos...","grupo":"2"},
-            {"objeto":"285","auxiliar":"000","denominacion":"Servicios informáticos y anexos","descripcion":"Gastos destinados al pago de servicios informáticos...","grupo":"2"},
-            {"objeto":"291","auxiliar":"000","denominacion":"Servicios de vigilancia y custodia","descripcion":"Erogaciones por servicios de vigilancia...","grupo":"2"},
-            {"objeto":"323","auxiliar":"000","denominacion":"Equipos de informática","descripcion":"Adquisición de computadores personales, laptops...","grupo":"3"},
-            {"objeto":"326","auxiliar":"000","denominacion":"Mobiliario de oficina","descripcion":"Muebles metálicos o de madera, escritorios, mesas...","grupo":"3"},
-            {"objeto":"353","auxiliar":"000","denominacion":"Otros vehículos automóviles","descripcion":"Automóviles, motos, camionetas, ambulancias...","grupo":"3"},
-            {"objeto":"387","auxiliar":"000","denominacion":"Vías de comunicación","descripcion":"Comprende los gastos en construcción de carreteras...","grupo":"3"},
-            {"objeto":"511","auxiliar":"000","denominacion":"A Empresas Públicas no Financieras","descripcion":"Clasifica los aportes a las Empresas Públicas...","grupo":"5"},
-            {"objeto":"551","auxiliar":"000","denominacion":"Científicas y de investigación","descripcion":"Clasifica las transferencias a instituciones científicas...","grupo":"5"},
-            {"objeto":"552","auxiliar":"000","denominacion":"Educativas","descripcion":"Clasifica las transferencias a instituciones educativas...","grupo":"5"},
-            {"objeto":"553","auxiliar":"000","denominacion":"De protección a la salud","descripcion":"Clasifica las transferencias a instituciones de salud...","grupo":"5"},
-            {"objeto":"554","auxiliar":"000","denominacion":"De asistencia social","descripcion":"Clasifica las transferencias a instituciones de asistencia...","grupo":"5"},
-            {"objeto":"555","auxiliar":"000","denominacion":"Deportivas, culturales y recreativas","descripcion":"Clasifica las transferencias a instituciones deportivas...","grupo":"5"},
-            {"objeto":"571","auxiliar":"000","denominacion":"Jubilaciones","descripcion":"Pago a personas que al cumplir el tiempo de servicio...","grupo":"5"},
-            {"objeto":"577","auxiliar":"000","denominacion":"Becas que no impliquen relación laboral","descripcion":"Clasifica el Objeto del Gasto asociado a Becas...","grupo":"5"},
-            {"objeto":"579","auxiliar":"048","denominacion":"TUS - canasta higiénica menstrual","descripcion":"Ley 20.375 faculta al PE a crear esta canasta...","grupo":"5"},
-            {"objeto":"711","auxiliar":"000","denominacion":"Sentencias judiciales","descripcion":"Pago de sentencias judiciales Art. 52 Ley 17.930...","grupo":"7"},
-            {"objeto":"793","auxiliar":"000","denominacion":"Indemnizaciones","descripcion":"Pago de indemnizaciones por despido, expropiación...","grupo":"7"},
-            {"objeto":"911","auxiliar":"000","denominacion":"Para solventar gastos corrientes","descripcion":"Gastos figurativos para solventar gastos corrientes...","grupo":"9"},
-            {"objeto":"923","auxiliar":"000","denominacion":"Para solventar aplicaciones financieras","descripcion":"Gastos figurativos para aplicaciones financieras...","grupo":"9"}
+            {"objeto":"283","auxiliar":"007","denominacion":"Serv. internación en sanatorios y hospitales-Sector Salud","descripcion":"Auxiliar solicitado por ASSE para internación en sanatorios y hospitales...","grupo":"2"},
+            {"objeto":"284","auxiliar":"000","denominacion":"Servicios de capacitación","descripcion":"Erogaciones destinadas a atender programas y cursos de capacitación...","grupo":"2"},
+            {"objeto":"285","auxiliar":"000","denominacion":"Servicios informáticos y anexos","descripcion":"Gastos destinados al pago de servicios informáticos, software, hosting...","grupo":"2"},
+            {"objeto":"291","auxiliar":"000","denominacion":"Servicios de vigilancia y custodia","descripcion":"Erogaciones por la prestación por parte de terceros de servicios de vigilancia...","grupo":"2"},
+            {"objeto":"323","auxiliar":"000","denominacion":"Equipos de informática","descripcion":"Adquisición de computadores personales, laptops, notebooks, servidores...","grupo":"3"},
+            {"objeto":"326","auxiliar":"000","denominacion":"Mobiliario de oficina","descripcion":"Muebles metálicos o de madera, escritorios, mesas, sillas...","grupo":"3"},
+            {"objeto":"353","auxiliar":"000","denominacion":"Otros vehículos automóviles","descripcion":"Automóviles, motos, camionetas, ambulancias, jeep...","grupo":"3"},
+            {"objeto":"387","auxiliar":"000","denominacion":"Vías de comunicación","descripcion":"Comprende los gastos en construcción de carreteras, caminos, calles, puentes...","grupo":"3"},
+            {"objeto":"511","auxiliar":"000","denominacion":"A Empresas Públicas no Financieras","descripcion":"Clasifica los aportes a las Empresas Públicas no Financieras...","grupo":"5"},
+            {"objeto":"551","auxiliar":"000","denominacion":"Científicas y de investigación","descripcion":"Clasifica las transferencias para gastos corrientes a instituciones privadas científicas...","grupo":"5"},
+            {"objeto":"552","auxiliar":"000","denominacion":"Educativas","descripcion":"Clasifica las transferencias para gastos corrientes a instituciones privadas educativas...","grupo":"5"},
+            {"objeto":"553","auxiliar":"000","denominacion":"De protección a la salud","descripcion":"Clasifica las transferencias para gastos corrientes a instituciones privadas de protección a la salud...","grupo":"5"},
+            {"objeto":"554","auxiliar":"000","denominacion":"De asistencia social","descripcion":"Clasifica las transferencias para gastos corrientes a instituciones privadas de asistencia social...","grupo":"5"},
+            {"objeto":"555","auxiliar":"000","denominacion":"Deportivas, culturales y recreativas","descripcion":"Clasifica las transferencias para gastos corrientes a instituciones deportivas, culturales...","grupo":"5"},
+            {"objeto":"571","auxiliar":"000","denominacion":"Jubilaciones","descripcion":"Pago a personas que al cumplir el tiempo de servicio y la edad reglamentaria...","grupo":"5"},
+            {"objeto":"577","auxiliar":"000","denominacion":"Becas que no impliquen relación laboral","descripcion":"Clasifica el Objeto del Gasto asociado a Becas...","grupo":"5"}
         ];
 
         // ============================================
-        // 🧠 BASE DE CONOCIMIENTO - MAPEO SEMÁNTICO
+        // 🔍 VARIABLES GLOBALES
+        // ============================================
+        let datosCompletos = datosCSV;
+        let limiteResultados = 20;
+        let filtroGrupo = '';
+        let searchCount = 0;
+        let customKeywords = {};
+        let apiSettings = {
+            googleApiKey: '',
+            googleCx: ''
+        };
+
+        // ============================================
+        // 🧠 MAPEO DE PALABRAS CLAVE (IA BASE)
         // ============================================
         const keywordsMap = {
             'sueldo': ['011', '021', '031'],
@@ -536,8 +635,8 @@
             'combustible': ['141'],
             'nafta': ['141'],
             'gasoil': ['141'],
-            'lubricante': ['141'],
-            'aceite motor': ['141'],            'medicamento': ['152'],
+            'lubricante': ['141'],            'aceite motor': ['141'],
+            'medicamento': ['152'],
             'droga': ['152'],
             'farmaco': ['152'],
             'vehiculo': ['353'],
@@ -579,26 +678,14 @@
             'impuesto': ['263'],
             'herramienta': ['176'],
             'lima': ['176'],
-            'ferreteria': ['176'],
             'plomeria': ['271'],
             'cañeria': ['271'],
             'material medico': ['194'],
             'quirurgico': ['194'],
-            'jeringa': ['194'],
-            'sentencia': ['711'],
-            'indemnizacion': ['793'],            'expropiacion': ['793']
+            'jeringa': ['194']
         };
-
         // ============================================
-        // 🧠 SISTEMA DE APRENDIZAJE DE IA
-        // ============================================
-        let customKeywords = {};
-        let searchCount = 0;
-        let limiteResultados = 20;
-        let filtroGrupo = '';
-
-        // ============================================
-        // 💾 PERSISTENCIA (LocalStorage)
+        // 💾 CARGAR/GUARDAR DATOS
         // ============================================
         
         function loadCustomKeywords() {
@@ -625,8 +712,103 @@
             document.getElementById('customKeywordsCount').textContent = count;
         }
 
+        function loadApiSettings() {
+            const saved = localStorage.getItem('hospital_flores_api_settings');
+            if (saved) {
+                try {
+                    apiSettings = JSON.parse(saved);
+                    document.getElementById('googleApiKey').value = apiSettings.googleApiKey || '';
+                    document.getElementById('googleCx').value = apiSettings.googleCx || '';
+                } catch (e) {
+                    apiSettings = { googleApiKey: '', googleCx: '' };
+                }
+            }
+        }
+
+        function saveApiSettings() {
+            apiSettings.googleApiKey = document.getElementById('googleApiKey').value.trim();
+            apiSettings.googleCx = document.getElementById('googleCx').value.trim();
+            localStorage.setItem('hospital_flores_api_settings', JSON.stringify(apiSettings));
+            alert('✅ Configuración de API guardada');
+        }
+
+        function clearApiSettings() {
+            apiSettings = { googleApiKey: '', googleCx: '' };            localStorage.setItem('hospital_flores_api_settings', JSON.stringify(apiSettings));
+            document.getElementById('googleApiKey').value = '';
+            document.getElementById('googleCx').value = '';
+            alert('🗑️ Configuración de API limpiada');
+        }
+
         // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA CON IA
+        // 🌐 APIs DE INTERNET
+        // ============================================
+        
+        async function buscarWikipedia(term) {
+            try {
+                const response = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(term)}`);
+                const data = await response.json();
+                if (data.extract) {
+                    return {
+                        title: data.title,
+                        extract: data.extract.substring(0, 300) + '...',
+                        url: data.content_urls?.desktop?.page || ''
+                    };
+                }
+                return null;
+            } catch (error) {
+                console.log('Wikipedia error:', error);
+                return null;
+            }
+        }
+
+        async function buscarDatamuse(term) {
+            try {
+                const response = await fetch(`https://api.datamuse.com/words?ml=${encodeURIComponent(term)}&max=10`);
+                const data = await response.json();
+                return data.map(item => item.word);
+            } catch (error) {
+                console.log('Datamuse error:', error);
+                return [];
+            }
+        }
+
+        async function buscarGoogle(term) {
+            if (!apiSettings.googleApiKey || !apiSettings.googleCx) {
+                return [];
+            }
+            
+            try {
+                const response = await fetch(`https://www.googleapis.com/customsearch/v1?key=${apiSettings.googleApiKey}&cx=${apiSettings.googleCx}&q=${encodeURIComponent(term)}`);
+                const data = await response.json();
+                return data.items || [];
+            } catch (error) {
+                console.log('Google API error:', error);                return [];
+            }
+        }
+
+        async function buscarEnInternet(query) {
+            const results = {
+                wikipedia: null,
+                sinonimos: [],
+                google: []
+            };
+            
+            // Búsquedas en paralelo (más rápido)
+            const [wiki, datamuse, google] = await Promise.all([
+                buscarWikipedia(query),
+                buscarDatamuse(query),
+                buscarGoogle(query)
+            ]);
+            
+            results.wikipedia = wiki;
+            results.sinonimos = datamuse;
+            results.google = google;
+            
+            return results;
+        }
+
+        // ============================================
+        // 🧠 FUNCIONES DE BÚSQUEDA
         // ============================================
         
         function normalizar(texto) {
@@ -635,12 +817,13 @@
             texto = texto.replace(/[áàäâ]/g, 'a');
             texto = texto.replace(/[éèëê]/g, 'e');
             texto = texto.replace(/[íìïî]/g, 'i');
-            texto = texto.replace(/[óòöô]/g, 'o');            texto = texto.replace(/[úùüû]/g, 'u');
+            texto = texto.replace(/[óòöô]/g, 'o');
+            texto = texto.replace(/[úùüû]/g, 'u');
             texto = texto.replace(/ñ/g, 'n');
             return texto;
         }
 
-        function calcularRelevancia(query, item) {
+        function calcularRelevancia(query, item, internetResults = null) {
             const queryNorm = normalizar(query);
             const textoCompleto = normalizar(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
             const denomNorm = normalizar(item.denominacion);
@@ -648,7 +831,7 @@
             
             let score = 0;
             let keywordEncontrada = null;
-            let esPersonalizada = false;
+            let esPersonalizada = false;            let esDeInternet = false;
             
             // 1. Palabras personalizadas (MÁXIMA PRIORIDAD)
             if (customKeywords[queryNorm]) {
@@ -669,24 +852,37 @@
                 }
             }
             
-            // 3. Coincidencia exacta en denominación
+            // 3. Resultados de Internet (sinónimos)
+            if (internetResults?.sinonimos) {
+                for (const sinonimo of internetResults.sinonimos) {
+                    if (textoCompleto.includes(normalizar(sinonimo))) {
+                        score += 25;
+                        if (!keywordEncontrada) {
+                            keywordEncontrada = sinonimo;
+                            esDeInternet = true;
+                        }
+                    }
+                }
+            }
+            
+            // 4. Coincidencia en denominación
             if (denomNorm.includes(queryNorm)) {
                 score += 40;
                 if (!keywordEncontrada) keywordEncontrada = 'denominación';
             }
             
-            // 4. Coincidencia en descripción
+            // 5. Coincidencia en descripción
             if (descNorm.includes(queryNorm)) {
                 score += 30;
                 if (!keywordEncontrada) keywordEncontrada = 'descripción';
             }
             
-            // 5. Coincidencia en código
+            // 6. Coincidencia en código
             if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
                 score += 60;
                 if (!keywordEncontrada) keywordEncontrada = 'código';            }
             
-            // 6. Búsqueda por palabras parciales
+            // 7. Búsqueda por palabras parciales
             const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
             palabrasQuery.forEach(palabra => {
                 if (textoCompleto.includes(palabra)) {
@@ -698,33 +894,71 @@
             return {
                 score: Math.min(score, 100),
                 keyword: keywordEncontrada,
-                esPersonalizada: esPersonalizada
+                esPersonalizada,
+                esDeInternet
             };
         }
 
-        function buscar() {
+        async function buscar() {
             const query = document.getElementById('searchInput').value.trim();
             const resultsDiv = document.getElementById('results');
+            const internetDiv = document.getElementById('internetResults');
+            const searchBtn = document.getElementById('searchBtn');
             
             if (!query || query.length < 2) {
                 resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa al menos 2 caracteres para buscar</div>';
                 return;
             }
             
-            const startTime = performance.now();
             searchCount++;
             document.getElementById('searchCount').textContent = searchCount;
+            searchBtn.disabled = true;
+            searchBtn.textContent = '⏳ Buscando...';
             
-            resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en ' + datosCompletos.length + ' objetos...</div>';
+            const startTime = performance.now();
             
-            setTimeout(() => {
+            try {
+                // 1. Buscar en Internet (en paralelo)
+                const internetResults = await buscarEnInternet(query);
+                
+                // 2. Mostrar resultados de Internet
+                if (internetResults.wikipedia || internetResults.sinonimos.length > 0 || internetResults.google.length > 0) {
+                    let html = `<h4>🌐 Información de Internet para "<strong>${query}</strong>":</h4>`;
+                    
+                    if (internetResults.wikipedia) {
+                        html += `
+                            <div class="internet-item">
+                                <h5>📚 Wikipedia</h5>
+                                <p><strong>${internetResults.wikipedia.title}</strong></p>                                <p>${internetResults.wikipedia.extract}</p>
+                                ${internetResults.wikipedia.url ? `<a href="${internetResults.wikipedia.url}" target="_blank" style="color: #8a2be2;">Ver más →</a>` : ''}
+                            </div>
+                        `;
+                    }
+                    
+                    if (internetResults.sinonimos.length > 0) {
+                        html += `
+                            <div class="internet-item">
+                                <h5>🔤 Sinónimos y palabras relacionadas</h5>
+                                <p>${internetResults.sinonimos.slice(0, 10).join(', ')}</p>
+                            </div>
+                        `;
+                    }
+                    
+                    internetDiv.innerHTML = html;
+                    internetDiv.style.display = 'block';
+                } else {
+                    internetDiv.style.display = 'none';
+                }
+                
+                // 3. Buscar en CSV con contexto de Internet
                 let resultados = datosCompletos.map(item => {
-                    const relevancia = calcularRelevancia(query, item);
-                    return { 
-                        ...item, 
+                    const relevancia = calcularRelevancia(query, item, internetResults);
+                    return {
+                        ...item,
                         relevancia: relevancia.score,
                         keywordEncontrada: relevancia.keyword,
-                        esPersonalizada: relevancia.esPersonalizada
+                        esPersonalizada: relevancia.esPersonalizada,
+                        esDeInternet: relevancia.esDeInternet
                     };
                 });
                 
@@ -733,34 +967,37 @@
                 if (filtroGrupo) {
                     resultados = resultados.filter(r => r.grupo === filtroGrupo);
                 }
-                                resultados.sort((a, b) => b.relevancia - a.relevancia);
+                
+                resultados.sort((a, b) => b.relevancia - a.relevancia);
                 resultados = resultados.slice(0, limiteResultados);
                 
                 const endTime = performance.now();
                 const searchTime = Math.round(endTime - startTime);
-                
-                document.getElementById('ultimaBusqueda').textContent = resultados.length;
                 document.getElementById('searchTime').textContent = searchTime + 'ms';
                 
+                document.getElementById('ultimaBusqueda').textContent = resultados.length;
+                
                 if (resultados.length === 0) {
-                    resultsDiv.innerHTML = `
-                        <div class="no-results">
+                    resultsDiv.innerHTML = `                        <div class="no-results">
                             <h2>❌ No se encontraron resultados</h2>
                             <p style="margin-top: 15px;">Intentá con otros términos o verificá la ortografía</p>
-                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: sueldo, harina, combustible, medicamento, vehículo, regla, internación, útiles, lapiz, aceite, lima, ferreteria, plomeria</p>
+                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: sueldo, harina, combustible, medicamento, vehículo, regla, internación, útiles, lima</p>
+                            <p style="margin-top: 10px; color: #28a745;">📝 ¿No encontrás lo que buscás? Agregá tu palabra en "Gestionar Palabras Personalizadas"</p>
                         </div>
                     `;
+                    searchBtn.disabled = false;
+                    searchBtn.textContent = '🔎 Buscar con IA';
                     return;
                 }
                 
                 let html = `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; font-weight: 600;">
                     ✅ <strong>${resultados.length}</strong> resultados encontrados 
-                    (de ${datosCompletos.length} objetos totales) - ⚡ ${searchTime}ms
+                    (de ${datosCompletos.length} registros totales) - ⚡ ${searchTime}ms
                 </div>`;
                 
                 resultados.forEach((r, index) => {
                     html += `
-                        <div class="result-card ${index === 0 ? 'selected' : ''}" onclick="selectResult('${r.objeto}', '${r.auxiliar}')">
+                        <div class="result-card ${index === 0 ? 'selected' : ''}" onclick="selectResult('${r.objeto}', '${r.auxiliar}', '${r.denominacion.replace(/'/g, "\\'")}')">
                             <div class="result-header">
                                 <span class="codigo-badge">${r.objeto}/${r.auxiliar}</span>
                                 <span class="relevancia-badge">📊 Relevancia: ${r.relevancia}%</span>
@@ -770,19 +1007,29 @@
                             <div class="categoria-tag">📁 Grupo ${r.grupo}</div>
                             ${r.keywordEncontrada ? `<div class="keyword-match">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
                             ${r.esPersonalizada ? `<div class="custom-keyword-badge">⭐ Palabra Personalizada</div>` : ''}
+                            ${r.esDeInternet ? `<div class="internet-badge">🌐 Encontrado por Internet</div>` : ''}
                             ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
                         </div>
                     `;
                 });
                 
                 resultsDiv.innerHTML = html;
-            }, 100);
+                
+            } catch (error) {
+                console.error('Error en búsqueda:', error);
+                resultsDiv.innerHTML = '<div class="error">❌ Error en la búsqueda. Intentá de nuevo.</div>';
+            }
+            
+            searchBtn.disabled = false;
+            searchBtn.textContent = '🔎 Buscar con IA';
         }
 
-        function selectResult(objeto, auxiliar) {
-            const card = event.target.closest('.result-card');
-            document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');            
+        function selectResult(objeto, auxiliar, denominacion) {
+            const query = document.getElementById('searchInput').value.trim();
+            
+            const card = event.target.closest('.result-card');            document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            
             const feedback = document.createElement('div');
             feedback.style.cssText = 'background: rgba(0,60,165,0.1); border: 2px solid #003ca5; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; color: #003ca5; font-weight: 600;';
             feedback.innerHTML = `✅ Objeto ${objeto}/${auxiliar} seleccionado`;
@@ -803,7 +1050,7 @@
         
         function toggleCustomKeywordsPanel() {
             const panel = document.getElementById('customKeywordsPanel');
-            const btn = document.querySelector('.toggle-panel-btn');
+            const btn = document.getElementById('togglePanelBtn');
             if (panel.style.display === 'none' || panel.style.display === '') {
                 panel.style.display = 'block';
                 btn.textContent = '📝 Ocultar Palabras Personalizadas';
@@ -811,6 +1058,11 @@
                 panel.style.display = 'none';
                 btn.textContent = '📝 Gestionar Palabras Personalizadas';
             }
+        }
+
+        function toggleApiSettingsPanel() {
+            const panel = document.getElementById('apiSettingsPanel');
+            panel.style.display = panel.style.display === 'none' || panel.style.display === '' ? 'block' : 'none';
         }
 
         function addCustomKeyword() {
@@ -823,16 +1075,8 @@
                 return;
             }
             
-            // Validar que el objeto exista
-            const objetoExiste = datosCompletos.some(d => d.objeto === objeto);
-            if (!objetoExiste) {
-                if (!confirm(`⚠️ El objeto ${objeto} no existe en la base de datos. ¿Querés agregarlo de todos modos?`)) {
-                    return;
-                }
-            }
-            
-            if (!customKeywords[keyword]) {                customKeywords[keyword] = [];
-            }
+            if (!customKeywords[keyword]) {
+                customKeywords[keyword] = [];            }
             
             const yaExiste = customKeywords[keyword].some(k => k.objeto === objeto && k.auxiliar === auxiliar);
             if (yaExiste) {
@@ -880,8 +1124,8 @@
         function renderCustomKeywordsList() {
             const list = document.getElementById('keywordsList');
             const keywords = Object.keys(customKeywords).sort();
-                        if (keywords.length === 0) {
-                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>';
+            
+            if (keywords.length === 0) {                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>';
                 return;
             }
             
@@ -929,8 +1173,8 @@
             reader.onload = function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
-                                        Object.keys(imported).forEach(keyword => {
-                        if (!customKeywords[keyword]) {
+                    
+                    Object.keys(imported).forEach(keyword => {                        if (!customKeywords[keyword]) {
                             customKeywords[keyword] = [];
                         }
                         imported[keyword].forEach(mapping => {
@@ -957,11 +1201,6 @@
         // ⚙️ FUNCIONES DE UTILIDAD
         // ============================================
         
-        function buscarCon(termino) {
-            document.getElementById('searchInput').value = termino;
-            buscar();
-        }
-
         function setLimite(limite) {
             limiteResultados = limite;
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -978,13 +1217,13 @@
                 if (btn.textContent.includes('Grupo')) {
                     btn.classList.remove('active');
                     if (btn.textContent.includes('Grupo ' + grupo)) btn.classList.add('active');
-                }            });
+                }
+            });
             buscar();
         }
 
         function limpiarFiltros() {
-            filtroGrupo = '';
-            document.querySelectorAll('.filter-btn').forEach(btn => {
+            filtroGrupo = '';            document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.textContent.includes('20 resultados')) btn.classList.add('active');
             });
@@ -992,21 +1231,6 @@
             document.getElementById('results').innerHTML = '';
             document.getElementById('ultimaBusqueda').textContent = '0';
             document.getElementById('searchTime').textContent = '0ms';
-        }
-
-        function cargarSugerencias() {
-            const sugerencias = [
-                'sueldo', 'harina', 'combustible', 'medicamento', 'vehiculo',
-                'regla', 'internacion', 'computadora', 'utiles', 'limpieza',
-                'electricidad', 'telefono', 'viatico', 'alquiler', 'jubilacion',
-                'beca', 'capacitacion', 'mantenimiento', 'lapiz', 'aceite',
-                'lima', 'ferreteria', 'plomeria', 'herramienta', 'sentencia'
-            ];
-            
-            const grid = document.getElementById('sugerenciasGrid');
-            grid.innerHTML = sugerencias.map(s => 
-                `<div class="sugerencia-item" onclick="buscarCon('${s}')">${s}</div>`
-            ).join('');
         }
 
         // ============================================
@@ -1019,13 +1243,16 @@
             };
             
             document.getElementById('totalRegistros').textContent = datosCompletos.length;
+            document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
             
             loadCustomKeywords();
-            cargarSugerencias();
+            loadApiSettings();
             
             console.log('✅ Buscador IA cargado');
-            console.log('📊 Objetos disponibles:', datosCompletos.length);
-            console.log('🎯 Grupos: 0-9');
+            console.log('📊 Registros:', datosCompletos.length);
+            console.log('📚 Palabras personalizadas:', Object.keys(customKeywords).length);
+            console.log('🌐 Internet:', apiSettings.googleApiKey ? 'Google API' : 'APIs gratuitas');
         };
-    </script></body>
+    </script>
+</body>
 </html>
