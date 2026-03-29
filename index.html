@@ -46,18 +46,8 @@
             font-weight: 500;
         }
         
-        .ai-status {
-            background: rgba(0,60,165,0.1);            border: 2px solid #003ca5;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .ai-status span { color: #003ca5; font-weight: 600; }
-        
         .upload-section {
-            background: #f8f9fa;
-            padding: 40px;
+            background: #f8f9fa;            padding: 40px;
             border-radius: 15px;
             text-align: center;
             margin-bottom: 30px;
@@ -96,7 +86,8 @@
         }
         .stat-number {
             font-size: 2em;
-            font-weight: 700;            color: #003ca5;
+            font-weight: 700;
+            color: #003ca5;
         }
         .stat-label {
             font-size: 0.9em;
@@ -104,48 +95,13 @@
             font-weight: 500;
         }
         
-        .internet-results {
-            display: none;
-            background: rgba(138,43,226,0.05);
-            border: 2px solid #8a2be2;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .internet-results h4 {
-            color: #8a2be2;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .internet-item {
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 3px solid #8a2be2;
-        }
-        .internet-item h5 {
-            color: #8a2be2;
-            margin-bottom: 8px;
-        }
-        .internet-item a {
-            color: #003ca5;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .internet-item a:hover {
-            text-decoration: underline;
-        }
-        
         .search-container {
-            display: none;
-            background: #f8f9fa;
+            display: none;            background: #f8f9fa;
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
-            border: 2px solid #003ca5;        }
+            border: 2px solid #003ca5;
+        }
         .search-box { display: flex; gap: 15px; margin-bottom: 20px; }
         .search-box input {
             flex: 1;
@@ -189,12 +145,12 @@
             cursor: pointer;
             transition: all 0.3s;
             font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-            font-size: 14px;
+            font-weight: 500;            font-size: 14px;
         }
         .filter-btn:hover, .filter-btn.active {
             background: #002d7a;
-        }        
+        }
+        
         .sugerencias {
             margin-top: 20px;
             padding: 20px;
@@ -238,12 +194,12 @@
             box-shadow: 0 2px 10px rgba(0,60,165,0.1);
         }
         .result-card:hover {
-            transform: translateX(10px);
-            background: #f8f9fa;
+            transform: translateX(10px);            background: #f8f9fa;
             box-shadow: 0 4px 20px rgba(0,60,165,0.2);
         }
         .result-card.selected {
-            border-left-color: #ff6b00;            background: #fff5f0;
+            border-left-color: #ff6b00;
+            background: #fff5f0;
         }
         .codigo-badge {
             background: #003ca5;
@@ -268,6 +224,8 @@
             background: #f8f9fa;
             padding: 15px;
             border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
         }
         .relevancia-badge {
             background: rgba(0,60,165,0.1);
@@ -285,14 +243,14 @@
             border-radius: 15px;
             font-size: 0.85em;
             margin-top: 10px;
-        }
-        .grupo-tag {
+        }        .grupo-tag {
             display: inline-block;
             background: #f8f9fa;
             color: #666;
             padding: 3px 10px;
             border-radius: 10px;
-            font-size: 0.75em;            margin-left: 10px;
+            font-size: 0.75em;
+            margin-left: 10px;
         }
         
         .loading { text-align: center; padding: 50px; color: #666; }
@@ -306,12 +264,125 @@
         }
         .no-results { text-align: center; padding: 50px; color: #666; }
         
+        .custom-keywords-panel {
+            display: none;
+            background: rgba(40,167,69,0.1);
+            border: 2px solid #28a745;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .custom-keywords-panel h3 {
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .add-keyword-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: #003ca5;
+            font-size: 0.9em;
+        }
+        .add-keyword-form input {            padding: 12px 15px;
+            border: 2px solid #003ca5;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .add-keyword-form button {
+            padding: 12px 25px;
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }
+        .add-keyword-form button:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        .keywords-list {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .keyword-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #28a745;
+        }
+        .keyword-item-info {
+            flex: 1;
+        }
+        .keyword-item-word {
+            font-weight: 700;
+            color: #28a745;
+            font-size: 1.1em;
+        }
+        .keyword-item-object {
+            color: #003ca5;
+            font-size: 0.9em;
+            margin-top: 5px;        }
+        .keyword-item-delete {
+            background: #dc3545;
+            color: #ffffff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s;
+        }
+        .keyword-item-delete:hover {
+            background: #c82333;
+        }
+        
+        .toggle-panel-btn {
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .toggle-panel-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        
         @media (max-width: 768px) {
             .header { flex-direction: column; text-align: center; }
             .logo-container { flex-direction: column; }
             .search-box { flex-direction: column; }
             .stats-bar { flex-direction: column; align-items: center; }
             .header h1 { font-size: 1.5em; }
+            .add-keyword-form {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -319,29 +390,23 @@
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="logo_hospital_flores.png" alt="Hospital de Flores ASSE" class="logo-img" id="hospitalLogo" onerror="this.style.display='none'">
-                <div class="header-text">
+                <img src="logo_hospital_flores.png" alt="Hospital de Flores ASSE" class="logo-img" id="hospitalLogo" onerror="this.style.display='none'">                <div class="header-text">
                     <h1>🏥 Hospital de Flores "Edison Camacho"</h1>
                     <p>Sector Contaduría | Clasificador de Objetos del Gasto</p>
                 </div>
             </div>
         </div>
         
-        <div class="ai-status">
-            📋 <span id="aiStatusText">Lista actualizada</span> | 
-            🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
-            🌐 Internet: <span id="internetStatus">Activo</span>
-        </div>
-        
         <!-- Carga de CSV -->
         <div class="upload-section" id="uploadSection">
             <h2 style="color: #003ca5; margin-bottom: 20px;">📂 Paso 1: Cargá tu archivo CSV</h2>
             <p style="margin: 20px 0; color: #666; font-size: 1.1em;">
-                Seleccioná el archivo <strong>ObjetosGasto.csv</strong> que descargaste de la CGN
+                Seleccioná el archivo <strong>ObjetosGasto.csv</strong> que descargaste de la CGN (923 objetos)
             </p>
             <label class="upload-btn">
                 📥 Seleccionar Archivo CSV
-                <input type="file" id="csvFile" accept=".csv">            </label>
+                <input type="file" id="csvFile" accept=".csv">
+            </label>
             <p id="fileName" style="margin-top: 20px; color: #28a745; font-weight: 600;"></p>
             <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
                 🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
@@ -355,8 +420,8 @@
                 <div class="stat-label">Objetos Cargados</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number" id="totalObjetos">0</div>
-                <div class="stat-label">Objetos Únicos</div>
+                <div class="stat-number" id="totalAuxiliares">0</div>
+                <div class="stat-label">Auxiliares</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number" id="ultimaBusqueda">0</div>
@@ -364,8 +429,44 @@
             </div>
         </div>
         
-        <!-- Resultados de Internet -->
-        <div class="internet-results" id="internetResults"></div>
+        <!-- Botón para mostrar/ocultar panel de palabras personalizadas -->
+        <button class="toggle-panel-btn" onclick="toggleCustomKeywordsPanel()" id="togglePanelBtn" style="display: none;">
+            📝 Gestionar Palabras Personalizadas
+        </button>
+        
+        <!-- Panel de Palabras Personalizadas -->
+        <div class="custom-keywords-panel" id="customKeywordsPanel">
+            <h3>📝 Agregar Palabras Personalizadas</h3>
+            <p style="margin-bottom: 20px; color: #666;">
+                Agregá tus propias palabras para que el buscador las reconozca en futuras búsquedas.
+            </p>            
+            <div class="add-keyword-form">
+                <div class="form-group">
+                    <label for="newKeyword">Palabra o Término:</label>
+                    <input type="text" id="newKeyword" placeholder="Ej: insumos, descartables, lima...">
+                </div>
+                <div class="form-group">
+                    <label for="newObjeto">Objeto:</label>
+                    <input type="text" id="newObjeto" placeholder="Ej: 191">
+                </div>
+                <div class="form-group">
+                    <label for="newAuxiliar">Auxiliar:</label>
+                    <input type="text" id="newAuxiliar" placeholder="Ej: 000" value="000">
+                </div>
+                <button onclick="addCustomKeyword()">➕ Agregar Palabra</button>
+            </div>
+            
+            <div class="keywords-list" id="keywordsList">
+                <p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="exportCustomKeywords()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📤 Exportar Palabras</button>
+                <button onclick="document.getElementById('importFile').click()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📥 Importar Palabras</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImport(event)">
+                <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">🗑️ Limpiar Todas</button>
+            </div>
+        </div>
         
         <!-- Buscador -->
         <div class="search-container" id="searchContainer">
@@ -373,7 +474,7 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lapiz, aceite..."
+                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lapiz, aceite, lima, ferreteria, plomeria..."
                     onkeypress="if(event.key === 'Enter') buscar()"
                 >
                 <button onclick="buscar()">🔎 Buscar Objeto</button>
@@ -387,10 +488,10 @@
                 <button class="filter-btn" onclick="filtrarGrupo('1')">Grupo 1</button>
                 <button class="filter-btn" onclick="filtrarGrupo('2')">Grupo 2</button>
                 <button class="filter-btn" onclick="filtrarGrupo('3')">Grupo 3</button>
-                <button class="filter-btn" onclick="filtrarGrupo('4')">Grupo 4</button>
-                <button class="filter-btn" onclick="filtrarGrupo('5')">Grupo 5</button>
+                <button class="filter-btn" onclick="filtrarGrupo('4')">Grupo 4</button>                <button class="filter-btn" onclick="filtrarGrupo('5')">Grupo 5</button>
                 <button class="filter-btn" onclick="filtrarGrupo('6')">Grupo 6</button>
-                <button class="filter-btn" onclick="filtrarGrupo('7')">Grupo 7</button>                <button class="filter-btn" onclick="filtrarGrupo('8')">Grupo 8</button>
+                <button class="filter-btn" onclick="filtrarGrupo('7')">Grupo 7</button>
+                <button class="filter-btn" onclick="filtrarGrupo('8')">Grupo 8</button>
                 <button class="filter-btn" onclick="filtrarGrupo('9')">Grupo 9</button>
                 <button class="filter-btn" onclick="limpiarFiltros()">🔄 Limpiar</button>
             </div>
@@ -411,65 +512,107 @@
         let datosCompletos = [];
         let limiteResultados = 20;
         let filtroGrupo = '';
-        let searchCount = 0;
+        let customKeywords = {};
 
         // ============================================
-        // 🔍 BÚSQUEDA EN INTERNET
+        // 🧠 BASE DE CONOCIMIENTO - MAPEO SEMÁNTICO
+        // ============================================
+        const keywordsMap = {
+            'sueldo': ['011', '021', '031'],
+            'salario': ['011', '021'],
+            'harina': ['111'],
+            'lechuga': ['111'],
+            'arroz': ['111'],
+            'carne': ['111'],
+            'aceite': ['111'],
+            'aceite comestible': ['111'],
+            'aceite de cocina': ['111'],
+            'combustible': ['141'],
+            'nafta': ['141'],
+            'gasoil': ['141'],
+            'lubricante': ['141'],
+            'aceite motor': ['141'],
+            'medicamento': ['152'],
+            'droga': ['152'],
+            'farmaco': ['152'],
+            'vehiculo': ['353'],
+            'auto': ['353'],
+            'camioneta': ['353'],            'internacion': ['283'],
+            'hospital': ['283'],
+            'sanatorio': ['283'],
+            'computadora': ['323'],
+            'laptop': ['323'],
+            'notebook': ['323'],
+            'limpieza': ['192', '278'],
+            'jabon': ['192'],
+            'escoba': ['192'],
+            'electricidad': ['213'],
+            'luz': ['213'],
+            'agua': ['212'],
+            'telefono': ['211'],
+            'internet': ['211'],
+            'regla': ['191', '176'],
+            'util': ['191'],
+            'oficina': ['191'],
+            'papel': ['131'],
+            'lapiz': ['191'],
+            'viatico': ['234', '235'],
+            'pasaje': ['231'],
+            'alquiler': ['251'],
+            'jubilacion': ['571'],
+            'beca': ['577'],
+            'capacitacion': ['284'],
+            'curso': ['284'],
+            'mantenimiento': ['271', '273'],
+            'reparacion': ['271', '273'],
+            'vigilancia': ['291'],
+            'seguridad': ['291'],
+            'mueble': ['326'],
+            'escritorio': ['326'],
+            'silla': ['326'],
+            'impuesto': ['263'],
+            'herramienta': ['176'],
+            'lima': ['176'],
+            'ferreteria': ['176'],
+            'plomeria': ['271'],
+            'cañeria': ['271'],
+            'material medico': ['194'],
+            'quirurgico': ['194'],
+            'jeringa': ['194']
+        };
+
+        // ============================================
+        // 💾 PERSISTENCIA (LocalStorage)
         // ============================================
         
-        async function buscarEnInternet(query) {
-            const internetDiv = document.getElementById('internetResults');
-            internetDiv.style.display = 'block';
-            internetDiv.innerHTML = '<div class="loading">🌐 Buscando en internet...</div>';
-            
-            let html = '<h4>🌐 Información de Internet para "<strong>' + query + '</strong>":</h4>';
-            let foundSomething = false;
-            
-            try {
-                // Búsqueda en Wikipedia
-                const wikiResponse = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
-                const wikiData = await wikiResponse.json();
-                
-                if (wikiData && wikiData.extract && !wikiData.type) {
-                    html += `
-                        <div class="internet-item">
-                            <h5>📚 Wikipedia</h5>
-                            <p><strong>${wikiData.title}</strong></p>
-                            <p>${wikiData.extract.substring(0, 300)}...</p>
-                            ${wikiData.content_urls?.desktop?.page ? `<a href="${wikiData.content_urls.desktop.page}" target="_blank">Ver más en Wikipedia →</a>` : ''}
-                        </div>
-                    `;
-                    foundSomething = true;                }
-                
-                // Búsqueda de sinónimos en Datamuse
-                const sinonimosResponse = await fetch(`https://api.datamuse.com/words?ml=${encodeURIComponent(query)}&max=5`);
-                const sinonimosData = await sinonimosResponse.json();
-                
-                if (sinonimosData && sinonimosData.length > 0) {
-                    const sinonimos = sinonimosData.map(s => s.word).join(', ');
-                    html += `
-                        <div class="internet-item">
-                            <h5>🔤 Sinónimos y palabras relacionadas</h5>
-                            <p>${sinonimos}</p>
-                        </div>
-                    `;
-                    foundSomething = true;
+        function loadCustomKeywords() {
+            const saved = localStorage.getItem('hospital_flores_custom_keywords_v3');            if (saved) {
+                try {
+                    customKeywords = JSON.parse(saved);
+                } catch (e) {
+                    customKeywords = {};
                 }
-                
-                if (foundSomething) {
-                    internetDiv.innerHTML = html;
-                } else {
-                    internetDiv.innerHTML = '<div class="error">⚠️ No se encontró información en internet</div>';
-                }
-                
-            } catch (error) {
-                console.log('Error en búsqueda internet:', error);
-                internetDiv.innerHTML = '<div class="error">⚠️ No se pudo obtener información de internet. Verificá tu conexión.</div>';
+            }
+            updateCustomKeywordsCount();
+            renderCustomKeywordsList();
+        }
+
+        function saveCustomKeywords() {
+            localStorage.setItem('hospital_flores_custom_keywords_v3', JSON.stringify(customKeywords));
+            updateCustomKeywordsCount();
+            renderCustomKeywordsList();
+        }
+
+        function updateCustomKeywordsCount() {
+            const count = Object.keys(customKeywords).length;
+            const badge = document.querySelector('.toggle-panel-btn');
+            if (badge && count > 0) {
+                badge.textContent = `📝 Gestionar Palabras Personalizadas (${count})`;
             }
         }
 
         // ============================================
-        // 💾 CARGA DEL CSV
+        // 📂 CARGA DEL CSV
         // ============================================
         document.getElementById('csvFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -488,11 +631,11 @@
             reader.readAsText(file, 'UTF-8');
         });
 
-        function procesarCSV(texto) {            try {
+        function procesarCSV(texto) {
+            try {
                 const lineas = texto.split('\n');
                 datosCompletos = [];
-                
-                // Saltar encabezado (línea 0)
+                                // Saltar encabezado (línea 0)
                 for (let i = 1; i < lineas.length; i++) {
                     const linea = lineas[i].trim();
                     if (!linea) continue;
@@ -535,14 +678,16 @@
                 }
                 
                 document.getElementById('totalRegistros').textContent = datosCompletos.length;
-                document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
+                document.getElementById('totalAuxiliares').textContent = [...new Set(datosCompletos.map(d => `${d.objeto}/${d.auxiliar}`))].length;
                 
-                document.getElementById('uploadSection').style.display = 'none';                document.getElementById('statsBar').style.display = 'flex';
+                document.getElementById('uploadSection').style.display = 'none';
+                document.getElementById('statsBar').style.display = 'flex';
+                document.getElementById('togglePanelBtn').style.display = 'inline-block';
                 document.getElementById('searchContainer').style.display = 'block';
-                
+                                loadCustomKeywords();
                 cargarSugerencias();
                 
-                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados (011 al 923). Ahora podés buscar.`);
+                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados. Ahora podés buscar.`);
                 
             } catch (error) {
                 console.error('Error procesando CSV:', error);
@@ -586,44 +731,64 @@
             const queryNorm = normalizar(query);
             const textoCompleto = normalizar(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
             const denomNorm = normalizar(item.denominacion);
-            const descNorm = normalizar(item.descripcion);            
-            let score = 0;
-            let keywordEncontrada = null;
+            const descNorm = normalizar(item.descripcion);
             
-            // 1. Coincidencia en código de objeto
-            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
-                score += 60;
-                keywordEncontrada = 'código';
+            let score = 0;            let keywordEncontrada = null;
+            let esPersonalizada = false;
+            
+            // 1. Palabras personalizadas (MÁXIMA PRIORIDAD)
+            if (customKeywords[queryNorm]) {
+                const mappings = customKeywords[queryNorm];
+                const coincide = mappings.some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
+                if (coincide) {
+                    score += 100;
+                    keywordEncontrada = queryNorm;
+                    esPersonalizada = true;
+                }
             }
             
-            // 2. Coincidencia exacta en denominación
+            // 2. Keywords mapeadas
+            if (keywordsMap[queryNorm]) {
+                if (keywordsMap[queryNorm].includes(item.objeto)) {
+                    score += 50;
+                    if (!keywordEncontrada) keywordEncontrada = queryNorm;
+                }
+            }
+            
+            // 3. Coincidencia exacta en denominación
             if (denomNorm.includes(queryNorm)) {
-                score += 50;
+                score += 40;
                 if (!keywordEncontrada) keywordEncontrada = 'denominación';
             }
             
-            // 3. Coincidencia en descripción
+            // 4. Coincidencia en descripción
             if (descNorm.includes(queryNorm)) {
-                score += 40;
+                score += 30;
                 if (!keywordEncontrada) keywordEncontrada = 'descripción';
             }
             
-            // 4. Búsqueda por palabras parciales
+            // 5. Coincidencia en código
+            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
+                score += 60;
+                if (!keywordEncontrada) keywordEncontrada = 'código';
+            }
+            
+            // 6. Búsqueda por palabras parciales
             const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
             palabrasQuery.forEach(palabra => {
                 if (textoCompleto.includes(palabra)) {
-                    score += 20;
+                    score += 15;
                     if (!keywordEncontrada) keywordEncontrada = palabra;
                 }
             });
             
-            return {
-                score: Math.min(score, 100),
-                keyword: keywordEncontrada
+            return {                score: Math.min(score, 100),
+                keyword: keywordEncontrada,
+                esPersonalizada: esPersonalizada
             };
         }
 
-        async function buscar() {
+        function buscar() {
             const query = document.getElementById('searchInput').value.trim();
             const resultsDiv = document.getElementById('results');
             
@@ -632,15 +797,7 @@
                 return;
             }
             
-            searchCount++;
-            document.getElementById('searchCount').textContent = searchCount;
-            
-            // Ocultar resultados anteriores de internet            document.getElementById('internetResults').style.display = 'none';
-            
             resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en ' + datosCompletos.length + ' objetos...</div>';
-            
-            // Búsqueda en internet en paralelo
-            buscarEnInternet(query);
             
             setTimeout(() => {
                 let resultados = datosCompletos.map(item => {
@@ -648,7 +805,8 @@
                     return { 
                         ...item, 
                         relevancia: relevancia.score,
-                        keywordEncontrada: relevancia.keyword
+                        keywordEncontrada: relevancia.keyword,
+                        esPersonalizada: relevancia.esPersonalizada
                     };
                 });
                 
@@ -668,13 +826,12 @@
                         <div class="no-results">
                             <h2>❌ No se encontraron resultados</h2>
                             <p style="margin-top: 15px;">Intentá con otros términos o verificá la ortografía</p>
-                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: harina, sueldo, combustible, medicamento, vehículo, regla, internación, útiles, lapiz, aceite</p>
+                            <p style="margin-top: 20px; color: #003ca5;">💡 Prueba con: sueldo, harina, combustible, medicamento, vehículo, regla, internación, útiles, lapiz, aceite, lima, ferreteria, plomeria</p>
                         </div>
                     `;
                     return;
                 }
-                
-                let html = `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; font-weight: 600;">
+                                let html = `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; font-weight: 600;">
                     ✅ <strong>${resultados.length}</strong> resultados encontrados 
                     (de ${datosCompletos.length} objetos totales)
                 </div>`;
@@ -684,12 +841,14 @@
                         <div class="result-card ${index === 0 ? 'selected' : ''}" onclick="selectResult('${r.objeto}', '${r.auxiliar}')">
                             <div class="result-header">
                                 <span class="codigo-badge">${r.objeto}/${r.auxiliar}</span>
-                                <span class="relevancia-badge">📊 Relevancia: ${r.relevancia}%</span>                            </div>
+                                <span class="relevancia-badge">📊 Relevancia: ${r.relevancia}%</span>
+                            </div>
                             <div class="denominacion">${r.denominacion}</div>
                             <div class="descripcion">${r.descripcion}</div>
                             ${r.categoria ? `<div class="categoria-tag">📁 ${r.categoria}</div>` : ''}
                             <span class="grupo-tag">Grupo ${r.grupo}</span>
                             ${r.keywordEncontrada ? `<div class="keyword-match" style="display:inline-block;background:rgba(255,107,0,0.1);color:#ff6b00;padding:4px 10px;border-radius:8px;font-size:0.75em;margin-top:8px;">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
+                            ${r.esPersonalizada ? `<div class="custom-keyword-badge" style="display:inline-block;background:rgba(40,167,69,0.1);color:#28a745;padding:4px 10px;border-radius:8px;font-size:0.75em;margin-top:8px;margin-left:8px;">⭐ Palabra Personalizada</div>` : ''}
                             ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
                         </div>
                     `;
@@ -719,6 +878,163 @@
         }
 
         // ============================================
+        // 📝 GESTIÓN DE PALABRAS PERSONALIZADAS
+        // ============================================
+                function toggleCustomKeywordsPanel() {
+            const panel = document.getElementById('customKeywordsPanel');
+            const btn = document.getElementById('togglePanelBtn');
+            if (panel.style.display === 'none' || panel.style.display === '') {
+                panel.style.display = 'block';
+                btn.textContent = '📝 Ocultar Palabras Personalizadas';
+            } else {
+                panel.style.display = 'none';
+                btn.textContent = '📝 Gestionar Palabras Personalizadas';
+            }
+        }
+
+        function addCustomKeyword() {
+            const keyword = document.getElementById('newKeyword').value.trim().toLowerCase();
+            const objeto = document.getElementById('newObjeto').value.trim();
+            const auxiliar = document.getElementById('newAuxiliar').value.trim() || '000';
+            
+            if (!keyword || !objeto) {
+                alert('⚠️ Por favor completá la palabra y el objeto');
+                return;
+            }
+            
+            // Validar que el objeto exista en los datos cargados
+            if (datosCompletos.length > 0) {
+                const objetoExiste = datosCompletos.some(d => d.objeto === objeto);
+                if (!objetoExiste) {
+                    if (!confirm(`⚠️ El objeto ${objeto} no existe en los datos cargados. ¿Querés agregarlo de todos modos?`)) {
+                        return;
+                    }
+                }
+            }
+            
+            if (!customKeywords[keyword]) {
+                customKeywords[keyword] = [];
+            }
+            
+            const yaExiste = customKeywords[keyword].some(k => k.objeto === objeto && k.auxiliar === auxiliar);
+            if (yaExiste) {
+                alert('⚠️ Esta palabra ya está asociada a este objeto');
+                return;
+            }
+            
+            customKeywords[keyword].push({
+                objeto: objeto,
+                auxiliar: auxiliar,
+                fecha: new Date().toISOString()
+            });
+            
+            saveCustomKeywords();
+                        document.getElementById('newKeyword').value = '';
+            document.getElementById('newObjeto').value = '';
+            document.getElementById('newAuxiliar').value = '000';
+            
+            alert('✅ ¡Palabra agregada correctamente! El buscador la reconocerá en futuras búsquedas.');
+        }
+
+        function deleteCustomKeyword(keyword, objeto, auxiliar) {
+            if (confirm(`¿Estás seguro de eliminar "${keyword}" → ${objeto}/${auxiliar}?`)) {
+                customKeywords[keyword] = customKeywords[keyword].filter(
+                    k => !(k.objeto === objeto && k.auxiliar === auxiliar)
+                );
+                
+                if (customKeywords[keyword].length === 0) {
+                    delete customKeywords[keyword];
+                }
+                
+                saveCustomKeywords();
+            }
+        }
+
+        function clearAllCustomKeywords() {
+            if (confirm('⚠️ ¿Estás seguro de eliminar TODAS las palabras personalizadas? Esta acción no se puede deshacer.')) {
+                customKeywords = {};
+                saveCustomKeywords();
+                alert('🗑️ Todas las palabras personalizadas fueron eliminadas.');
+            }
+        }
+
+        function renderCustomKeywordsList() {
+            const list = document.getElementById('keywordsList');
+            const keywords = Object.keys(customKeywords).sort();
+            
+            if (keywords.length === 0) {
+                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>';
+                return;
+            }
+            
+            let html = '';
+            keywords.forEach(keyword => {
+                customKeywords[keyword].forEach(mapping => {
+                    html += `
+                        <div class="keyword-item">
+                            <div class="keyword-item-info">
+                                <div class="keyword-item-word">📝 ${keyword}</div>
+                                <div class="keyword-item-object">→ Objeto ${mapping.objeto}/${mapping.auxiliar}</div>
+                            </div>
+                            <button class="keyword-item-delete" onclick="deleteCustomKeyword('${keyword}', '${mapping.objeto}', '${mapping.auxiliar}')">🗑️ Eliminar</button>
+                        </div>
+                    `;                });
+            });
+            
+            list.innerHTML = html;
+        }
+
+        function exportCustomKeywords() {
+            if (Object.keys(customKeywords).length === 0) {
+                alert('⚠️ No hay palabras personalizadas para exportar');
+                return;
+            }
+            
+            const data = JSON.stringify(customKeywords, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `palabras_personalizadas_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    
+                    Object.keys(imported).forEach(keyword => {
+                        if (!customKeywords[keyword]) {
+                            customKeywords[keyword] = [];
+                        }
+                        imported[keyword].forEach(mapping => {
+                            const yaExiste = customKeywords[keyword].some(
+                                k => k.objeto === mapping.objeto && k.auxiliar === mapping.auxiliar
+                            );
+                            if (!yaExiste) {
+                                customKeywords[keyword].push(mapping);
+                            }
+                        });
+                    });
+                    
+                    saveCustomKeywords();
+                    alert(`✅ Se importaron ${Object.keys(imported).length} palabras personalizadas`);
+                } catch (error) {                    alert('❌ Error al importar el archivo. Asegurate que sea un JSON válido.');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ============================================
         // ⚙️ FUNCIONES DE UTILIDAD
         // ============================================
         
@@ -733,7 +1049,8 @@
                 if (btn.textContent.includes('resultados')) {
                     btn.classList.remove('active');
                     if (btn.textContent.includes(limite)) btn.classList.add('active');
-                }            });
+                }
+            });
         }
 
         function filtrarGrupo(grupo) {
@@ -756,15 +1073,14 @@
             document.getElementById('searchInput').value = '';
             document.getElementById('results').innerHTML = '';
             document.getElementById('ultimaBusqueda').textContent = '0';
-            document.getElementById('internetResults').style.display = 'none';
         }
 
         function cargarSugerencias() {
-            const sugerencias = [
-                'harina', 'sueldo', 'combustible', 'medicamento', 'vehiculo',
+            const sugerencias = [                'sueldo', 'harina', 'combustible', 'medicamento', 'vehiculo',
                 'regla', 'internacion', 'computadora', 'utiles', 'limpieza',
                 'electricidad', 'telefono', 'viatico', 'alquiler', 'jubilacion',
-                'beca', 'capacitacion', 'mantenimiento', 'lapiz', 'aceite'
+                'beca', 'capacitacion', 'mantenimiento', 'lapiz', 'aceite',
+                'lima', 'ferreteria', 'plomeria'
             ];
             
             const grid = document.getElementById('sugerenciasGrid');
@@ -781,6 +1097,9 @@
             logoImg.onerror = function() {
                 this.style.display = 'none';
             };
+            
+            loadCustomKeywords();
         };
-    </script></body>
+    </script>
+</body>
 </html>
