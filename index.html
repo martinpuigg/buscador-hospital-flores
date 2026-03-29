@@ -2,97 +2,116 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Clasificador de Gasto</title>
+<title>Clasificador Inteligente</title>
+
 <style>
-body { font-family: Arial; padding:20px; }
+body { font-family: Arial; padding:20px; background:#f5f7fb; }
 input { padding:10px; width:300px; }
 button { padding:10px; }
-.result { margin-top:20px; padding:15px; border:2px solid #003ca5; border-radius:10px; }
+.result { margin-top:20px; padding:15px; border-left:5px solid #003ca5; background:white; }
 .sugerencias span {
     background:#003ca5; color:#fff; padding:5px 10px; margin:5px;
     display:inline-block; cursor:pointer; border-radius:5px;
 }
 </style>
 </head>
+
 <body>
 
-<h2>🏥 Clasificador de Objetos del Gasto</h2>
+<h2>🏥 Clasificador Inteligente</h2>
 
 <input type="file" id="csvFile"><br><br>
 
-<input type="text" id="searchInput" placeholder="Ej: carne, computadora..." onkeypress="if(event.key==='Enter') buscar()">
+<input type="text" id="searchInput" placeholder="Ej: carne, insumos..."
+onkeypress="if(event.key==='Enter') buscar()">
+
 <button onclick="buscar()">Buscar</button>
 
 <div class="sugerencias" id="sugerencias"></div>
-
 <div id="resultado"></div>
 
 <script>
+
 let datos = [];
+let memoria = JSON.parse(localStorage.getItem('memoria') || '{}');
 
 // ================= CSV =================
-document.getElementById('csvFile').addEventListener('change', function(e){
-    const file = e.target.files[0];
-    const reader = new FileReader();
+function parseCSVLine(line) {
+    let result=[], current='', inQuotes=false;
+    for (let char of line) {
+        if (char === '"') inQuotes = !inQuotes;
+        else if (char === ',' && !inQuotes) {
+            result.push(current); current='';
+        } else current += char;
+    }
+    result.push(current);
+    return result;
+}
 
+document.getElementById('csvFile').addEventListener('change', function(e){
+    const reader = new FileReader();
     reader.onload = function(e){
         const lines = e.target.result.split('\n');
         datos = [];
 
         for(let i=1;i<lines.length;i++){
-            let cols = lines[i].split(',');
-
-            if(cols.length >= 4){
+            let c = parseCSVLine(lines[i]);
+            if(c.length >= 4){
                 datos.push({
-                    objeto: cols[0].trim(),
-                    auxiliar: cols[1].trim(),
-                    denominacion: cols[2].trim(),
-                    descripcion: cols[3].trim()
+                    objeto:c[0].trim(),
+                    auxiliar:c[1].trim(),
+                    denominacion:c[2].replace(/^"|"$/g,'').trim(),
+                    descripcion:c[3].replace(/^"|"$/g,'').trim()
                 });
             }
         }
 
-        alert("CSV cargado: " + datos.length + " registros");
+        alert("CSV cargado");
     };
-
-    reader.readAsText(file);
+    reader.readAsText(e.target.files[0]);
 });
 
 // ================= NORMALIZAR =================
-function normalizar(t){
+function norm(t){
     return t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-// ================= REGLA FUERTE =================
-const alimentos = [
-'harina','lechuga','arroz','carne','pan','fideo','pasta','aceite','azucar','sal',
-'pollo','pescado','verdura','fruta','comida','alimento','leche','queso','huevo'
-];
+// ================= REGLA ALIMENTOS =================
+const alimentos = ['carne','arroz','harina','pan','leche','queso','pollo','pescado'];
 
 // ================= DEFINICIÓN =================
 function definicion(item){
-    return `Corresponde a un gasto utilizado para ${item.denominacion.toLowerCase()}, asociado al objeto ${item.objeto}.`;
+    return `Objeto ${item.objeto}: ${item.denominacion}`;
 }
 
 // ================= BUSCAR =================
 function buscar(){
-    const q = normalizar(document.getElementById('searchInput').value);
+
+    const q = norm(document.getElementById('searchInput').value);
     const div = document.getElementById('resultado');
 
     if(!q){ div.innerHTML="Escribí algo"; return; }
 
     let resultado;
 
-    // 🔥 SI ES ALIMENTO → 111 SIEMPRE
-    if(alimentos.some(a => q.includes(a))){
+    // 🔥 1. MEMORIA (PRIORIDAD MÁXIMA)
+    if(memoria[q]){
+        resultado = datos.find(d =>
+            d.objeto === memoria[q].objeto &&
+            d.auxiliar === memoria[q].auxiliar
+        );
+    }
+
+    // 🔥 2. REGLA ALIMENTOS
+    if(!resultado && alimentos.some(a=>q.includes(a))){
         resultado = datos.find(d => d.objeto === '111');
-    } else {
-        resultado = datos
-            .map(d => ({
-                ...d,
-                score: normalizar(d.denominacion + d.descripcion).includes(q) ? 1 : 0
-            }))
-            .sort((a,b)=>b.score-a.score)[0];
+    }
+
+    // 🔥 3. BÚSQUEDA NORMAL
+    if(!resultado){
+        resultado = datos.find(d =>
+            norm(d.denominacion + d.descripcion).includes(q)
+        );
     }
 
     if(!resultado){
@@ -100,23 +119,14 @@ function buscar(){
         return;
     }
 
+    // 🔥 GUARDAR APRENDIZAJE
+    memoria[q] = {
+        objeto: resultado.objeto,
+        auxiliar: resultado.auxiliar
+    };
+    localStorage.setItem('memoria', JSON.stringify(memoria));
+
     div.innerHTML = `
         <div class="result">
             <b>${resultado.objeto}/${resultado.auxiliar}</b><br><br>
-            <b>${resultado.denominacion}</b><br><br>
-            ${resultado.descripcion}<br><br>
-            🤖 ${definicion(resultado)}
-        </div>
-    `;
-}
-
-// ================= SUGERENCIAS =================
-const sugerencias = ['carne','harina','computadora','limpieza','medicamento'];
-
-document.getElementById('sugerencias').innerHTML =
-    sugerencias.map(s => `<span onclick="document.getElementById('searchInput').value='${s}';buscar()">${s}</span>`).join('');
-
-</script>
-
-</body>
-</html>
+            <b>${resultado
