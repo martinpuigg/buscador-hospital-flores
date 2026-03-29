@@ -3,85 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clasificador Hospital de Flores - IA con Definición</title>
+    <title>Clasificador Hospital de Flores - Versión Final</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --blue: #003ca5; --orange: #ff6b00; --green: #28a745; --bg: #f4f7f6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
-        body { background: var(--bg); padding: 10px; color: #333; }
+        body { background: var(--bg); padding: 10px; color: #333; line-height: 1.4; }
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        
+        /* Cabecera */
         .header { border-bottom: 3px solid var(--blue); margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .header h1 { color: var(--blue); font-size: 1.2em; }
+
+        /* Sección de Carga (Se oculta sola) */
         #uploadSection { background: #eef2f7; padding: 30px; border-radius: 10px; text-align: center; border: 2px dashed var(--blue); margin-bottom: 20px; }
         .btn-file { background: var(--blue); color: white; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; display: inline-block; }
-        .ai-box { background: #f8f9fa; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-        .api-input { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 6px; margin-top: 8px; }
+
+        /* Configuración */
+        .config-box { background: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .api-input { width: 100%; padding: 10px; border: 2px solid #ccc; border-radius: 6px; margin-top: 5px; font-size: 0.9em; }
+
+        /* Buscador */
         .search-area { background: var(--blue); padding: 15px; border-radius: 10px; display: flex; flex-direction: column; gap: 10px; }
         @media (min-width: 600px) { .search-area { flex-direction: row; } }
         #q { flex: 1; padding: 12px; border-radius: 6px; border: none; font-size: 1em; outline: none; }
-        #b { padding: 12px 25px; background: var(--orange); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; min-width: 150px; }
-        #b:disabled { background: #999; cursor: not-allowed; }
+        #b { padding: 12px 25px; background: var(--orange); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; min-width: 140px; }
+        #b:disabled { background: #999; }
+
+        /* Resultados IA */
+        #iaStatus { display: none; background: #fff5f0; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin: 15px 0; animation: fadeIn 0.3s; }
+        .ia-def { font-size: 1em; color: #333; margin-top: 5px; }
+        .ia-badge { background: var(--orange); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7em; font-weight: bold; }
+
+        /* Diccionario Interno */
+        .toggle-dic { width: 100%; padding: 10px; background: var(--green); color: white; border: none; border-radius: 6px; margin: 15px 0; font-weight: 600; cursor: pointer; }
+        .dic-panel { display: none; background: #f0fff4; border: 1px solid var(--green); padding: 15px; border-radius: 10px; }
         
-        /* Panel IA con Definición */
-        .ia-status-msg { display: none; background: #fff5f0; border: 2px solid var(--orange); padding: 15px; border-radius: 10px; margin-top: 15px; }
-        .ia-definition { font-size: 1em; color: #333; line-height: 1.5; margin-top: 5px; }
-        .ia-title { color: var(--orange); font-weight: 700; font-size: 0.9em; margin-bottom: 5px; display: block; }
-        
+        /* Tarjetas de Gastos */
         .card { border-left: 6px solid var(--blue); padding: 15px; background: white; margin-top: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 6px; }
-        .card.ia-found { border-left-color: var(--orange); background: #fffaf5; }
-        .code-badge { background: var(--blue); color: white; padding: 4px 12px; border-radius: 15px; font-weight: bold; font-size: 0.85em; }
+        .card.ia-match { border-left-color: var(--orange); background: #fffaf5; }
+        .code-tag { background: var(--blue); color: white; padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 0.8em; }
+
         .loading { text-align: center; padding: 20px; font-weight: bold; color: var(--blue); }
-        .reset-db { font-size: 0.7em; color: #999; cursor: pointer; text-decoration: underline; margin-top: 30px; display: block; text-align: center; }
+        .reset-link { display: block; text-align: center; margin-top: 30px; font-size: 0.7em; color: #999; cursor: pointer; text-decoration: underline; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🏥 Hospital de Flores</h1>
-            <div id="dbStatus" style="font-size: 0.7em; font-weight: bold;">ESPERANDO BASE DE DATOS...</div>
+            <div id="statusLabel" style="font-size: 0.7em; font-weight: bold;">Carga el archivo para empezar</div>
         </div>
 
         <div id="uploadSection">
-            <h2 style="color: var(--blue); font-size: 1.2em;">📂 Carga de Objetos</h2>
-            <label class="btn-file"> SELECCIONAR CSV <input type="file" id="csvFile" accept=".csv" style="display:none;"></label>
+            <h2 style="color: var(--blue); font-size: 1.1em;">📂 Carga Inicial del Clasificador</h2>
+            <p style="font-size: 0.8em; color: #666; margin: 10px 0;">Selecciona el archivo <b>ObjetosGasto.csv</b>. Se guardará en la memoria local.</p>
+            <label class="btn-file">
+                SUBIR ARCHIVO CSV
+                <input type="file" id="csvFile" accept=".csv" style="display:none;">
+            </label>
         </div>
 
-        <div id="mainApp" style="display:none;">
-            <div class="ai-box">
-                <label style="font-weight:bold; color:var(--orange); font-size: 0.8em;">🤖 Gemini API Key:</label>
-                <input type="password" id="key" class="api-input" placeholder="Pega tu clave AIzaSy...">
+        <div id="appBody" style="display:none;">
+            <div class="config-box">
+                <label style="font-weight:bold; color:var(--orange); font-size: 0.8em;">🔑 Clave API Google Gemini:</label>
+                <input type="password" id="apiKey" class="api-input" placeholder="Pega tu clave aquí...">
             </div>
 
             <div class="search-area">
-                <input type="text" id="q" placeholder="Ej: Atún, Jeringa, Tornillo motor..." onkeypress="if(event.key==='Enter') buscar()">
+                <input type="text" id="q" placeholder="Ej: Atún, Jeringas, 152, Reparación..." onkeypress="if(event.key==='Enter') buscar()">
                 <button id="b" onclick="buscar()">ANALIZAR</button>
             </div>
 
-            <div id="iaStatus" class="ia-status-msg"></div>
+            <div id="iaStatus">
+                <span class="ia-badge">🤖 ANÁLISIS DE INTELIGENCIA ARTIFICIAL</span>
+                <div id="iaDef" class="ia-def"></div>
+            </div>
+
             <div id="results"></div>
-            
-            <span class="reset-db" onclick="resetDatabase()">⚠️ Borrar datos guardados</span>
+
+            <button class="toggle-dic" onclick="toggleDic()">📝 Mis Reglas Guardadas (Diccionario)</button>
+            <div id="dicPanel" class="dic-panel">
+                <div style="display:flex; gap:5px; margin-bottom:10px;">
+                    <input type="text" id="nk" placeholder="Palabra" style="flex:2; padding:8px;">
+                    <input type="text" id="no" placeholder="Objeto" style="flex:1; padding:8px;">
+                    <button onclick="saveRule()" style="background:var(--green); color:white; border:none; padding:8px 15px; border-radius:5px; font-weight:bold;">GUARDAR</button>
+                </div>
+                <div id="rulesList" style="font-size: 0.8em;"></div>
+            </div>
+
+            <span class="reset-link" onclick="clearData()">⚠️ Borrar base de datos y cargar una nueva</span>
         </div>
     </div>
 
     <script>
-        let DB_LOCAL = [];
-        let cacheIA = JSON.parse(localStorage.getItem('h_cache_ia_def') || '{}');
-        let isBusy = false;
+        let OBJETOS_GASTO = [];
+        let DICCIONARIO = JSON.parse(localStorage.getItem('hosp_dic_v2') || '{}');
+        let CACHE_IA = JSON.parse(localStorage.getItem('hosp_ai_cache_v2') || '{}');
+        let trabajando = false;
 
         window.onload = () => {
-            document.getElementById('key').value = localStorage.getItem('h_key') || '';
-            checkDatabase();
+            document.getElementById('apiKey').value = localStorage.getItem('hosp_key') || '';
+            verificarBaseDatos();
+            renderRules();
         };
 
-        function checkDatabase() {
-            const saved = localStorage.getItem('hospital_db');
-            if (saved) {
-                DB_LOCAL = JSON.parse(saved);
+        // --- MANEJO DE BASE DE DATOS LOCAL ---
+        function verificarBaseDatos() {
+            const data = localStorage.getItem('hosp_db_full');
+            if (data) {
+                OBJETOS_GASTO = JSON.parse(data);
                 document.getElementById('uploadSection').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'block';
-                document.getElementById('dbStatus').innerText = `✅ ${DB_LOCAL.length} OBJETOS CARGADOS`;
-                document.getElementById('dbStatus').style.color = "var(--green)";
+                document.getElementById('appBody').style.display = 'block';
+                document.getElementById('statusLabel').innerText = `✅ ${OBJETOS_GASTO.length} REGISTROS CARGADOS`;
+                document.getElementById('statusLabel').style.color = "var(--green)";
             }
         }
 
@@ -89,136 +125,156 @@
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = (event) => procesarCSV(event.target.result);
+            reader.onload = (event) => {
+                const lineas = event.target.result.split(/\r?\n/);
+                const temp = [];
+                for (let i = 1; i < lineas.length; i++) {
+                    const col = lineas[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    if (col.length >= 3) {
+                        temp.push({
+                            o: col[0].replace(/"/g, '').trim(),
+                            a: col[1].replace(/"/g, '').trim() || "000",
+                            n: col[2].replace(/"/g, '').trim(),
+                            d: (col[3] || "").replace(/"/g, '').trim()
+                        });
+                    }
+                }
+                if (temp.length > 0) {
+                    localStorage.setItem('hosp_db_full', JSON.stringify(temp));
+                    location.reload();
+                }
+            };
             reader.readAsText(file, 'ISO-8859-1');
         });
 
-        function procesarCSV(texto) {
-            const lineas = texto.split(/\r?\n/);
-            const dataProcesada = [];
-            for (let i = 1; i < lineas.length; i++) {
-                const col = lineas[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                if (col.length >= 3) {
-                    dataProcesada.push({
-                        o: col[0].replace(/"/g, '').trim(),
-                        a: col[1].replace(/"/g, '').trim() || "000",
-                        n: col[2].replace(/"/g, '').trim(),
-                        d: (col[3] || "").replace(/"/g, '').trim()
-                    });
-                }
-            }
-            if (dataProcesada.length > 0) {
-                localStorage.setItem('hospital_db', JSON.stringify(dataProcesada));
-                checkDatabase();
-            }
+        function clearData() { if(confirm("¿Borrar todo?")) { localStorage.clear(); location.reload(); } }
+
+        // --- DICCIONARIO ---
+        function toggleDic() { const p = document.getElementById('dicPanel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
+        function saveRule() {
+            const k = document.getElementById('nk').value.toLowerCase().trim();
+            const o = document.getElementById('no').value.trim();
+            if(k && o) { DICCIONARIO[k] = o; localStorage.setItem('hosp_dic_v2', JSON.stringify(DICCIONARIO)); renderRules(); }
+        }
+        function renderRules() {
+            const l = document.getElementById('rulesList'); l.innerHTML = '';
+            for(let k in DICCIONARIO) l.innerHTML += `<div><b>${k}</b> ➔ Objeto ${DICCIONARIO[k]}</div>`;
         }
 
+        // --- MOTOR DE BÚSQUEDA ---
         async function buscar() {
-            if(isBusy) return;
+            if(trabajando) return;
             const query = document.getElementById('q').value.trim();
             if(query.length < 2) return;
 
-            isBusy = true;
+            trabajando = true;
             const btn = document.getElementById('b');
             const resDiv = document.getElementById('results');
-            const statusDiv = document.getElementById('iaStatus');
+            const iaBox = document.getElementById('iaStatus');
             
-            btn.innerText = "⏳..."; btn.disabled = true;
-            resDiv.innerHTML = '<div class="loading">Buscando...</div>';
-            statusDiv.style.display = 'none';
+            btn.disabled = true; btn.innerText = "⏳...";
+            resDiv.innerHTML = '<div class="loading">Buscando localmente...</div>';
+            iaBox.style.display = 'none';
 
-            let qL = query.toLowerCase();
-            let matches = DB_LOCAL.filter(i => i.n.toLowerCase().includes(qL) || i.o === query);
+            const queryL = query.toLowerCase();
 
-            if (matches.length > 0) {
-                mostrarCards(matches, false);
-                liberar();
+            // 1. Prioridad: ¿Está en mi Diccionario?
+            let codigoManual = DICCIONARIO[queryL] || null;
+
+            // 2. Buscar en la Base de Datos Local
+            let locales = OBJETOS_GASTO.filter(i => i.n.toLowerCase().includes(queryL) || i.o === query || i.o === codigoManual);
+
+            if (locales.length > 0) {
+                mostrarResultados(locales, false);
+                // Si encontramos algo local, igual lanzamos la IA en segundo plano por si hay definición
+                consultarIA(query);
             } else {
-                statusDiv.style.display = 'block';
-                statusDiv.innerHTML = '<div class="loading">🤖 Analizando en la web...</div>';
-                
-                try {
-                    let aiData = await consultarIA(query);
-                    if (aiData) {
-                        statusDiv.innerHTML = `
-                            <span class="ia-title">🤖 ANÁLISIS INTELIGENTE:</span>
-                            <div class="ia-definition">${aiData.definicion}</div>
-                        `;
-                        let aiMatches = DB_LOCAL.filter(i => i.o === aiData.codigo);
-                        mostrarCards(aiMatches, true);
-                    } else {
-                        resDiv.innerHTML = '<p style="text-align:center; padding:20px;">Sin resultados.</p>';
-                        statusDiv.style.display = 'none';
-                    }
-                } catch (err) {
-                    statusDiv.innerHTML = `⚠️ Error al conectar con el servidor de IA.`;
-                } finally {
-                    liberar();
-                }
+                // 3. Si no hay nada local, esperar obligatoriamente a la IA
+                resDiv.innerHTML = '<div class="loading">🤖 Analizando en la web con IA...</div>';
+                await consultarIA(query);
             }
+
+            trabajando = false; btn.disabled = false; btn.innerText = "ANALIZAR";
         }
 
-        async function consultarIA(q) {
-            const key = document.getElementById('key').value.trim();
-            if (!key) return null;
-            localStorage.setItem('h_key', key);
+        async function consultarIA(query) {
+            const key = document.getElementById('apiKey').value.trim();
+            const iaBox = document.getElementById('iaStatus');
+            const iaDef = document.getElementById('iaDef');
             
-            if(cacheIA[q.toLowerCase()]) return cacheIA[q.toLowerCase()];
+            if(!key) return;
+            localStorage.setItem('hosp_key', key);
 
+            // Revisar memoria de la IA
+            if(CACHE_IA[query.toLowerCase()]) {
+                pintarIA(CACHE_IA[query.toLowerCase()]);
+                return;
+            }
+
+            // Temporizador de 15 seg para no quedar colgado
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 20000);
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
 
             try {
-                // Pedimos un formato JSON para separar código de definición
-                const prompt = `Actúa como experto contable de Uruguay (CGN). Analiza el gasto: "${q}". 
-                Responde ÚNICAMENTE en este formato JSON:
-                {
-                  "codigo": "XXX",
-                  "definicion": "Definición corta de qué es el artículo y por qué pertenece a ese objeto de gasto."
-                }`;
+                const prompt = `Actúa como experto contable de Uruguay. Analiza el gasto: "${query}". 
+                Responde únicamente en este formato JSON:
+                {"codigo": "número de 3 dígitos", "definicion": "explicación de qué es el producto y por qué pertenece a ese objeto"}`;
 
-                const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-                    method: "POST", 
+                const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                    method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
                     signal: controller.signal
                 });
-                clearTimeout(timeoutId);
-                const d = await r.json();
-                let text = d.candidates[0].content.parts[0].text;
-                
-                // Limpiar el texto para que sea un JSON válido
-                text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-                const obj = JSON.parse(text);
-                
-                if (obj.codigo) {
-                    cacheIA[q.toLowerCase()] = obj;
-                    localStorage.setItem('h_cache_ia_def', JSON.stringify(cacheIA));
-                    return obj;
+
+                const data = await resp.json();
+                let rawText = data.candidates[0].content.parts[0].text.replace(/```json|```/g, "").trim();
+                const aiObj = JSON.parse(rawText);
+
+                if(aiObj.codigo) {
+                    CACHE_IA[query.toLowerCase()] = aiObj;
+                    localStorage.setItem('hosp_ai_cache_v2', JSON.stringify(CACHE_IA));
+                    pintarIA(aiObj);
                 }
-            } catch (e) { return null; }
+            } catch (e) {
+                console.error("Fallo IA o Tiempo Agotado");
+            } finally {
+                clearTimeout(timeoutId);
+            }
         }
 
-        function mostrarCards(items, esIA) {
+        function pintarIA(aiObj) {
+            const iaBox = document.getElementById('iaStatus');
+            const iaDef = document.getElementById('iaDef');
             const resDiv = document.getElementById('results');
-            if (!esIA) resDiv.innerHTML = ''; 
-            
-            if (items.length === 0 && esIA) {
-                resDiv.innerHTML = '<p style="text-align:center; padding:10px; font-size:0.8em; color:#999;">El objeto sugerido por la IA no se encuentra en tu base de datos local.</p>';
-            }
 
-            items.slice(0, 30).forEach(r => {
+            iaBox.style.display = 'block';
+            iaDef.innerHTML = `<b>Asociación:</b> ${aiObj.definicion}`;
+
+            // Buscar el objeto oficial para mostrar la tarjeta
+            const oficiales = OBJETOS_GASTO.filter(i => i.o === aiObj.codigo);
+            if(oficiales.length > 0) {
+                // Si no había resultados locales previos, o si queremos actualizar con la IA
+                if(resDiv.innerHTML.includes("loading") || resDiv.innerHTML.includes("Buscando")) {
+                    mostrarResultados(oficiales, true);
+                }
+            }
+        }
+
+        function mostrarResultados(items, esIA) {
+            const resDiv = document.getElementById('results');
+            if(esIA) resDiv.innerHTML = '<p style="font-size:0.7em; font-weight:bold; margin-bottom:5px; color:var(--orange);">TARJETA OFICIAL ASOCIADA:</p>';
+            else resDiv.innerHTML = '';
+
+            items.slice(0, 20).forEach(r => {
                 resDiv.innerHTML += `
-                    <div class="card ${esIA ? 'ia-found' : ''}">
-                        <span class="code-badge">OBJETO ${r.o} / ${r.a}</span>
+                    <div class="card ${esIA ? 'ia-match' : ''}">
+                        <span class="code-tag">OBJETO ${r.o} / ${r.a}</span>
                         <h3 style="margin:8px 0 4px 0; color:var(--blue); font-size:1em;">${r.n}</h3>
-                        <p style="color:#666; font-size:0.8em; line-height:1.4;">${r.d}</p>
+                        <p style="color:#666; font-size:0.85em;">${r.d}</p>
                     </div>`;
             });
         }
-
-        function resetDatabase() { if(confirm("¿Borrar todo?")) { localStorage.removeItem('hospital_db'); location.reload(); } }
-        function liberar() { isBusy = false; const b = document.getElementById('b'); b.innerText = "ANALIZAR"; b.disabled = false; }
     </script>
 </body>
 </html>
