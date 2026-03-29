@@ -197,7 +197,52 @@
         .filter-btn:hover, .filter-btn.active {
             background: #002d7a;
         }
+        // ============================================
+// 🌐 BÚSQUEDA EN INTERNET (CORREGIDA)
+// ============================================
+
+async function buscarEnInternet(query) {
+    const internetDiv = document.getElementById('internetResults');
+    internetDiv.style.display = 'block';
+    internetDiv.innerHTML = '<div class="loading">🌐 Buscando definición...</div>';
+    
+    try {
+        // Solo búsqueda en Wikipedia (tipo diccionario)
+        const wikiResponse = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
+        const wikiData = await wikiResponse.json();
         
+        let html = '<h4>📖 Definición</h4>';
+        
+        if (wikiData && wikiData.extract && !wikiData.type) {
+            html += `
+                <div class="uruguay-source">
+                    <h5>${wikiData.title}</h5>
+                    <p>${wikiData.extract.substring(0, 300)}${wikiData.extract.length > 300 ? '...' : ''}</p>
+                    ${wikiData.content_urls?.desktop?.page ? 
+                        `<p style="margin-top: 10px;"><a href="${wikiData.content_urls.desktop.page}" target="_blank" style="color: #003ca5; font-weight: 600;">Ver más en Wikipedia →</a></p>` 
+                        : ''}
+                </div>
+            `;
+        } else {
+            html += `
+                <div class="uruguay-source">
+                    <p style="color: #666;">No se encontró definición para "<strong>${query}</strong>"</p>
+                    <p style="margin-top: 10px;"><a href="https://es.wikipedia.org/w/index.php?search=${encodeURIComponent(query)}" target="_blank" style="color: #003ca5; font-weight: 600;">Buscar en Wikipedia →</a></p>
+                </div>
+            `;
+        }
+        
+        internetDiv.innerHTML = html;
+        
+    } catch (error) {
+        console.log('Error en búsqueda internet:', error);
+        internetDiv.innerHTML = `
+            <div class="error">
+                ⚠️ No se pudo obtener información de internet. Verificá tu conexión.
+            </div>
+        `;
+    }
+}
         .sugerencias {
             margin-top: 20px;
             padding: 20px;
