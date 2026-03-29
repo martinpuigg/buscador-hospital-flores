@@ -47,8 +47,7 @@
         }
         
         .ai-status {
-            background: rgba(0,60,165,0.1);
-            border: 2px solid #003ca5;
+            background: rgba(0,60,165,0.1);            border: 2px solid #003ca5;
             padding: 15px;
             border-radius: 10px;
             text-align: center;
@@ -97,273 +96,13 @@
         }
         .stat-number {
             font-size: 2em;
-            font-weight: 700;
-            color: #003ca5;
+            font-weight: 700;            color: #003ca5;
         }
         .stat-label {
             font-size: 0.9em;
             color: #666;
             font-weight: 500;
         }
-        
-        .internet-results {
-            display: none;
-            background: rgba(0,60,165,0.05);
-            border: 2px solid #003ca5;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        .internet-results h4 {
-            color: #003ca5;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .uruguay-source {
-            background: rgba(0,60,165,0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .uruguay-source h5 {
-            color: #003ca5;
-            margin-bottom: 8px;
-        }
-        .uruguay-source a {
-            color: #003ca5;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .uruguay-source a:hover {
-            text-decoration: underline;
-        }
-        
-        .search-container {
-            display: none;
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border: 2px solid #003ca5;
-        }
-        .search-box { display: flex; gap: 15px; margin-bottom: 20px; }
-        .search-box input {
-            flex: 1;
-            padding: 18px 25px;
-            font-size: 18px;
-            border: 2px solid #003ca5;
-            border-radius: 10px;
-            background: #ffffff;
-            color: #003ca5;
-            outline: none;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .search-box input:focus {
-            border-color: #002d7a;
-            box-shadow: 0 0 10px rgba(0,60,165,0.2);
-        }
-        .search-box button {
-            padding: 18px 40px;
-            background: #003ca5;
-            color: #ffffff;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
-        }
-        .search-box button:hover {
-            background: #002d7a;
-            transform: scale(1.05);
-        }
-        
-        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
-        .filter-btn {
-            padding: 10px 20px;
-            background: #003ca5;
-            color: #ffffff;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        .filter-btn:hover, .filter-btn.active {
-            background: #002d7a;
-        }
-        // ============================================
-// 🌐 BÚSQUEDA EN INTERNET (CORREGIDA)
-// ============================================
-
-async function buscarEnInternet(query) {
-    const internetDiv = document.getElementById('internetResults');
-    internetDiv.style.display = 'block';
-    internetDiv.innerHTML = '<div class="loading">🌐 Buscando definición...</div>';
-    
-    try {
-        // Solo búsqueda en Wikipedia (tipo diccionario)
-        const wikiResponse = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
-        const wikiData = await wikiResponse.json();
-        
-        let html = '<h4>📖 Definición</h4>';
-        
-        if (wikiData && wikiData.extract && !wikiData.type) {
-            html += `
-                <div class="uruguay-source">
-                    <h5>${wikiData.title}</h5>
-                    <p>${wikiData.extract.substring(0, 300)}${wikiData.extract.length > 300 ? '...' : ''}</p>
-                    ${wikiData.content_urls?.desktop?.page ? 
-                        `<p style="margin-top: 10px;"><a href="${wikiData.content_urls.desktop.page}" target="_blank" style="color: #003ca5; font-weight: 600;">Ver más en Wikipedia →</a></p>` 
-                        : ''}
-                </div>
-            `;
-        } else {
-            html += `
-                <div class="uruguay-source">
-                    <p style="color: #666;">No se encontró definición para "<strong>${query}</strong>"</p>
-                    <p style="margin-top: 10px;"><a href="https://es.wikipedia.org/w/index.php?search=${encodeURIComponent(query)}" target="_blank" style="color: #003ca5; font-weight: 600;">Buscar en Wikipedia →</a></p>
-                </div>
-            `;
-        }
-        
-        internetDiv.innerHTML = html;
-        
-    } catch (error) {
-        console.log('Error en búsqueda internet:', error);
-        internetDiv.innerHTML = `
-            <div class="error">
-                ⚠️ No se pudo obtener información de internet. Verificá tu conexión.
-            </div>
-        `;
-    }
-}
-        .sugerencias {
-            margin-top: 20px;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 10px;
-            border: 2px solid #003ca5;
-        }
-        .sugerencias h3 {
-            margin-bottom: 15px;
-            color: #003ca5;
-        }
-        .sugerencias-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-        }
-        .sugerencia-item {
-            background: #003ca5;
-            color: #ffffff;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        .sugerencia-item:hover {
-            background: #002d7a;
-            transform: translateY(-2px);
-        }
-        
-        .results-container { display: grid; gap: 20px; }
-        .result-card {
-            background: #ffffff;
-            border-left: 4px solid #003ca5;
-            padding: 25px;
-            border-radius: 10px;
-            transition: all 0.3s;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0,60,165,0.1);
-        }
-        .result-card:hover {
-            transform: translateX(10px);
-            background: #f8f9fa;
-            box-shadow: 0 4px 20px rgba(0,60,165,0.2);
-        }
-        .result-card.selected {
-            border-left-color: #ff6b00;
-            background: #fff5f0;
-        }
-        .codigo-badge {
-            background: #003ca5;
-            color: #ffffff;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 1.1em;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        .denominacion {
-            font-size: 1.3em;
-            font-weight: 600;
-            margin: 10px 0;
-            color: #003ca5;
-        }
-        .descripcion {
-            color: #666;
-            line-height: 1.6;
-            font-size: 0.95em;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .relevancia-badge {
-            background: rgba(0,60,165,0.1);
-            color: #003ca5;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            float: right;
-        }
-        .categoria-tag {
-            display: inline-block;
-            background: rgba(0,60,165,0.1);
-            color: #003ca5;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;
-            margin-top: 10px;
-        }
-        .grupo-tag {
-            display: inline-block;
-            background: #f8f9fa;
-            color: #666;
-            padding: 3px 10px;
-            border-radius: 10px;
-            font-size: 0.75em;
-            margin-left: 10px;
-        }
-        .keyword-match {
-            display: inline-block;
-            background: rgba(255,107,0,0.1);
-            color: #ff6b00;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            margin-top: 8px;
-        }
-        
-        .loading { text-align: center; padding: 50px; color: #666; }
-        .error {
-            background: rgba(255,100,100,0.1);
-            border: 2px solid #dc3545;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            color: #dc3545;
-        }
-        .no-results { text-align: center; padding: 50px; color: #666; }
         
         .custom-keywords-panel {
             display: none;
@@ -406,8 +145,7 @@ async function buscarEnInternet(query) {
             color: #ffffff;
             border: none;
             border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
+            cursor: pointer;            font-weight: 600;
             font-family: 'Montserrat', sans-serif;
             transition: all 0.3s;
         }
@@ -456,26 +194,185 @@ async function buscarEnInternet(query) {
             font-family: 'Montserrat', sans-serif;
             transition: all 0.3s;
         }
-        .keyword-item-delete:hover {
-            background: #c82333;
+        .keyword-item-delete:hover {            background: #c82333;
         }
         
-        .toggle-panel-btn {
-            background: #28a745;
+        .search-container {
+            display: none;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid #003ca5;
+        }
+        .search-box { display: flex; gap: 15px; margin-bottom: 20px; }
+        .search-box input {
+            flex: 1;
+            padding: 18px 25px;
+            font-size: 18px;
+            border: 2px solid #003ca5;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #003ca5;
+            outline: none;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .search-box input:focus {
+            border-color: #002d7a;
+            box-shadow: 0 0 10px rgba(0,60,165,0.2);
+        }
+        .search-box button {
+            padding: 18px 40px;
+            background: #003ca5;
             color: #ffffff;
             border: none;
-            padding: 15px 30px;
             border-radius: 10px;
-            cursor: pointer;
+            font-size: 18px;
             font-weight: 600;
+            cursor: pointer;
             font-family: 'Montserrat', sans-serif;
-            margin-bottom: 20px;
             transition: all 0.3s;
         }
-        .toggle-panel-btn:hover {
-            background: #218838;
+        .search-box button:hover {
+            background: #002d7a;
             transform: scale(1.05);
         }
+        
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .filter-btn {
+            padding: 10px 20px;
+            background: #003ca5;
+            color: #ffffff;
+            border: none;            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: #002d7a;
+        }
+        
+        .sugerencias {
+            margin-top: 20px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            border: 2px solid #003ca5;
+        }
+        .sugerencias h3 {
+            margin-bottom: 15px;
+            color: #003ca5;
+        }
+        .sugerencias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .sugerencia-item {
+            background: #003ca5;
+            color: #ffffff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+        }
+        .sugerencia-item:hover {
+            background: #002d7a;
+            transform: translateY(-2px);
+        }
+        
+        .results-container { display: grid; gap: 20px; }
+        .result-card {
+            background: #ffffff;
+            border-left: 4px solid #003ca5;
+            padding: 25px;
+            border-radius: 10px;
+            transition: all 0.3s;            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,60,165,0.1);
+        }
+        .result-card:hover {
+            transform: translateX(10px);
+            background: #f8f9fa;
+            box-shadow: 0 4px 20px rgba(0,60,165,0.2);
+        }
+        .result-card.selected {
+            border-left-color: #ff6b00;
+            background: #fff5f0;
+        }
+        .codigo-badge {
+            background: #003ca5;
+            color: #ffffff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .denominacion {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin: 10px 0;
+            color: #003ca5;
+        }
+        .descripcion {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95em;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .relevancia-badge {
+            background: rgba(0,60,165,0.1);
+            color: #003ca5;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            float: right;
+        }
+        .categoria-tag {
+            display: inline-block;
+            background: rgba(0,60,165,0.1);
+            color: #003ca5;
+            padding: 5px 12px;
+            border-radius: 15px;            font-size: 0.85em;
+            margin-top: 10px;
+        }
+        .grupo-tag {
+            display: inline-block;
+            background: #f8f9fa;
+            color: #666;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            margin-left: 10px;
+        }
+        .keyword-match {
+            display: inline-block;
+            background: rgba(255,107,0,0.1);
+            color: #ff6b00;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.75em;
+            margin-top: 8px;
+        }
+        
+        .loading { text-align: center; padding: 50px; color: #666; }
+        .error {
+            background: rgba(255,100,100,0.1);
+            border: 2px solid #dc3545;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            color: #dc3545;
+        }
+        .no-results { text-align: center; padding: 50px; color: #666; }
         
         .history-section {
             display: none;
@@ -493,8 +390,7 @@ async function buscarEnInternet(query) {
             background: #ffffff;
             padding: 12px 18px;
             border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: pointer;
+            margin-bottom: 10px;            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -521,6 +417,54 @@ async function buscarEnInternet(query) {
             font-weight: 500;
         }
         
+        .toggle-panel-btn {
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .toggle-panel-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        
+        .internet-results {
+            display: none;
+            background: rgba(0,60,165,0.05);
+            border: 2px solid #003ca5;
+            padding: 20px;
+            border-radius: 10px;            margin-bottom: 20px;
+        }
+        .internet-results h4 {
+            color: #003ca5;
+            margin-bottom: 15px;
+        }
+        .uruguay-source {
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid #003ca5;
+        }
+        .uruguay-source h5 {
+            color: #003ca5;
+            margin-bottom: 8px;
+        }
+        .uruguay-source a {
+            color: #003ca5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .uruguay-source a:hover {
+            text-decoration: underline;
+        }
+        
         @media (max-width: 768px) {
             .header { flex-direction: column; text-align: center; }
             .logo-container { flex-direction: column; }
@@ -544,8 +488,7 @@ async function buscarEnInternet(query) {
                 </div>
             </div>
         </div>
-        
-        <div class="ai-status" id="aiStatus">
+                <div class="ai-status" id="aiStatus">
             🇺🇾 <span id="aiStatusText">Buscador Uruguay - Cargá tu archivo CSV</span> | 
             🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
             📚 Palabras personalizadas: <span id="customKeywordsCount">0</span>
@@ -574,17 +517,14 @@ async function buscarEnInternet(query) {
                 <div class="stat-label">Objetos Cargados</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number" id="totalObjetos">0</div>
-                <div class="stat-label">Objetos Únicos</div>
+                <div class="stat-number" id="totalGrupos">10</div>
+                <div class="stat-label">Grupos (0-9)</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number" id="ultimaBusqueda">0</div>
                 <div class="stat-label">Resultados</div>
             </div>
         </div>
-        
-        <!-- Resultados de Internet -->
-        <div class="internet-results" id="internetResults"></div>
         
         <!-- Botón para mostrar/ocultar panel de palabras personalizadas -->
         <button class="toggle-panel-btn" onclick="toggleCustomKeywordsPanel()" id="togglePanelBtn" style="display: none;">
@@ -597,8 +537,7 @@ async function buscarEnInternet(query) {
             <p style="margin-bottom: 20px; color: #666;">
                 Agregá tus propias palabras para que el buscador las reconozca y las asocie a objetos de gasto.
             </p>
-            
-            <div class="add-keyword-form">
+                        <div class="add-keyword-form">
                 <div class="form-group">
                     <label for="newKeyword">Palabra o Término:</label>
                     <input type="text" id="newKeyword" placeholder="Ej: insumos, descartables, lima...">
@@ -618,13 +557,16 @@ async function buscarEnInternet(query) {
                 <p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>
             </div>
             
-            <div class="export-import-btns" style="display: flex; gap: 10px; margin-top: 20px;">
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button onclick="exportCustomKeywords()" style="background: #003ca5; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📤 Exportar Palabras</button>
                 <button onclick="document.getElementById('importFile').click()" style="background: #28a745; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">📥 Importar Palabras</button>
                 <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImport(event)">
                 <button onclick="clearAllCustomKeywords()" style="background: #dc3545; color: #fff; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: 'Montserrat', sans-serif;">🗑️ Limpiar Todas</button>
             </div>
         </div>
+        
+        <!-- Resultados de Internet -->
+        <div class="internet-results" id="internetResults"></div>
         
         <!-- Buscador -->
         <div class="search-container" id="searchContainer">
@@ -644,8 +586,7 @@ async function buscarEnInternet(query) {
                 <button class="filter-btn" onclick="setLimite(100)">100 resultados</button>
                 <button class="filter-btn" onclick="filtrarGrupo('0')">Grupo 0</button>
                 <button class="filter-btn" onclick="filtrarGrupo('1')">Grupo 1</button>
-                <button class="filter-btn" onclick="filtrarGrupo('2')">Grupo 2</button>
-                <button class="filter-btn" onclick="filtrarGrupo('3')">Grupo 3</button>
+                <button class="filter-btn" onclick="filtrarGrupo('2')">Grupo 2</button>                <button class="filter-btn" onclick="filtrarGrupo('3')">Grupo 3</button>
                 <button class="filter-btn" onclick="filtrarGrupo('4')">Grupo 4</button>
                 <button class="filter-btn" onclick="filtrarGrupo('5')">Grupo 5</button>
                 <button class="filter-btn" onclick="filtrarGrupo('6')">Grupo 6</button>
@@ -680,33 +621,84 @@ async function buscarEnInternet(query) {
         let filtroGrupo = '';
         let searchCount = 0;
         let customKeywords = {};
+        let searchHistory = [];
         
         // ============================================
         // 🧠 BASE DE CONOCIMIENTO - MAPEO SEMÁNTICO
         // ============================================
         const keywordsMap = {
+            // Alimentos (111)
             'harina': ['111'], 'lechuga': ['111'], 'arroz': ['111'], 'carne': ['111'],
             'aceite': ['111'], 'aceite comestible': ['111'], 'aceite de cocina': ['111'],
+            'azucar': ['111'], 'azúcar': ['111'], 'sal': ['111'], 'fideo': ['111'], 'pasta': ['111'],
+            
+            // Sueldos (011, 021, 031)
             'sueldo': ['011', '021', '031'], 'salario': ['011', '021'],
-            'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'],
+            
+            // Combustibles (141)            'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'],
             'lubricante': ['141'], 'aceite motor': ['141'],
-            'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'],
-            'vehiculo': ['353'], 'auto': ['353'], 'camioneta': ['353'],
-            'internacion': ['283'], 'hospital': ['283'], 'sanatorio': ['283'],
+            
+            // Medicamentos (152)
+            'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'], 'fármaco': ['152'],
+            
+            // Vehículos (353)
+            'vehiculo': ['353'], 'vehículo': ['353'], 'auto': ['353'], 'camioneta': ['353'],
+            
+            // Internación (283)
+            'internacion': ['283'], 'internación': ['283'], 'hospital': ['283'],
+            
+            // Computadoras (323)
             'computadora': ['323'], 'laptop': ['323'], 'notebook': ['323'],
-            'limpieza': ['192'], 'jabon': ['192'], 'escoba': ['192'],
+            
+            // Limpieza (192)
+            'limpieza': ['192'], 'jabon': ['192'], 'jabón': ['192'], 'escoba': ['192'],
+            
+            // Electricidad/Agua/Teléfono (211, 212, 213)
             'electricidad': ['213'], 'luz': ['213'], 'agua': ['212'],
-            'telefono': ['211'], 'internet': ['211'],
-            'regla': ['191', '176'], 'util': ['191'], 'oficina': ['191'],
-            'lapiz': ['191'], 'lapiz': ['191'], 'papel': ['131', '191'],
-            'viatico': ['234', '235'], 'pasaje': ['231'], 'alquiler': ['251'],
-            'jubilacion': ['571'], 'beca': ['577'],
-            'capacitacion': ['284'], 'curso': ['284'],
-            'mantenimiento': ['271', '273'], 'reparacion': ['271', '273'],
-            'vigilancia': ['291'], 'seguridad': ['291'],
-            'ferreteria': ['176'], 'herramienta': ['176'],
-            'plomeria': ['271'], 'canilla': ['271'], 'grifo': ['271'],
-            'lima': ['176']
+            'telefono': ['211'], 'teléfono': ['211'], 'internet': ['211'],
+            
+            // Útiles de oficina (191)
+            'regla': ['191', '176'], 'util': ['191'], 'útil': ['191'], 'oficina': ['191'],
+            'lapiz': ['191'], 'lápiz': ['191'], 'papel': ['131', '191'],
+            
+            // Viáticos/Pasajes (231, 234, 235)
+            'viatico': ['234', '235'], 'viático': ['234', '235'], 'pasaje': ['231'],
+            'alquiler': ['251'],
+            
+            // Jubilación/Becas (571, 577)
+            'jubilacion': ['571'], 'jubilación': ['571'], 'beca': ['577'],
+            
+            // Herramientas (176)
+            'herramienta': ['176'], 'ferreteria': ['176'], 'ferretería': ['176'],
+            
+            // Plomería (271, 163, 154)
+            'plomeria': ['271', '163', '154'], 'plomería': ['271', '163', '154'],
+            'cañeria': ['271', '163'], 'cañería': ['271', '163'], 'tuberia': ['271', '163'],
+            'grifo': ['271', '163'], 'canilla': ['271', '163'],
+            
+            // Material Médico (194)
+            'material medico': ['194'], 'material médico': ['194'],
+            'quirurgico': ['194'], 'quirúrgico': ['194'], 'jeringa': ['194'],
+            
+            // Capacitación (284)
+            'capacitacion': ['284'], 'capacitación': ['284'], 'curso': ['284'],
+            
+            // Vigilancia (291)
+            'vigilancia': ['291'], 'seguridad': ['291'],            
+            // Mobiliario (326)
+            'mueble': ['326'], 'escritorio': ['326'], 'silla': ['326'], 'mesa': ['326'],
+            
+            // Impuestos (263)
+            'impuesto': ['263'], 'tasa': ['263'], 'dgi': ['263'], 'bps': ['263'],
+            
+            // Construcción (387)
+            'construccion': ['387'], 'construcción': ['387'], 'cemento': ['387'], 'ladrillo': ['387'],
+            
+            // Seguros (264)
+            'seguro': ['264'], 'poliza': ['264'], 'póliza': ['264'],
+            
+            // Mantenimiento (271, 273)
+            'mantenimiento': ['271', '273'], 'reparacion': ['271', '273'], 'reparación': ['271', '273'],
         };
 
         // ============================================
@@ -741,8 +733,7 @@ async function buscarEnInternet(query) {
             const panel = document.getElementById('customKeywordsPanel');
             const btn = document.getElementById('togglePanelBtn');
             if (panel.style.display === 'none' || panel.style.display === '') {
-                panel.style.display = 'block';
-                btn.textContent = '📝 Ocultar Palabras Personalizadas';
+                panel.style.display = 'block';                btn.textContent = '📝 Ocultar Palabras Personalizadas';
             } else {
                 panel.style.display = 'none';
                 btn.textContent = '📝 Gestionar Palabras Personalizadas';
@@ -757,6 +748,16 @@ async function buscarEnInternet(query) {
             if (!keyword || !objeto) {
                 alert('⚠️ Por favor completá la palabra y el objeto');
                 return;
+            }
+            
+            // Validar que el objeto exista en los datos cargados
+            if (datosCompletos.length > 0) {
+                const objetoExiste = datosCompletos.some(d => d.objeto === objeto);
+                if (!objetoExiste) {
+                    if (!confirm(`⚠️ El objeto ${objeto} no existe en los datos cargados. ¿Querés agregarlo de todos modos?`)) {
+                        return;
+                    }
+                }
             }
             
             if (!customKeywords[keyword]) {
@@ -781,8 +782,7 @@ async function buscarEnInternet(query) {
             document.getElementById('newObjeto').value = '';
             document.getElementById('newAuxiliar').value = '000';
             
-            alert('✅ ¡Palabra agregada correctamente!');
-        }
+            alert('✅ ¡Palabra agregada correctamente! El buscador la reconocerá en futuras búsquedas.');        }
 
         function deleteCustomKeyword(keyword, objeto, auxiliar) {
             if (confirm(`¿Estás seguro de eliminar "${keyword}" → ${objeto}/${auxiliar}?`)) {
@@ -799,7 +799,7 @@ async function buscarEnInternet(query) {
         }
 
         function clearAllCustomKeywords() {
-            if (confirm('⚠️ ¿Estás seguro de eliminar TODAS las palabras personalizadas?')) {
+            if (confirm('⚠️ ¿Estás seguro de eliminar TODAS las palabras personalizadas? Esta acción no se puede deshacer.')) {
                 customKeywords = {};
                 saveCustomKeywords();
                 alert('🗑️ Todas las palabras personalizadas fueron eliminadas.');
@@ -811,7 +811,7 @@ async function buscarEnInternet(query) {
             const keywords = Object.keys(customKeywords).sort();
             
             if (keywords.length === 0) {
-                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún.</p>';
+                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>';
                 return;
             }
             
@@ -832,7 +832,6 @@ async function buscarEnInternet(query) {
             
             list.innerHTML = html;
         }
-
         function exportCustomKeywords() {
             if (Object.keys(customKeywords).length === 0) {
                 alert('⚠️ No hay palabras personalizadas para exportar');
@@ -875,19 +874,62 @@ async function buscarEnInternet(query) {
                     });
                     
                     saveCustomKeywords();
-                    alert(`✅ Se importaron ${Object.keys(imported).length} palabras`);
+                    alert(`✅ Se importaron ${Object.keys(imported).length} palabras personalizadas`);
                 } catch (error) {
-                    alert('❌ Error al importar. Asegurate que sea JSON válido.');
+                    alert('❌ Error al importar el archivo. Asegurate que sea un JSON válido.');
                 }
             };
             reader.readAsText(file);
-            event.target.value = '';
+            event.target.value = '';        }
+
+        // ============================================
+        // 🌐 BÚSQUEDA EN INTERNET (URUGUAY)
+        // ============================================
+        
+        async function buscarEnInternet(query) {
+            const internetDiv = document.getElementById('internetResults');
+            internetDiv.style.display = 'block';
+            internetDiv.innerHTML = '<div class="loading">🌐 Buscando definiciones en Uruguay...</div>';
+            
+            let html = '<h4>🇺🇾 Información de Uruguay para "<strong>' + query + '</strong>":</h4>';
+            
+            try {
+                // Búsqueda en Wikipedia
+                const wikiResponse = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query + ' Uruguay')}`);
+                const wikiData = await wikiResponse.json();
+                
+                if (wikiData && wikiData.extract && !wikiData.type) {
+                    html += `
+                        <div class="uruguay-source">
+                            <h5>📚 Wikipedia</h5>
+                            <p><strong>${wikiData.title}</strong></p>
+                            <p>${wikiData.extract.substring(0, 300)}...</p>
+                            ${wikiData.content_urls?.desktop?.page ? `<a href="${wikiData.content_urls.desktop.page}" target="_blank">Ver más en Wikipedia →</a>` : ''}
+                        </div>
+                    `;
+                }
+                
+                // Enlaces a sitios uruguayos
+                html += `
+                    <div class="uruguay-source">
+                        <h5>🏛️ Sitios Gubernamentales de Uruguay</h5>
+                        <p><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank">CGN (Contaduría General) →</a></p>
+                        <p><a href="https://www.siif.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank">SIIF Uruguay →</a></p>
+                        <p><a href="https://www.impo.com.uy/buscar/${encodeURIComponent(query)}" target="_blank">IMPO (Legislación) →</a></p>
+                    </div>
+                `;
+                
+                internetDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.log('Error en búsqueda internet:', error);
+                internetDiv.innerHTML = '<div class="error">⚠️ No se pudo obtener información de internet. Verificá tu conexión.</div>';
+            }
         }
 
         // ============================================
         // 📂 CARGA DEL CSV
-        // ============================================
-        document.getElementById('csvFile').addEventListener('change', function(e) {
+        // ============================================        document.getElementById('csvFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
             
@@ -899,7 +941,7 @@ async function buscarEnInternet(query) {
                 procesarCSV(text);
             };
             reader.onerror = function() {
-                alert('❌ Error al leer el archivo.');
+                alert('❌ Error al leer el archivo. Asegúrate que sea un CSV válido.');
             };
             reader.readAsText(file, 'UTF-8');
         });
@@ -909,10 +951,12 @@ async function buscarEnInternet(query) {
                 const lineas = texto.split('\n');
                 datosCompletos = [];
                 
+                // Saltar encabezado (línea 0)
                 for (let i = 1; i < lineas.length; i++) {
                     const linea = lineas[i].trim();
                     if (!linea) continue;
                     
+                    // Parseo de CSV (maneja comillas)
                     const columnas = [];
                     let actual = '';
                     let entreComillas = false;
@@ -934,8 +978,7 @@ async function buscarEnInternet(query) {
                         const grupo = objeto.charAt(0);
                         
                         datosCompletos.push({
-                            objeto: objeto,
-                            auxiliar: columnas[1]?.trim() || '',
+                            objeto: objeto,                            auxiliar: columnas[1]?.trim() || '',
                             denominacion: columnas[2]?.trim() || '',
                             descripcion: columnas[3]?.trim() || '',
                             grupo: grupo,
@@ -945,12 +988,11 @@ async function buscarEnInternet(query) {
                 }
                 
                 if (datosCompletos.length === 0) {
-                    alert('⚠️ No se encontraron datos en el CSV.');
+                    alert('⚠️ No se encontraron datos en el CSV. Verifica el formato.');
                     return;
                 }
                 
                 document.getElementById('totalRegistros').textContent = datosCompletos.length;
-                document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
                 
                 document.getElementById('uploadSection').style.display = 'none';
                 document.getElementById('statsBar').style.display = 'flex';
@@ -961,11 +1003,11 @@ async function buscarEnInternet(query) {
                 loadCustomKeywords();
                 cargarSugerencias();
                 
-                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados.`);
+                alert(`✅ ¡Listo! ${datosCompletos.length} objetos cargados (011 al 923). Ahora podés buscar.`);
                 
             } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Error: ' + error.message);
+                console.error('Error procesando CSV:', error);
+                alert('❌ Error al procesar el CSV: ' + error.message);
             }
         }
 
@@ -985,63 +1027,7 @@ async function buscarEnInternet(query) {
             return categorias[grupo] || 'Otros';
         }
 
-        // ============================================
-        // 🌐 BÚSQUEDA EN INTERNET (WIKIPEDIA URUGUAY)
-        // ============================================
-        
-        async function buscarEnInternet(query) {
-            const internetDiv = document.getElementById('internetResults');
-            internetDiv.style.display = 'block';
-            internetDiv.innerHTML = '<div class="loading">🌐 Buscando definiciones en Uruguay...</div>';
-            
-            try {
-                // Búsqueda en Wikipedia en español
-                const wikiResponse = await fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
-                const wikiData = await wikiResponse.json();
-                
-                let html = '<h4>🌐 Información de Internet para "<strong>' + query + '</strong>":</h4>';
-                
-                if (wikiData && wikiData.extract && !wikiData.type) {
-                    html += `
-                        <div class="uruguay-source">
-                            <h5>📚 Wikipedia</h5>
-                            <p><strong>${wikiData.title}</strong></p>
-                            <p>${wikiData.extract.substring(0, 300)}...</p>
-                            ${wikiData.content_urls?.desktop?.page ? `<a href="${wikiData.content_urls.desktop.page}" target="_blank">Ver más en Wikipedia →</a>` : ''}
-                        </div>
-                    `;
-                } else {
-                    html += '<div class="uruguay-source"><p>No se encontró información en Wikipedia.</p></div>';
-                }
-                
-                // Búsqueda en Google Uruguay
-                html += `
-                    <div class="uruguay-source">
-                        <h5>🔍 Google Uruguay</h5>
-                        <p><a href="https://www.google.com.uy/search?q=${encodeURIComponent(query + ' objeto del gasto Uruguay')}" target="_blank">Buscar en Google Uruguay →</a></p>
-                    </div>
-                `;
-                
-                // Búsqueda en sitios gubernamentales de Uruguay
-                html += `
-                    <div class="uruguay-source">
-                        <h5>🏛️ Sitios Gubernamentales de Uruguay</h5>
-                        <p><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank">CGN (Contaduría General) →</a></p>
-                        <p><a href="https://www.siif.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank">SIIF Uruguay →</a></p>
-                        <p><a href="https://www.impo.com.uy/buscar/${encodeURIComponent(query)}" target="_blank">IMPO (Legislación) →</a></p>
-                    </div>
-                `;
-                
-                internetDiv.innerHTML = html;
-                
-            } catch (error) {
-                console.log('Error en búsqueda internet:', error);
-                internetDiv.innerHTML = '<div class="error">⚠️ No se pudo obtener información de internet. Verificá tu conexión.</div>';
-            }
-        }
-
-        // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA (CORREGIDO TILDES)
+        // ============================================        // 🔍 MOTOR DE BÚSQUEDA
         // ============================================
         
         function normalizar(texto) {
@@ -1049,7 +1035,6 @@ async function buscarEnInternet(query) {
             texto = texto.toLowerCase().trim();
             // Quitar tildes correctamente
             texto = texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-            // Reemplazar ñ por n
             texto = texto.replace(/ñ/g, 'n');
             return texto;
         }
@@ -1091,8 +1076,7 @@ async function buscarEnInternet(query) {
             if (descNorm.includes(queryNorm)) {
                 score += 30;
                 if (!keywordEncontrada) keywordEncontrada = 'descripción';
-            }
-            
+            }            
             // 5. Coincidencia en código
             if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
                 score += 60;
@@ -1126,16 +1110,22 @@ async function buscarEnInternet(query) {
             searchCount++;
             document.getElementById('searchCount').textContent = searchCount;
             
-            // Ocultar resultados anteriores de internet
-            document.getElementById('internetResults').style.display = 'none';
+            // Guardar en historial
+            searchHistory.push({
+                query: query,
+                timestamp: Date.now()
+            });
+            if (searchHistory.length > 20) {
+                searchHistory = searchHistory.slice(-20);
+            }
+            renderHistory();
             
             resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en ' + datosCompletos.length + ' objetos...</div>';
             
             // Búsqueda en internet en paralelo
             buscarEnInternet(query);
             
-            setTimeout(() => {
-                let resultados = datosCompletos.map(item => {
+            setTimeout(() => {                let resultados = datosCompletos.map(item => {
                     const relevancia = calcularRelevancia(query, item);
                     return { 
                         ...item, 
@@ -1184,12 +1174,10 @@ async function buscarEnInternet(query) {
                             <span class="grupo-tag">Grupo ${r.grupo}</span>
                             ${r.keywordEncontrada ? `<div class="keyword-match">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
                             ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
-                        </div>
-                    `;
+                        </div>                    `;
                 });
                 
                 resultsDiv.innerHTML = html;
-                renderHistory();
             }, 300);
         }
 
@@ -1235,8 +1223,7 @@ async function buscarEnInternet(query) {
             filtroGrupo = grupo;
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 if (btn.textContent.includes('Grupo')) {
-                    btn.classList.remove('active');
-                    if (btn.textContent.includes('Grupo ' + grupo)) btn.classList.add('active');
+                    btn.classList.remove('active');                    if (btn.textContent.includes('Grupo ' + grupo)) btn.classList.add('active');
                 }
             });
             buscar();
@@ -1251,16 +1238,16 @@ async function buscarEnInternet(query) {
             document.getElementById('searchInput').value = '';
             document.getElementById('results').innerHTML = '';
             document.getElementById('ultimaBusqueda').textContent = '0';
-            document.getElementById('internetResults').style.display = 'none';
         }
 
         function cargarSugerencias() {
             const sugerencias = [
-                'harina', 'sueldo', 'combustible', 'medicamento', 'vehiculo',
-                'regla', 'internacion', 'computadora', 'utiles', 'limpieza',
-                'electricidad', 'telefono', 'viatico', 'alquiler', 'jubilacion',
-                'beca', 'capacitacion', 'mantenimiento', 'lapiz', 'aceite',
-                'lima', 'ferreteria', 'plomeria'
+                'harina', 'sueldo', 'combustible', 'medicamento', 'vehículo',
+                'regla', 'internación', 'computadora', 'útiles', 'limpieza',
+                'electricidad', 'teléfono', 'viático', 'alquiler', 'jubilación',
+                'beca', 'capacitación', 'mantenimiento', 'construcción', 'vigilancia',
+                'lechuga', 'papel', 'agua', 'internet', 'seguro', 'subsidio',
+                'lápiz', 'aceite', 'lubricante', 'pintura', 'cemento', 'lima'
             ];
             
             const grid = document.getElementById('sugerenciasGrid');
@@ -1271,24 +1258,25 @@ async function buscarEnInternet(query) {
 
         function renderHistory() {
             const historyList = document.getElementById('historyList');
-            const recentSearches = []; // Podés implementar historial si querés
             
-            if (recentSearches.length === 0) {
+            if (searchHistory.length === 0) {
                 historyList.innerHTML = '<p style="color: #666;">No hay historial aún.</p>';
                 return;
             }
             
+            const recentSearches = searchHistory.slice(-10).reverse();
+            
             historyList.innerHTML = recentSearches.map(s => `
                 <div class="history-item" onclick="document.getElementById('searchInput').value='${s.query}'; buscar();">
                     <span>🔍 ${s.query}</span>
-                    <span class="history-count">${s.resultsCount} resultados</span>
+                    <span class="history-count">${new Date(s.timestamp).toLocaleTimeString()}</span>
                 </div>
             `).join('');
         }
-
         function clearHistory() {
             if (confirm('¿Estás seguro de limpiar todo el historial?')) {
-                document.getElementById('historyList').innerHTML = '<p style="color: #666;">No hay historial aún.</p>';
+                searchHistory = [];
+                renderHistory();
                 alert('Historial limpiado.');
             }
         }
