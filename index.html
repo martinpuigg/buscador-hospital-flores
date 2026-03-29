@@ -614,6 +614,66 @@
         }
 
         function clearHistory() { searchHistory = []; renderHistory(); }
+
+        // ============================================
+        // 🌐 BÚSQUEDA EN INTERNET (WIKCIONARIO)
+        // ============================================
+        async function buscarEnInternet(query) {
+            const internetDiv = document.getElementById('internetResults');
+            internetDiv.style.display = 'block';
+            internetDiv.innerHTML = '<div class="loading">📖 Buscando en el diccionario web...</div>';
+            
+            try {
+                // Agarramos solo la primera palabra para evitar que falle con frases largas
+                const palabraClave = query.split(' ')[0].toLowerCase();
+                
+                // Consultamos al Wikcionario (Diccionario libre en español)
+                const wikiResponse = await fetch(`https://es.wiktionary.org/api/rest_v1/page/summary/${encodeURIComponent(palabraClave)}`);
+                
+                let html = `<h4>🌐 Resultados en la web para "<strong>${query}</strong>":</h4>`;
+                
+                if (wikiResponse.ok) {
+                    const wikiData = await wikiResponse.json();
+                    
+                    if (wikiData && wikiData.extract) {
+                        html += `
+                        <div class="uruguay-source" style="background: #f0f7ff; border-left: 3px solid #0056b3; padding: 15px; border-radius: 8px;">
+                            <h5 style="color: #0056b3; margin-bottom: 8px;">📖 Definición del Diccionario</h5>
+                            <p style="font-size: 1em; color: #333; line-height: 1.5;"><strong>${palabraClave}:</strong> ${wikiData.extract}</p>
+                        </div>
+                        `;
+                    }
+                } else {
+                    html += `
+                    <div class="uruguay-source" style="background: #fff3cd; border-left: 3px solid #ffc107; padding: 15px; border-radius: 8px;">
+                        <p style="color: #856404; margin: 0; font-size: 0.9em;">⚠️ No se encontró una definición exacta en el diccionario web para esta palabra.</p>
+                    </div>
+                    `;
+                }
+                
+                // Mantenemos siempre los accesos rápidos a la CGN y al IMPO
+                html += `
+                <div class="uruguay-source" style="border-left: 3px solid #28a745; margin-top: 15px; padding: 15px; border-radius: 8px; background: #ffffff;">
+                    <h5 style="color: #28a745; margin-bottom: 10px;">🏛️ Accesos Directos al Estado</h5>
+                    <p style="margin-bottom: 8px;"><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank" style="color: #003ca5; text-decoration: none; font-weight: 500;">🔍 Buscar "${query}" en el portal de la CGN →</a></p>
+                    <p><a href="https://www.impo.com.uy/buscar/${encodeURIComponent(query)}" target="_blank" style="color: #003ca5; text-decoration: none; font-weight: 500;">📜 Buscar normativa en IMPO →</a></p>
+                </div>
+                `;
+                
+                internetDiv.innerHTML = html;
+            } catch (error) {
+                // Falla silenciosa: si algo se rompe, mostramos solo los botones de Uruguay
+                internetDiv.innerHTML = `
+                <h4>🌐 Resultados en la web para "<strong>${query}</strong>":</h4>
+                <div class="uruguay-source" style="border-left: 3px solid #28a745; padding: 15px; border-radius: 8px; background: #ffffff;">
+                    <h5 style="color: #28a745; margin-bottom: 10px;">🏛️ Accesos Directos al Estado</h5>
+                    <p style="margin-bottom: 8px;"><a href="https://www.cgn.gub.uy/busqueda?q=${encodeURIComponent(query)}" target="_blank" style="color: #003ca5; text-decoration: none; font-weight: 500;">🔍 Buscar "${query}" en CGN →</a></p>
+                    <p><a href="https://www.impo.com.uy/buscar/${encodeURIComponent(query)}" target="_blank" style="color: #003ca5; text-decoration: none; font-weight: 500;">📜 Buscar normativa en IMPO →</a></p>
+                </div>
+                `;
+            }
+        }
+
     </script>
 </body>
 </html>
