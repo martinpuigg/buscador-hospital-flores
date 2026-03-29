@@ -177,4 +177,397 @@
             
             <div class="filters">
                 <button class="filter-btn active" onclick="setLimite(20)">Mostrar 20</button>
-                <button class="
+                <button class="filter-btn" onclick="setLimite(50)">Mostrar 50</button>
+                <button class="filter-btn" onclick="filtrarGrupo('0')">Sueldos (G. 0)</button>
+                <button class="filter-btn" onclick="filtrarGrupo('1')">Insumos (G. 1)</button>
+                <button class="filter-btn" onclick="filtrarGrupo('2')">Servicios (G. 2)</button>
+                <button class="filter-btn" onclick="filtrarGrupo('3')">Inversiones (G. 3)</button>
+                <button class="filter-btn" onclick="limpiarFiltros()" style="background: #e0e0e0; color: #333; border: none;">🔄 Quitar Filtros</button>
+            </div>
+
+            <div class="internet-results" id="internetResults"></div>
+        </div>
+
+        <div id="results" class="results-container"></div>
+    </div>
+
+    <script>
+        // ============================================
+        // 📊 VARIABLES Y CONFIGURACIÓN BÁSICA
+        // ============================================
+        let datosCompletos = [];
+        let limiteResultados = 20;
+        let filtroGrupo = '';
+        let searchCount = 0;
+        let customKeywords = {};
+
+        // Diccionario base precargado
+        const keywordsMap = {
+            'harina': ['111'], 'arroz': ['111'], 'carne': ['111'], 'aceite': ['111'],
+            'atun': ['111'], 'atún': ['111'], 'arveja': ['111'], 'fideo': ['111'],
+            'jeringa': ['194'], 'descartable': ['194'], 'gasa': ['194'], 'guante': ['194'],
+            'medicamento': ['152'], 'pastilla': ['152'], 'suero': ['194'],
+            'limpieza': ['192'], 'jabon': ['192'], 'jabón': ['192'], 'hipoclorito': ['192'],
+            'oficina': ['191'], 'papel': ['131', '191'], 'resma': ['191'],
+            'sueldo': ['011', '021', '031'], 'suplencia': ['021', '031'],
+            'combustible': ['141'], 'nafta': ['141'], 'ambulancia': ['353'],
+            'mantenimiento': ['271', '273'], 'reparacion': ['271', '273'],
+            'electricidad': ['213'], 'agua': ['212'], 'telefono': ['211']
+        };
+
+        // Al iniciar, cargar configuraciones del navegador
+        window.onload = function() {
+            const savedKey = localStorage.getItem('hospital_flores_gemini_key');
+            if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
+            loadCustomKeywords();
+        };
+
+        document.getElementById('apiKeyInput').addEventListener('change', function(e) {
+            localStorage.setItem('hospital_flores_gemini_key', e.target.value.trim());
+        });
+
+        // ============================================
+        // 📝 DICCIONARIO INTERNO (Gestión de Reglas)
+        // ============================================
+        function loadCustomKeywords() {
+            const saved = localStorage.getItem('hospital_flores_custom_keywords');
+            if (saved) customKeywords = JSON.parse(saved);
+            updateCustomKeywordsCount();
+            renderCustomKeywordsList();
+        }
+
+        function saveCustomKeywords() {
+            localStorage.setItem('hospital_flores_custom_keywords', JSON.stringify(customKeywords));
+            updateCustomKeywordsCount();
+            renderCustomKeywordsList();
+        }
+
+        function updateCustomKeywordsCount() {
+            document.getElementById('customKeywordsCount').textContent = Object.keys(customKeywords).length;
+        }
+
+        function toggleCustomKeywordsPanel() {
+            const panel = document.getElementById('customKeywordsPanel');
+            panel.style.display = panel.style.display === 'none' || panel.style.display === '' ? 'block' : 'none';
+        }
+
+        function addCustomKeyword() {
+            const keyword = document.getElementById('newKeyword').value.trim().toLowerCase();
+            const objeto = document.getElementById('newObjeto').value.trim();
+            const auxiliar = document.getElementById('newAuxiliar').value.trim() || '000';
+
+            if (!keyword || !objeto) return alert('Por favor completá la palabra y el código del objeto.');
+            if (!customKeywords[keyword]) customKeywords[keyword] = [];
+            
+            const yaExiste = customKeywords[keyword].some(k => k.objeto === objeto && k.auxiliar === auxiliar);
+            if (yaExiste) return alert('Esta regla ya se encuentra registrada.');
+
+            customKeywords[keyword].push({ objeto, auxiliar });
+            saveCustomKeywords();
+            
+            document.getElementById('newKeyword').value = ''; 
+            document.getElementById('newObjeto').value = '';
+            
+            // Re-ejecutar la búsqueda si hay una activa
+            const currentSearch = document.getElementById('searchInput').value.trim();
+            if (currentSearch) buscar();
+        }
+
+        function deleteCustomKeyword(keyword, objeto, auxiliar) {
+            customKeywords[keyword] = customKeywords[keyword].filter( k => !(k.objeto === objeto && k.auxiliar === auxiliar) );
+            if (customKeywords[keyword].length === 0) delete customKeywords[keyword];
+            saveCustomKeywords();
+        }
+
+        function clearAllCustomKeywords() {
+            if (confirm('⚠️ ¿Estás seguro de borrar TODAS las reglas aprendidas?')) { 
+                customKeywords = {}; 
+                saveCustomKeywords(); 
+            }
+        }
+
+        function renderCustomKeywordsList() {
+            const list = document.getElementById('keywordsList');
+            const keywords = Object.keys(customKeywords).sort();
+            if (keywords.length === 0) { list.innerHTML = '<p style="color: #666; text-align: center;">No hay reglas registradas.</p>'; return; }
+
+            let html = '';
+            keywords.forEach(keyword => {
+                customKeywords[keyword].forEach(mapping => {
+                    html += `
+                        <div class="keyword-item">
+                            <div><strong style="color: #28a745; text-transform: capitalize;">${keyword}</strong> ➔ Objeto ${mapping.objeto}/${mapping.auxiliar}</div>
+                            <button class="keyword-item-delete" onclick="deleteCustomKeyword('${keyword}', '${mapping.objeto}', '${mapping.auxiliar}')">Quitar</button>
+                        </div>`;
+                });
+            });
+            list.innerHTML = html;
+        }
+
+        // ============================================
+        // 🤖 MOTOR DE IA CON AUTO-DESCUBRIMIENTO
+        // ============================================
+        async function consultarInteligenciaArtificial(query) {
+            const internetDiv = document.getElementById('internetResults');
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+
+            if (!apiKey) {
+                internetDiv.style.display = 'block';
+                internetDiv.innerHTML = `
+                    <div style="background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 15px; border-radius: 8px;">
+                        ⚠️ <strong>IA Desactivada:</strong> Pegá tu clave arriba para clasificar conceptos atípicos automáticamente.
+                    </div>`;
+                return;
+            }
+
+            internetDiv.style.display = 'block';
+            internetDiv.innerHTML = '<div class="loading">🤖 Verificando servidor y conectando a la IA...</div>';
+
+            const prompt = `Actúa como un experto en contabilidad pública de Uruguay y del clasificador de gastos de la CGN. El usuario quiere clasificar este gasto: "${query}".
+Devuelve un JSON con exactamente esta estructura (sin texto adicional):
+{
+  "explicacion": "Breve definición del artículo y su naturaleza de gasto en contexto de compras públicas, sugiriendo el objeto de gasto (ej: 111, 194, 273) dentro de la misma explicación."
+}`;
+
+            try {
+                // PASO 1: Descubrir qué modelos están permitidos para esta API KEY
+                const modelsResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+                const modelsData = await modelsResponse.json();
+
+                if (!modelsResponse.ok || modelsData.error) {
+                    throw new Error(modelsData.error ? modelsData.error.message : 'La API Key fue rechazada.');
+                }
+
+                // Filtrar modelos válidos para texto
+                let modeloElegido = "";
+                if (modelsData.models) {
+                    const modelosValidos = modelsData.models.filter(m => 
+                        m.supportedGenerationMethods && 
+                        m.supportedGenerationMethods.includes("generateContent") &&
+                        m.name.includes("gemini")
+                    );
+                    
+                    if (modelosValidos.length === 0) throw new Error("La clave no tiene permisos para modelos de texto.");
+                    
+                    // Elegir el mejor modelo disponible (prioriza flash o pro)
+                    const flashModel = modelosValidos.find(m => m.name.includes("flash"));
+                    const proModel = modelosValidos.find(m => m.name.includes("pro"));
+                    modeloElegido = flashModel ? flashModel.name : (proModel ? proModel.name : modelosValidos[0].name);
+                }
+
+                // PASO 2: Llamada a la IA con el modelo seguro
+                internetDiv.innerHTML = `<div class="loading">🤖 Analizando gasto...</div>`;
+                
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/${modeloElegido}:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok || data.error) throw new Error(data.error ? data.error.message : 'Error al procesar la respuesta');
+
+                // Procesamiento y renderizado del resultado de la IA
+                let aiText = data.candidates[0].content.parts[0].text;
+                aiText = aiText.replace(/```json/gi, '').replace(/```/g, '').trim();
+                const aiData = JSON.parse(aiText);
+
+                // Resultado final sin botón adicional
+                let html = `
+                    <h4 style="color: #ff6b00; margin-bottom: 10px;">🤖 Recomendación Contable (IA):</h4>
+                    <div style="font-size: 1.05em; color: #333; line-height: 1.5;">
+                        ${aiData.explicacion}
+                    </div>
+                `;
+
+                internetDiv.innerHTML = html;
+
+            } catch (error) {
+                internetDiv.innerHTML = `
+                    <div class="error" style="border-color: #f5c6cb; background: #f8d7da; color: #721c24;">
+                        ⚠️ <strong>Falló el análisis inteligente.</strong><br>
+                        Asegurate de que la clave de Google no tenga espacios o haya caducado.<br>
+                        <span style="font-size: 0.85em; color: #999;">Error: ${error.message}</span>
+                    </div>`;
+            }
+        }
+
+        // ============================================
+        // 📂 LECTURA DEL CSV LOCAL (CON Ñ Y TILDES) Y SEPARADORES FLEXIBLES
+        // ============================================
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            document.getElementById('fileName').textContent = `✅ Documento cargado: ${file.name}`;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) { procesarCSV(event.target.result); };
+            // ISO-8859-1 es vital para leer exportaciones de Excel en español sin romper las letras
+            reader.readAsText(file, 'ISO-8859-1'); 
+        });
+
+        function procesarCSV(texto) {
+            try {
+                let separador = ',';
+                const primeraLinea = texto.split('\n')[0];
+                if (primeraLinea.includes(';')) {
+                    separador = ';';
+                }
+
+                const lineas = texto.split(/\r?\n/); 
+                datosCompletos = [];
+                
+                for (let i = 1; i < lineas.length; i++) {
+                    const linea = lineas[i].trim(); 
+                    if (!linea) continue;
+                    
+                    const columnas = []; 
+                    let actual = ''; 
+                    let entreComillas = false;
+                    
+                    for (let char of linea) {
+                        if (char === '"') entreComillas = !entreComillas;
+                        else if (char === separador && !entreComillas) { 
+                            columnas.push(actual.trim().replace(/^"|"$/g, '')); 
+                            actual = ''; 
+                        }
+                        else actual += char;
+                    }
+                    columnas.push(actual.trim().replace(/^"|"$/g, ''));
+                    
+                    if (columnas.length >= 3) {
+                        const objeto = columnas[0]?.trim() || '';
+                        datosCompletos.push({
+                            objeto: objeto, 
+                            auxiliar: columnas[1]?.trim() || '000',
+                            denominacion: columnas[2]?.trim() || '', 
+                            descripcion: columnas[3]?.trim() || '',
+                            grupo: objeto.charAt(0)
+                        });
+                    }
+                }
+                
+                if (datosCompletos.length === 0) {
+                    alert('⚠️ El archivo se leyó, pero parece estar vacío o tener un formato irreconocible.');
+                    return;
+                }
+                
+                document.getElementById('totalRegistros').textContent = datosCompletos.length;
+                document.getElementById('uploadSection').style.display = 'none';
+                document.getElementById('statsBar').style.display = 'flex';
+                document.getElementById('togglePanelBtn').style.display = 'block';
+                document.getElementById('searchContainer').style.display = 'block';
+                
+            } catch (error) { 
+                alert('❌ Error de lectura. Verificá que el archivo sea un CSV separado por comas válido.'); 
+            }
+        }
+
+        // ============================================
+        // 🔍 BÚSQUEDA Y RENDERIZADO
+        // ============================================
+        function normalizar(texto) { 
+            return (texto || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); 
+        }
+
+        function calcularRelevancia(query, item) {
+            const queryNorm = normalizar(query);
+            let score = 0; let keywordEncontrada = null;
+
+            // 1. Reglas manuales (Prioridad 1)
+            if (customKeywords[queryNorm]) {
+                const coincide = customKeywords[queryNorm].some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
+                if (coincide) { score += 100; keywordEncontrada = `Regla del diccionario interno`; }
+            }
+            // 2. Base de conocimiento rápida (Prioridad 2)
+            if (keywordsMap[queryNorm] && keywordsMap[queryNorm].includes(item.objeto)) {
+                score += 80; keywordEncontrada = `Sugerencia del sistema`;
+            }
+            // 3. Coincidencia de texto pura (Prioridad 3)
+            if (normalizar(item.denominacion).includes(queryNorm)) score += 45;
+            if (normalizar(item.descripcion).includes(queryNorm)) score += 35;
+            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) score += 70;
+            
+            return { score: Math.min(score, 100), keyword: keywordEncontrada };
+        }
+
+        function buscar() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('results');
+            
+            if (!query || query.length < 2) return;
+            
+            searchCount++; document.getElementById('searchCount').textContent = searchCount;
+            resultsDiv.innerHTML = '<div class="loading">⏳ Rastrendo código contable...</div>';
+            
+            // Llama a la IA
+            consultarInteligenciaArtificial(query);
+
+            setTimeout(() => {
+                let resultados = datosCompletos.map(item => ({ ...item, ...calcularRelevancia(query, item) })).filter(r => r.score >= 15);
+                
+                if (filtroGrupo) resultados = resultados.filter(r => r.grupo === filtroGrupo);
+                
+                resultados.sort((a, b) => b.score - a.score);
+                resultados = resultados.slice(0, limiteResultados);
+                
+                document.getElementById('ultimaBusqueda').textContent = resultados.length;
+
+                if (resultados.length === 0) {
+                    resultsDiv.innerHTML = `
+                        <div class="no-results">
+                            <h3 style="color: #333; margin-bottom: 10px;">La palabra exacta no figura en el listado de la CGN</h3>
+                            <p>Revisá el consejo de la Inteligencia Artificial en el recuadro naranja de arriba.</p>
+                        </div>`;
+                    return;
+                }
+
+                let html = '';
+                resultados.forEach((r, index) => {
+                    html += `
+                        <div class="result-card ${index === 0 ? 'selected' : ''}" onclick="selectResult(event)">
+                            <div>
+                                <span class="codigo-badge">Objeto ${r.objeto} / ${r.auxiliar}</span> 
+                                <span class="relevancia-badge">Relevancia: ${r.score}%</span>
+                            </div>
+                            <div class="denominacion">${r.denominacion}</div>
+                            <div class="descripcion">${r.descripcion}</div>
+                            <span class="grupo-tag">Grupo ${r.grupo}</span>
+                            ${r.keyword ? `<div class="keyword-match">🏷️ ${r.keyword}</div>` : ''}
+                        </div>`;
+                });
+                resultsDiv.innerHTML = html;
+            }, 300);
+        }
+
+        function selectResult(event) {
+            document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+        
+        function setLimite(limite) { 
+            limiteResultados = limite; 
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                if(b.textContent.includes('Mostrar')) b.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            buscar(); 
+        }
+        
+        function filtrarGrupo(grupo) { 
+            filtroGrupo = grupo; 
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            buscar(); 
+        }
+        
+        function limpiarFiltros() { 
+            filtroGrupo = ''; 
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.filter-btn').classList.add('active');
+            buscar(); 
+        }
+    </script>
+</body>
+</html>
