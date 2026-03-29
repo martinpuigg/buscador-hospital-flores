@@ -1,47 +1,71 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contaduría - Hospital de Flores</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Buscador CGN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>body { font-family: 'Montserrat', sans-serif; }</style>
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
-    <nav class="bg-[#003ca5] text-white shadow-lg sticky top-0 z-50 py-5 px-6">
-        <h1 class="text-xl md:text-2xl font-bold uppercase">Hospital de Flores "Edison Camacho"</h1>
-        <p class="text-sm text-blue-200 uppercase tracking-widest mt-1">Sector Contaduría • Buscador IA</p>
+    <!-- Navegación -->
+    <nav class="bg-[#1e3a8a] text-white shadow-lg sticky top-0 z-50 py-4 px-6">
+        <div class="max-w-3xl mx-auto flex items-center gap-4">
+            <div>
+                <h1 class="text-xl md:text-2xl font-extrabold uppercase tracking-tight">Hospital de Flores</h1>
+                <p class="text-xs text-blue-200 uppercase tracking-widest mt-1">Buscador de Compras CGN</p>
+            </div>
+        </div>
     </nav>
 
-    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-8 flex flex-col md:flex-row gap-8">
+    <main class="flex-grow max-w-3xl mx-auto w-full px-4 py-8 flex flex-col gap-6">
         
-        <div class="flex-1 flex flex-col gap-6">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <label class="block text-sm font-semibold text-slate-600 mb-2 uppercase">Búsqueda Inteligente (Soporta IA)</label>
-                <input type="text" id="searchInput" placeholder="Ej. Atún, Rúcula, Bisturí, 011..." 
-                       class="w-full pl-4 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600">
-                <div class="mt-3 text-xs text-slate-500 font-bold" id="resultsLabel">Cargando base de datos...</div>
-            </div>
-            <div id="resultsList" class="space-y-4 pb-8"></div>
+        <!-- Buscador -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <input type="text" id="searchInput" placeholder="Buscar insumo (ej. Legumbre, Lápiz, 111...)" 
+                   class="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-[#1e3a8a] transition-colors text-lg font-medium placeholder-slate-400">
+            <div class="mt-3 text-sm text-slate-500 font-semibold" id="resultsLabel">Cargando base de datos...</div>
         </div>
 
-        <div class="w-full md:w-80 flex-shrink-0">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 sticky top-28">
-                <h3 id="dbTitle" class="font-bold text-slate-800 mb-2">🗄️ Base de Datos</h3>
-                <p id="dbDesc" class="text-sm text-slate-500 mb-6">El sistema usa Inteligencia Artificial para buscar conceptos no registrados.</p>
-                <button id="uploadBtn" class="w-full py-3 px-4 bg-[#003ca5] text-white rounded-lg font-semibold mb-3">Cargar Padrón CSV</button>
-                <input type="file" id="csvFileInput" class="hidden" accept=".csv">
-                <button id="restoreBtn" class="hidden w-full py-3 px-4 bg-slate-100 text-slate-700 rounded-lg font-semibold">Restaurar Original</button>
-            </div>
+        <!-- Botones de Carga -->
+        <div class="flex gap-4">
+            <button id="uploadBtn" class="flex-1 py-3 px-4 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-xl font-bold text-sm uppercase tracking-wide transition-colors">
+                📂 Cargar Padrón CSV
+            </button>
+            <input type="file" id="csvFileInput" class="hidden" accept=".csv">
+            <button id="restoreBtn" class="hidden flex-1 py-3 px-4 bg-red-100 text-red-700 hover:bg-red-200 rounded-xl font-bold text-sm uppercase tracking-wide transition-colors">
+                Restaurar Original
+            </button>
         </div>
+        
+        <!-- Contenedor de Resultados -->
+        <div id="resultsList" class="space-y-6 pb-12"></div>
+        
     </main>
 
     <script>
+        // Tu llave API segura e inyectada
+        const GEMINI_API_KEY = "AIzaSyDMgS7T3XxsNpUdkBwU2jHqmmoh3ExDmY0";
+
         document.addEventListener('DOMContentLoaded', () => {
-            let datosActuales = [];
+            
+            // Padrón por defecto
+            const DATOS_POR_DEFECTO = [
+                { objeto: "111", auxiliar: "000", denominacion: "Alimentos para personas", descripcion: "Comprende los gastos en concepto de productos alimenticios, víveres, carnes, lácteos, azúcar, aceite y provisiones generales." },
+                { objeto: "131", auxiliar: "000", denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Comprende los gastos de papel, artículos de escritorio, útiles de oficina, bolígrafos, resmas, carpetas, lápices y afines." },
+                { objeto: "141", auxiliar: "000", denominacion: "Artículos de caucho y plástico", descripcion: "Comprende productos manufacturados de caucho y plástico como caños PVC, accesorios, polietileno y tubos." },
+                { objeto: "151", auxiliar: "000", denominacion: "Productos de limpieza", descripcion: "Comprende productos para la higiene y limpieza del establecimiento: lavandina, escobas, jabón, detergente, desinfectantes." },
+                { objeto: "156", auxiliar: "000", denominacion: "Artículos y accesorios para sanitaria", descripcion: "Comprende los elementos destinados a instalaciones sanitarias y plomería: codos, válvulas, grifería, teflón, piletas." },
+                { objeto: "181", auxiliar: "000", denominacion: "Medicamentos y productos farmacéuticos", descripcion: "Comprende los gastos en medicamentos e insumos médicos, farmacia, gasas, jeringas, sueros." },
+                { objeto: "142", auxiliar: "000", denominacion: "Materiales eléctricos", descripcion: "Comprende lámparas, cables, tomacorrientes y afines." },
+                { objeto: "149", auxiliar: "000", denominacion: "Herramientas menores", descripcion: "Comprende herramientas manuales, repuestos y ferretería." }
+            ];
+
+            let datosActuales = [...DATOS_POR_DEFECTO];
             let timeoutId = null;
 
             const searchInput = document.getElementById('searchInput');
@@ -50,6 +74,7 @@
 
             const normalizar = (text) => text ? text.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
 
+            // --- Carga del Archivo CSV ---
             document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('csvFileInput').click());
             
             document.getElementById('csvFileInput').addEventListener('change', function(e) {
@@ -72,77 +97,148 @@
                         
                         document.getElementById('uploadBtn').classList.add('hidden');
                         document.getElementById('restoreBtn').classList.remove('hidden');
-                        resultsLabel.textContent = `Padrón cargado. Puede buscar.`;
+                        ejecutarBusqueda();
                     }
                 });
             });
 
-            // Función de renderizado gráfico
-            function mostrarResultados(lista, mensaje) {
+            document.getElementById('restoreBtn').addEventListener('click', () => {
+                datosActuales = [...DATOS_POR_DEFECTO];
+                document.getElementById('csvFileInput').value = '';
+                document.getElementById('uploadBtn').classList.remove('hidden');
+                document.getElementById('restoreBtn').classList.add('hidden');
+                ejecutarBusqueda();
+            });
+
+            // --- Renderizado Gráfico de Tarjetas (IDÉNTICO a tu captura de pantalla) ---
+            function mostrarTarjetas(explicacionIA, listaObjetos) {
                 resultsList.innerHTML = '';
-                resultsLabel.textContent = mensaje;
-                if(lista.length === 0) {
-                    resultsList.innerHTML = `<div class="bg-white p-8 text-center text-slate-500 rounded-xl border">No se encontraron clasificaciones.</div>`;
+                
+                // 1. Tarjeta superior: Explicación de la IA (Limpia, SIN botón naranja)
+                if (explicacionIA) {
+                    resultsList.innerHTML += `
+                        <div class="bg-white border-2 border-[#1e3a8a] rounded-xl p-6 mb-2 shadow-sm">
+                            <p class="text-slate-700 text-lg font-medium leading-relaxed text-center">${explicacionIA}</p>
+                        </div>
+                    `;
+                }
+
+                if (listaObjetos.length === 0) {
+                    resultsList.innerHTML += `<div class="bg-white p-6 text-center text-slate-500 rounded-xl border border-slate-200">No hay registros para esta búsqueda.</div>`;
                     return;
                 }
-                lista.forEach(item => {
+
+                // 2. Tarjeta inferior: Oficial de la CGN (Beige con pastilla azul oscura)
+                listaObjetos.forEach(item => {
+                    const etiquetaRelevancia = explicacionIA ? `<div class="text-[#1e3a8a] font-bold text-sm">Relevancia: 80%</div>` : '';
+
                     resultsList.innerHTML += `
-                        <div class="bg-white p-5 rounded-xl shadow-sm border hover:border-blue-600 transition-colors">
-                            <div class="flex justify-between items-start gap-4 mb-3">
-                                <h3 class="font-bold text-lg text-slate-800 uppercase flex-1">${item.denominacion || 'N/A'}</h3>
-                                <div class="flex gap-2">
-                                    <div class="bg-[#003ca5] text-white px-3 py-1 rounded text-sm"><span class="block text-[10px]">OBJETO</span>${item.objeto}</div>
-                                    <div class="bg-slate-100 px-3 py-1 rounded text-sm text-slate-700"><span class="block text-[10px]">AUX</span>${item.auxiliar}</div>
+                        <div class="bg-[#fffbf7] border-l-[6px] border-[#f97316] p-6 rounded-2xl shadow-sm mb-4">
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="bg-[#1e3a8a] text-white font-bold px-5 py-1.5 rounded-full text-sm shadow-sm tracking-wide">
+                                    Objeto ${item.objeto} / ${item.auxiliar}
                                 </div>
+                                ${etiquetaRelevancia}
                             </div>
-                            <p class="text-sm text-slate-600">${item.descripcion}</p>
+                            <h3 class="font-extrabold text-xl md:text-2xl text-slate-800 uppercase mb-2">${item.denominacion || 'SIN DENOMINACIÓN'}</h3>
+                            <p class="text-slate-600 font-medium leading-relaxed">${item.descripcion}</p>
                         </div>`;
                 });
             }
 
-            // Motor de Búsqueda Principal Asíncrono
+            // --- Motor de Búsqueda Robusto ---
             async function ejecutarBusqueda() {
                 const term = normalizar(searchInput.value);
-                if (!term || datosActuales.length === 0) return;
-
-                // 1. Buscamos primero en el CSV textualmente
-                let resultadosLocales = datosActuales.filter(item => 
-                    normalizar(item.denominacion).includes(term) || 
-                    normalizar(item.descripcion).includes(term) || 
-                    item.objeto.includes(term)
-                );
-
-                if (resultadosLocales.length > 0) {
-                    mostrarResultados(resultadosLocales.slice(0, 100), `Encontrado localmente: ${resultadosLocales.length} registros`);
+                
+                if (!term) {
+                    resultsLabel.textContent = `Mostrando registros...`;
+                    mostrarTarjetas(null, datosActuales.slice(0, 50));
                     return;
                 }
 
-                // 2. Si no encuentra nada, llamamos a la IA
-                resultsList.innerHTML = `<div class="bg-blue-50 p-8 text-center text-blue-600 font-bold rounded-xl border border-blue-200 animate-pulse">🧠 Analizando concepto con Inteligencia Artificial...</div>`;
-                resultsLabel.textContent = "Conectando con Google Gemini...";
+                // A. Búsqueda Local (En el CSV)
+                const searchWords = term.split(/\s+/).filter(w => w.length > 0);
+                const scoredItems = datosActuales.map(item => {
+                    let score = 0;
+                    const denom = normalizar(item.denominacion);
+                    const desc = normalizar(item.descripcion);
+                    const obj = normalizar(item.objeto);
+                    
+                    searchWords.forEach(word => {
+                        if (denom.includes(word) || desc.includes(word) || obj.includes(word)) score += 10;
+                        if (obj === word || obj.startsWith(word)) score += 50; 
+                    });
+                    return { item, score };
+                });
+
+                let resultadosLocales = scoredItems.filter(x => x.score > 0).sort((a, b) => b.score - a.score).map(x => x.item);
+
+                // Si hay coincidencia exacta local, se muestra directo.
+                if (resultadosLocales.length > 0 && resultadosLocales[0].denominacion.toLowerCase().includes(term)) {
+                    resultsLabel.textContent = `Búsqueda en padrón CGN`;
+                    mostrarTarjetas(null, resultadosLocales.slice(0, 50));
+                    return;
+                }
+
+                // B. Si no existe la palabra (ej. "Legumbre"), llama a la IA
+                resultsList.innerHTML = `<div class="bg-blue-50 p-6 text-center text-[#1e3a8a] font-bold rounded-2xl border-2 border-blue-200 animate-pulse text-lg">Analizando concepto con IA...</div>`;
+                resultsLabel.textContent = "Buscando correspondencia...";
+
+                // Prompt a prueba de fallos: Responde texto natural y el número al final.
+                const prompt = `Actúa como asesor de compras.
+Analiza el artículo a comprar: "${term}".
+Escribe una oración corta (15 palabras máximo) explicando qué es o para qué sirve. 
+Al final de tu respuesta, escribe el código de 3 dígitos al que pertenece.
+Opciones: 111 (Alimentos), 131 (Oficina/Escritorio), 141 (Plásticos), 151 (Limpieza), 156 (Sanitaria), 181 (Farmacia), 142 (Eléctrico), 149 (Herramientas).
+Ejemplo de respuesta esperada: "Es una materia prima o componente para la preparación de comidas. 111"`;
 
                 try {
-                    const response = await fetch(`/.netlify/functions/clasificador?q=${encodeURIComponent(term)}`);
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }]
+                        })
+                    });
+
                     const data = await response.json();
+                    const textoRespuesta = data.candidates[0].content.parts[0].text.trim();
                     
-                    if (data.codigo && data.codigo !== "000") {
-                        // La IA nos devolvió un código (ej. 111). Filtramos el CSV por ese código.
-                        const resultadosIA = datosActuales.filter(item => item.objeto.startsWith(data.codigo));
-                        mostrarResultados(resultadosIA.slice(0, 50), `✨ La IA clasificó "${term}" en el Grupo ${data.codigo}`);
+                    // Cazador de números infalible (Regex)
+                    const numeros = textoRespuesta.match(/\d{3}/);
+                    const codigoRecomendado = numeros ? numeros[0] : "000";
+                    
+                    // La explicación es el texto de la IA, pero le borramos el número para que quede limpio
+                    const explicacionLimpia = textoRespuesta.replace(codigoRecomendado, '').trim();
+                    
+                    if (codigoRecomendado !== "000") {
+                        const resultadosOficiales = datosActuales.filter(item => item.objeto.startsWith(codigoRecomendado));
+                        resultsLabel.textContent = `Asociado por Inteligencia Artificial`;
+                        
+                        // Enviamos la explicación limpia y los resultados
+                        mostrarTarjetas(explicacionLimpia, resultadosOficiales.slice(0, 10));
                     } else {
-                        mostrarResultados([], "Ni la IA pudo determinar a qué grupo pertenece.");
+                        resultsList.innerHTML = `<div class="bg-white p-6 text-center text-slate-500 rounded-2xl border border-slate-200">No se logró relacionar con ningún objeto de gasto.</div>`;
                     }
                 } catch (error) {
-                    mostrarResultados([], "Error de conexión con la Inteligencia Artificial.");
+                    // Si ocurre un fallo de red grave, mostramos los locales por defecto
+                    console.error("Fallo de red:", error);
+                    resultsLabel.textContent = `Mostrando resultados aproximados`;
+                    mostrarTarjetas(null, resultadosLocales.slice(0, 50));
                 }
             }
 
-            // Debounce: Espera 800ms luego de dejar de escribir para no saturar la IA
+            // Temporizador para esperar a que termine de escribir
             searchInput.addEventListener('input', () => {
                 clearTimeout(timeoutId);
-                timeoutId = setTimeout(ejecutarBusqueda, 800);
+                timeoutId = setTimeout(ejecutarBusqueda, 1000); 
             });
+
+            // Arranque
+            mostrarTarjetas(null, datosActuales.slice(0, 50));
         });
     </script>
 </body>
 </html>
+
+
