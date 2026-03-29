@@ -3,1197 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏥 Hospital de Flores "Edison Camacho" - Sector Contaduría</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: #ffffff;
-            min-height: 100vh;
-            padding: 20px;
-            color: #003ca5;
-        }
-        .container { max-width: 1400px; margin: 0 auto; }
-        
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 30px 0;
-            border-bottom: 3px solid #003ca5;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .logo-img {
-            max-width: 200px;
-            height: auto;
-        }
-        .header-text h1 {
-            font-size: 1.8em;
-            color: #003ca5;
-            font-weight: 700;
-        }
-        .header-text p {
-            color: #666;
-            font-size: 1em;
-            font-weight: 500;
-        }
-        
-        .ai-status {
-            background: rgba(0,60,165,0.1);            border: 2px solid #003ca5;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .ai-status span { color: #003ca5; font-weight: 600; }
-        
-        .upload-section {
-            background: #f8f9fa;
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 30px;
-            border: 2px dashed #003ca5;
-        }
-        .upload-section input { display: none; }
-        .upload-btn {
-            background: #003ca5;
-            color: #ffffff;
-            padding: 20px 40px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 600;
-            display: inline-block;
-            transition: all 0.3s;
-        }
-        .upload-btn:hover {
-            background: #002d7a;
-            transform: scale(1.05);
-        }
-        
-        .stats-bar {
-            display: none;
-            justify-content: center;
-            gap: 30px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        .stat-item {
-            background: #f8f9fa;
-            padding: 15px 25px;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid #003ca5;
-        }
-        .stat-number {
-            font-size: 2em;
-            font-weight: 700;            color: #003ca5;
-        }
-        .stat-label {
-            font-size: 0.9em;
-            color: #666;
-            font-weight: 500;
-        }
-        
-        /* Panel de Palabras Personalizadas */
-        .custom-keywords-panel {
-            display: none;
-            background: rgba(40,167,69,0.1);
-            border: 2px solid #28a745;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-        }
-        .custom-keywords-panel h3 {
-            color: #28a745;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
-        .add-keyword-form {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 15px;
-            margin-bottom: 20px;
-            align-items: end;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .form-group label {
-            font-weight: 600;
-            color: #003ca5;
-            font-size: 0.9em;
-        }
-        .add-keyword-form input {
-            padding: 12px 15px;
-            border: 2px solid #003ca5;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .add-keyword-form button {
-            padding: 12px 25px;
-            background: #28a745;
-            color: #ffffff;            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
-            font-size: 14px;
-        }
-        .add-keyword-form button:hover {
-            background: #218838;
-            transform: scale(1.05);
-        }
-        .keywords-list {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 15px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .keyword-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid #28a745;
-        }
-        .keyword-item-info {
-            flex: 1;
-        }
-        .keyword-item-word {
-            font-weight: 700;
-            color: #28a745;
-            font-size: 1.1em;
-        }
-        .keyword-item-object {
-            color: #003ca5;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .keyword-item-delete {
-            background: #dc3545;
-            color: #ffffff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
-        }
-        .keyword-item-delete:hover {
-            background: #c82333;
-        }
-        .export-import-btns {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        .export-import-btns button {
-            padding: 12px 25px;
-            background: #003ca5;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
-        }
-        .export-import-btns button:hover {
-            background: #002d7a;
-            transform: scale(1.05);
-        }
-        
-        .search-container {
-            display: none;
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border: 2px solid #003ca5;
-        }
-        .search-box { display: flex; gap: 15px; margin-bottom: 20px; }
-        .search-box input {
-            flex: 1;
-            padding: 18px 25px;
-            font-size: 18px;
-            border: 2px solid #003ca5;
-            border-radius: 10px;
-            background: #ffffff;
-            color: #003ca5;
-            outline: none;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .search-box input:focus {
-            border-color: #002d7a;            box-shadow: 0 0 10px rgba(0,60,165,0.2);
-        }
-        .search-box button {
-            padding: 18px 40px;
-            background: #003ca5;
-            color: #ffffff;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
-        }
-        .search-box button:hover {
-            background: #002d7a;
-            transform: scale(1.05);
-        }
-        
-        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
-        .filter-btn {
-            padding: 10px 20px;
-            background: #003ca5;
-            color: #ffffff;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        .filter-btn:hover, .filter-btn.active {
-            background: #002d7a;
-        }
-        
-        .sugerencias {
-            margin-top: 20px;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 10px;
-            border: 2px solid #003ca5;
-        }
-        .sugerencias h3 {
-            margin-bottom: 15px;
-            color: #003ca5;
-        }
-        .sugerencias-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));            gap: 10px;
-        }
-        .sugerencia-item {
-            background: #003ca5;
-            color: #ffffff;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        .sugerencia-item:hover {
-            background: #002d7a;
-            transform: translateY(-2px);
-        }
-        
-        .results-container { display: grid; gap: 20px; }
-        .result-card {
-            background: #ffffff;
-            border-left: 4px solid #003ca5;
-            padding: 25px;
-            border-radius: 10px;
-            transition: all 0.3s;
-            box-shadow: 0 2px 10px rgba(0,60,165,0.1);
-            cursor: pointer;
-        }
-        .result-card:hover {
-            transform: translateX(10px);
-            box-shadow: 0 4px 20px rgba(0,60,165,0.2);
-        }
-        .result-card.selected {
-            border-left-color: #ff6b00;
-            background: #fff5f0;
-        }
-        .codigo-badge {
-            background: #003ca5;
-            color: #ffffff;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 1.1em;
-            display: inline-block;
-            margin-bottom: 10px;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .denominacion {
-            font-size: 1.3em;
-            font-weight: 600;            margin: 10px 0;
-            color: #003ca5;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .descripcion {
-            color: #666;
-            line-height: 1.6;
-            font-size: 0.95em;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 400;
-        }
-        .relevancia-badge {
-            background: rgba(0,60,165,0.1);
-            color: #003ca5;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            float: right;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        .categoria-tag {
-            display: inline-block;
-            background: rgba(0,60,165,0.1);
-            color: #003ca5;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;
-            margin-top: 10px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        .grupo-tag {
-            display: inline-block;
-            background: #f8f9fa;
-            color: #666;
-            padding: 3px 10px;
-            border-radius: 10px;
-            font-size: 0.75em;
-            margin-left: 10px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        .keyword-match {
-            display: inline-block;
-            background: rgba(255,107,0,0.1);
-            color: #ff6b00;            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            margin-top: 8px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        .custom-keyword-badge {
-            display: inline-block;
-            background: rgba(40,167,69,0.1);
-            color: #28a745;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            margin-top: 8px;
-            margin-left: 8px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        
-        .loading { text-align: center; padding: 50px; color: #666; font-family: 'Montserrat', sans-serif; }
-        .error {
-            background: rgba(255,100,100,0.1);
-            border: 2px solid #dc3545;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            color: #dc3545;
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        .history-section {
-            display: none;
-            margin-top: 30px;
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 12px;
-            border: 2px solid #003ca5;
-        }
-        .history-section h3 {
-            color: #003ca5;
-            margin-bottom: 15px;
-        }
-        .history-item {
-            background: #ffffff;
-            padding: 12px 18px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            display: flex;            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #003ca5;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .history-item:hover {
-            background: #f0f4f8;
-        }
-        .history-count {
-            color: #003ca5;
-            font-size: 0.9em;
-            font-weight: 500;
-        }
-        
-        .clear-btn {
-            background: #dc3545;
-            color: #ffffff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-        
-        @media (max-width: 768px) {
-            .header { flex-direction: column; text-align: center; }
-            .logo-container { flex-direction: column; }
-            .search-box { flex-direction: column; }
-            .stats-bar { flex-direction: column; align-items: center; }
-            .header h1 { font-size: 1.5em; }
-            .add-keyword-form {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <title>Buscador CGN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>body { font-family: 'Montserrat', sans-serif; }</style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="logo-container">
-                <img src="logo_hospital_flores.png" alt="Hospital de Flores ASSE" class="logo-img" id="hospitalLogo" onerror="this.style.display='none'">
-                <div class="header-text">
-                    <h1>🏥 Hospital de Flores "Edison Camacho"</h1>
-                    <p>Sector Contaduría | Clasificador de Objetos del Gasto</p>
-                </div>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Navegación Original -->
+    <nav class="bg-[#1e3ba6] text-white shadow-lg sticky top-0 z-50 py-4 px-6">
+        <div class="max-w-3xl mx-auto flex items-center gap-4">
+            <div>
+                <h1 class="text-xl md:text-2xl font-extrabold uppercase tracking-tight">Hospital de Flores</h1>
+                <p class="text-xs text-blue-200 uppercase tracking-widest mt-1">Buscador de Compras CGN</p>
             </div>
         </div>
-                <div class="ai-status" id="aiStatus">
-            📊 <span id="aiStatusText">IA lista - Cargá tu archivo CSV para comenzar</span> | 
-            🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
-            📚 Palabras personalizadas: <span id="customKeywordsCount">0</span>
-        </div>
-        
-        <!-- Carga de CSV -->
-        <div class="upload-section" id="uploadSection">
-            <h2 style="color: #003ca5; margin-bottom: 20px;">📂 Paso 1: Cargá tu archivo CSV</h2>
-            <p style="margin: 20px 0; color: #666; font-size: 1.1em;">
-                Seleccioná el archivo <strong>ObjetosGasto.csv</strong> que descargaste de la CGN
-            </p>
-            <label class="upload-btn">
-                📥 Seleccionar Archivo CSV
-                <input type="file" id="csvFile" accept=".csv">
-            </label>
-            <p id="fileName" style="margin-top: 20px; color: #28a745; font-weight: 600;"></p>
-            <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
-                🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
-            </p>
-        </div>
-        
-        <!-- Estadísticas -->
-        <div class="stats-bar" id="statsBar">
-            <div class="stat-item">
-                <div class="stat-number" id="totalRegistros">0</div>
-                <div class="stat-label">Registros Cargados</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" id="totalObjetos">0</div>
-                <div class="stat-label">Objetos Únicos</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" id="ultimaBusqueda">0</div>
-                <div class="stat-label">Resultados</div>
-            </div>
-        </div>
-        
-        <!-- Panel de Palabras Personalizadas -->
-        <div class="custom-keywords-panel" id="customKeywordsPanel">
-            <h3>📝 Agregar Palabras Personalizadas</h3>
-            <p style="margin-bottom: 20px; color: #666;">
-                Agregá tus propias palabras para que la IA las reconozca en futuras búsquedas. 
-                <strong>Ejemplo:</strong> "lima" → Objeto 176 (Herramientas)
-            </p>
-            
-            <div class="add-keyword-form">
-                <div class="form-group">
-                    <label for="newKeyword">Palabra o Término:</label>
-                    <input type="text" id="newKeyword" placeholder="Ej: lima, insumos, descartables...">                </div>
-                <div class="form-group">
-                    <label for="newObjeto">Objeto:</label>
-                    <input type="text" id="newObjeto" placeholder="Ej: 176">
-                </div>
-                <div class="form-group">
-                    <label for="newAuxiliar">Auxiliar:</label>
-                    <input type="text" id="newAuxiliar" placeholder="Ej: 000" value="000">
-                </div>
-                <button onclick="addCustomKeyword()">➕ Agregar Palabra</button>
-            </div>
-            
-            <div class="keywords-list" id="keywordsList">
-                <p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>
-            </div>
-            
-            <div class="export-import-btns">
-                <button onclick="exportCustomKeywords()">📤 Exportar Palabras</button>
-                <button onclick="document.getElementById('importFile').click()">📥 Importar Palabras</button>
-                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleImport(event)">
-                <button onclick="clearAllCustomKeywords()" style="background: #dc3545;">🗑️ Limpiar Todas</button>
-            </div>
-        </div>
+    </nav>
+
+    <main class="flex-grow max-w-3xl mx-auto w-full px-4 py-8 flex flex-col gap-6">
         
         <!-- Buscador -->
-        <div class="search-container" id="searchContainer">
-            <div class="search-box">
-                <input 
-                    type="text" 
-                    id="searchInput" 
-                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lechuga, lapiz, aceite, lima..."
-                    onkeypress="if(event.key === 'Enter') buscar()"
-                >
-                <button onclick="buscar()">🔎 Buscar Objeto</button>
-            </div>
-            
-            <div class="filters">
-                <button class="filter-btn active" onclick="setLimite(20)">20 resultados</button>
-                <button class="filter-btn" onclick="setLimite(50)">50 resultados</button>
-                <button class="filter-btn" onclick="setLimite(100)">100 resultados</button>
-                <button class="filter-btn" onclick="filtrarGrupo('0')">Grupo 0</button>
-                <button class="filter-btn" onclick="filtrarGrupo('1')">Grupo 1</button>
-                <button class="filter-btn" onclick="filtrarGrupo('2')">Grupo 2</button>
-                <button class="filter-btn" onclick="filtrarGrupo('3')">Grupo 3</button>
-                <button class="filter-btn" onclick="filtrarGrupo('4')">Grupo 4</button>
-                <button class="filter-btn" onclick="filtrarGrupo('5')">Grupo 5</button>
-                <button class="filter-btn" onclick="filtrarGrupo('6')">Grupo 6</button>
-                <button class="filter-btn" onclick="filtrarGrupo('7')">Grupo 7</button>
-                <button class="filter-btn" onclick="filtrarGrupo('8')">Grupo 8</button>
-                <button class="filter-btn" onclick="filtrarGrupo('9')">Grupo 9</button>                <button class="filter-btn" onclick="limpiarFiltros()">🔄 Limpiar</button>
-            </div>
-            
-            <div class="sugerencias" id="sugerencias">
-                <h3>💡 Búsquedas sugeridas</h3>
-                <div class="sugerencias-grid" id="sugerenciasGrid"></div>
-            </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <input type="text" id="searchInput" placeholder="Buscar insumo (ej. Legumbre, 111...)" 
+                   class="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-[#1e3ba6] transition-colors text-lg font-medium placeholder-slate-400">
+            <div class="mt-3 text-sm text-slate-500 font-semibold" id="resultsLabel">Cargando base de datos...</div>
+        </div>
+
+        <div class="flex gap-4">
+            <button id="uploadBtn" class="flex-1 py-3 px-4 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-xl font-bold text-sm uppercase tracking-wide transition-colors">
+                📂 Cargar Padrón CSV
+            </button>
+            <input type="file" id="csvFileInput" class="hidden" accept=".csv">
+            <button id="restoreBtn" class="hidden flex-1 py-3 px-4 bg-red-100 text-red-700 hover:bg-red-200 rounded-xl font-bold text-sm uppercase tracking-wide transition-colors">
+                Restaurar Original
+            </button>
         </div>
         
-        <div id="results" class="results-container"></div>
+        <!-- Contenedor de Resultados (Aquí va tu diseño) -->
+        <div id="resultsList" class="space-y-6 pb-12"></div>
         
-        <!-- Historial -->
-        <div class="history-section" id="historySection">
-            <h3>📜 Historial de Búsquedas</h3>
-            <div id="historyList"></div>
-            <button class="clear-btn" onclick="clearHistory()">🗑️ Limpiar Historial</button>
-        </div>
-    </div>
+    </main>
 
     <script>
-        // ============================================
-        // 📊 VARIABLES GLOBALES
-        // ============================================
-        let datosCompletos = [];
-        let limiteResultados = 20;
-        let filtroGrupo = '';
-        let searchCount = 0;
-        
-        // ============================================
-        // 📝 SISTEMA DE PALABRAS PERSONALIZADAS
-        // ============================================
-        let customKeywords = {};
-        
-        function loadCustomKeywords() {
-            const saved = localStorage.getItem('hospital_flores_custom_keywords_v2');
-            if (saved) {
-                try {
-                    customKeywords = JSON.parse(saved);
-                } catch (e) {
-                    customKeywords = {};
-                }
-            }
-            updateCustomKeywordsCount();
-            renderCustomKeywordsList();
-        }
-        
-        function saveCustomKeywords() {
-            localStorage.setItem('hospital_flores_custom_keywords_v2', JSON.stringify(customKeywords));
-            updateCustomKeywordsCount();
-            renderCustomKeywordsList();        }
-        
-        function updateCustomKeywordsCount() {
-            const count = Object.keys(customKeywords).length;
-            document.getElementById('customKeywordsCount').textContent = count;
-        }
-        
-        function addCustomKeyword() {
-            const keyword = document.getElementById('newKeyword').value.trim().toLowerCase();
-            const objeto = document.getElementById('newObjeto').value.trim();
-            const auxiliar = document.getElementById('newAuxiliar').value.trim() || '000';
-            
-            if (!keyword || !objeto) {
-                alert('⚠️ Por favor completá la palabra y el objeto');
-                return;
-            }
-            
-            // Validar que el objeto exista en los datos cargados
-            if (datosCompletos.length > 0) {
-                const objetoExiste = datosCompletos.some(d => d.objeto === objeto);
-                if (!objetoExiste) {
-                    if (!confirm(`⚠️ El objeto ${objeto} no existe en los datos cargados. ¿Querés agregarlo de todos modos?`)) {
-                        return;
-                    }
-                }
-            }
-            
-            // Agregar o actualizar palabra
-            if (!customKeywords[keyword]) {
-                customKeywords[keyword] = [];
-            }
-            
-            // Verificar si ya existe esta combinación
-            const yaExiste = customKeywords[keyword].some(k => k.objeto === objeto && k.auxiliar === auxiliar);
-            if (yaExiste) {
-                alert('⚠️ Esta palabra ya está asociada a este objeto');
-                return;
-            }
-            
-            customKeywords[keyword].push({
-                objeto: objeto,
-                auxiliar: auxiliar,
-                fecha: new Date().toISOString()
-            });
-            
-            saveCustomKeywords();
-            
-            // Limpiar formulario
-            document.getElementById('newKeyword').value = '';
-            document.getElementById('newObjeto').value = '';            document.getElementById('newAuxiliar').value = '000';
-            
-            alert('✅ ¡Palabra agregada correctamente! Ahora la IA la reconocerá en futuras búsquedas.');
-        }
-        
-        function deleteCustomKeyword(keyword, objeto, auxiliar) {
-            if (confirm(`¿Estás seguro de eliminar "${keyword}" → ${objeto}/${auxiliar}?`)) {
-                customKeywords[keyword] = customKeywords[keyword].filter(
-                    k => !(k.objeto === objeto && k.auxiliar === auxiliar)
-                );
-                
-                if (customKeywords[keyword].length === 0) {
-                    delete customKeywords[keyword];
-                }
-                
-                saveCustomKeywords();
-            }
-        }
-        
-        function clearAllCustomKeywords() {
-            if (confirm('⚠️ ¿Estás seguro de eliminar TODAS las palabras personalizadas? Esta acción no se puede deshacer.')) {
-                customKeywords = {};
-                saveCustomKeywords();
-                alert('🗑️ Todas las palabras personalizadas fueron eliminadas.');
-            }
-        }
-        
-        function renderCustomKeywordsList() {
-            const list = document.getElementById('keywordsList');
-            const keywords = Object.keys(customKeywords).sort();
-            
-            if (keywords.length === 0) {
-                list.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No hay palabras personalizadas aún. Agregá la primera arriba.</p>';
-                return;
-            }
-            
-            let html = '';
-            keywords.forEach(keyword => {
-                customKeywords[keyword].forEach(mapping => {
-                    html += `
-                        <div class="keyword-item">
-                            <div class="keyword-item-info">
-                                <div class="keyword-item-word">📝 ${keyword}</div>
-                                <div class="keyword-item-object">→ Objeto ${mapping.objeto}/${mapping.auxiliar}</div>
-                            </div>
-                            <button class="keyword-item-delete" onclick="deleteCustomKeyword('${keyword}', '${mapping.objeto}', '${mapping.auxiliar}')">🗑️ Eliminar</button>
-                        </div>
-                    `;
-                });
-            });            
-            list.innerHTML = html;
-        }
-        
-        function exportCustomKeywords() {
-            if (Object.keys(customKeywords).length === 0) {
-                alert('⚠️ No hay palabras personalizadas para exportar');
-                return;
-            }
-            
-            const data = JSON.stringify(customKeywords, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `palabras_personalizadas_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-        
-        function handleImport(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    
-                    // Fusionar con las existentes
-                    Object.keys(imported).forEach(keyword => {
-                        if (!customKeywords[keyword]) {
-                            customKeywords[keyword] = [];
-                        }
-                        imported[keyword].forEach(mapping => {
-                            const yaExiste = customKeywords[keyword].some(
-                                k => k.objeto === mapping.objeto && k.auxiliar === mapping.auxiliar
-                            );
-                            if (!yaExiste) {
-                                customKeywords[keyword].push(mapping);
-                            }
-                        });
-                    });
-                    
-                    saveCustomKeywords();
-                    alert(`✅ Se importaron ${Object.keys(imported).length} palabras personalizadas`);
-                } catch (error) {
-                    alert('❌ Error al importar el archivo. Asegurate que sea un JSON válido.');                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-        
-        // ============================================
-        // 🧠 BASE DE CONOCIMIENTO - MAPEO SEMÁNTICO
-        // ============================================
-        const keywordsMap = {
-            // Alimentos (111)
-            'harina': ['111'], 'lechuga': ['111'], 'arroz': ['111'], 'carne': ['111'],
-            'aceite': ['111'], 'aceite comestible': ['111'], 'aceite de cocina': ['111'],
-            'azucar': ['111'], 'azúcar': ['111'], 'sal': ['111'], 'fideo': ['111'], 'pasta': ['111'],
-            
-            // Combustibles (141)
-            'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'],
-            'lubricante': ['141'], 'aceite motor': ['141'], 'aceite lubricante': ['141'],
-            
-            // Sueldos (011, 021, 031)
-            'sueldo': ['011', '021', '031'], 'salario': ['011', '021'],
-            
-            // Medicamentos (152)
-            'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'], 'fármaco': ['152'],
-            
-            // Vehículos (353)
-            'vehiculo': ['353'], 'vehículo': ['353'], 'auto': ['353'], 'camioneta': ['353'],
-            
-            // Internación (283)
-            'internacion': ['283'], 'internación': ['283'], 'hospital': ['283', '152'],
-            
-            // Computadoras (323)
-            'computadora': ['323'], 'laptop': ['323'], 'notebook': ['323'],
-            
-            // Limpieza (192)
-            'limpieza': ['192', '278'], 'jabon': ['192'], 'jabón': ['192'], 'escoba': ['192'],
-            
-            // Electricidad/Agua/Teléfono (211, 212, 213)
-            'electricidad': ['213'], 'luz': ['213'], 'agua': ['212'],
-            'telefono': ['211'], 'teléfono': ['211'], 'internet': ['211'],
-            
-            // Útiles de oficina (191)
-            'regla': ['191', '176'], 'util': ['191'], 'útil': ['191'], 'oficina': ['191', '131', '326'],
-            'lapiz': ['191'], 'lápiz': ['191'], 'papel': ['131', '191'],
-            
-            // Viáticos/Pasajes (231, 234, 235)
-            'viatico': ['234', '235'], 'viático': ['234', '235'], 'pasaje': ['231'],
-            'alquiler': ['251'],
-            
-            // Jubilación/Becas (571, 577)            'jubilacion': ['571'], 'jubilación': ['571'], 'beca': ['577'],
-            
-            // Herramientas (176)
-            'herramienta': ['176'], 'ferreteria': ['176'], 'ferretería': ['176'],
-            'lima': ['176'], 'destornillador': ['176'], 'martillo': ['176'],
-            
-            // Plomería (271, 163, 154)
-            'plomeria': ['271', '163', '154'], 'plomería': ['271', '163', '154'],
-            'cañeria': ['271', '163'], 'cañería': ['271', '163'], 'tuberia': ['271', '163'],
-            'grifo': ['271', '163'], 'canilla': ['271', '163'],
-            
-            // Material Médico (194)
-            'material medico': ['194'], 'material médico': ['194'],
-            'quirurgico': ['194'], 'quirúrgico': ['194'], 'jeringa': ['194'],
-        };
-        
-        // ============================================
-        // 💾 CARGA DEL CSV
-        // ============================================
-        document.getElementById('csvFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            document.getElementById('fileName').textContent = `✅ Archivo cargado: ${file.name}`;
-            
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const text = event.target.result;
-                procesarCSV(text);
-            };
-            reader.onerror = function() {
-                alert('❌ Error al leer el archivo. Asegúrate que sea un CSV válido.');
-            };
-            reader.readAsText(file, 'UTF-8');
-        });
-        
-        function procesarCSV(texto) {
-            try {
-                const lineas = texto.split('\n');
-                datosCompletos = [];
-                
-                for (let i = 1; i < lineas.length; i++) {
-                    const linea = lineas[i].trim();
-                    if (!linea) continue;
-                    
-                    const columnas = [];
-                    let actual = '';
-                    let entreComillas = false;
-                    
-                    for (let char of linea) {                        if (char === '"') {
-                            entreComillas = !entreComillas;
-                        } else if (char === ',' && !entreComillas) {
-                            columnas.push(actual.trim().replace(/^"|"$/g, ''));
-                            actual = '';
-                        } else {
-                            actual += char;
-                        }
-                    }
-                    columnas.push(actual.trim().replace(/^"|"$/g, ''));
-                    
-                    if (columnas.length >= 4) {
-                        const objeto = columnas[0]?.trim() || '';
-                        const grupo = objeto.charAt(0);
-                        
-                        datosCompletos.push({
-                            objeto: objeto,
-                            auxiliar: columnas[1]?.trim() || '',
-                            denominacion: columnas[2]?.trim() || '',
-                            descripcion: columnas[3]?.trim() || '',
-                            grupo: grupo,
-                            categoria: obtenerCategoria(grupo)
-                        });
-                    }
-                }
-                
-                if (datosCompletos.length === 0) {
-                    alert('⚠️ No se encontraron datos en el CSV. Verifica el formato.');
-                    return;
-                }
-                
-                document.getElementById('totalRegistros').textContent = datosCompletos.length;
-                document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
-                
-                document.getElementById('uploadSection').style.display = 'none';
-                document.getElementById('statsBar').style.display = 'flex';
-                document.getElementById('customKeywordsPanel').style.display = 'block';
-                document.getElementById('searchContainer').style.display = 'block';
-                document.getElementById('historySection').style.display = 'block';
-                
-                loadCustomKeywords();
-                cargarSugerencias();
-                
-                alert(`✅ ¡Listo! ${datosCompletos.length} registros cargados. Ahora podés buscar y agregar palabras personalizadas.`);
-                
-            } catch (error) {
-                console.error('Error procesando CSV:', error);
-                alert('❌ Error al procesar el CSV: ' + error.message);
-            }
-        }        
-        function obtenerCategoria(grupo) {
-            const categorias = {
-                '0': 'Servicios Personales',
-                '1': 'Bienes de Consumo',
-                '2': 'Servicios No Personales',
-                '3': 'Bienes de Uso',
-                '4': 'Aplicaciones Financieras',
-                '5': 'Transferencias',
-                '6': 'Deuda Pública',
-                '7': 'Otros Gastos',
-                '8': 'Amortización de Deuda',
-                '9': 'Gastos Figurativos'
-            };
-            return categorias[grupo] || 'Otros';
-        }
-        
-        // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA CON IA
-        // ============================================
-        
-        function normalizar(texto) {
-            if (!texto) return '';
-            texto = texto.toLowerCase().trim();
-            texto = texto.replace(/[áàäâ]/g, 'a');
-            texto = texto.replace(/[éèëê]/g, 'e');
-            texto = texto.replace(/[íìïî]/g, 'i');
-            texto = texto.replace(/[óòöô]/g, 'o');
-            texto = texto.replace(/[úùüû]/g, 'u');
-            texto = texto.replace(/ñ/g, 'n');
-            return texto;
-        }
-        
-        function calcularRelevancia(query, item) {
-            const queryNorm = normalizar(query);
-            const textoCompleto = normalizar(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
-            const denomNorm = normalizar(item.denominacion);
-            const descNorm = normalizar(item.descripcion);
-            
-            let score = 0;
-            let keywordEncontrada = null;
-            let esPersonalizada = false;
-            
-            // 1. Buscar en palabras personalizadas (MÁXIMA PRIORIDAD)
-            if (customKeywords[queryNorm]) {
-                const mappings = customKeywords[queryNorm];
-                const coincide = mappings.some(m => m.objeto === item.objeto && m.auxiliar === item.auxiliar);
-                if (coincide) {
-                    score += 100;
-                    keywordEncontrada = queryNorm;                    esPersonalizada = true;
-                }
-            }
-            
-            // 2. Búsqueda por keywords mapeadas (IA base)
-            if (keywordsMap[queryNorm]) {
-                if (keywordsMap[queryNorm].includes(item.objeto)) {
-                    score += 50;
-                    if (!keywordEncontrada) {
-                        keywordEncontrada = queryNorm;
-                    }
-                }
-            }
-            
-            // 3. Coincidencia exacta en denominación
-            if (denomNorm.includes(queryNorm)) {
-                score += 40;
-                if (!keywordEncontrada) keywordEncontrada = 'denominación';
-            }
-            
-            // 4. Coincidencia en descripción
-            if (descNorm.includes(queryNorm)) {
-                score += 30;
-                if (!keywordEncontrada) keywordEncontrada = 'descripción';
-            }
-            
-            // 5. Coincidencia en código
-            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) {
-                score += 60;
-                if (!keywordEncontrada) keywordEncontrada = 'código';
-            }
-            
-            // 6. Búsqueda por palabras parciales
-            const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
-            palabrasQuery.forEach(palabra => {
-                if (textoCompleto.includes(palabra)) {
-                    score += 15;
-                    if (!keywordEncontrada) keywordEncontrada = palabra;
-                }
-            });
-            
-            return {
-                score: Math.min(score, 100),
-                keyword: keywordEncontrada,
-                esPersonalizada: esPersonalizada
-            };
-        }
-        
-        function buscar() {
-            const query = document.getElementById('searchInput').value.trim();            const resultsDiv = document.getElementById('results');
-            
-            if (!query || query.length < 2) {
-                resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa al menos 2 caracteres para buscar</div>';
-                return;
-            }
-            
-            searchCount++;
-            document.getElementById('searchCount').textContent = searchCount;
-            
-            resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en ' + datosCompletos.length + ' registros...</div>';
-            
-            setTimeout(() => {
-                let resultados = datosCompletos.map(item => {
-                    const relevancia = calcularRelevancia(query, item);
-                    return { 
-                        ...item, 
-                        relevancia: relevancia.score,
-                        keywordEncontrada: relevancia.keyword,
-                        esPersonalizada: relevancia.esPersonalizada
-                    };
-                });
-                
-                resultados = resultados.filter(r => r.relevancia >= 15);
-                
-                if (filtroGrupo) {
-                    resultados = resultados.filter(r => r.grupo === filtroGrupo);
-                }
-                
-                resultados.sort((a, b) => b.relevancia - a.relevancia);
-                resultados = resultados.slice(0, limiteResultados);
-                
-                document.getElementById('ultimaBusqueda').textContent = resultados.length;
-                
-                if (resultados.length === 0) {
-                    resultsDiv.innerHTML = `
-                        <div class="error">
-                            ❌ No se encontraron resultados
-                            <p style="margin-top: 15px;">Intentá con otros términos o verificá la ortografía</p>
-                            <p style="margin-top: 20px; color: #28a745;">💡 ¿No encontrás lo que buscás? Agregá tu palabra en el panel "Agregar Palabras Personalizadas"</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                let html = `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; font-weight: 600;">
-                    ✅ <strong>${resultados.length}</strong> resultados encontrados 
-                    (de ${datosCompletos.length} registros totales)
-                </div>`;
-                                resultados.forEach((r, index) => {
-                    html += `
-                        <div class="result-card ${index === 0 ? 'selected' : ''}" onclick="selectResult('${r.objeto}', '${r.auxiliar}', '${r.denominacion.replace(/'/g, "\\'")}')">
-                            <div class="result-header">
-                                <span class="codigo-badge">${r.objeto}/${r.auxiliar}</span>
-                                <span class="relevancia-badge">📊 Relevancia: ${r.relevancia}%</span>
-                            </div>
-                            <div class="denominacion">${r.denominacion}</div>
-                            <div class="descripcion">${r.descripcion}</div>
-                            ${r.categoria ? `<div class="categoria-tag">📁 ${r.categoria}</div>` : ''}
-                            <span class="grupo-tag">Grupo ${r.grupo}</span>
-                            ${r.keywordEncontrada ? `<div class="keyword-match">🏷️ Coincide en: ${r.keywordEncontrada}</div>` : ''}
-                            ${r.esPersonalizada ? `<div class="custom-keyword-badge">⭐ Palabra Personalizada</div>` : ''}
-                            ${index === 0 ? '<div style="margin-top: 10px; color: #ff6b00; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
-                        </div>
-                    `;
-                });
-                
-                resultsDiv.innerHTML = html;
-            }, 300);
-        }
-        
-        function selectResult(objeto, auxiliar, denominacion) {
-            const query = document.getElementById('searchInput').value.trim();
-            
-            const card = event.target.closest('.result-card');
-            document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            
-            const feedback = document.createElement('div');
-            feedback.style.cssText = 'background: rgba(40,167,69,0.1); border: 2px solid #28a745; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; color: #28a745; font-weight: 600;';
-            feedback.innerHTML = `✅ Objeto ${objeto}/${auxiliar} seleccionado`;
-            
-            const existingFeedback = document.querySelector('.ai-feedback');
-            if (existingFeedback) existingFeedback.remove();
-            feedback.classList.add('ai-feedback');
-            document.getElementById('results').appendChild(feedback);
-            
-            setTimeout(() => {
-                feedback.remove();
-            }, 5000);
-        }
-        
-        // ============================================
-        // ⚙️ FUNCIONES DE UTILIDAD
-        // ============================================
-        
-        function buscarCon(termino) {
-            document.getElementById('searchInput').value = termino;
-            buscar();        }
-        
-        function setLimite(limite) {
-            limiteResultados = limite;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.textContent.includes('resultados')) {
-                    btn.classList.remove('active');
-                    if (btn.textContent.includes(limite)) btn.classList.add('active');
-                }
-            });
-        }
-        
-        function filtrarGrupo(grupo) {
-            filtroGrupo = grupo;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.textContent.includes('Grupo')) {
-                    btn.classList.remove('active');
-                    if (btn.textContent.includes('Grupo ' + grupo)) btn.classList.add('active');
-                }
-            });
-            buscar();
-        }
-        
-        function limpiarFiltros() {
-            filtroGrupo = '';
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.includes('20 resultados')) btn.classList.add('active');
-            });
-            document.getElementById('searchInput').value = '';
-            document.getElementById('results').innerHTML = '';
-            document.getElementById('ultimaBusqueda').textContent = '0';
-        }
-        
-        function cargarSugerencias() {
-            const sugerencias = [
-                'harina', 'sueldo', 'combustible', 'medicamento', 'vehículo',
-                'regla', 'internación', 'computadora', 'útiles', 'limpieza',
-                'electricidad', 'teléfono', 'viático', 'alquiler', 'jubilación',
-                'beca', 'capacitación', 'mantenimiento', 'construcción', 'vigilancia',
-                'lechuga', 'papel', 'agua', 'internet', 'seguro', 'subsidio',
-                'lapiz', 'aceite', 'lubricante', 'pintura', 'cemento', 'lima'
+        // ======================================================================
+        // ¡ATENCIÓN! DEBES PONER UNA LLAVE NUEVA AQUÍ. 
+        // La anterior (AIzaSyDM...) fue bloqueada por Google al filtrarse en Github.
+        const GEMINI_API_KEY = "PEGA_AQUI_TU_NUEVA_LLAVE";
+        // ======================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const DATOS_POR_DEFECTO = [
+                { objeto: "111", auxiliar: "000", denominacion: "Alimentos para personas", descripcion: "Todo insumo/producto para la preparación de comidas. Comprende los gastos en concepto de productos alimenticios, víveres, carnes, lácteos, azúcar, aceite." },
+                { objeto: "131", auxiliar: "000", denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Comprende los gastos de papel, artículos de escritorio, útiles de oficina, bolígrafos, resmas, carpetas." },
+                { objeto: "141", auxiliar: "000", denominacion: "Artículos de caucho y plástico", descripcion: "Comprende productos manufacturados de caucho y plástico como caños PVC, accesorios, polietileno." },
+                { objeto: "151", auxiliar: "000", denominacion: "Productos de limpieza", descripcion: "Comprende productos para la higiene y limpieza del establecimiento: lavandina, escobas, jabón, detergente." },
+                { objeto: "156", auxiliar: "000", denominacion: "Artículos y accesorios para sanitaria", descripcion: "Comprende los elementos destinados a instalaciones sanitarias y plomería: codos, válvulas, grifería, teflón." },
+                { objeto: "181", auxiliar: "000", denominacion: "Medicamentos y productos farmacéuticos", descripcion: "Comprende los gastos en medicamentos e insumos médicos, farmacia, gasas, jeringas." },
+                { objeto: "142", auxiliar: "000", denominacion: "Materiales eléctricos", descripcion: "Comprende lámparas, cables, tomacorrientes y afines." },
+                { objeto: "149", auxiliar: "000", denominacion: "Herramientas menores", descripcion: "Comprende herramientas manuales, repuestos y ferretería." }
             ];
-            
-            const grid = document.getElementById('sugerenciasGrid');
-            grid.innerHTML = sugerencias.map(s => 
-                `<div class="sugerencia-item" onclick="buscarCon('${s}')">${s}</div>`
-            ).join('');
-        }
-                function clearHistory() {
-            if (confirm('¿Estás seguro de limpiar todo el historial de aprendizaje? La IA volverá a empezar.')) {
-                searchCount = 0;
-                document.getElementById('searchCount').textContent = '0';
-                document.getElementById('historyList').innerHTML = '<p style="color: #666;">No hay historial aún.</p>';
-                alert('Historial limpiado.');
+
+            let datosActuales = [...DATOS_POR_DEFECTO];
+            let timeoutId = null;
+
+            const searchInput = document.getElementById('searchInput');
+            const resultsList = document.getElementById('resultsList');
+            const resultsLabel = document.getElementById('resultsLabel');
+
+            const normalizar = (text) => text ? text.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
+
+            // --- Lógica de Carga CSV ---
+            document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('csvFileInput').click());
+            document.getElementById('csvFileInput').addEventListener('change', function(e) {
+                Papa.parse(e.target.files[0], {
+                    header: true, skipEmptyLines: true, encoding: "ISO-8859-1",
+                    complete: function(results) {
+                        const cleanField = (f) => f ? normalizar(f).replace(/[^a-z0-9]/g, '') : "";
+                        const fields = results.meta.fields;
+                        const keyObjeto = fields.find(f => cleanField(f).includes('objeto')) || fields[0];
+                        const keyAux = fields.find(f => cleanField(f).includes('auxiliar') || cleanField(f).includes('subgrupo')) || fields[1];
+                        const keyDenom = fields.find(f => cleanField(f).includes('denominacion') || cleanField(f).includes('nombre')) || fields[2];
+                        const keyDesc = fields.find(f => cleanField(f).includes('desc')) || fields[3];
+
+                        datosActuales = results.data.map((row, id) => ({
+                            id, objeto: row[keyObjeto] ? row[keyObjeto].trim() : "",
+                            auxiliar: row[keyAux] ? row[keyAux].trim() : "",
+                            denominacion: row[keyDenom] ? row[keyDenom].trim() : "",
+                            descripcion: row[keyDesc] ? row[keyDesc].trim() : ""
+                        }));
+                        
+                        document.getElementById('uploadBtn').classList.add('hidden');
+                        document.getElementById('restoreBtn').classList.remove('hidden');
+                        ejecutarBusqueda();
+                    }
+                });
+            });
+
+            document.getElementById('restoreBtn').addEventListener('click', () => {
+                datosActuales = [...DATOS_POR_DEFECTO];
+                document.getElementById('csvFileInput').value = '';
+                document.getElementById('uploadBtn').classList.remove('hidden');
+                document.getElementById('restoreBtn').classList.add('hidden');
+                ejecutarBusqueda();
+            });
+
+            // --- TU DISEÑO EXACTO RECONSTRUIDO (Basado en la captura de pantalla) ---
+            function mostrarTarjetas(explicacionIA, listaObjetos) {
+                resultsList.innerHTML = '';
+                
+                // 1. Tarjeta superior de la IA (Borde azul) - ¡Botón naranja eliminado!
+                if (explicacionIA) {
+                    resultsList.innerHTML += `
+                        <div class="bg-white border-2 border-[#1e3ba6] rounded-xl p-6 shadow-sm mb-6">
+                            <p class="text-slate-700 text-lg md:text-xl font-medium leading-relaxed">${explicacionIA}</p>
+                        </div>
+                    `;
+                }
+
+                if (listaObjetos.length === 0) {
+                    resultsList.innerHTML += `<div class="bg-white p-6 text-center text-slate-500 rounded-xl border border-slate-200">No hay registros para mostrar.</div>`;
+                    return;
+                }
+
+                // 2. Tarjeta inferior (Borde naranja, pastilla azul)
+                listaObjetos.forEach(item => {
+                    resultsList.innerHTML += `
+                        <div class="bg-[#fff9f2] border-l-[6px] border-[#f97316] p-6 rounded-xl shadow-sm mb-4">
+                            <div class="flex justify-between items-center mb-4">
+                                <div class="bg-[#1e3ba6] text-white font-bold px-4 py-1.5 rounded-full text-sm tracking-wide">
+                                    Objeto ${item.objeto} / ${item.auxiliar}
+                                </div>
+                                <div class="text-[#1e3ba6] font-bold text-sm tracking-wide">
+                                    Relevancia: 80%
+                                </div>
+                            </div>
+                            <h3 class="font-bold text-xl md:text-2xl text-slate-800 mb-2">${item.denominacion || 'SIN DENOMINACIÓN'}</h3>
+                            <p class="text-slate-600 font-medium leading-relaxed">${item.descripcion}</p>
+                        </div>`;
+                });
             }
-        }
-        
-        // ============================================
-        // 🚀 INICIALIZAR
-        // ============================================
-        window.onload = function() {
-            const logoImg = document.getElementById('hospitalLogo');
-            logoImg.onerror = function() {
-                this.style.display = 'none';
-            };
-            
-            loadCustomKeywords();
-        };
+
+            // --- Motor de Búsqueda Seguro ---
+            async function ejecutarBusqueda() {
+                const term = normalizar(searchInput.value);
+                
+                // Validar que la llave se haya cambiado
+                if (GEMINI_API_KEY === "PEGA_AQUI_TU_NUEVA_LLAVE" || GEMINI_API_KEY.includes("AIzaSyDM")) {
+                    resultsList.innerHTML = `<div class="bg-red-50 border-l-4 border-red-500 p-6 text-red-700 rounded-xl shadow-sm"><h3 class="font-bold text-lg mb-2">⚠️ Error de Seguridad</h3><p>Google bloqueó tu antigua API Key porque se hizo pública. Por favor, genera una nueva llave en Google AI Studio y pégala en el código.</p></div>`;
+                    return;
+                }
+
+                if (!term) {
+                    resultsLabel.textContent = `Mostrando registros del padrón...`;
+                    mostrarTarjetas(null, datosActuales.slice(0, 50));
+                    return;
+                }
+
+                // A. Busca localmente primero
+                const searchWords = term.split(/\s+/).filter(w => w.length > 0);
+                const scoredItems = datosActuales.map(item => {
+                    let score = 0;
+                    const denom = normalizar(item.denominacion);
+                    const desc = normalizar(item.descripcion);
+                    const obj = normalizar(item.objeto);
+                    
+                    searchWords.forEach(word => {
+                        if (denom.includes(word) || desc.includes(word) || obj.includes(word)) score += 10;
+                        if (obj === word || obj.startsWith(word)) score += 50; 
+                    });
+                    return { item, score };
+                });
+
+                let resultadosLocales = scoredItems.filter(x => x.score > 0).sort((a, b) => b.score - a.score).map(x => x.item);
+
+                if (resultadosLocales.length > 0 && resultadosLocales[0].denominacion.toLowerCase().includes(term)) {
+                    resultsLabel.textContent = `Búsqueda local (CGN)`;
+                    mostrarTarjetas(null, resultadosLocales.slice(0, 50));
+                    return;
+                }
+
+                // B. Si no lo encuentra local, usa la Inteligencia Artificial
+                resultsList.innerHTML = `<div class="bg-blue-50 p-6 text-center text-[#1e3ba6] font-bold rounded-xl border border-blue-200 animate-pulse text-lg">Conectando con la IA...</div>`;
+                resultsLabel.textContent = "Analizando el insumo...";
+
+                // Prompt súper simple y seguro que no rompe el código
+                const prompt = `Actúa como asesor de compras del Estado.
+Insumo: "${term}".
+Escribe una breve oración explicando qué es o para qué sirve este insumo.
+Al final de la oración, escribe ÚNICAMENTE el código de 3 dígitos de esta lista al que pertenece: 111 (Alimentos), 131 (Oficina), 141 (Plásticos), 151 (Limpieza), 156 (Sanitaria), 181 (Farmacia), 142 (Eléctrico), 149 (Herramientas).`;
+
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }]
+                        })
+                    });
+
+                    if (!response.ok) throw new Error("Llave API inválida o bloqueada.");
+
+                    const data = await response.json();
+                    let textoRespuesta = data.candidates[0].content.parts[0].text.trim();
+                    
+                    // Extrae el número sin equivocarse (ej: busca "111", "131", etc.)
+                    const numeros = textoRespuesta.match(/\b(111|131|141|151|156|181|142|149)\b/);
+                    const codigo = numeros ? numeros[0] : "000";
+                    
+                    // Borramos el número del texto para que la descripción quede limpia
+                    let explicacionLimpia = textoRespuesta;
+                    if (codigo !== "000") {
+                        explicacionLimpia = explicacionLimpia.replace(codigo, '').trim();
+                        // Limpiamos la puntuación que pueda quedar suelta al final
+                        explicacionLimpia = explicacionLimpia.replace(/[:\-.,]+$/, '') + ".";
+                    }
+                    
+                    if (codigo !== "000") {
+                        const resultadosOficiales = datosActuales.filter(item => item.objeto.startsWith(codigo));
+                        resultsLabel.textContent = `Asociado por IA`;
+                        mostrarTarjetas(explicacionLimpia, resultadosOficiales.slice(0, 10));
+                    } else {
+                        resultsList.innerHTML = `<div class="bg-white p-6 text-center text-slate-500 rounded-xl border border-slate-200">El artículo no se relaciona con las categorías actuales.</div>`;
+                    }
+                } catch (error) {
+                    console.error("Error IA:", error);
+                    resultsList.innerHTML = `<div class="bg-red-50 text-red-600 p-6 text-center rounded-xl border border-red-200"><strong>Error de conexión.</strong> Verifica que la llave API sea nueva y esté activa.</div>`;
+                }
+            }
+
+            searchInput.addEventListener('input', () => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(ejecutarBusqueda, 1000); 
+            });
+
+            mostrarTarjetas(null, datosActuales.slice(0, 50));
+        });
     </script>
 </body>
 </html>
+
+
