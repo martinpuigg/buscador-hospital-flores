@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contaduría - Hospital de Flores</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="[https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap](https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap)" rel="stylesheet">
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
     <style>
         body { font-family: 'Montserrat', sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -43,7 +43,7 @@
                 <label class="block text-sm font-bold text-slate-500 mb-3 uppercase tracking-wider">Buscar Objeto de Gasto</label>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <div class="relative flex-1">
-                        <input type="text" id="searchInput" placeholder="Ej. Papel, Estufa, Caño, Martillo..." 
+                        <input type="text" id="searchInput" placeholder="Ej. Papel, Estufa, Caño, Martillo, Trincheta..." 
                                class="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-[#1e3ba6] transition-colors text-lg font-medium placeholder-slate-400">
                     </div>
                     <button id="searchBtn" class="px-8 py-4 bg-[#1e3ba6] hover:bg-blue-800 text-white font-bold rounded-xl shadow-md transition-colors flex justify-center items-center gap-2">
@@ -75,7 +75,7 @@
                 </select>
                 
                 <div id="groqConfig" class="hidden bg-blue-50 p-3 rounded-xl border border-blue-100">
-                    <p class="text-[10px] text-slate-600 mb-2 leading-relaxed">Vincular con <a href="https://console.groq.com/" target="_blank" class="text-blue-600 underline font-bold">Groq Console</a>:</p>
+                    <p class="text-[10px] text-slate-600 mb-2 leading-relaxed">Vincular con <a href="[https://console.groq.com/](https://console.groq.com/)" target="_blank" class="text-blue-600 underline font-bold">Groq Console</a>:</p>
                     <input type="password" id="groqKeyInput" placeholder="gsk_..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs mb-2 shadow-inner focus:outline-none">
                     <button id="saveGroqBtn" class="w-full py-2 bg-slate-800 text-white font-bold rounded-lg text-[10px] uppercase tracking-wide hover:bg-black transition-colors">
                         Guardar Clave Groq
@@ -182,7 +182,7 @@
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="[https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js](https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js)"></script>
     <script>
         const apiKey = ""; 
 
@@ -213,6 +213,7 @@
                 setTimeout(() => msg.classList.add('hidden'), 2500);
             });
 
+            // Catálogo CGN Básico
             const NOMBRES_GRUPOS = {
                 "0": "Retribuciones Personales",
                 "1": "Bienes de Consumo",
@@ -246,12 +247,12 @@
             const normalizar = (text) => text ? text.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
 
             const getGrupoInfo = (obj) => {
-                const gCode = obj.charAt(0);
+                const gCode = String(obj).charAt(0);
                 return { code: gCode, name: NOMBRES_GRUPOS[gCode] || "Grupo General" };
             };
 
             const getSubgrupoInfo = (obj) => {
-                const sCode = obj.substring(0, 2);
+                const sCode = String(obj).substring(0, 2);
                 return { code: sCode };
             };
 
@@ -262,7 +263,7 @@
                 manualRulesContainer.innerHTML = '';
                 const rules = Object.keys(diccionarioPersonalizado);
                 if (rules.length === 0) {
-                    manualRulesContainer.innerHTML = '<p class="text-[10px] text-slate-400 italic text-center py-2">Sin clasificaciones.</p>';
+                    manualRulesContainer.innerHTML = '<p class="text-[10px] text-slate-400 italic text-center py-2">Sin clasificaciones guardadas.</p>';
                     return;
                 }
                 rules.forEach(word => {
@@ -276,7 +277,7 @@
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </button>
                         </div>
-                        <div class="text-[10px] font-bold text-[#1e3ba6]">Obj: ${rule.objeto} / ${rule.auxiliar}</div>
+                        <div class="text-[10px] font-bold text-[#1e3ba6]">Objeto: ${rule.objeto} / ${rule.auxiliar}</div>
                     `;
                     manualRulesContainer.appendChild(div);
                 });
@@ -316,8 +317,8 @@
                         diccionarioPersonalizado = { ...diccionarioPersonalizado, ...imported };
                         localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
                         renderizarReglasManuales();
-                        alert("¡Importado!");
-                    } catch (err) { alert("Error al cargar."); }
+                        alert("¡Importado correctamente!");
+                    } catch (err) { alert("Error al cargar el archivo."); }
                 };
                 reader.readAsText(file);
             });
@@ -371,13 +372,20 @@
             };
 
             function crearHTMLTarjeta(objeto, auxiliar, denominacion, descripcion, justificacion, tipo, queryOriginal, manualGroup, manualSub, index = null) {
-                const groupInfo = manualGroup ? { code: objeto.charAt(0), name: manualGroup } : getGrupoInfo(objeto);
-                const subInfo = manualSub ? { code: objeto.substring(0, 2), name: manualSub } : getSubgrupoInfo(objeto);
+                // FILTRO DE SEGURIDAD: Obligar a que el objeto sea puramente numérico.
+                let cleanObjeto = String(objeto).replace(/\D/g, '');
+                let cleanAuxiliar = String(auxiliar).replace(/\D/g, '');
+                // Si la IA falla completamente y no manda números, asignar un código genérico temporal "199" (Otros) para que no rompa la aplicación.
+                if(!cleanObjeto || cleanObjeto.length < 1) cleanObjeto = "199";
+                if(!cleanAuxiliar || cleanAuxiliar.length < 1) cleanAuxiliar = "000";
 
-                const safeJust = justificacion.replace(/'/g, "\\'").replace(/\n/g, " ");
-                const safeWord = queryOriginal.replace(/'/g, "\\'");
-                const safeDenom = denominacion.replace(/'/g, "\\'");
-                const safeDesc = descripcion.replace(/'/g, "\\'");
+                const groupInfo = manualGroup ? { code: cleanObjeto.charAt(0), name: manualGroup } : getGrupoInfo(cleanObjeto);
+                const subInfo = manualSub ? { code: cleanObjeto.substring(0, 2), name: manualSub } : getSubgrupoInfo(cleanObjeto);
+
+                const safeJust = (justificacion || "No hay justificación disponible").replace(/'/g, "\\'").replace(/\n/g, " ");
+                const safeWord = (queryOriginal || "").replace(/'/g, "\\'");
+                const safeDenom = (denominacion || "Clasificación Genérica").replace(/'/g, "\\'");
+                const safeDesc = (descripcion || "Descripción no especificada").replace(/'/g, "\\'");
                 const safeGroup = groupInfo.name.replace(/'/g, "\\'");
                 const safeSub = (subInfo.name || "General").replace(/'/g, "\\'");
 
@@ -390,25 +398,25 @@
                     etiqueta = tipo === 'ia' ? `<span class="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-1 rounded-full border border-purple-200">✨ Opción IA #${index + 1}</span>` : `<span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-1 rounded-full border border-blue-200">📚 Padrón Oficial</span>`;
                     feedbackButtons = `
                         <div class="mt-4 flex flex-col sm:flex-row gap-2 border-t border-slate-100 pt-4">
-                            <button onclick="confirmarIA('${safeWord}', '${objeto}', '${auxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}')" class="flex-1 py-2 bg-emerald-600 text-white rounded-lg font-bold text-[10px] hover:bg-emerald-700 transition-colors shadow-sm">✅ Confirmar</button>
-                            <button onclick="corregirIA('${safeWord}', '${objeto}', '${auxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}')" class="flex-1 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-bold text-[10px] hover:bg-rose-100 transition-colors">❌ Corregir</button>
+                            <button onclick="confirmarIA('${safeWord}', '${cleanObjeto}', '${cleanAuxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}')" class="flex-1 py-2 bg-emerald-600 text-white rounded-lg font-bold text-[10px] hover:bg-emerald-700 transition-colors shadow-sm">✅ Confirmar</button>
+                            <button onclick="corregirIA('${safeWord}', '${cleanObjeto}', '${cleanAuxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}')" class="flex-1 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-bold text-[10px] hover:bg-rose-100 transition-colors">❌ Corregir</button>
                         </div>`;
                 }
 
                 return `
                     <div class="bg-white border-l-[4px] border-[#1e3ba6] p-5 rounded-xl shadow-sm animate-result">
                         <div class="flex justify-between items-center mb-3">
-                            <div class="bg-[#1e3ba6] text-white font-black px-3 py-1 rounded-lg text-[10px]">OBJETO ${objeto} / ${auxiliar}</div>
+                            <div class="bg-[#1e3ba6] text-white font-black px-3 py-1 rounded-lg text-[10px]">OBJETO ${cleanObjeto} / ${cleanAuxiliar}</div>
                             ${etiqueta}
                         </div>
                         <div class="flex gap-3 mb-2 text-[9px] font-bold uppercase text-slate-400">
                             <div>GRUPO <span class="text-slate-600">${groupInfo.code} - ${groupInfo.name}</span></div>
                             <div>SUBGRUPO <span class="text-slate-600">${subInfo.code}</span></div>
                         </div>
-                        <h3 class="font-extrabold text-lg text-slate-800 uppercase leading-tight mb-1">${denominacion}</h3>
-                        <p class="text-slate-500 text-xs mb-3 line-clamp-2 italic">${descripcion}</p>
+                        <h3 class="font-extrabold text-lg text-slate-800 uppercase leading-tight mb-1">${safeDenom}</h3>
+                        <p class="text-slate-500 text-xs mb-3 line-clamp-2 italic">${safeDesc}</p>
                         <div class="bg-blue-50 border border-blue-100 rounded-lg p-3">
-                            <p class="text-slate-700 text-[11px] leading-relaxed"><b>Justificación:</b> ${justificacion}</p>
+                            <p class="text-slate-700 text-[11px] leading-relaxed"><b>Justificación:</b> ${safeJust}</p>
                         </div>
                         ${feedbackButtons}
                     </div>`;
@@ -458,31 +466,33 @@
                     htmlLocal += `</div>`;
                 }
 
-                // 3. IA - TOP OPCIONES CON REGLA ESTRICTA DE VARIANTES
+                // 3. IA - TOP OPCIONES CON REGLA ESTRICTA DE VARIANTES Y CÓDIGOS
                 const prompt = `Actúa como experto asesor contable uruguayo para compras estatales.
                 El usuario busca el insumo: "${termRaw}".
                 
                 REGLA DE ORO ESTRICTA PARA VARIANTES:
-                Si el usuario ingresa un término genérico que puede tener distintas variantes (por material, tipo de energía, uso, etc. Ej: "estufa", "papel", "caño", "guantes", "carne"), ESTÁS OBLIGADO a devolver MÍNIMO 3 OBJETOS en el JSON, separando claramente cada variante, INCLUSO SI COMPARTEN EL MISMO CÓDIGO DE OBJETO.
+                Si el usuario ingresa un término genérico que puede tener distintas variantes (por material, tipo de energía, uso, etc. Ej: "estufa", "papel", "caño", "guantes", "carne", "trincheta"), ESTÁS OBLIGADO a devolver MÍNIMO 3 OBJETOS en el JSON, separando claramente cada variante. NUNCA DEVUELVAS UNA LISTA VACÍA.
+                Si no encuentras el código exacto, usa el genérico más cercano de su grupo (ej. 199, 299) pero SIEMPRE DEVUELVE RESPUESTA.
                 
-                Ejemplos obligatorios:
-                - "estufa" -> Debes devolver una tarjeta para Estufa Eléctrica, otra para Estufa a Gas, otra a Leña. (Asegúrate de deducir el código correcto del catálogo CGN para calefacción, NO uses 322 porque 322 es para telefonía y afines).
+                Ejemplos obligatorios y correcciones:
+                - "estufa" -> Debes devolver Estufa Eléctrica, Estufa a Gas, etc. (NUNCA uses 322 para estufas, porque 322 es de telefonía. Usa el código correcto de CGN para equipos de calefacción o electrodomésticos).
+                - "trincheta" -> Herramientas manuales (176) o Útiles de escritorio/oficina (131).
                 - "papel" -> Papel higiénico (151), Resma A4 (131), Papel toalla (151).
                 - "caño" -> PVC (114), Hierro (171), Cobre/Bronce.
                 
                 En el campo "denominacion", pon el nombre específico de la variante (Ej: "Estufa Eléctrica").
-                En el campo "justificacion", DEBES EMPEZAR en mayúsculas aclarando el caso: "SI ES ELÉCTRICA: ...", "SI ES A GAS: ...", "SI ES HIGIÉNICO: ...".
+                En el campo "justificacion", DEBES EMPEZAR en mayúsculas aclarando el caso: "SI ES ELÉCTRICA: ...", "SI ES HERRAMIENTA MANUAL: ...", "SI ES DE OFICINA: ...".
                 
                 IMPORTANTE SOBRE LOS CÓDIGOS (Catálogo CGN):
-                - El campo "objeto" DEBE SER ESTRICTAMENTE UN NÚMERO DE 3 DÍGITOS en formato texto (ejemplo: "114", "171", "321"). NUNCA pongas letras, palabras o nombres de materiales en el campo "objeto".
+                - El campo "objeto" DEBE SER ESTRICTAMENTE UN NÚMERO DE 3 DÍGITOS en formato texto (ejemplo: "114", "171", "176"). NUNCA pongas letras, palabras o nombres de materiales en el campo "objeto". ¡SOLO NÚMEROS!
                 - El campo "auxiliar" DEBE SER ESTRICTAMENTE UN NÚMERO DE 3 DÍGITOS en formato texto (ejemplo: "000").
                 - Plástico/PVC: "114"
                 - Metales básicos (hierro, varilla): "171"
-                - Herramientas manuales/repuestos: "176"
+                - Herramientas manuales/repuestos (trincheta, martillo): "176"
                 - Muebles físicos: "321"
-                - Útiles/Papelería (resmas): "131"
+                - Útiles/Papelería (resmas, trincheta de oficina): "131"
                 - Limpieza y aseo (papel higiénico, toallas): "151"
-                - Para cualquier otro ítem, utiliza tu conocimiento experto y estricto del Catálogo de Objetos de Gastos de la Contaduría General de la Nación (CGN) de Uruguay. Nunca inventes códigos, usa los vigentes numéricos.
+                - Para cualquier otro ítem, utiliza tu conocimiento experto del Catálogo de Objetos de Gastos de la Contaduría General de la Nación (CGN) de Uruguay. Nunca inventes códigos numéricos, y si no lo sabes con seguridad, usa un código genérico numérico (ej. "199" para otros bienes de consumo).
                 
                 Responde ÚNICAMENTE en formato JSON: un arreglo de objetos con las llaves exactas: "objeto" (solo 3 números), "auxiliar" (solo 3 números), "denominacion", "descripcion", "justificacion".`;
 
@@ -502,7 +512,7 @@
                         textoRespuesta = data.candidates?.[0]?.content?.parts?.[0]?.text;
                     } else {
                         if (!GROQ_API_KEY) throw new Error("⚠️ Vincula tu llave de Groq.");
-                        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                        const res = await fetch('[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)', {
                             method: 'POST',
                             headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' },
                             body: JSON.stringify({ 
@@ -517,8 +527,18 @@
                         textoRespuesta = JSON.stringify(parsed.options || parsed.results || Object.values(parsed)[0] || parsed);
                     }
 
-                    const opciones = JSON.parse(textoRespuesta);
-                    if (!Array.isArray(opciones)) throw new Error("La IA no devolvió un formato de lista válido.");
+                    // SEGURIDAD DE PARSEO: Extraer solo el JSON, ignorar formatos markdown extraños
+                    let cleanJSON = textoRespuesta;
+                    const jsonMatch = textoRespuesta.match(/\[[\s\S]*\]/);
+                    if (jsonMatch) {
+                        cleanJSON = jsonMatch[0];
+                    }
+                    
+                    const opciones = JSON.parse(cleanJSON);
+                    
+                    if (!Array.isArray(opciones) || opciones.length === 0) {
+                        throw new Error("La IA no devolvió objetos válidos para esta búsqueda.");
+                    }
 
                     let htmlIA = `
                         <div class="mb-4">
