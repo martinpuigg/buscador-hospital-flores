@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contaduría - Hospital de Flores</title>
-    <link href="[https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap](https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap)" rel="stylesheet">
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Montserrat', sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -75,7 +75,7 @@
                 </select>
                 
                 <div id="groqConfig" class="hidden bg-blue-50 p-3 rounded-xl border border-blue-100">
-                    <p class="text-[10px] text-slate-600 mb-2 leading-relaxed">Vincular con <a href="[https://console.groq.com/](https://console.groq.com/)" target="_blank" class="text-blue-600 underline font-bold">Groq Console</a>:</p>
+                    <p class="text-[10px] text-slate-600 mb-2 leading-relaxed">Vincular con <a href="https://console.groq.com/" target="_blank" class="text-blue-600 underline font-bold">Groq Console</a>:</p>
                     <input type="password" id="groqKeyInput" placeholder="gsk_..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs mb-2 shadow-inner focus:outline-none">
                     <button id="saveGroqBtn" class="w-full py-2 bg-slate-800 text-white font-bold rounded-lg text-[10px] uppercase tracking-wide hover:bg-black transition-colors">
                         Guardar Clave Groq
@@ -182,7 +182,7 @@
         </div>
     </footer>
 
-    <script src="[https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js](https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js)"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script>
         const apiKey = ""; 
 
@@ -512,7 +512,7 @@
                         textoRespuesta = data.candidates?.[0]?.content?.parts?.[0]?.text;
                     } else {
                         if (!GROQ_API_KEY) throw new Error("⚠️ Vincula tu llave de Groq.");
-                        const res = await fetch('[https://api.groq.com/openai/v1/chat/completions](https://api.groq.com/openai/v1/chat/completions)', {
+                        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                             method: 'POST',
                             headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' },
                             body: JSON.stringify({ 
