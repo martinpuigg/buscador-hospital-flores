@@ -15,7 +15,6 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-result { animation: fadeIn 0.3s ease-out forwards; }
         
-        /* Estilo para el acordeón de reglas */
         details summary::-webkit-details-marker { display: none; }
         details[open] summary svg { transform: rotate(180deg); }
     </style>
@@ -56,7 +55,7 @@
             
             <div id="resultsList" class="space-y-4 pb-12">
                 <div class="bg-white p-8 text-center text-slate-400 rounded-xl border border-dashed border-slate-300">
-                    Determina la imputación presupuestal del gasto (011 al 923).
+                    Introduce un término para encontrar su código (011 al 923).
                 </div>
             </div>
         </div>
@@ -117,7 +116,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Justificación del uso</label>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Justificación</label>
                         <textarea id="newJust" placeholder="Por qué se clasifica así..." rows="2" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none resize-none"></textarea>
                     </div>
 
@@ -139,10 +138,10 @@
 
                 <div class="mt-6 pt-6 border-t border-slate-200">
                     <button id="uploadBtn" class="w-full py-2 px-4 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-xl text-[10px] font-bold uppercase transition-colors flex justify-center items-center gap-2">
-                        📂 Cargar CSV del Padrón
+                        📂 Cargar Padrón (CSV)
                     </button>
                     <input type="file" id="csvFileInput" class="hidden" accept=".csv">
-                    <div id="csvStatus" class="text-[9px] mt-2 text-center text-slate-400 font-bold hidden">Padrón Cargado Correctamente</div>
+                    <div id="csvStatus" class="text-[9px] mt-2 text-center text-emerald-600 font-bold hidden">✅ Padrón CGN Vinculado</div>
                 </div>
             </div>
         </div>
@@ -186,18 +185,16 @@
                 setTimeout(() => msg.classList.add('hidden'), 2500);
             });
 
-            // --- PADRÓN AMPLIADO INICIAL ---
+            // --- PADRÓN BASE OFICIAL (ACTUALIZADO SEGÚN CGN Y USUARIO) ---
             const PADRON_BASE = {
-                "011": { denominacion: "Sueldo básico de cargos presupuestados", descripcion: "Retribuciones mensuales fijas de funcionarios presupuestados." },
-                "031": { denominacion: "Retribuciones de personal contratado", descripcion: "Salarios de personal bajo régimen de contrato." },
+                "011": { denominacion: "Sueldo básico de cargos", descripcion: "Retribuciones del personal que ocupa cargos presupuestados permanentes." },
                 "111": { denominacion: "Alimentos para personas", descripcion: "Víveres, carnes, lácteos, frutas y verduras." },
-                "131": { denominacion: "Útiles de oficina y papelería", descripcion: "Artículos de escritorio, bolígrafos, resmas, carpetas." },
-                "151": { denominacion: "Productos de limpieza", descripcion: "Higiene y limpieza: lavandina, escobas, jabón." },
-                "176": { denominacion: "Herramientas, repuestos y accesorios", descripcion: "Comprende herramientas manuales (como martillos, pinzas), repuestos mecánicos y accesorios de mantenimiento." },
-                "232": { denominacion: "Viáticos", descripcion: "Gastos de alimentación y alojamiento por traslados." },
-                "321": { denominacion: "Mobiliario y Equipamiento", descripcion: "Escritorios físicos, sillas, estanterías, armarios." },
-                "322": { denominacion: "Equipo de computación", descripcion: "PCs, monitores, impresoras, servidores." },
-                "923": { denominacion: "Reserva para imprevistos", descripcion: "Gastos no programados o urgencias." }
+                "131": { denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Papelería, bolígrafos, resmas, carpetas y artículos de oficina." },
+                "151": { denominacion: "Productos de limpieza, aseo y fumigación", descripcion: "Higiene y limpieza: lavandina, escobas, jabón, desinfectantes." },
+                "176": { denominacion: "Repuestos y accesorios", descripcion: "Incluye HERRAMIENTAS manuales (martillo, pinza, etc.), repuestos mecánicos y accesorios." },
+                "321": { denominacion: "Mobiliario y equipo de oficina", descripcion: "Bienes de uso: escritorios físicos, mesas, sillas, armarios." },
+                "322": { denominacion: "Equipo de computación y periféricos", descripcion: "Computadoras, monitores, impresoras, servidores." },
+                "923": { denominacion: "Reserva para imprevistos", descripcion: "Partidas para gastos no programados o urgencias presupuestales." }
             };
 
             let PADRON_CGN = { ...PADRON_BASE };
@@ -207,7 +204,7 @@
 
             const normalizar = (text) => text ? text.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
 
-            // --- GESTIÓN DE REGLAS MANUALES ---
+            // --- REGLAS MANUALES ---
             let diccionarioPersonalizado = JSON.parse(localStorage.getItem('diccionarioCGN')) || {};
             const manualRulesContainer = document.getElementById('manualRulesContainer');
 
@@ -215,7 +212,7 @@
                 manualRulesContainer.innerHTML = '';
                 const rules = Object.keys(diccionarioPersonalizado);
                 if (rules.length === 0) {
-                    manualRulesContainer.innerHTML = '<p class="text-[10px] text-slate-400 italic text-center py-2">Sin reglas guardadas.</p>';
+                    manualRulesContainer.innerHTML = '<p class="text-[10px] text-slate-400 italic text-center py-2">Sin reglas personalizadas.</p>';
                     return;
                 }
                 rules.forEach(word => {
@@ -229,7 +226,7 @@
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                             </button>
                         </div>
-                        <div class="text-[10px] font-bold text-[#1e3ba6] mb-1">Objeto: ${rule.objeto} / ${rule.auxiliar}</div>
+                        <div class="text-[10px] font-bold text-[#1e3ba6]">Obj: ${rule.objeto} / ${rule.auxiliar}</div>
                     `;
                     manualRulesContainer.appendChild(div);
                 });
@@ -279,7 +276,7 @@
                 diccionarioPersonalizado[wordNorm] = { objeto: obj, auxiliar: aux, denominacion: denom, descripcion: desc, justificacion: just };
                 localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
                 renderizarReglasManuales();
-                resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">✅ Clasificación confirmada.</div>`;
+                resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">✅ Clasificación guardada.</div>`;
             };
 
             window.corregirIA = function(word, obj, aux, just, denom, desc) {
@@ -289,9 +286,10 @@
                 document.getElementById('newDenom').value = denom;
                 document.getElementById('newDesc').value = desc;
                 document.getElementById('newJust').value = just;
-                document.getElementById('manualForm').classList.add('ring-4', 'ring-rose-400');
-                setTimeout(() => document.getElementById('manualForm').classList.remove('ring-4', 'ring-rose-400'), 2000);
-                document.getElementById('manualForm').scrollIntoView({ behavior: 'smooth' });
+                const form = document.getElementById('manualForm');
+                form.classList.add('ring-4', 'ring-rose-400');
+                setTimeout(() => form.classList.remove('ring-4', 'ring-rose-400'), 2000);
+                form.scrollIntoView({ behavior: 'smooth' });
             };
 
             function renderizarTarjeta(objeto, auxiliar, denominacion, descripcion, justificacion, tipo, queryOriginal) {
@@ -303,9 +301,9 @@
                 const safeDesc = descripcion.replace(/'/g, "\\'");
 
                 if (tipo === 'manual') {
-                    etiqueta = `<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">✍️ Regla Personalizada</span>`;
+                    etiqueta = `<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">✍️ Tu Regla</span>`;
                 } else {
-                    etiqueta = tipo === 'ia' ? `<span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full border border-purple-200">✨ IA (${aiSelect.value.toUpperCase()})</span>` : `<span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">📚 Padrón Oficial</span>`;
+                    etiqueta = tipo === 'ia' ? `<span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full border border-purple-200">✨ IA (${aiSelect.value.toUpperCase()})</span>` : `<span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">📚 Catálogo Oficial</span>`;
                     feedbackButtons = `
                         <div class="mt-6 flex flex-col sm:flex-row gap-3 border-t border-slate-100 pt-6">
                             <button onclick="confirmarIA('${safeWord}', '${objeto}', '${auxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}')" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs hover:bg-emerald-700 transition-colors flex justify-center items-center gap-2 shadow-sm">✅ Confirmar</button>
@@ -323,7 +321,7 @@
                         <p class="text-slate-600 font-medium italic border-l-4 border-slate-200 pl-4 mb-6 leading-relaxed">${descripcion}</p>
                         <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 relative overflow-hidden">
                             <div class="absolute top-0 left-0 w-1.5 h-full bg-[#1e3ba6]"></div>
-                            <h4 class="text-xs font-black text-[#1e3ba6] uppercase mb-2 flex items-center gap-2"><span>💡</span> Justificación</h4>
+                            <h4 class="text-xs font-black text-[#1e3ba6] uppercase mb-2 flex items-center gap-2"><span>💡</span> Justificación Sugerida</h4>
                             <p class="text-slate-700 font-medium leading-relaxed">${justificacion}</p>
                         </div>
                         ${feedbackButtons}
@@ -335,16 +333,14 @@
                 const term = normalizar(termRaw);
                 if (!term) return;
 
-                // 1. Reglas Manuales
                 for (const word in diccionarioPersonalizado) {
                     if (term === word || term.includes(word) || word.includes(term)) {
                         const info = diccionarioPersonalizado[word];
-                        renderizarTarjeta(info.objeto, info.auxiliar, info.denominacion || "Rubro Personalizado", info.descripcion || "Definido por usuario", info.justificacion, 'manual', termRaw);
+                        renderizarTarjeta(info.objeto, info.auxiliar, info.denominacion || "Rubro Personalizado", info.descripcion || "Definido por el usuario", info.justificacion, 'manual', termRaw);
                         return;
                     }
                 }
 
-                // 2. Búsqueda en Padrón Cargado (Local)
                 const match = datosActuales.find(item => 
                     normalizar(item.denominacion).includes(term) || 
                     normalizar(item.descripcion).includes(term) ||
@@ -352,15 +348,19 @@
                 );
                 
                 if (match) {
-                    renderizarTarjeta(match.objeto, match.auxiliar, match.denominacion, match.descripcion, "Coincidencia directa en el padrón.", 'sistema', termRaw);
+                    renderizarTarjeta(match.objeto, match.auxiliar, match.denominacion, match.descripcion, "Coincidencia semántica encontrada en el padrón.", 'sistema', termRaw);
                     return;
                 }
 
-                // 3. Inteligencia Artificial
                 resultsList.innerHTML = `<div class="bg-purple-50 p-10 text-center text-purple-700 font-bold rounded-xl animate-pulse shadow-inner">🧠 Analizando con IA...</div>`;
-                const prompt = `Actúa como asesor de compras de Uruguay. Insumo: "${termRaw}". 
-                IMPORTANTE: Herramientas (martillo, taladro) y repuestos van en 176. Muebles físicos (escritorio, silla) van en 321. Papelería en 131. Sueldos en 011.
-                Categorías: 011-923. Responde brevemente qué es y pon el código al final.`;
+                
+                const prompt = `Actúa como asesor contable de Uruguay. Insumo: "${termRaw}". 
+                REGLAS CRÍTICAS:
+                - Herramientas manuales (martillo, pinza, etc.) y repuestos van en 176.
+                - Muebles físicos (escritorio, silla) van en 321.
+                - Papelería (bolígrafo, papel) va en 131.
+                - Sueldos básicos van en 011.
+                Clasifícalo en el rango 011-923. Responde brevemente qué es y pon el código al final.`;
 
                 try {
                     let textoRespuesta = "";
@@ -382,7 +382,7 @@
 
                     const codigoMatch = textoRespuesta.match(/\b(0\d\d|1\d\d|2\d\d|3\d\d|4\d\d|923)\b/);
                     const codigo = codigoMatch ? codigoMatch[0] : "176";
-                    const padron = PADRON_CGN[codigo] || { denominacion: "Grupo Identificado", descripcion: "Análisis semántico." };
+                    const padron = PADRON_CGN[codigo] || { denominacion: "Grupo Sugerido", descripcion: "Análisis semántico inteligente." };
                     renderizarTarjeta(codigo, "000", padron.denominacion, padron.descripcion, textoRespuesta.replace(codigo, '').trim(), 'ia', termRaw);
                 } catch (e) {
                     resultsList.innerHTML = `<div class="bg-rose-50 p-8 text-center rounded-2xl border-2 border-dashed border-rose-300 font-bold text-rose-700">${e.message}</div>`;
@@ -392,7 +392,6 @@
             searchBtn.addEventListener('click', ejecutarBusqueda);
             searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') ejecutarBusqueda(); });
 
-            // --- CARGA DE CSV (Personalizada para tu archivo) ---
             document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('csvFileInput').click());
             document.getElementById('csvFileInput').addEventListener('change', function(e) {
                 if (!e.target.files[0]) return;
@@ -400,28 +399,28 @@
                     header: true, skipEmptyLines: true, 
                     complete: function(results) {
                         const fields = results.meta.fields;
-                        // Mapeo dinámico de tus cabeceras
                         const hObj = fields.find(f => normalizar(f).includes('objeto')) || fields[0];
                         const hAux = fields.find(f => normalizar(f).includes('auxiliar')) || fields[1];
                         const hDenom = fields.find(f => normalizar(f).includes('denominacion')) || fields[2];
                         const hDesc = fields.find(f => normalizar(f).includes('desc')) || fields[3];
 
-                        datosActuales = results.data.map(row => ({
-                            objeto: (row[hObj] || "").toString().replace('.0', '').padStart(3, '0'),
-                            auxiliar: (row[hAux] || "000").toString().replace('.0', '').padStart(3, '0'),
-                            denominacion: (row[hDenom] || "").trim(),
-                            descripcion: (row[hDesc] || "").trim()
-                        }));
+                        datosActuales = results.data.map(row => {
+                            let objVal = (row[hObj] || "").toString().split('.')[0].padStart(3, '0');
+                            let auxVal = (row[hAux] || "000").toString().split('.')[0].padStart(3, '0');
+                            return {
+                                objeto: objVal,
+                                auxiliar: auxVal,
+                                denominacion: (row[hDenom] || "").trim(),
+                                descripcion: (row[hDesc] || "").trim()
+                            };
+                        }).filter(i => i.objeto !== "000");
 
-                        // Actualizar Padrón Base para la IA
                         datosActuales.forEach(item => {
-                            if (item.objeto && item.objeto !== "000") {
-                                PADRON_CGN[item.objeto] = { denominacion: item.denominacion, descripcion: item.descripcion };
-                            }
+                            PADRON_CGN[item.objeto] = { denominacion: item.denominacion, descripcion: item.descripcion };
                         });
 
                         document.getElementById('csvStatus').classList.remove('hidden');
-                        resultsList.innerHTML = `<div class="bg-blue-50 border border-blue-200 p-6 rounded-2xl text-blue-800 text-center font-bold animate-result shadow-sm">📂 Padrón cargado con éxito. Ahora buscará en todos los objetos de tu archivo.</div>`;
+                        resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">📂 Padrón CGN vinculado con éxito. La IA y el buscador ahora usarán tus datos oficiales.</div>`;
                     }
                 });
             });
