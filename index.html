@@ -21,7 +21,8 @@
             position: absolute;
             top: 20px;
             left: 0;
-            width: 200px;
+            width: 260px; /* Antes estaba en 200px */
+            max-width: 100%;
             height: auto;
         }
 
@@ -289,14 +290,14 @@
     <div class="container">
         <div class="header">
             <img src="logo_hospital_flores.png" alt="Logo Hospital de Flores" class="logo" onerror="this.style.display='none'">
-            <h1 style="font-size: 2.2em;"><span style="font-weight: 900;">Hospital de Flores</span> <span style="font-weight: 700;">Dr. Edison Camacho</span></h1>
+            <h1 style="font-size: 2.2em; font-weight: 700;">Hospital de Flores Dr. Edison Camacho</h1>
             <h2 style="color: #003ca5; margin-bottom: 10px; font-size: 1.6em;">Sector Contaduría</h2>
             <p>Buscador de Objetos del Gasto CGN - SIIF Uruguay</p>
         </div>
         
         <div class="ai-status" id="aiStatus">
             🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
-            📚 Keywords aprendidas: <span id="keywordsLearned">0</span>
+            📚 Palabras clave aprendidas: <span id="keywordsLearned">0</span>
         </div>
         
         <!-- Carga de CSV -->
