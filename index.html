@@ -43,7 +43,7 @@
                 <label class="block text-sm font-bold text-slate-500 mb-3 uppercase tracking-wider">Buscar Objeto de Gasto</label>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <div class="relative flex-1">
-                        <input type="text" id="searchInput" placeholder="Ej. Varilla, Martillo, Escritorio, Viáticos..." 
+                        <input type="text" id="searchInput" placeholder="Ej. Varilla, Martillo, Escritorio, Estufa, Caño..." 
                                class="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-[#1e3ba6] transition-colors text-lg font-medium placeholder-slate-400">
                     </div>
                     <button id="searchBtn" class="px-8 py-4 bg-[#1e3ba6] hover:bg-blue-800 text-white font-bold rounded-xl shadow-md transition-colors flex justify-center items-center gap-2">
@@ -451,15 +451,22 @@
                 const prompt = `Actúa como experto asesor contable uruguayo para compras estatales.
                 El usuario busca el insumo: "${termRaw}".
                 
-                INSTRUCCIÓN CLAVE PARA VARIANTES:
-                Si el usuario ingresa un término genérico que puede estar hecho de distintos materiales o tener distintos usos (ej. "caño" puede ser PVC o Metal; "guantes" pueden ser quirúrgicos o de obra; "papel" puede ser higiénico o de oficina), DEBES generar opciones separadas para cada variante.
-                En el campo "justificacion", empieza SIEMPRE en mayúsculas aclarando la variante (Ej: "SI ES CAÑO DE PVC: ...", "SI ES CAÑO DE METAL: ...", "SI ES USO MÉDICO: ...").
+                INSTRUCCIÓN CLAVE PARA VARIANTES (MUY IMPORTANTE):
+                Si el usuario ingresa un término genérico que puede tener distintas variantes (por material, fuente de energía, uso, etc.), DEBES generar opciones separadas para cada variante.
+                Ejemplos de términos con variantes:
+                - "estufa" (puede ser eléctrica, a gas, a leña).
+                - "caño" (puede ser PVC, metal, termofusión).
+                - "guantes" (quirúrgicos, de obra, de limpieza).
+                - "papel" (higiénico, resma A4).
+                - "vehículo" (auto, ambulancia, moto).
+                En el campo "justificacion", empieza SIEMPRE en mayúsculas aclarando la variante (Ej: "SI ES ESTUFA ELÉCTRICA: ...", "SI ES ESTUFA A GAS: ...", "SI ES CAÑO DE PVC: ...").
                 
                 IMPORTANTE (Catálogo CGN 011 a 923):
                 - Artículos de plástico/PVC (ej. caño PVC): 114
                 - Hierro/metales básicos (ej. caño hierro, varillas): 171
                 - Herramientas manuales/repuestos: 176
                 - Muebles físicos: 321
+                - Equipos eléctricos, electrodomésticos y de calefacción eléctrica: 322 o el correspondiente a equipamiento.
                 - Útiles/Papelería (ej. resmas de papel): 131
                 - Insumos de limpieza y aseo (ej. papel higiénico): 151
                 
