@@ -85,7 +85,7 @@
                 <h3 class="font-bold text-[#1e3ba6] mb-2 flex items-center gap-2 text-md">
                     <span>🧠</span> Enseñar al Buscador
                 </h3>
-                <div id="manualForm" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4">
+                <div id="manualForm" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4 transition-all duration-300">
                     <input type="text" id="newWord" placeholder="Palabra (ej. Escritorio)" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6]">
                     <div class="flex gap-2">
                         <input type="number" id="newObj" placeholder="Objeto" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
@@ -154,14 +154,14 @@
             // --- PADRÓN AMPLIADO ---
             const PADRON_BASE = {
                 "111": { denominacion: "Alimentos para personas", descripcion: "Víveres, carnes, lácteos, frutas y verduras." },
-                "131": { denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Papelería, útiles, bolígrafos, resmas, carpetas." },
-                "151": { denominacion: "Productos de limpieza", descripcion: "Higiene: lavandina, escobas, detergente." },
-                "156": { denominacion: "Productos plásticos, acrílicos y similares", descripcion: "Plástico, PVC, baldes, envases." },
-                "181": { denominacion: "Medicamentos y productos farmacéuticos", descripcion: "Farmacia, gasas, jeringas, medicación." },
-                "142": { denominacion: "Materiales eléctricos", descripcion: "Lámparas, cables, materiales de instalación." },
-                "321": { denominacion: "Mobiliario y Equipamiento de Oficina", descripcion: "Escritorios, sillas, estanterías, armarios metálicos." },
+                "131": { denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Papelería, útiles de oficina, bolígrafos, resmas, carpetas." },
+                "151": { denominacion: "Productos de limpieza", descripcion: "Higiene y limpieza: lavandina, escobas, jabón, detergente." },
+                "156": { denominacion: "Productos plásticos, acrílicos y similares", descripcion: "Plástico, PVC, baldes, envases, polietileno." },
+                "181": { denominacion: "Medicamentos y productos farmacéuticos", descripcion: "Insumos médicos, farmacia, gasas, jeringas, medicamentos." },
+                "142": { denominacion: "Materiales eléctricos", descripcion: "Lámparas, cables, tomacorrientes y afines." },
+                "321": { denominacion: "Mobiliario y Equipamiento de Oficina", descripcion: "Escritorios físicos, sillas, estanterías, armarios metálicos." },
                 "322": { denominacion: "Equipo de computación y periféricos", descripcion: "Computadoras, monitores, impresoras, scanners." },
-                "149": { denominacion: "Herramientas menores", descripcion: "Herramientas manuales y repuestos menores." }
+                "149": { denominacion: "Herramientas menores", descripcion: "Herramientas manuales y repuestos menores de ferretería." }
             };
 
             let PADRON_CGN = { ...PADRON_BASE };
@@ -199,9 +199,11 @@
                 document.querySelectorAll('.delete-rule-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const word = e.currentTarget.getAttribute('data-word');
-                        delete diccionarioPersonalizado[word];
-                        localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
-                        renderizarReglasManuales();
+                        if(confirm(`¿Quieres borrar la regla para "${word}"?`)) {
+                            delete diccionarioPersonalizado[word];
+                            localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
+                            renderizarReglasManuales();
+                        }
                     });
                 });
             }
@@ -232,11 +234,13 @@
             const searchBtn = document.getElementById('searchBtn');
             const resultsList = document.getElementById('resultsList');
 
+            // FUNCIONES GLOBALES PARA LOS BOTONES DE FEEDBACK
             window.confirmarIA = function(word, obj, aux, just) {
-                diccionarioPersonalizado[word] = { objeto: obj, auxiliar: aux, justificacion: just };
+                const wordNorm = normalizar(word);
+                diccionarioPersonalizado[wordNorm] = { objeto: obj, auxiliar: aux, justificacion: just };
                 localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
                 renderizarReglasManuales();
-                resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result">✅ Clasificación guardada permanentemente.</div>`;
+                resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">✅ Clasificación confirmada y guardada en tus reglas personales.</div>`;
             };
 
             window.corregirIA = function(word, obj, aux, just) {
@@ -244,9 +248,15 @@
                 document.getElementById('newObj').value = obj;
                 document.getElementById('newAux').value = aux;
                 document.getElementById('newJust').value = just;
-                document.getElementById('manualForm').classList.add('ring-4', 'ring-blue-400');
-                setTimeout(() => document.getElementById('manualForm').classList.remove('ring-4', 'ring-blue-400'), 1500);
-                location.href = '#manualForm';
+                
+                // Efecto visual de resaltado en el formulario
+                const form = document.getElementById('manualForm');
+                form.classList.add('ring-4', 'ring-rose-400');
+                setTimeout(() => form.classList.remove('ring-4', 'ring-rose-400'), 2000);
+                
+                // Scroll suave al formulario
+                form.scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('newObj').focus();
             };
 
             function renderizarTarjeta(objeto, auxiliar, denominacion, descripcion, justificacion, tipo, queryOriginal) {
@@ -257,14 +267,15 @@
                     etiqueta = `<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">✍️ Regla Personalizada</span>`;
                 } else if (tipo === 'ia') {
                     etiqueta = `<span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full border border-purple-200">✨ IA (${aiSelect.value.toUpperCase()})</span>`;
-                    // Botones de Confirmación/Corrección
+                    
+                    // BOTONES DE ACCIÓN PARA LA IA
                     feedbackButtons = `
-                        <div class="mt-6 flex gap-3 border-t border-slate-200 pt-6">
-                            <button onclick="confirmarIA('${queryOriginal}', '${objeto}', '${auxiliar}', '${justificacion.replace(/'/g, "\\'")}')" class="flex-1 py-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl font-bold text-xs hover:bg-emerald-100 transition-colors flex justify-center items-center gap-2">
-                                ✅ Confirmar Imputación
+                        <div class="mt-6 flex flex-col sm:flex-row gap-3 border-t border-slate-100 pt-6">
+                            <button onclick="confirmarIA('${queryOriginal}', '${objeto}', '${auxiliar}', '${justificacion.replace(/'/g, "\\'")}')" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs hover:bg-emerald-700 transition-colors flex justify-center items-center gap-2 shadow-sm">
+                                ✅ Es Correcto, Guardar
                             </button>
-                            <button onclick="corregirIA('${queryOriginal}', '${objeto}', '${auxiliar}', '${justificacion.replace(/'/g, "\\'")}')" class="flex-1 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl font-bold text-xs hover:bg-rose-100 transition-colors flex justify-center items-center gap-2">
-                                ❌ Está Equivocado
+                            <button onclick="corregirIA('${queryOriginal}', '${objeto}', '${auxiliar}', '${justificacion.replace(/'/g, "\\'")}')" class="flex-1 py-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl font-bold text-xs hover:bg-rose-100 transition-colors flex justify-center items-center gap-2">
+                                ❌ Corregir Objeto
                             </button>
                         </div>`;
                 } else {
@@ -273,23 +284,27 @@
 
                 resultsList.innerHTML = `
                     <div class="bg-[#fffcf8] border-l-[6px] border-[#f97316] p-6 rounded-2xl shadow-md animate-result">
-                        <div class="flex justify-between items-center mb-4">
-                            <div class="bg-[#1e3ba6] text-white font-black px-5 py-2 rounded-full text-sm tracking-widest">OBJETO ${objeto} / ${auxiliar}</div>
+                        <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                            <div class="bg-[#1e3ba6] text-white font-black px-5 py-2 rounded-full text-sm tracking-widest shadow-sm">OBJETO ${objeto} / ${auxiliar}</div>
                             ${etiqueta}
                         </div>
-                        <h2 class="font-extrabold text-2xl text-slate-800 uppercase mb-2">${denominacion}</h2>
+                        <h2 class="font-extrabold text-2xl text-slate-800 uppercase mb-2 leading-tight">${denominacion}</h2>
                         <p class="text-slate-600 font-medium italic border-l-4 border-slate-200 pl-4 mb-6 leading-relaxed">${descripcion}</p>
-                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 relative overflow-hidden">
+                        
+                        <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 relative overflow-hidden">
                             <div class="absolute top-0 left-0 w-1.5 h-full bg-[#1e3ba6]"></div>
-                            <h4 class="text-xs font-black text-[#1e3ba6] uppercase mb-2">💡 Justificación Sugerida</h4>
-                            <p class="text-slate-700 font-medium">${justificacion}</p>
+                            <h4 class="text-xs font-black text-[#1e3ba6] uppercase mb-2 flex items-center gap-2">
+                                <span>💡</span> Justificación Sugerida
+                            </h4>
+                            <p class="text-slate-700 font-medium leading-relaxed">${justificacion}</p>
                         </div>
+
                         ${feedbackButtons}
                     </div>`;
             }
 
             async function ejecutarBusqueda() {
-                const termRaw = searchInput.value;
+                const termRaw = searchInput.value.trim();
                 const term = normalizar(termRaw);
                 if (!term) return;
 
@@ -304,18 +319,29 @@
                 }
 
                 // 2. Coincidencia Local
-                const match = datosActuales.find(item => normalizar(item.denominacion).includes(term) || term.includes(normalizar(item.denominacion)));
+                const match = datosActuales.find(item => 
+                    normalizar(item.denominacion).includes(term) || 
+                    term.includes(normalizar(item.denominacion)) ||
+                    (term.length > 4 && normalizar(item.denominacion).startsWith(term.substring(0, 4)))
+                );
+                
                 if (match) {
                     renderizarTarjeta(match.objeto, match.auxiliar, match.denominacion, match.descripcion, "Coincidencia semántica directa encontrada en el padrón.", 'sistema', termRaw);
                     return;
                 }
 
                 // 3. IA
-                resultsList.innerHTML = `<div class="bg-purple-50 p-10 text-center text-purple-700 font-bold rounded-xl animate-pulse shadow-inner">🧠 Analizando con IA...</div>`;
+                resultsList.innerHTML = `
+                    <div class="bg-purple-50 p-10 text-center text-purple-700 font-bold rounded-xl animate-pulse shadow-inner flex flex-col items-center gap-3">
+                        <span class="text-4xl">🧠</span>
+                        <span>Analizando "${termRaw}" con Inteligencia Artificial...</span>
+                    </div>`;
                 
-                const prompt = `Actúa como asesor de compras del Estado Uruguayo. Insumo: "${termRaw}". 
-                Códigos: 111 (Alimentos), 131 (Útiles), 151 (Limpieza), 156 (Plásticos), 181 (Farmacia), 142 (Eléctrico), 321 (MOBILIARIO: mesas, sillas, escritorios), 322 (COMPUTACIÓN).
-                Responde brevemente qué es y pon el código al final. Si es mueble usa 321. Si es lapicera/papel usa 131.`;
+                const prompt = `Actúa como asesor de compras de Uruguay. Insumo: "${termRaw}". 
+                Si es un mueble físico (escritorio, silla, estante) usa 321. 
+                Si es papelería o útiles pequeños (bolígrafo, papel, regla) usa 131.
+                Si es comida usa 111. Si es limpieza usa 151. Si es computación usa 322.
+                Responde brevemente qué es y pon el código al final.`;
 
                 try {
                     let textoRespuesta = "";
@@ -325,25 +351,35 @@
                         const data = await res.json();
                         textoRespuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || "000";
                     } else {
-                        if (!GROQ_API_KEY) throw new Error("⚠️ Por favor vincula tu llave de Groq.");
+                        if (!GROQ_API_KEY) throw new Error("⚠️ Por favor vincula tu llave de Groq en el panel derecho.");
                         const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                             method: 'POST',
                             headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages: [{ role: "user", content: prompt }], temperature: 0.1 })
+                            body: JSON.stringify({ 
+                                model: "llama-3.3-70b-versatile", 
+                                messages: [{ role: "user", content: prompt }], 
+                                temperature: 0.1 
+                            })
                         });
                         const data = await res.json();
                         textoRespuesta = data.choices?.[0]?.message?.content || "000";
                     }
 
-                    const codigo = textoRespuesta.match(/\b(111|131|141|151|156|181|142|321|322)\b/)?.[0] || "131";
+                    const codigoMatch = textoRespuesta.match(/\b(111|131|141|151|156|181|142|321|322)\b/);
+                    const codigo = codigoMatch ? codigoMatch[0] : "131";
                     const padron = PADRON_CGN[codigo] || { denominacion: "Grupo Identificado", descripcion: "Análisis semántico." };
+                    
                     renderizarTarjeta(codigo, "000", padron.denominacion, padron.descripcion, textoRespuesta.replace(codigo, '').trim(), 'ia', termRaw);
                     
                 } catch (e) {
-                    resultsList.innerHTML = `<div class="bg-rose-50 p-8 text-center rounded-2xl border-2 border-dashed border-rose-300">
-                        <h3 class="text-rose-700 font-bold">${e.message.includes("llave") ? e.message : "Error al consultar la IA."}</h3>
-                        <p class="text-rose-500 text-xs mt-2">Carga el objeto manualmente en el panel de la derecha.</p>
-                    </div>`;
+                    resultsList.innerHTML = `
+                        <div class="bg-rose-50 p-8 text-center rounded-2xl border-2 border-dashed border-rose-300">
+                            <h3 class="text-rose-700 font-bold text-lg">${e.message.includes("llave") ? "Falta Configuración" : "Error en la IA"}</h3>
+                            <p class="text-rose-500 text-xs mt-2 mb-4">${e.message}</p>
+                            <div class="p-3 bg-white/50 rounded-lg text-rose-800 text-xs italic">
+                                Puedes agregar la regla manualmente a la derecha.
+                            </div>
+                        </div>`;
                 }
             }
 
@@ -363,7 +399,7 @@
                             denominacion: (row.denominacion || row.Denominacion || "").trim(),
                             descripcion: (row.descripcion || row.Descripcion || "").trim()
                         }));
-                        resultsList.innerHTML = `<div class="bg-blue-50 border border-blue-200 p-6 rounded-2xl text-blue-800 text-center font-bold animate-result">📂 CSV cargado. Base de datos actualizada con éxito.</div>`;
+                        resultsList.innerHTML = `<div class="bg-blue-50 border border-blue-200 p-6 rounded-2xl text-blue-800 text-center font-bold animate-result shadow-sm">📂 Padrón CSV cargado correctamente.</div>`;
                     }
                 });
             });
