@@ -473,16 +473,18 @@
                 En el campo "denominacion", pon el nombre específico de la variante (Ej: "Estufa Eléctrica").
                 En el campo "justificacion", DEBES EMPEZAR en mayúsculas aclarando el caso: "SI ES ELÉCTRICA: ...", "SI ES A GAS: ...", "SI ES HIGIÉNICO: ...".
                 
-                IMPORTANTE (Catálogo CGN de referencia):
-                - Plástico/PVC: 114
-                - Metales básicos (hierro, varilla): 171
-                - Herramientas manuales/repuestos: 176
-                - Muebles físicos: 321
-                - Útiles/Papelería (resmas): 131
-                - Limpieza y aseo (papel higiénico, toallas): 151
-                - Para cualquier otro ítem, utiliza tu conocimiento experto y estricto del Catálogo de Objetos de Gastos de la Contaduría General de la Nación (CGN) de Uruguay. Nunca inventes códigos, usa los vigentes.
+                IMPORTANTE SOBRE LOS CÓDIGOS (Catálogo CGN):
+                - El campo "objeto" DEBE SER ESTRICTAMENTE UN NÚMERO DE 3 DÍGITOS en formato texto (ejemplo: "114", "171", "321"). NUNCA pongas letras, palabras o nombres de materiales en el campo "objeto".
+                - El campo "auxiliar" DEBE SER ESTRICTAMENTE UN NÚMERO DE 3 DÍGITOS en formato texto (ejemplo: "000").
+                - Plástico/PVC: "114"
+                - Metales básicos (hierro, varilla): "171"
+                - Herramientas manuales/repuestos: "176"
+                - Muebles físicos: "321"
+                - Útiles/Papelería (resmas): "131"
+                - Limpieza y aseo (papel higiénico, toallas): "151"
+                - Para cualquier otro ítem, utiliza tu conocimiento experto y estricto del Catálogo de Objetos de Gastos de la Contaduría General de la Nación (CGN) de Uruguay. Nunca inventes códigos, usa los vigentes numéricos.
                 
-                Responde ÚNICAMENTE en formato JSON: un arreglo de objetos con las llaves: "objeto", "auxiliar", "denominacion", "descripcion", "justificacion".`;
+                Responde ÚNICAMENTE en formato JSON: un arreglo de objetos con las llaves exactas: "objeto" (solo 3 números), "auxiliar" (solo 3 números), "denominacion", "descripcion", "justificacion".`;
 
                 try {
                     let textoRespuesta = "";
@@ -576,4 +578,4 @@
         });
     </script>
 </body>
-</html
+</html>
