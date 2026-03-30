@@ -382,7 +382,7 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lechuga, lápiz..."
+                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lechuga, lápiz, cubierta..."
                     onkeypress="if(event.key === 'Enter') buscar()"
                 >
                 <button onclick="buscar()">🔎 Buscar objeto</button>
@@ -424,8 +424,9 @@
         let filtroGrupo = '';
         
         // 👇👇👇 ¡PON TU LLAVE DE GEMINI AQUÍ ABAJO! 👇👇👇
-        // (Pégala exactamente entre las comillas)
-        const apiKey = "AIzaSyBBfxH0B7Vnazo608LL07QR7fLbdPXfCeY";
+        // Si vas a usar el botón "Preview" de esta página, DEBES dejarla vacía ("").
+        // Si vas a guardar este archivo en tu PC para usarlo, pega tu llave entre las comillas.
+        const apiKey = "AIzaSyAgs8WWB3-TqljduiPkc7BCK2ezU81tVuE";
         
         // ============================================
         // 🧠 SISTEMA DE APRENDIZAJE DE IA
@@ -440,65 +441,37 @@
         };
         
         // DICCIONARIO INTERNO COMPLETAMENTE NORMALIZADO (SIN TILDES)
-        // Esto soluciona que "lapiz" o "lápiz" siempre hagan match perfecto
         let keywordsMap = {
-            // Alimentos
             'harina': ['111'], 'lechuga': ['111'], 'arroz': ['111'], 'carne': ['111'], 
             'verdura': ['111'], 'comida': ['111'], 'alimento': ['111'], 'pan': ['111'], 
             'leche': ['111'], 'huevos': ['111'], 'pescado': ['111'], 'pollo': ['111'], 
             'queso': ['111'], 'fruta': ['111'], 'ensalada': ['111'], 'tomate': ['111'], 
             'atun': ['111'], 'arveja': ['111'], 'fideo': ['111'], 'yerba': ['111'],
-            // Sueldos
             'sueldo': ['011', '021', '031'], 'salario': ['011', '021'], 'remuneracion': ['011'], 'jornal': ['011', '031'], 'paga': ['011'],
-            // Combustibles
             'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'], 'diesel': ['141'], 'gasolina': ['141'], 'petroleo': ['141'],
-            // Medicamentos
             'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'], 'vacuna': ['152'], 'pastilla': ['152'], 'jarabe': ['152'],
-            // Vehículos
             'vehiculo': ['353'], 'auto': ['353'], 'camioneta': ['353'], 'moto': ['353'], 'ambulancia': ['353'], 'camion': ['353'],
-            // Útiles de oficina
             'regla': ['191', '176'], 'util': ['191'], 'oficina': ['191', '131', '326'], 'papel': ['131'], 'lapiz': ['191'], 'boligrafo': ['191'], 'cuaderno': ['191'], 'tinta': ['191'], 'toner': ['191'], 'hoja': ['131'], 'goma': ['191'], 'clip': ['191'],
-            // Internación/Salud
             'internacion': ['283'], 'hospital': ['283', '152'], 'sanatorio': ['283'], 'medico': ['283', '152'], 'clinica': ['283'], 'paciente': ['283'],
-            // Informática
             'computadora': ['323'], 'laptop': ['323'], 'notebook': ['323'], 'servidor': ['323'], 'software': ['285'], 'programa': ['285'], 'teclado': ['323'], 'mouse': ['323'], 'monitor': ['323'],
-            // Limpieza
             'limpieza': ['192', '278'], 'jabon': ['192'], 'escoba': ['192'], 'lavandina': ['192'], 'detergente': ['192'], 'trapo': ['192'], 'bolsa': ['192'],
-            // Servicios básicos
             'electricidad': ['213'], 'luz': ['213'], 'agua': ['212'], 'telefono': ['211'], 'internet': ['211'], 'wifi': ['211'],
-            // Viáticos/Pasajes
             'viatico': ['234', '235'], 'pasaje': ['231', '232', '233'], 'alquiler': ['251'], 'hospedaje': ['234', '235'], 'hotel': ['234', '235'],
-            // Capacitación
             'capacitacion': ['284'], 'curso': ['284'], 'taller': ['284'], 'seminario': ['284'], 'diplomado': ['284'], 'maestria': ['284'],
-            // Jubilación/Becas
             'jubilacion': ['571'], 'retiro': ['571'], 'pasividad': ['571'], 'beca': ['577'], 'becario': ['577'], 'becaria': ['577'],
-            // Herramientas
             'herramienta': ['176'], 'destornillador': ['176'], 'martillo': ['176'], 'llave': ['176'], 'alicate': ['176'], 'pinza': ['176'], 'taladro': ['322'],
-            // Vestimenta
             'vestimenta': ['122'], 'uniforme': ['122'], 'ropa': ['122'], 'calzado': ['122'], 'zapato': ['122'], 'botas': ['122'], 'camisa': ['122'], 'pantalon': ['122'],
-            // Seguros
             'seguro': ['264'], 'poliza': ['264'], 'prima': ['264'], 'cobertura': ['264'],
-            // Mantenimiento
             'mantenimiento': ['271', '273', '275', '276'], 'reparacion': ['271', '273'], 'arreglo': ['271', '273'], 'pintura': ['151'], 'repuesto': ['199'],
-            // Construcción
             'construccion': ['387'], 'carretera': ['387'], 'camino': ['387'], 'puente': ['387'], 'obra': ['387'], 'edificio': ['387', '271'], 'ladrillo': ['161'], 'cemento': ['161'], 'arena': ['161'],
-            // Vigilancia
             'vigilancia': ['291'], 'seguridad': ['291', '328'], 'custodia': ['291'], 'guardia': ['291'], 'alarma': ['328'],
-            // Mobiliario
             'mueble': ['326'], 'escritorio': ['326'], 'silla': ['326'], 'mesa': ['326'], 'sillon': ['326'], 'armario': ['326'], 'estante': ['326'],
-            // Impresoras/Equipos
             'impresora': ['323', '324'], 'scanner': ['323'], 'plotter': ['324'], 'fotocopiadora': ['324'],
-            // Subsidios/Transferencias
             'subsidio': ['511', '554', '579'], 'subvencion': ['511', '554'], 'aporte': ['511', '513'], 'transferencia': ['511', '513', '514', '519'],
-            // Deportes/Cultura
             'deporte': ['555'], 'cultural': ['555'], 'recreativo': ['555'], 'olimpico': ['555'], 'futbol': ['555'], 'tenis': ['555'],
-            // Animales
             'animal': ['112'], 'mascota': ['112'], 'perro': ['112'], 'gato': ['112'], 'caballo': ['112'], 'veterinario': ['112', '153'], 'racion': ['112'],
-            // Energía
             'energia': ['213', '142'], 'consumo': ['213'], 'medidor': ['213'], 'kilowatt': ['213'], 'kw': ['213'], 'kwh': ['213'],
-            // Impuestos
             'impuesto': ['263'], 'tasa': ['263'], 'tributo': ['263'], 'multa': ['263'], 'dgi': ['263'], 'dna': ['263'], 'bps': ['263'], 'iva': ['263'],
-            // Indemnizaciones
             'indemnizacion': ['793'], 'expropiacion': ['793'], 'sentencia': ['711'], 'judicial': ['711']
         };
 
@@ -510,18 +483,12 @@
             const saved = localStorage.getItem('cgn_ai_learning_v2');
             if (saved) {
                 knowledgeBase = JSON.parse(saved);
-                // Expandir keywords map con lo aprendido
                 Object.keys(knowledgeBase.learnedKeywords).forEach(term => {
-                    if (!keywordsMap[term]) {
-                        keywordsMap[term] = knowledgeBase.learnedKeywords[term];
-                    }
+                    if (!keywordsMap[term]) keywordsMap[term] = knowledgeBase.learnedKeywords[term];
                 });
-                // Expandir keyword mappings
                 if (knowledgeBase.keywordMappings) {
                     Object.keys(knowledgeBase.keywordMappings).forEach(term => {
-                        if (!keywordsMap[term]) {
-                            keywordsMap[term] = knowledgeBase.keywordMappings[term];
-                        }
+                        if (!keywordsMap[term]) keywordsMap[term] = knowledgeBase.keywordMappings[term];
                     });
                 }
             }
@@ -792,7 +759,6 @@
                 
                 document.getElementById('ultimaBusqueda').textContent = resultados.length;
                 
-                // Si no hay resultados locales, invocamos la IA de Gemini
                 if (resultados.length === 0) {
                     buscarConGemini(query);
                 } else {
@@ -813,16 +779,19 @@
                 </div>`;
 
             try {
-                // Armamos un resumen optimizado del catálogo para enviar a la IA
                 const categoriasDisponibles = {};
                 datosCompletos.forEach(d => {
                     if (!categoriasDisponibles[d.objeto]) {
                         categoriasDisponibles[d.objeto] = d.denominacion;
                     }
                 });
-                const resumenCatalogo = Object.entries(categoriasDisponibles).map(([obj, den]) => `- ${obj}: ${den}`).join('\n');
+                
+                // Extraemos las primeras 200 categorías para no saturar la petición y que sea ultra rápida
+                const resumenCatalogo = Object.entries(categoriasDisponibles).slice(0, 200).map(([obj, den]) => `- ${obj}: ${den}`).join('\n');
 
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+                // En el entorno de canvas se usa el modelo preview, si tienes llave propia usa flash
+                const modeloAUsar = apiKey ? "gemini-1.5-flash" : "gemini-2.5-flash-preview-09-2025";
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${modeloAUsar}:generateContent?key=${apiKey}`;
                 
                 const promptText = `
                     Actúa como un experto contable de la Contaduría General de la Nación de Uruguay.
@@ -856,7 +825,6 @@
                 let retries = 0;
                 const delays = [1000, 2000, 4000, 8000, 16000];
 
-                // Sistema de reintentos por si Google limita la velocidad (Exponential Backoff)
                 while (retries < 5) {
                     try {
                         const response = await fetch(url, {
@@ -866,8 +834,10 @@
                         });
                         
                         if (!response.ok) {
-                            const errorData = await response.json().catch(() => ({}));
-                            throw new Error(errorData?.error?.message || `Error HTTP ${response.status}`);
+                            const errorText = await response.text();
+                            let errMsg = `HTTP ${response.status}`;
+                            try { const errObj = JSON.parse(errorText); errMsg = errObj.error.message; } catch(e) {}
+                            throw new Error(errMsg);
                         }
                         
                         resultData = await response.json();
@@ -880,18 +850,19 @@
                 }
 
                 if (resultData && resultData.candidates && resultData.candidates[0]) {
-                    const textResponse = resultData.candidates[0].content.parts[0].text;
+                    let textResponse = resultData.candidates[0].content.parts[0].text;
+                    // Limpieza de seguridad por si la IA manda formato markdown invisible
+                    textResponse = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
                     const aiResult = JSON.parse(textResponse);
 
                     if (aiResult.codigo && aiResult.codigo !== "null") {
-                        // Encontramos los ítems del catálogo que corresponden a este código que la IA eligió
                         let resultadosAI = datosCompletos.filter(item => item.objeto === aiResult.codigo);
                         
                         if (resultadosAI.length > 0) {
                             resultadosAI = resultadosAI.map(item => ({
                                 ...item,
                                 relevancia: 95,
-                                keywordEncontrada: aiResult.razon // Guardamos la explicación de la IA
+                                keywordEncontrada: aiResult.razon
                             }));
                             
                             if (filtroGrupo) resultadosAI = resultadosAI.filter(r => r.grupo === filtroGrupo);
@@ -903,10 +874,10 @@
                     }
                 }
                 
-                mostrarError(query); // Si la IA devolvió null o no hizo match
+                mostrarError(query);
             } catch (error) {
                 console.error("Error consultando Gemini:", error);
-                mostrarError(query, `<br><br>💡 <strong>Detalle del error:</strong> ${error.message}`);
+                mostrarError(query, `<br><br>💡 <strong>Detalle técnico para el administrador:</strong> ${error.message}`);
             }
         }
 
@@ -962,7 +933,7 @@
             resultsDiv.innerHTML = `
                 <div class="error" style="background: rgba(255, 170, 0, 0.05); border-color: #ffaa00; color: #b27300;">
                     <h3 style="margin-bottom: 10px; color: #cc8800;">🤔 Aún no conozco la palabra "<strong>${query}</strong>"</h3>
-                    <p>Ni la búsqueda local ni el análisis de internet lograron clasificar este gasto con certeza. ${mensajeExtra}</p>
+                    <p>Ni la búsqueda local ni el análisis de Inteligencia Artificial lograron clasificar este gasto con certeza. ${mensajeExtra}</p>
                     
                     <div style="margin-top: 20px; padding: 20px; background: #fff; border-radius: 10px; border: 1px dashed #ffaa00;">
                         <p style="margin-bottom: 15px; font-weight: 600; color: #003ca5;">Enséñame manualmente y no lo olvidaré para la próxima:</p>
