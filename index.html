@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏥 Hospital de Flores "Edison Camacho" - Sector Contaduría</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Buscador de Objetos de Gastos - Objetos del Gasto CGN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -16,596 +16,299 @@
         }
         .container { max-width: 1400px; margin: 0 auto; }
         
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 30px 0;
-            border-bottom: 3px solid #003ca5;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .logo-img {
-            max-width: 200px;
+        .header { position: relative; text-align: center; padding: 40px 0; }
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 200px;
             height: auto;
         }
-        .header-text h1 {
-            font-size: 1.8em;
+
+        .header h1 {
+            font-size: 2.5em; margin-bottom: 10px;
             color: #003ca5;
-            font-weight: 700;
         }
-        .header-text p {
-            color: #666;
-            font-size: 1em;
-            font-weight: 500;
-        }
+        .header p { color: #555; font-size: 1.1em; }
         
         .ai-status {
-            background: rgba(0,60,165,0.1);            
-            border: 2px solid #003ca5;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
+            background: rgba(0, 60, 165, 0.05);
+            border: 1px solid #003ca5;
+            padding: 15px; border-radius: 10px;
+            text-align: center; margin-bottom: 20px;
+            color: #003ca5;
         }
-        .ai-status span { color: #003ca5; font-weight: 600; }
+        .ai-status span { color: #003ca5; font-weight: bold; }
         
         .upload-section {
             background: #f8f9fa;
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            margin-bottom: 30px;
+            padding: 40px; border-radius: 15px;
+            text-align: center; margin-bottom: 30px;
             border: 2px dashed #003ca5;
         }
         .upload-section input { display: none; }
         .upload-btn {
             background: #003ca5;
-            color: #ffffff;
-            padding: 20px 40px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 600;
-            display: inline-block;
-            transition: all 0.3s;
+            color: #ffffff; padding: 20px 40px;
+            border-radius: 10px; cursor: pointer;
+            font-size: 18px; font-weight: bold;
+            display: inline-block; transition: transform 0.2s;
+            font-family: 'Montserrat', sans-serif;
         }
-        .upload-btn:hover {
-            background: #002d7a;
-            transform: scale(1.05);
-        }
+        .upload-btn:hover { transform: scale(1.05); }
         
         .stats-bar {
-            display: none;
-            justify-content: center;
-            gap: 30px;
-            margin: 20px 0;
-            flex-wrap: wrap;
+            display: none; justify-content: center; gap: 30px;
+            margin: 20px 0; flex-wrap: wrap;
         }
         .stat-item {
-            background: #f8f9fa;
-            padding: 15px 25px;
-            border-radius: 10px;
-            text-align: center;
-            border: 2px solid #003ca5;
+            background: rgba(0, 60, 165, 0.05);
+            padding: 15px 25px; border-radius: 10px; text-align: center;
         }
-        .stat-number {
-            font-size: 2em;
-            font-weight: 700;            
-            color: #003ca5;
-        }
-        .stat-label {
-            font-size: 0.9em;
-            color: #666;
-            font-weight: 500;
-        }
+        .stat-number { font-size: 2em; font-weight: bold; color: #003ca5; }
+        .stat-label { font-size: 0.9em; color: #555; }
         
-        .custom-keywords-panel {
+        .learning-panel {
             display: none;
-            background: rgba(40,167,69,0.1);
-            border: 2px solid #28a745;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
+            background: rgba(0, 60, 165, 0.03);
+            border: 1px solid rgba(0, 60, 165, 0.2);
+            padding: 20px; border-radius: 12px;
+            margin-bottom: 25px;
         }
-        .custom-keywords-panel h3 {
-            color: #28a745;
-            margin-bottom: 20px;
+        .learning-panel h4 { color: #003ca5; margin-bottom: 15px; font-weight: 700; }
+        .learning-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .learn-stat {
+            background: #fff;
+            border: 1px solid rgba(0, 60, 165, 0.1);
+            padding: 15px; border-radius: 8px;
         }
-        .add-keyword-form {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 15px;
-            margin-bottom: 20px;
+        .learn-stat-value { font-size: 1.5em; color: #003ca5; font-weight: bold; }
+        .learn-stat-label { font-size: 0.85em; color: #555; }
+        
+        .manual-learning {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(0, 60, 165, 0.3);
         }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .form-group label {
-            font-weight: 600;
-            color: #003ca5;
-            font-size: 0.9em;
-        }
-        .add-keyword-form input {
-            padding: 12px 15px;
-            border: 2px solid #003ca5;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .add-keyword-form button {
-            padding: 12px 25px;
-            background: #28a745;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;            
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
-        }
-        .add-keyword-form button:hover {
-            background: #218838;
-            transform: scale(1.05);
-        }
-        .keywords-list {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 15px;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .keyword-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+        .manual-learning-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 4px solid #28a745;
-        }
-        .keyword-item-info { flex: 1; }
-        .keyword-item-word {
-            font-weight: 700;
-            color: #28a745;
-            font-size: 1.1em;
-        }
-        .keyword-item-object {
-            color: #003ca5;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .keyword-item-delete {
-            background: #dc3545;
-            color: #ffffff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
             cursor: pointer;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
+            color: #003ca5;
+            transition: opacity 0.2s;
         }
-        .keyword-item-delete:hover { background: #c82333; }
-        
-        .search-container {            
+        .manual-learning-header:hover { opacity: 0.8; }
+        .manual-learning-header h4 { margin-bottom: 0; }
+
+        .manual-learning input {
+            padding: 12px 15px; font-size: 15px;
+            border: 1px solid rgba(0, 60, 165, 0.4); border-radius: 8px;
+            font-family: 'Montserrat', sans-serif; color: #003ca5;
+            outline: none; background: #fff;
+        }
+        .manual-learning input:focus { border-color: #003ca5; box-shadow: 0 0 0 2px rgba(0,60,165,0.1); }
+        .manual-learning button {
+            padding: 12px 25px; background: #003ca5; color: #fff;
+            border: none; border-radius: 8px; cursor: pointer;
+            font-weight: 600; font-family: 'Montserrat', sans-serif;
+            transition: opacity 0.2s;
+        }
+        .manual-learning button:hover { opacity: 0.9; }
+
+        .search-container {
             display: none;
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border: 2px solid #003ca5;
+            background: rgba(0, 60, 165, 0.03);
+            border: 1px solid rgba(0, 60, 165, 0.1);
+            padding: 30px; border-radius: 15px; margin-bottom: 30px;
         }
         .search-box { display: flex; gap: 15px; margin-bottom: 20px; }
         .search-box input {
-            flex: 1;
-            padding: 18px 25px;
-            font-size: 18px;
-            border: 2px solid #003ca5;
-            border-radius: 10px;
-            background: #ffffff;
-            color: #003ca5;
-            outline: none;
+            flex: 1; padding: 18px 25px; font-size: 18px;
+            border: 2px solid rgba(0, 60, 165, 0.3); border-radius: 10px;
+            background: #fff; color: #003ca5; outline: none;
             font-family: 'Montserrat', sans-serif;
         }
-        .search-box input:focus {
-            border-color: #002d7a;
-            box-shadow: 0 0 10px rgba(0,60,165,0.2);
-        }
+        .search-box input:focus { border-color: #003ca5; }
+        .search-box input::placeholder { color: #888; }
         .search-box button {
             padding: 18px 40px;
             background: #003ca5;
-            color: #ffffff;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
+            color: #ffffff; border: none; border-radius: 10px;
+            font-size: 18px; font-weight: bold; cursor: pointer;
             font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
+            transition: opacity 0.2s;
         }
-        .search-box button:hover { background: #002d7a; transform: scale(1.05); }
+        .search-box button:hover { opacity: 0.9; }
         
-        .web-search-btn {
-            background: #6f42c1;
-            margin-left: 10px;
-        }
-        .web-search-btn:hover { background: #5a32a3; }
-        
-        .filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
         .filter-btn {
             padding: 10px 20px;
-            background: #003ca5;
-            color: #ffffff;
-            border: none;
-            border-radius: 20px;            
-            cursor: pointer;
+            background: #fff;
+            border: 1px solid #003ca5;
+            border-radius: 20px; color: #003ca5; cursor: pointer;
             transition: all 0.3s;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-            font-size: 14px;
+            font-family: 'Montserrat', sans-serif; font-weight: 600;
         }
-        .filter-btn:hover, .filter-btn.active { background: #002d7a; }
+        .filter-btn:hover, .filter-btn.active {
+            background: #003ca5; color: #ffffff;
+        }
         
         .sugerencias {
-            margin-top: 20px;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 10px;
-            border: 2px solid #003ca5;
+            margin-top: 20px; padding: 20px;
+            background: rgba(0, 60, 165, 0.05); border-radius: 10px;
         }
-        .sugerencias h3 { margin-bottom: 15px; color: #003ca5; }
+        .sugerencias h3 { margin-bottom: 15px; color: #003ca5; font-size: 1.1em; }
         .sugerencias-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 10px;
         }
         .sugerencia-item {
-            background: #003ca5;
-            color: #ffffff;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
+            background: #fff;
+            border: 1px solid rgba(0, 60, 165, 0.2);
+            padding: 10px 15px; border-radius: 8px;
+            cursor: pointer; transition: all 0.3s; text-align: center;
+            color: #003ca5; font-weight: 600;
         }
-        .sugerencia-item:hover {
-            background: #002d7a;
-            transform: translateY(-2px);
-        }
+        .sugerencia-item:hover { background: #003ca5; color: #fff; }
         
         .results-container { display: grid; gap: 20px; }
         .result-card {
             background: #ffffff;
+            border: 1px solid rgba(0, 60, 165, 0.1);
             border-left: 4px solid #003ca5;
-            padding: 25px;
-            border-radius: 10px;
+            padding: 25px; border-radius: 10px;
             transition: all 0.3s;
             cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0,60,165,0.1);
-            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
         .result-card:hover {
-            transform: translateX(10px);            
-            background: #f8f9fa;
-            box-shadow: 0 4px 20px rgba(0,60,165,0.2);
+            transform: translateX(5px);
+            box-shadow: 0 6px 12px rgba(0, 60, 165, 0.1);
         }
         .result-card.selected {
-            border-left-color: #ff6b00;
-            background: #fff5f0;
-        }
-        .result-card.web-result {
-            border-left-color: #6f42c1;
-            background: #f9f4ff;
+            border-left-color: #ffaa00;
+            background: rgba(255, 170, 0, 0.05);
         }
         .codigo-badge {
             background: #003ca5;
-            color: #ffffff;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 1.1em;
-            display: inline-block;
+            color: #ffffff; padding: 8px 20px; border-radius: 20px;
+            font-weight: bold; font-size: 1.1em; display: inline-block;
             margin-bottom: 10px;
         }
         .denominacion {
-            font-size: 1.3em;
-            font-weight: 600;
-            margin: 10px 0;
-            color: #003ca5;
+            font-size: 1.3em; font-weight: 700;
+            margin: 10px 0; color: #003ca5;
         }
         .descripcion {
-            color: #666;
-            line-height: 1.6;
-            font-size: 0.95em;
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
+            color: #444; line-height: 1.6; font-size: 0.95em;
+            background: rgba(0, 60, 165, 0.03);
+            border: 1px solid rgba(0, 60, 165, 0.1);
+            padding: 15px; border-radius: 8px;
+            max-height: 200px; overflow-y: auto;
         }
         .relevancia-badge {
-            background: rgba(0,60,165,0.1);
-            color: #003ca5;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 0.9em;
+            background: rgba(0, 60, 165, 0.1);
+            color: #003ca5; font-weight: 600;
+            padding: 5px 15px; border-radius: 15px; font-size: 0.9em;
             float: right;
-        }
-        .categoria-tag {
-            display: inline-block;
-            background: rgba(0,60,165,0.1);
-            color: #003ca5;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;            
-            margin-top: 10px;
-        }
-        .grupo-tag {
-            display: inline-block;
-            background: #f8f9fa;
-            color: #666;
-            padding: 3px 10px;
-            border-radius: 10px;
-            font-size: 0.75em;
-            margin-left: 10px;
         }
         .keyword-match {
             display: inline-block;
-            background: rgba(255,107,0,0.1);
-            color: #ff6b00;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            margin-top: 8px;
-        }
-        .web-source {
-            display: inline-block;
-            background: rgba(111,66,193,0.1);
-            color: #6f42c1;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            margin-top: 8px;
-        }
-        
-        /* Modal para selección de mejor concordancia */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 800px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;            
-            border: 3px solid #003ca5;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #003ca5;
-        }
-        .modal-close {
-            background: #dc3545;
-            color: white;
-            border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: bold;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .modal-close:hover { background: #c82333; }
-        .web-results-list {
-            display: grid;
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .web-result-option {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid #6f42c1;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .web-result-option:hover, .web-result-option.selected {
-            background: #f0e6ff;
-            border-color: #5a32a3;
-            transform: translateX(5px);
-        }
-        .web-result-option .codigo-badge { background: #6f42c1; }
-        .modal-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-        .modal-btn {
-            padding: 12px 30px;
-            border: none;            
-            border-radius: 8px;
-            cursor: pointer;
+            background: rgba(255, 170, 0, 0.15);
+            color: #cc8800; padding: 4px 10px;
+            border-radius: 8px; font-size: 0.75em; margin-top: 8px;
             font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.3s;
         }
-        .modal-btn-primary {
-            background: #003ca5;
-            color: white;
-        }
-        .modal-btn-primary:hover { background: #002d7a; }
-        .modal-btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        .modal-btn-secondary:hover { background: #5a6268; }
         
-        .loading { text-align: center; padding: 50px; color: #666; }
-        .loading-spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(0,60,165,0.2);
-            border-radius: 50%;
-            border-top-color: #003ca5;
-            animation: spin 1s linear infinite;
-            margin-bottom: 15px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
+        .loading { text-align: center; padding: 50px; color: #003ca5; font-weight: 600; }
         .error {
-            background: rgba(255,100,100,0.1);
-            border: 2px solid #dc3545;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            color: #dc3545;
+            background: rgba(255, 60, 60, 0.1);
+            color: #d32f2f;
+            border: 1px solid rgba(255, 60, 60, 0.3); padding: 20px;
+            border-radius: 10px; margin-top: 20px; font-weight: 600;
         }
-        .no-results { text-align: center; padding: 50px; color: #666; }
         
         .history-section {
             display: none;
             margin-top: 30px;
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 12px;
-            border: 2px solid #003ca5;
+            background: rgba(0, 60, 165, 0.03);
+            border: 1px solid rgba(0, 60, 165, 0.1);
+            padding: 25px; border-radius: 12px;
         }
         .history-section h3 { color: #003ca5; margin-bottom: 15px; }
-        .history-item {            
-            background: #ffffff;
-            padding: 12px 18px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
+        .history-item {
+            background: #fff;
+            border: 1px solid rgba(0, 60, 165, 0.1);
+            padding: 12px 18px; border-radius: 8px;
+            margin-bottom: 10px; cursor: pointer;
+            display: flex; justify-content: space-between;
             align-items: center;
-            border: 1px solid #003ca5;
-        }
-        .history-item:hover { background: #f0f4f8; }
-        .history-count {
             color: #003ca5;
-            font-size: 0.9em;
-            font-weight: 500;
+            font-weight: 600;
         }
+        .history-item:hover { background: rgba(0, 60, 165, 0.05); }
+        .history-count { color: #666; font-size: 0.9em; font-weight: 400; }
         
         .clear-btn {
-            background: #dc3545;
-            color: #ffffff;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
+            background: #fff;
+            color: #d32f2f; border: 1px solid #d32f2f;
+            padding: 8px 20px; border-radius: 8px;
+            cursor: pointer; margin-top: 15px; font-family: 'Montserrat', sans-serif;
+            font-weight: 600; transition: all 0.2s;
         }
-        .clear-btn:hover { background: #c82333; }
-        
-        .toggle-panel-btn {
-            background: #28a745;
-            color: #ffffff;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-        }
-        .toggle-panel-btn:hover { background: #218838; transform: scale(1.05); }
-        
-        .cache-info {
-            background: rgba(111,66,193,0.1);
-            border: 2px solid #6f42c1;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 0.9em;            
-            margin-top: 10px;
-            color: #6f42c1;
-        }
+        .clear-btn:hover { background: #d32f2f; color: #fff; }
         
         @media (max-width: 768px) {
-            .header { flex-direction: column; text-align: center; }
-            .logo-container { flex-direction: column; }
             .search-box { flex-direction: column; }
             .stats-bar { flex-direction: column; align-items: center; }
-            .header h1 { font-size: 1.5em; }
-            .add-keyword-form { grid-template-columns: 1fr; }
-            .modal-actions { flex-direction: column; }
+            .header h1 { font-size: 1.8em; }
+            .manual-learning div { flex-direction: column; }
+            .manual-learning input { width: 100% !important; }
+            .logo {
+                position: relative;
+                top: 0;
+                margin: 0 auto 20px auto;
+                display: block;
+            }
+            .header { padding-top: 20px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo-container">
-                <img src="logo_hospital_flores.png" alt="Hospital de Flores ASSE" class="logo-img" id="hospitalLogo" onerror="this.style.display='none'">
-                <div class="header-text">
-                    <h1>🏥 Hospital de Flores "Edison Camacho"</h1>
-                    <p>Sector Contaduría | Clasificador de Objetos del Gasto</p>
-                </div>
-            </div>
+            <img src="logo_hospital_flores.png" alt="Logo Hospital de Flores" class="logo" onerror="this.style.display='none'">
+            <h1>Buscador de Objetos de Gastos</h1>
+            <p>Objetos del Gasto CGN - SIIF Uruguay | La IA aprende de tus búsquedas</p>
         </div>
         
         <div class="ai-status" id="aiStatus">
-            📋 <span id="aiStatusText">Sistema listo - Cargá tu archivo CSV</span> | 
-            🔍 Búsquedas: <span id="searchCount">0</span> |
-            📚 Palabras personalizadas: <span id="customKeywordsCount">0</span> |
-            💾 Cache: <span id="cacheCount">0</span> items
+            🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
+            📚 Keywords aprendidas: <span id="keywordsLearned">0</span>
         </div>
         
         <!-- Carga de CSV -->
         <div class="upload-section" id="uploadSection">
-            <h2 style="color: #003ca5; margin-bottom: 20px;">📂 Paso 1: Cargá tu archivo CSV</h2>
-            <p style="margin: 20px 0; color: #666; font-size: 1.1em;">
-                Seleccioná el archivo <strong>ObjetosGasto.csv</strong> que descargaste de la CGN
+            <h2>📂 Paso 1: Carga tu archivo CSV</h2>
+            <p style="margin: 20px 0; color: #aaa; font-size: 1.1em;">
+                Selecciona el archivo <strong>ObjetosGasto.csv</strong> que descargaste de la CGN
             </p>
             <label class="upload-btn">
                 📥 Seleccionar Archivo CSV
                 <input type="file" id="csvFile" accept=".csv">
             </label>
-            <p id="fileName" style="margin-top: 20px; color: #28a745; font-weight: 600;"></p>
-            <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
+            <p id="fileName" style="margin-top: 20px; color: #00ff88; font-weight: bold;"></p>
+            <p style="margin-top: 15px; color: #888; font-size: 0.9em;">
                 🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
             </p>
-            <button id="clearDataBtn" class="clear-btn" style="display:none; margin-top:15px;">
-                🗑️ Limpiar datos y recargar
-            </button>
         </div>
         
         <!-- Estadísticas -->
         <div class="stats-bar" id="statsBar">
             <div class="stat-item">
                 <div class="stat-number" id="totalRegistros">0</div>
-                <div class="stat-label">Objetos Cargados</div>
+                <div class="stat-label">Registros Cargados</div>
             </div>
             <div class="stat-item">
                 <div class="stat-number" id="totalObjetos">0</div>
@@ -615,913 +318,700 @@
                 <div class="stat-number" id="ultimaBusqueda">0</div>
                 <div class="stat-label">Resultados</div>
             </div>
-        </div>
-        
-        <!-- Botón para mostrar/ocultar panel de palabras personalizadas -->
-        <button class="toggle-panel-btn" onclick="toggleCustomKeywordsPanel()" id="togglePanelBtn" style="display: none;">
-            📝 Gestionar Palabras Personalizadas
-        </button>
-        
-        <!-- Panel de Palabras Personalizadas -->
-        <div class="custom-keywords-panel" id="customKeywordsPanel">
-            <h3>📝 Agregar Palabras Personalizadas</h3>
-            <p style="margin-bottom: 20px; color: #666;">
-                Agregá tus propias palabras para que el buscador las reconozca y las asocie a objetos de gasto.
-            </p>
-            
-            <div class="add-keyword-form">
-                <div class="form-group">
-                    <label for="newKeyword">Palabra o Término:</label>
-                    <input type="text" id="newKeyword" placeholder="Ej: insumos, descartables, lima...">
-                </div>
-                <div class="form-group">
-                    <label for="newObjeto">Objeto:</label>
-                    <input type="text" id="newObjeto" placeholder="Ej: 191">
-                </div>
-                <div class="form-group">
-                    <label for="newAuxiliar">Auxiliar:</label>
-                    <input type="text" id="newAuxiliar" placeholder="Ej: 000" value="000">
-                </div>
-                <button onclick="addCustomKeyword()">➕ Agregar Palabra</button>
-            </div>
-            
-            <div class="keywords-list" id="keywordsList">
-                <!-- Keywords dinámicas aquí -->
+            <div class="stat-item" style="cursor: pointer; background: rgba(211, 47, 47, 0.05); border: 1px solid rgba(211, 47, 47, 0.3);" onclick="borrarDatosCSV()">
+                <div class="stat-number" style="color: #d32f2f; font-size: 1.5em;">🔄</div>
+                <div class="stat-label" style="color: #d32f2f; font-weight: bold;">Cambiar CSV</div>
             </div>
         </div>
         
-        <!-- Búsqueda -->
+        <!-- Panel de Aprendizaje -->
+        <div class="learning-panel" id="learningPanel">
+            <h4>🧠 Panel de Aprendizaje de IA</h4>
+            <div class="learning-stats">
+                <div class="learn-stat">
+                    <div class="learn-stat-value" id="learnedTerms">0</div>
+                    <div class="learn-stat-label">Términos Aprendidos</div>
+                </div>
+                <div class="learn-stat">
+                    <div class="learn-stat-value" id="avgRelevance">0%</div>
+                    <div class="learn-stat-label">Relevancia Promedio</div>
+                </div>
+                <div class="learn-stat">
+                    <div class="learn-stat-value" id="topObject">-</div>
+                    <div class="learn-stat-label">Objeto Más Buscado</div>
+                </div>
+                <div class="learn-stat">
+                    <div class="learn-stat-value" id="learningScore">0</div>
+                    <div class="learn-stat-label">Score de Aprendizaje</div>
+                </div>
+            </div>
+            
+            <!-- Nueva sección: Carga Manual de Palabras -->
+            <div class="manual-learning">
+                <div class="manual-learning-header" onclick="toggleManualLearning()">
+                    <h4>➕ Enseñar palabra a la IA manualmente</h4>
+                    <span id="manualToggleIcon" style="font-weight: bold;">▼</span>
+                </div>
+                <div id="manualLearningForm" style="display: none; margin-top: 15px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <input type="text" id="manualWord" placeholder="Palabra (ej: maceta)" style="flex: 1; min-width: 150px;">
+                        <input type="text" id="manualObject" placeholder="Objeto (ej: 199)" style="width: 140px;">
+                        <input type="text" id="manualAuxiliar" placeholder="Auxiliar (ej: 000)" style="width: 140px;">
+                        <button onclick="agregarPalabraManual()">Guardar</button>
+                    </div>
+                    <div id="manualMsg" style="margin-top: 15px; font-weight: 600; display: none;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Buscador -->
         <div class="search-container" id="searchContainer">
-            <h2 style="color: #003ca5; margin-bottom: 20px;">🔍 Paso 2: Buscá tu objeto de gasto</h2>
             <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Escribí una palabra clave, código o descripción..." autocomplete="off">
-                <button onclick="performSearch()">🔎 Buscar</button>
-                <button class="web-search-btn" onclick="performWebSearch()">🌐 Buscar en Internet</button>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lechuga..."
+                    onkeypress="if(event.key === 'Enter') buscar()"
+                >
+                <button onclick="buscar()">🔎 Buscar objeto</button>
             </div>
             
             <div class="filters">
-                <button class="filter-btn active" onclick="filterResults('all', this)">Todos</button>
-                <button class="filter-btn" onclick="filterResults('local', this)">Base Local</button>
-                <button class="filter-btn" onclick="filterResults('web', this)">Internet</button>
-                <button class="filter-btn" onclick="filterResults('custom', this)">Personalizados</button>
+                <button class="filter-btn active" onclick="setLimite(20)">20 resultados</button>
+                <button class="filter-btn" onclick="setLimite(50)">50 resultados</button>
+                <button class="filter-btn" onclick="setLimite(100)">100 resultados</button>
+                <button class="filter-btn" onclick="limpiarFiltros()">🔄 Limpiar</button>
             </div>
             
-            <div class="sugerencias" id="sugerenciasContainer">
-                <h3>💡 Sugerencias rápidas:</h3>
-                <div class="sugerencias-grid" id="sugerenciasGrid">
-                    <!-- Sugerencias dinámicas -->
-                </div>
+            <div class="sugerencias" id="sugerencias">
+                <h3>💡 Sugerencias de IA (basado en tu historial)</h3>
+                <div class="sugerencias-grid" id="sugerenciasGrid"></div>
             </div>
         </div>
         
-        <!-- Resultados -->
-        <div class="results-container" id="resultsContainer">
-            <!-- Resultados dinámicos -->
-        </div>
+        <div id="results" class="results-container"></div>
         
         <!-- Historial -->
         <div class="history-section" id="historySection">
-            <h3>📜 Historial de Búsquedas</h3>
+            <h3>📜 Historial de Búsquedas (La IA aprende de esto)</h3>
             <div id="historyList"></div>
-            <button class="clear-btn" onclick="clearHistory()">🗑️ Limpiar Historial</button>
-        </div>
-        
-        <!-- Modal de Selección de Concordancia -->
-        <div class="modal" id="selectionModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>🎯 Seleccionar Mejor Concordancia</h3>
-                    <button class="modal-close" onclick="closeModal()">×</button>
-                </div>
-                <p id="modalSearchTerm" style="margin-bottom: 15px; color: #666;"></p>
-                <div class="web-results-list" id="webResultsList">
-                    <!-- Opciones de resultados web -->
-                </div>
-                <div class="cache-info" id="cacheInfo">
-                    💾 Los resultados se guardarán en caché para futuras búsquedas
-                </div>
-                <div class="modal-actions">
-                    <button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancelar</button>
-                    <button class="modal-btn modal-btn-primary" onclick="confirmSelection()">✅ Confirmar Selección</button>
-                </div>
-            </div>
+            <button class="clear-btn" onclick="clearHistory()">🗑️ Limpiar Historial y Aprendizaje</button>
         </div>
     </div>
 
     <script>
         // ============================================
-        // CONFIGURACIÓN GLOBAL
+        // 📊 VARIABLES GLOBALES Y API DE GOOGLE GEMINI
         // ============================================
-        const CONFIG = {
-            localStorageKeys: {
-                objetosGasto: 'hospital_flores_objetos_gasto',
-                customKeywords: 'hospital_flores_custom_keywords',
-                searchCache: 'hospital_flores_search_cache',
-                searchHistory: 'hospital_flores_search_history',
-                lastUpdate: 'hospital_flores_last_update'
-            },
-            cacheExpiration: 7 * 24 * 60 * 60 * 1000, // 7 días
-            maxHistoryItems: 50,
-            webSearchAPI: 'https://api.duckduckgo.com/?q='
-        };
-
+        let datosCompletos = [];
+        let limiteResultados = 20;
+        let filtroGrupo = '';
+        
+        // Llave proporcionada dinámicamente por el entorno para uso de la IA
+        const apiKey = "";
+        
         // ============================================
-        // ESTADO DE LA APLICACIÓN
+        // 🧠 SISTEMA DE APRENDIZAJE DE IA
         // ============================================
-        let appState = {
-            objetosGasto: [],
-            customKeywords: [],
-            searchCache: {},
+        let knowledgeBase = {
+            searches: [],
+            learnedKeywords: {},
+            objectPopularity: {},
+            userPreferences: {},
             searchHistory: [],
-            currentFilter: 'all',
-            lastSearchResults: [],      // ← NUEVO: para filtros funcionales
-            lastSearchTerm: '',
-            selectedWebResult: null,
-            pendingSearchTerm: null
+            keywordMappings: {}
+        };
+        
+        // Keywords base que se expanden con el aprendizaje
+        let keywordsMap = {
+            'harina': ['111'], 'lechuga': ['111'], 'arroz': ['111'], 'carne': ['111'], 
+            'verdura': ['111'], 'comida': ['111'], 'alimento': ['111'], 'pan': ['111'], 
+            'leche': ['111'], 'huevos': ['111'], 'pescado': ['111'], 'pollo': ['111'], 
+            'queso': ['111'], 'fruta': ['111'], 'ensalada': ['111'], 'tomate': ['111']
         };
 
         // ============================================
-        // INICIALIZACIÓN
+        // 💾 PERSISTENCIA (LocalStorage)
         // ============================================
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadDataFromStorage();
-            updateUI();
-            setupEventListeners();
-            
-            // Si ya hay datos cargados, mostrar interfaz de búsqueda
-            if (appState.objetosGasto.length > 0) {
-                document.getElementById('uploadSection').style.display = 'none';
-                document.getElementById('statsBar').style.display = 'flex';
-                document.getElementById('searchContainer').style.display = 'block';
-                document.getElementById('togglePanelBtn').style.display = 'inline-block';
-                generateSuggestions();
-            }
-        });
-
-        // ============================================
-        // PERSISTENCIA - LOCAL STORAGE
-        // ============================================
-        async function loadDataFromStorage() {
-            try {
-                const storedObjetos = localStorage.getItem(CONFIG.localStorageKeys.objetosGasto);
-                if (storedObjetos) appState.objetosGasto = JSON.parse(storedObjetos);
-                
-                const storedKeywords = localStorage.getItem(CONFIG.localStorageKeys.customKeywords);
-                if (storedKeywords) appState.customKeywords = JSON.parse(storedKeywords);
-                
-                const storedCache = localStorage.getItem(CONFIG.localStorageKeys.searchCache);
-                if (storedCache) {
-                    const cache = JSON.parse(storedCache);
-                    const now = Date.now();
-                    appState.searchCache = Object.fromEntries(
-                        Object.entries(cache).filter(([_, value]) => 
-                            now - value.timestamp < CONFIG.cacheExpiration
-                        )
-                    );
+        
+        function loadLearningData() {
+            const saved = localStorage.getItem('cgn_ai_learning_v2');
+            if (saved) {
+                knowledgeBase = JSON.parse(saved);
+                // Expandir keywords map con lo aprendido
+                Object.keys(knowledgeBase.learnedKeywords).forEach(term => {
+                    if (!keywordsMap[term]) {
+                        keywordsMap[term] = knowledgeBase.learnedKeywords[term];
+                    }
+                });
+                // Expandir keyword mappings
+                if (knowledgeBase.keywordMappings) {
+                    Object.keys(knowledgeBase.keywordMappings).forEach(term => {
+                        if (!keywordsMap[term]) {
+                            keywordsMap[term] = knowledgeBase.keywordMappings[term];
+                        }
+                    });
                 }
-                
-                const storedHistory = localStorage.getItem(CONFIG.localStorageKeys.searchHistory);
-                if (storedHistory) appState.searchHistory = JSON.parse(storedHistory);
-                
-                console.log('✅ Datos cargados desde almacenamiento local');
-            } catch (error) {
-                console.error('❌ Error cargando datos:', error);
             }
         }
 
-        function saveDataToStorage() {
-            try {
-                localStorage.setItem(CONFIG.localStorageKeys.objetosGasto, JSON.stringify(appState.objetosGasto));
-                localStorage.setItem(CONFIG.localStorageKeys.customKeywords, JSON.stringify(appState.customKeywords));
-                localStorage.setItem(CONFIG.localStorageKeys.searchCache, JSON.stringify(appState.searchCache));
-                localStorage.setItem(CONFIG.localStorageKeys.searchHistory, JSON.stringify(appState.searchHistory.slice(0, CONFIG.maxHistoryItems)));
-                localStorage.setItem(CONFIG.localStorageKeys.lastUpdate, Date.now().toString());
-                console.log('✅ Datos guardados en almacenamiento local');
-            } catch (error) {
-                console.error('❌ Error guardando datos:', error);
-            }
+        function saveLearningData() {
+            localStorage.setItem('cgn_ai_learning_v2', JSON.stringify(knowledgeBase));
         }
 
         // ============================================
-        // PROCESAMIENTO DE CSV
+        // 🧠 FUNCIONES DE APRENDIZAJE
+        // ============================================
+        
+        function learnFromSearch(query, results, selectedObject) {
+            const timestamp = Date.now();
+            const queryNorm = normalizar(query);
+            
+            knowledgeBase.searches.push({ query: queryNorm, timestamp: timestamp, resultsCount: results.length, selectedObject: selectedObject });
+
+            if (selectedObject) {
+                knowledgeBase.objectPopularity[selectedObject] = (knowledgeBase.objectPopularity[selectedObject] || 0) + 1;
+                if (!knowledgeBase.keywordMappings[queryNorm]) knowledgeBase.keywordMappings[queryNorm] = [];
+                if (!knowledgeBase.keywordMappings[queryNorm].includes(selectedObject)) knowledgeBase.keywordMappings[queryNorm].push(selectedObject);
+                
+                results.forEach(r => {
+                    if (r.relevancia >= 50) {
+                        if (!knowledgeBase.learnedKeywords[queryNorm]) knowledgeBase.learnedKeywords[queryNorm] = [];
+                        if (!knowledgeBase.learnedKeywords[queryNorm].includes(r.objeto)) knowledgeBase.learnedKeywords[queryNorm].push(r.objeto);
+                    }
+                });
+            }
+
+            if (knowledgeBase.searches.length > 100) knowledgeBase.searches = knowledgeBase.searches.slice(-100);
+            saveLearningData();
+            updateAIStatus();
+        }
+
+        function getLearnedSuggestions() {
+            const suggestions = [];
+            const searchCounts = {};
+            knowledgeBase.searches.forEach(s => { searchCounts[s.query] = (searchCounts[s.query] || 0) + 1; });
+            
+            Object.entries(searchCounts).sort((a, b) => b[1] - a[1]).slice(0, 5).forEach(([term, count]) => {
+                suggestions.push({ term, count, type: 'frequent' });
+            });
+
+            Object.entries(knowledgeBase.objectPopularity).sort((a, b) => b[1] - a[1]).slice(0, 3).forEach(([objeto, count]) => {
+                const data = datosCompletos.find(d => d.objeto === objeto);
+                if (data) suggestions.push({ term: data.denominacion.split(' ')[0], count, type: 'popular', objeto });
+            });
+
+            Object.keys(knowledgeBase.learnedKeywords).slice(0, 5).forEach(term => {
+                if (!suggestions.find(s => s.term === term)) suggestions.push({ term, count: 1, type: 'learned' });
+            });
+
+            return suggestions.slice(0, 12);
+        }
+
+        function updateAIStatus() {
+            document.getElementById('searchCount').textContent = knowledgeBase.searches.length;
+            document.getElementById('keywordsLearned').textContent = Object.keys(knowledgeBase.learnedKeywords).length + Object.keys(knowledgeBase.keywordMappings).length;
+            document.getElementById('learnedTerms').textContent = Object.keys(knowledgeBase.learnedKeywords).length;
+            
+            const recentSearches = knowledgeBase.searches.slice(-20);
+            if (recentSearches.length > 0) {
+                const avg = Math.round(recentSearches.reduce((sum, s) => sum + (s.resultsCount > 0 ? 70 : 30), 0) / recentSearches.length);
+                document.getElementById('avgRelevance').textContent = avg + '%';
+            }
+
+            const topObject = Object.entries(knowledgeBase.objectPopularity).sort((a, b) => b[1] - a[1])[0];
+            if (topObject) {
+                const data = datosCompletos.find(d => d.objeto === topObject[0]);
+                document.getElementById('topObject').textContent = data ? `${topObject[0]} (${data.denominacion.split(' ').slice(0, 2).join(' ')})` : topObject[0];
+            }
+
+            const score = Math.min(100, Math.round(
+                (knowledgeBase.searches.length * 2) + 
+                (Object.keys(knowledgeBase.learnedKeywords).length * 5) +
+                (Object.keys(knowledgeBase.objectPopularity).length * 3) +
+                (Object.keys(knowledgeBase.keywordMappings).length * 4)
+            ));
+            document.getElementById('learningScore').textContent = score;
+        }
+
+        function clearHistory() {
+            if (confirm('¿Estás seguro de limpiar todo el historial de aprendizaje? La IA volverá a empezar.')) {
+                knowledgeBase = { searches: [], learnedKeywords: {}, objectPopularity: {}, userPreferences: {}, searchHistory: [], keywordMappings: {} };
+                saveLearningData(); updateAIStatus(); renderHistory(); renderSuggestions();
+                alert('Historial limpiado. La IA empezará a aprender desde cero.');
+            }
+        }
+
+        function toggleManualLearning() {
+            const form = document.getElementById('manualLearningForm');
+            const icon = document.getElementById('manualToggleIcon');
+            if (form.style.display === 'none') { form.style.display = 'block'; icon.textContent = '▲'; } 
+            else { form.style.display = 'none'; icon.textContent = '▼'; }
+        }
+
+        function agregarPalabraManual() {
+            const wordInput = document.getElementById('manualWord');
+            const objInput = document.getElementById('manualObject');
+            const auxInput = document.getElementById('manualAuxiliar');
+            const word = normalizar(wordInput.value);
+            const obj = objInput.value.trim();
+            const aux = auxInput.value.trim();
+            const msgDiv = document.getElementById('manualMsg');
+
+            if (!word || !obj) {
+                msgDiv.textContent = "⚠️ Por favor, completa al menos la palabra y el objeto.";
+                msgDiv.style.color = "#d32f2f"; msgDiv.style.display = "block";
+                setTimeout(() => { msgDiv.style.display = "none"; }, 4000); return;
+            }
+
+            if (!knowledgeBase.learnedKeywords[word]) knowledgeBase.learnedKeywords[word] = [];
+            if (!knowledgeBase.learnedKeywords[word].includes(obj)) knowledgeBase.learnedKeywords[word].push(obj);
+            if (aux && !knowledgeBase.learnedKeywords[word].includes(`${obj}-${aux}`)) knowledgeBase.learnedKeywords[word].push(`${obj}-${aux}`);
+
+            if (!keywordsMap[word]) keywordsMap[word] = [];
+            if (!keywordsMap[word].includes(obj)) keywordsMap[word].push(obj);
+            if (aux && !keywordsMap[word].includes(`${obj}-${aux}`)) keywordsMap[word].push(`${obj}-${aux}`);
+
+            saveLearningData(); updateAIStatus(); cargarSugerencias();
+
+            wordInput.value = ''; objInput.value = ''; auxInput.value = '';
+            
+            msgDiv.innerHTML = `✅ ¡Palabra <strong>"${word}"</strong> vinculada al objeto <strong>${obj}</strong>${aux ? ` (Aux: <strong>${aux}</strong>)` : ''} con éxito!`;
+            msgDiv.style.color = "#003ca5"; msgDiv.style.display = "block";
+            setTimeout(() => { msgDiv.style.display = "none"; }, 5000);
+        }
+
+        // ============================================
+        // 💾 CARGA DEL CSV
         // ============================================
         document.getElementById('csvFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
-            
+            document.getElementById('fileName').textContent = `✅ Archivo cargado: ${file.name}`;
             const reader = new FileReader();
-            reader.onload = function(event) {
-                parseCSV(event.target.result);
-            };
-            reader.readAsText(file, 'UTF-8');
-            
-            document.getElementById('fileName').textContent = `📄 ${file.name} seleccionado`;
+            reader.onload = function(event) { procesarCSV(event.target.result); };
+            reader.onerror = function() { alert('❌ Error al leer el archivo. Asegúrate que sea un CSV válido.'); };
+            reader.readAsText(file, 'ISO-8859-1');
         });
 
-        function parseCSV(csvText) {
-            const lines = csvText.split('\n').filter(line => line.trim());
-            if (lines.length < 1) return;
-            
-            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
-            
-            appState.objetosGasto = [];
-            
-            for (let i = 1; i < lines.length; i++) {
-                const values = parseCSVLine(lines[i]);
-                if (values.length < headers.length) continue;
-                
-                const obj = {};
-                headers.forEach((header, index) => {
-                    obj[header] = values[index]?.replace(/^"|"$/g, '').trim() || '';
-                });
-                
-                if (obj.codigo || obj.código) {
-                    appState.objetosGasto.push({
-                        codigo: obj.codigo || obj.código || '',
-                        denominacion: obj.denominacion || obj.denominación || obj.descripcion || '',
-                        descripcion: obj.descripcion || obj.detalle || '',
-                        grupo: obj.grupo || '',
-                        categoria: obj.categoria || obj.categoría || '',
-                        auxiliar: obj.auxiliar || '000',
-                        source: 'local'
-                    });
-                }
-            }
-            
-            saveDataToStorage();
-            updateUI();
-            generateSuggestions();
-            
-            // Ocultar sección de carga y mostrar búsqueda
-            document.getElementById('uploadSection').style.display = 'none';
-            document.getElementById('statsBar').style.display = 'flex';
-            document.getElementById('searchContainer').style.display = 'block';
-            document.getElementById('togglePanelBtn').style.display = 'inline-block';
-            document.getElementById('clearDataBtn').style.display = 'inline-block';
-            
-            document.getElementById('aiStatusText').textContent = '✅ Datos cargados - Listo para buscar';
-        }
-
-        function parseCSVLine(line) {
-            const result = [];
-            let current = '';
-            let inQuotes = false;
-            
-            for (let char of line) {
-                if (char === '"') {
-                    inQuotes = !inQuotes;
-                } else if (char === ',' && !inQuotes) {
-                    result.push(current);
-                    current = '';
-                } else {
-                    current += char;
-                }
-            }
-            result.push(current);
-            return result;
-        }
-
-        // ============================================
-        // BÚSQUEDA LOCAL
-        // ============================================
-        async function performSearch() {
-            const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-            if (!searchTerm) return;
-            
-            // Verificar caché
-            if (appState.searchCache[searchTerm]) {
-                displayResults(appState.searchCache[searchTerm].results, searchTerm, true);
-                addToHistory(searchTerm);
-                return;
-            }
-            
-            const results = [];
-            const terms = searchTerm.split(' ').filter(t => t.length > 2);
-            
-            for (const objeto of appState.objetosGasto) {
-                const searchText = `${objeto.codigo} ${objeto.denominacion} ${objeto.descripcion} ${objeto.grupo}`.toLowerCase();
-                const keywordMatch = appState.customKeywords.find(k => 
-                    k.palabra.toLowerCase() === searchTerm && k.objeto === objeto.codigo
-                );
-                
-                let score = 0;
-                
-                if (objeto.codigo.toLowerCase() === searchTerm) score += 100;
-                if (keywordMatch) score += 80;
-                
-                for (const term of terms) {
-                    if (objeto.codigo.toLowerCase().includes(term)) score += 50;
-                    if (objeto.denominacion.toLowerCase().includes(term)) score += 30;
-                    if (objeto.descripcion.toLowerCase().includes(term)) score += 20;
-                    if (objeto.grupo.toLowerCase().includes(term)) score += 10;
-                }
-                
-                if (score > 0) {
-                    results.push({
-                        ...objeto,
-                        score,
-                        matchedTerms: terms.filter(t => searchText.includes(t)),
-                        source: keywordMatch ? 'custom' : 'local'
-                    });
-                }
-            }
-            
-            results.sort((a, b) => b.score - a.score);
-            
-            // Guardar en caché
-            appState.searchCache[searchTerm] = {
-                results: results.slice(0, 20),
-                timestamp: Date.now()
-            };
-            
-            saveDataToStorage();
-            displayResults(results.slice(0, 20), searchTerm);
-            addToHistory(searchTerm);
-            updateStats(results.length);
-        }
-
-        // ============================================
-        // BÚSQUEDA EN INTERNET (sin cambios relevantes)
-        // ============================================
-        async function performWebSearch() {
-            const searchTerm = document.getElementById('searchInput').value.trim();
-            if (!searchTerm) {
-                alert('⚠️ Por favor ingresá un término para buscar');
-                return;
-            }
-            
-            const cacheKey = `web_${searchTerm.toLowerCase()}`;
-            if (appState.searchCache[cacheKey]) {
-                showSelectionModal(appState.searchCache[cacheKey].results, searchTerm);
-                return;
-            }
-            
-            document.getElementById('aiStatusText').textContent = '🌐 Buscando en internet...';
-            
+        function procesarCSV(texto) {
             try {
-                const results = await fetchWebResults(searchTerm);
-                
-                if (results.length > 0) {
-                    appState.searchCache[cacheKey] = { results, timestamp: Date.now() };
-                    saveDataToStorage();
-                    showSelectionModal(results, searchTerm);
-                } else {
-                    const fallbackResults = await performFallbackSearch(searchTerm);
-                    if (fallbackResults.length > 0) {
-                        appState.searchCache[cacheKey] = { results: fallbackResults, timestamp: Date.now() };
-                        saveDataToStorage();
-                        showSelectionModal(fallbackResults, searchTerm);
-                    } else {
-                        throw new Error('No se encontraron resultados');
+                const lineas = texto.split('\n');
+                datosCompletos = [];
+                for (let i = 1; i < lineas.length; i++) {
+                    const linea = lineas[i].trim();
+                    if (!linea) continue;
+                    
+                    const columnas = [];
+                    let actual = '';
+                    let entreComillas = false;
+                    for (let char of linea) {
+                        if (char === '"') entreComillas = !entreComillas;
+                        else if (char === ',' && !entreComillas) { columnas.push(actual.trim().replace(/^"|"$/g, '')); actual = ''; }
+                        else actual += char;
+                    }
+                    columnas.push(actual.trim().replace(/^"|"$/g, ''));
+                    
+                    if (columnas.length >= 4) {
+                        const objeto = columnas[0]?.trim() || '';
+                        datosCompletos.push({
+                            objeto: objeto,
+                            auxiliar: columnas[1]?.trim() || '',
+                            denominacion: columnas[2]?.trim() || '',
+                            descripcion: columnas[3]?.trim() || '',
+                            grupo: objeto.charAt(0),
+                            categoria: obtenerCategoria(objeto.charAt(0))
+                        });
                     }
                 }
-            } catch (error) {
-                console.error('Error en búsqueda web:', error);
-                const fallbackResults = generateFallbackResults(searchTerm);
-                showSelectionModal(fallbackResults, searchTerm);
+                
+                if (datosCompletos.length === 0) { alert('⚠️ No se encontraron datos en el CSV.'); return; }
+                try { localStorage.setItem('cgn_csv_data_v1', JSON.stringify(datosCompletos)); } catch (e) {}
+                
+                iniciarAppConDatos();
+                alert(`✅ ¡Listo! ${datosCompletos.length} registros cargados.`);
+            } catch (error) { alert('❌ Error al procesar el CSV: ' + error.message); }
+        }
+
+        function iniciarAppConDatos() {
+            document.getElementById('totalRegistros').textContent = datosCompletos.length;
+            document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('statsBar').style.display = 'flex';
+            document.getElementById('learningPanel').style.display = 'block';
+            document.getElementById('searchContainer').style.display = 'block';
+            document.getElementById('historySection').style.display = 'block';
+            updateAIStatus(); cargarSugerencias(); renderHistory();
+        }
+
+        function borrarDatosCSV() {
+            if (confirm('¿Deseas borrar el archivo actual y cargar uno nuevo? Tu historial de aprendizaje NO se perderá.')) {
+                localStorage.removeItem('cgn_csv_data_v1'); location.reload();
             }
         }
 
-        async function fetchWebResults(query) {
-            const proxy = 'https://api.allorigins.win/raw?url=';
-            const apiUrl = `https://api.duckduckgo.com/?q=${encodeURIComponent(query + ' clasificador objetos gasto Uruguay')}&format=json`;
+        function obtenerCategoria(grupo) {
+            const categorias = {
+                '0': 'Servicios Personales', '1': 'Bienes de Consumo', '2': 'Servicios No Personales',
+                '3': 'Bienes de Uso', '4': 'Aplicaciones Financieras', '5': 'Transferencias',
+                '6': 'Deuda Pública', '7': 'Otros Gastos', '8': 'Amortización de Deuda', '9': 'Gastos Figurativos'
+            };
+            return categorias[grupo] || 'Otros';
+        }
+
+        // ============================================
+        // 🔍 MOTOR DE BÚSQUEDA CON IA LOCAL Y GEMINI
+        // ============================================
+        
+        function normalizar(texto) {
+            if (!texto) return '';
+            texto = texto.toLowerCase().trim();
+            texto = texto.replace(/[áàäâ]/g, 'a').replace(/[éèëê]/g, 'e').replace(/[íìïî]/g, 'i').replace(/[óòöô]/g, 'o').replace(/[úùüû]/g, 'u').replace(/ñ/g, 'n');
+            return texto;
+        }
+
+        function calcularRelevancia(query, item) {
+            const queryNorm = normalizar(query);
+            const textoCompleto = normalizar(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
+            const denomNorm = normalizar(item.denominacion);
+            const descNorm = normalizar(item.descripcion);
             
+            let score = 0; let keywordEncontrada = null;
+            if (denomNorm.includes(queryNorm)) score += 50;
+            if (descNorm.includes(queryNorm)) score += 30;
+            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) score += 60;
+            
+            if (keywordsMap[queryNorm]) {
+                if (keywordsMap[queryNorm].includes(item.objeto)) { score += 40; keywordEncontrada = queryNorm; }
+                if (keywordsMap[queryNorm].includes(`${item.objeto}-${item.auxiliar}`)) { score += 60; keywordEncontrada = queryNorm; }
+            }
+            
+            const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
+            palabrasQuery.forEach(palabra => {
+                if (textoCompleto.includes(palabra)) { score += 15; if (!keywordEncontrada) keywordEncontrada = palabra; }
+            });
+            
+            if (item.categoria && normalizar(item.categoria).includes(queryNorm)) score += 20;
+            if (knowledgeBase.objectPopularity[item.objeto]) score += Math.min(20, knowledgeBase.objectPopularity[item.objeto] * 2);
+            
+            return { score: Math.min(score, 100), keyword: keywordEncontrada };
+        }
+
+        function buscar() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('results');
+            
+            if (!query || query.length < 2) {
+                resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa al menos 2 caracteres para buscar</div>'; return;
+            }
+            
+            resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en base de datos local...</div>';
+            
+            setTimeout(() => {
+                let resultados = datosCompletos.map(item => {
+                    const relevancia = calcularRelevancia(query, item);
+                    return { ...item, relevancia: relevancia.score, keywordEncontrada: relevancia.keyword };
+                });
+                
+                resultados = resultados.filter(r => r.relevancia >= 15);
+                if (filtroGrupo) resultados = resultados.filter(r => r.grupo === filtroGrupo);
+                resultados.sort((a, b) => b.relevancia - a.relevancia);
+                resultados = resultados.slice(0, limiteResultados);
+                
+                document.getElementById('ultimaBusqueda').textContent = resultados.length;
+                
+                // Si no hay resultados locales, invocamos a Google Gemini
+                if (resultados.length === 0) {
+                    buscarConGemini(query);
+                } else {
+                    learnFromSearch(query, resultados, resultados[0]?.objeto);
+                    renderResultados(resultados, false, query);
+                }
+            }, 300);
+        }
+
+        // --- MAGIA PURA: INTEGRACIÓN CON LA API DE GOOGLE GEMINI ---
+        async function buscarConGemini(query) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="loading" style="color: #003ca5;">
+                    <span style="font-size: 1.5em; display:block; margin-bottom: 10px;">✨🧠✨</span>
+                    Palabra no registrada en memoria.<br>
+                    <strong>Consultando a la Inteligencia Artificial de Google (Gemini)</strong> para deducir el objeto del gasto...
+                </div>`;
+
             try {
-                const response = await fetch(proxy + encodeURIComponent(apiUrl));
-                const data = await response.json();
-                const results = [];
+                // Armamos un resumen optimizado del catálogo para enviar a la IA
+                const categoriasDisponibles = {};
+                datosCompletos.forEach(d => {
+                    if (!categoriasDisponibles[d.objeto]) {
+                        categoriasDisponibles[d.objeto] = d.denominacion;
+                    }
+                });
+                const resumenCatalogo = Object.entries(categoriasDisponibles).map(([obj, den]) => `- ${obj}: ${den}`).join('\n');
+
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                 
-                if (data.AbstractText) {
-                    results.push({
-                        codigo: 'WEB-001',
-                        denominacion: data.Heading || 'Resultado de búsqueda web',
-                        descripcion: data.AbstractText.substring(0, 200) + '...',
-                        grupo: 'Búsqueda Internet',
-                        categoria: 'Referencia',
-                        source: 'web',
-                        url: data.AbstractURL,
-                        relevance: 90
-                    });
-                }
-                
-                if (data.RelatedTopics && Array.isArray(data.RelatedTopics)) {
-                    data.RelatedTopics.slice(0, 5).forEach((topic, index) => {
-                        if (topic.Text) {
-                            const match = topic.Text.match(/(\d{3})\s*-\s*(.+)/);
-                            results.push({
-                                codigo: match ? match[1] : `WEB-${String(index + 1).padStart(3, '0')}`,
-                                denominacion: match ? match[2] : topic.Text.split(' - ')[0],
-                                descripcion: topic.Text,
-                                grupo: 'Búsqueda Internet',
-                                categoria: 'Referencia',
-                                source: 'web',
-                                url: topic.FirstURL,
-                                relevance: 80 - (index * 5)
-                            });
+                const promptText = `
+                    Actúa como un experto contable de la Contaduría General de la Nación de Uruguay.
+                    Un usuario quiere clasificar un gasto descrito como: "${query}".
+                    
+                    Revisa las siguientes categorías de Objetos del Gasto (código de 3 dígitos) y elige el que sea más preciso a nivel semántico. Por ejemplo, "arveja" o "atún" van en Alimentos, "silla de ruedas" va en equipos médicos, etc.
+                    
+                    Aquí está el catálogo principal:
+                    ${resumenCatalogo}
+                    
+                    Devuelve ÚNICAMENTE un objeto JSON válido, sin markdown ni comillas externas, con esta estructura:
+                    {"codigo": "AQUI_EL_CODIGO_DE_3_DIGITOS", "razon": "Breve explicación muy clara de por qué este artículo o servicio ('${query}') se clasifica bajo esa denominación."}
+                    Si no logras encontrar nada razonable en la lista, devuelve {"codigo": null}.
+                `;
+
+                const payload = {
+                    contents: [{ parts: [{ text: promptText }] }],
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                codigo: { type: "STRING" },
+                                razon: { type: "STRING" }
+                            }
                         }
-                    });
-                }
-                return results.filter(r => r.denominacion && r.codigo);
-            } catch (error) {
-                console.warn('Error fetch DuckDuckGo:', error);
-                return [];
-            }
-        }
-
-        async function performFallbackSearch(query) {
-            const commonObjects = [
-                { codigo: '111', denominacion: 'Personal permanente', descripcion: 'Sueldos y salarios del personal de planta' },
-                { codigo: '112', denominacion: 'Personal transitorio', descripcion: 'Contrataciones temporarias y suplencias' },
-                { codigo: '121', denominacion: 'Jornales', descripcion: 'Pago por tareas eventuales' },
-                { codigo: '191', denominacion: 'Insumos médicos y descartables', descripcion: 'Material de curación, insumos hospitalarios' },
-                { codigo: '192', denominacion: 'Medicamentos', descripcion: 'Fármacos y productos farmacéuticos' },
-                { codigo: '211', denominacion: 'Combustibles y lubricantes', descripcion: 'Nafta, gasoil, aceites para vehículos' },
-                { codigo: '212', denominacion: 'Energía eléctrica', descripcion: 'Consumo de energía en instalaciones' },
-                { codigo: '213', denominacion: 'Agua y saneamiento', descripcion: 'Servicios de agua corriente y cloacas' },
-                { codigo: '231', denominacion: 'Materiales de oficina', descripcion: 'Papelería, útiles, impresiones' },
-                { codigo: '232', denominacion: 'Mantenimiento y reparaciones', descripcion: 'Servicios técnicos y arreglos' },
-                { codigo: '251', denominacion: 'Servicios de terceros', descripcion: 'Contratación externa de servicios' },
-                { codigo: '311', denominacion: 'Equipamiento médico', descripcion: 'Adquisición de equipos para atención' },
-                { codigo: '312', denominacion: 'Mobiliario y enseres', descripcion: 'Muebles y equipamiento de oficinas' }
-            ];
-            
-            const queryLower = query.toLowerCase();
-            const results = [];
-            
-            for (const obj of commonObjects) {
-                const searchText = `${obj.codigo} ${obj.denominacion} ${obj.descripcion}`.toLowerCase();
-                if (searchText.includes(queryLower) || queryLower.split(' ').some(t => searchText.includes(t) && t.length > 2)) {
-                    results.push({
-                        ...obj,
-                        grupo: 'Clasificador CGN',
-                        categoria: 'Objeto de Gasto',
-                        source: 'web',
-                        relevance: 85,
-                        url: `https://www.cgn.gub.uy/clasificador/objeto/${obj.codigo}`
-                    });
-                }
-            }
-            
-            if (results.length === 0) {
-                results.push({
-                    codigo: 'XXX',
-                    denominacion: `Búsqueda: "${query}"`,
-                    descripcion: 'No se encontró coincidencia exacta. Verificá la ortografía o contactá con Contaduría.',
-                    grupo: 'Sin clasificar',
-                    categoria: 'Revisión necesaria',
-                    source: 'web',
-                    relevance: 50
-                });
-            }
-            return results;
-        }
-
-        function generateFallbackResults(query) {
-            return [{
-                codigo: 'CONSULTAR',
-                denominacion: `Término no registrado: "${query}"`,
-                descripcion: 'Este término no está en la base local ni en fuentes web. Contactá con Contaduría.',
-                grupo: 'Pendiente',
-                categoria: 'Requiere validación',
-                source: 'web',
-                relevance: 30
-            }];
-        }
-
-        // ============================================
-        // MODAL DE SELECCIÓN
-        // ============================================
-        function showSelectionModal(results, searchTerm) {
-            appState.pendingSearchTerm = searchTerm;
-            appState.selectedWebResult = null;
-            
-            document.getElementById('modalSearchTerm').textContent = `Resultados para: "${searchTerm}"`;
-            
-            const resultsList = document.getElementById('webResultsList');
-            resultsList.innerHTML = '';
-            
-            results.forEach((result, index) => {
-                const option = document.createElement('div');
-                option.className = 'web-result-option';
-                option.dataset.index = index;
-                option.onclick = () => selectWebResult(index, results);
-                
-                option.innerHTML = `
-                    <span class="codigo-badge">${result.codigo}</span>
-                    <div class="denominacion">${result.denominacion}</div>
-                    <div class="descripcion">${result.descripcion}</div>
-                    <span class="categoria-tag">${result.categoria || 'Sin categoría'}</span>
-                    <span class="grupo-tag">${result.grupo || ''}</span>
-                    ${result.url ? `<span class="web-source">🔗 ${new URL(result.url).hostname}</span>` : ''}
-                    <span class="relevancia-badge">Relevancia: ${result.relevance || 0}%</span>
-                `;
-                resultsList.appendChild(option);
-            });
-            
-            document.getElementById('selectionModal').classList.add('active');
-        }
-
-        function selectWebResult(index, results) {
-            appState.selectedWebResult = results[index];
-            document.querySelectorAll('.web-result-option').forEach((el, i) => {
-                el.classList.toggle('selected', i === index);
-            });
-        }
-
-        function confirmSelection() {
-            if (!appState.selectedWebResult || !appState.pendingSearchTerm) {
-                alert('⚠️ Por favor seleccioná un resultado antes de confirmar');
-                return;
-            }
-            
-            const result = appState.selectedWebResult;
-            const searchTerm = appState.pendingSearchTerm;
-            
-            addCustomKeywordFromWeb(searchTerm, result.codigo, result.auxiliar || '000');
-            displayResults([result], searchTerm, true);
-            addToHistory(searchTerm);
-            closeModal();
-        }
-
-        function closeModal() {
-            document.getElementById('selectionModal').classList.remove('active');
-            appState.pendingSearchTerm = null;
-            appState.selectedWebResult = null;
-        }
-
-        // Cerrar modal con Escape o click fuera
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-        });
-        document.getElementById('selectionModal').addEventListener('click', (e) => {
-            if (e.target.id === 'selectionModal') closeModal();
-        });
-
-        // ============================================
-        // GESTIÓN DE KEYWORDS PERSONALIZADAS
-        // ============================================
-        function toggleCustomKeywordsPanel() {
-            const panel = document.getElementById('customKeywordsPanel');
-            panel.style.display = panel.style.display === 'none' || panel.style.display === '' ? 'block' : 'none';
-            if (panel.style.display === 'block') renderKeywordsList();
-        }
-
-        function addCustomKeyword() {
-            const palabra = document.getElementById('newKeyword').value.trim();
-            const objeto = document.getElementById('newObjeto').value.trim();
-            const auxiliar = document.getElementById('newAuxiliar').value.trim() || '000';
-            
-            if (!palabra || !objeto) {
-                alert('⚠️ Completá la palabra y el objeto');
-                return;
-            }
-            
-            const exists = appState.customKeywords.some(k => 
-                k.palabra.toLowerCase() === palabra.toLowerCase() && k.objeto === objeto
-            );
-            if (exists) {
-                alert('⚠️ Esta palabra ya está asociada a este objeto');
-                return;
-            }
-            
-            appState.customKeywords.push({ palabra, objeto, auxiliar, timestamp: Date.now() });
-            saveDataToStorage();
-            
-            document.getElementById('newKeyword').value = '';
-            document.getElementById('newObjeto').value = '';
-            renderKeywordsList();
-            updateUI();
-            
-            document.getElementById('aiStatusText').textContent = '✅ Palabra personalizada agregada';
-            setTimeout(() => updateStatusText(), 2000);
-        }
-
-        function addCustomKeywordFromWeb(palabra, objeto, auxiliar) {
-            const exists = appState.customKeywords.some(k => 
-                k.palabra.toLowerCase() === palabra.toLowerCase() && k.objeto === objeto
-            );
-            if (!exists) {
-                appState.customKeywords.push({ 
-                    palabra, 
-                    objeto, 
-                    auxiliar, 
-                    timestamp: Date.now(),
-                    source: 'web'
-                });
-                saveDataToStorage();
-                renderKeywordsList();
-                updateUI();
-            }
-        }
-
-        function deleteCustomKeyword(index) {
-            if (confirm('¿Confirmás eliminar esta palabra personalizada?')) {
-                appState.customKeywords.splice(index, 1);
-                saveDataToStorage();
-                renderKeywordsList();
-                updateUI();
-            }
-        }
-
-        function renderKeywordsList() {
-            const container = document.getElementById('keywordsList');
-            container.innerHTML = '';
-            
-            if (appState.customKeywords.length === 0) {
-                container.innerHTML = '<p style="color:#666;text-align:center;padding:20px;">No hay palabras personalizadas aún</p>';
-                return;
-            }
-            
-            const sorted = [...appState.customKeywords].sort((a, b) => b.timestamp - a.timestamp);
-            
-            sorted.forEach((keyword) => {
-                const realIndex = appState.customKeywords.indexOf(keyword);
-                const item = document.createElement('div');
-                item.className = 'keyword-item';
-                item.innerHTML = `
-                    <div class="keyword-item-info">
-                        <div class="keyword-item-word">${keyword.palabra}</div>
-                        <div class="keyword-item-object">Objeto: ${keyword.objeto} | Auxiliar: ${keyword.auxiliar} ${keyword.source === 'web' ? '🌐' : ''}</div>
-                    </div>
-                    <button class="keyword-item-delete" onclick="deleteCustomKeyword(${realIndex})">🗑️ Eliminar</button>
-                `;
-                container.appendChild(item);
-            });
-        }
-
-        // ============================================
-        // MOSTRAR RESULTADOS (CORREGIDO)
-        // ============================================
-        function displayResults(results, searchTerm, fromCache = false) {
-            appState.lastSearchResults = [...results];
-            appState.lastSearchTerm = searchTerm;
-            renderResults(results, searchTerm, fromCache);
-        }
-
-        // Nueva función para renderizar (permite filtros sin perder resultados originales)
-        function renderResults(resultsToShow, searchTerm, fromCache = false) {
-            const container = document.getElementById('resultsContainer');
-            
-            if (resultsToShow.length === 0) {
-                container.innerHTML = `
-                    <div class="no-results">
-                        <h3>😕 No se encontraron resultados</h3>
-                        <p style="margin-top:10px;color:#666;">
-                            Probá con otros términos o usá la búsqueda en internet 🌐
-                        </p>
-                        <button class="web-search-btn" onclick="performWebSearch()" style="margin-top:15px;">
-                            🔍 Buscar "${searchTerm}" en Internet
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-            
-            const cacheBadge = fromCache ? '<span style="background:#28a745;color:white;padding:3px 10px;border-radius:10px;font-size:0.8em;margin-left:10px;">💾 Caché</span>' : '';
-            
-            container.innerHTML = `
-                <h3 style="margin-bottom:20px;color:#003ca5;">
-                    📋 Resultados para "${searchTerm}" ${cacheBadge}
-                    <span style="font-size:0.9em;color:#666;font-weight:400;">(${resultsToShow.length} encontrados)</span>
-                </h3>
-            `;
-            
-            resultsToShow.forEach(result => {
-                const card = document.createElement('div');
-                card.className = `result-card ${result.source === 'web' ? 'web-result' : ''}`;
-                
-                // CORRECCIÓN: uso de addEventListener con event para evitar error "event is not defined"
-                card.addEventListener('click', (e) => {
-                    selectResult(result, e.currentTarget);
-                });
-                
-                const matchedTerms = result.matchedTerms?.length > 0 
-                    ? result.matchedTerms.map(t => `<span class="keyword-match">🎯 ${t}</span>`).join(' ') 
-                    : '';
-                
-                card.innerHTML = `
-                    <span class="codigo-badge">${result.codigo}</span>
-                    ${result.source === 'web' ? '<span class="relevancia-badge">🌐 Internet</span>' : ''}
-                    <div class="denominacion">${result.denominacion}</div>
-                    <div class="descripcion">${result.descripcion || 'Sin descripción disponible'}</div>
-                    \( {result.categoria ? `<span class="categoria-tag"> \){result.categoria}</span>` : ''}
-                    \( {result.grupo ? `<span class="grupo-tag"> \){result.grupo}</span>` : ''}
-                    ${matchedTerms}
-                    \( {result.url ? `<div style="margin-top:10px"><a href=" \){result.url}" target="_blank" style="color:#003ca5;font-size:0.9em;" onclick="event.stopPropagation()">🔗 Ver fuente original</a></div>` : ''}
-                `;
-                
-                container.appendChild(card);
-            });
-        }
-
-        function selectResult(result, cardElement) {
-            document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
-            if (cardElement) cardElement.classList.add('selected');
-            
-            navigator.clipboard?.writeText(result.codigo).then(() => {
-                document.getElementById('aiStatusText').textContent = `✅ Código ${result.codigo} copiado`;
-                setTimeout(() => updateStatusText(), 2000);
-            }).catch(() => {
-                document.getElementById('aiStatusText').textContent = `📋 Seleccionado: ${result.codigo} - ${result.denominacion}`;
-            });
-        }
-
-        // ============================================
-        // FILTROS (AHORA FUNCIONALES)
-        // ============================================
-        function filterResults(type, btn) {
-            appState.currentFilter = type;
-            
-            // Actualizar botones activos
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            if (!appState.lastSearchResults || appState.lastSearchResults.length === 0) return;
-            
-            const filteredResults = appState.lastSearchResults.filter(result => {
-                if (type === 'all') return true;
-                return result.source === type;
-            });
-            
-            renderResults(filteredResults, appState.lastSearchTerm, true);
-        }
-
-        // ============================================
-        // SUGERENCIAS
-        // ============================================
-        function generateSuggestions() {
-            const container = document.getElementById('sugerenciasGrid');
-            container.innerHTML = '';
-            
-            const suggestions = new Set();
-            
-            appState.customKeywords.slice(0, 5).forEach(k => suggestions.add(k.palabra));
-            
-            const commonTerms = ['insumos', 'medicamentos', 'personal', 'mantenimiento', 'servicios', 'equipamiento', 'oficina', 'combustible'];
-            commonTerms.forEach(term => {
-                if (appState.objetosGasto.some(o => 
-                    o.denominacion.toLowerCase().includes(term) || 
-                    o.descripcion.toLowerCase().includes(term)
-                )) {
-                    suggestions.add(term);
-                }
-            });
-            
-            appState.searchHistory.slice(0, 3).forEach(h => suggestions.add(h.term));
-            
-            Array.from(suggestions).slice(0, 8).forEach(suggestion => {
-                const item = document.createElement('div');
-                item.className = 'sugerencia-item';
-                item.textContent = suggestion;
-                item.onclick = () => {
-                    document.getElementById('searchInput').value = suggestion;
-                    performSearch();
+                    }
                 };
-                container.appendChild(item);
-            });
-            
-            if (suggestions.size === 0) {
-                container.innerHTML = '<p style="color:#666;grid-column:1/-1;">Cargá datos para ver sugerencias</p>';
+
+                let resultData = null;
+                let retries = 0;
+                const delays = [1000, 2000, 4000, 8000, 16000];
+
+                while (retries < 5) {
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (!response.ok) throw new Error('API Error');
+                        resultData = await response.json();
+                        break;
+                    } catch (error) {
+                        if (retries === 4) {
+                            mostrarError(query, "Fallo de conexión con el servidor de la IA.");
+                            return;
+                        }
+                        await new Promise(r => setTimeout(r, delays[retries]));
+                        retries++;
+                    }
+                }
+
+                if (resultData && resultData.candidates && resultData.candidates[0]) {
+                    const textResponse = resultData.candidates[0].content.parts[0].text;
+                    const aiResult = JSON.parse(textResponse);
+
+                    if (aiResult.codigo && aiResult.codigo !== "null") {
+                        // Encontramos los ítems del catálogo que corresponden a este código que la IA eligió
+                        let resultadosAI = datosCompletos.filter(item => item.objeto === aiResult.codigo);
+                        
+                        if (resultadosAI.length > 0) {
+                            resultadosAI = resultadosAI.map(item => ({
+                                ...item,
+                                relevancia: 95,
+                                keywordEncontrada: aiResult.razon // Usamos la explicación de la IA aquí
+                            }));
+                            
+                            if (filtroGrupo) resultadosAI = resultadosAI.filter(r => r.grupo === filtroGrupo);
+                            resultadosAI = resultadosAI.slice(0, limiteResultados);
+                            
+                            renderResultados(resultadosAI, true, query);
+                            return;
+                        }
+                    }
+                }
+                
+                mostrarError(query); // Si la IA devolvió null o no hizo match
+            } catch (error) {
+                console.error("Error consultando Gemini:", error);
+                mostrarError(query);
             }
         }
 
-        // ============================================
-        // HISTORIAL
-        // ============================================
-        function addToHistory(term) {
-            appState.searchHistory = appState.searchHistory.filter(h => h.term.toLowerCase() !== term.toLowerCase());
-            appState.searchHistory.unshift({ term, timestamp: Date.now(), count: 1 });
-            if (appState.searchHistory.length > CONFIG.maxHistoryItems) appState.searchHistory.pop();
+        // --- FUNCIÓN UNIFICADA DE RENDERIZADO ---
+        function renderResultados(resultados, esDeInternet = false, originalQuery = '') {
+            const resultsDiv = document.getElementById('results');
+            let html = '';
             
-            saveDataToStorage();
+            if (esDeInternet) {
+                html += `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; background: rgba(0, 60, 165, 0.05); padding: 15px; border-radius: 10px; border: 1px solid rgba(0, 60, 165, 0.2);">
+                    ✨🧠 <strong>Deducción de Inteligencia Artificial (Gemini):</strong> Analizamos "${originalQuery}" usando NLP y determinamos su clasificación correcta. <br>
+                    <span style="font-size: 0.9em; margin-top: 5px; display: inline-block; font-weight: 600; color: #cc8800;">👉 Haz clic en el objeto para que tu navegador lo aprenda y la próxima búsqueda sea instantánea.</span>
+                </div>`;
+            } else {
+                html += `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; font-weight: 600;">
+                    ✅ <strong>${resultados.length}</strong> resultados encontrados 
+                    (de ${datosCompletos.length} registros totales)
+                </div>`;
+            }
+            
+            resultados.forEach((r, index) => {
+                html += `
+                    <div class="result-card ${index === 0 && !esDeInternet ? 'selected' : ''}" onclick="selectResult(event, '${r.objeto}', '${r.auxiliar}', '${originalQuery}')">
+                        <div class="result-header">
+                            <span class="codigo-badge">${r.objeto}/${r.auxiliar}</span>
+                            <span class="relevancia-badge">${esDeInternet ? '🧠 Certeza IA: Alta' : '📊 Relevancia: ' + r.relevancia + '%'}</span>
+                        </div>
+                        <div class="denominacion">${r.denominacion}</div>
+                        <div class="descripcion">${r.descripcion}</div>
+                        ${r.categoria ? `<div class="categoria-tag" style="display:inline-block;background:rgba(0, 60, 165, 0.1);color:#003ca5;font-weight:600;padding:5px 12px;border-radius:15px;font-size:0.85em;margin-top:10px;">📁 ${r.categoria}</div>` : ''}
+                        <span class="grupo-tag" style="display:inline-block;background:rgba(0, 60, 165, 0.05);border: 1px solid rgba(0,60,165,0.2);color:#003ca5;font-weight:600;padding:3px 10px;border-radius:10px;font-size:0.75em;margin-left:10px;">Grupo ${r.grupo}</span>
+                        ${r.keywordEncontrada ? `<div class="keyword-match" style="display:block; margin-top:12px; white-space: pre-wrap;">💡 <strong>Justificación IA:</strong> ${r.keywordEncontrada}</div>` : ''}
+                        ${index === 0 && !esDeInternet ? '<div style="margin-top: 10px; color: #cc8800; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
+                    </div>
+                `;
+            });
+            
+            resultsDiv.innerHTML = html;
             renderHistory();
+        }
+
+        function mostrarError(query, mensajeExtra = "") {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="error" style="background: rgba(255, 170, 0, 0.05); border-color: #ffaa00; color: #b27300;">
+                    <h3 style="margin-bottom: 10px; color: #cc8800;">🤔 Aún no conozco la palabra "<strong>${query}</strong>"</h3>
+                    <p>Ni la búsqueda local ni la Inteligencia Artificial lograron clasificar este gasto con certeza. ${mensajeExtra}</p>
+                    
+                    <div style="margin-top: 20px; padding: 20px; background: #fff; border-radius: 10px; border: 1px dashed #ffaa00;">
+                        <p style="margin-bottom: 15px; font-weight: 600; color: #003ca5;">Enséñame manualmente y no lo olvidaré para la próxima:</p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <input type="text" id="quickWord" value="${query}" disabled style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; color: #666; width: 150px; font-family: 'Montserrat', sans-serif;">
+                            <span style="font-size: 1.5em; color: #ccc;">➡</span>
+                            <input type="text" id="quickObject" placeholder="Cód Objeto (ej: 111)" style="padding: 12px; border: 1px solid #003ca5; border-radius: 8px; width: 180px; font-family: 'Montserrat', sans-serif; outline: none;">
+                            <input type="text" id="quickAux" placeholder="Aux (opcional)" style="padding: 12px; border: 1px solid #ccc; border-radius: 8px; width: 160px; font-family: 'Montserrat', sans-serif; outline: none;">
+                            <button onclick="enseñarRapido('${query}')" style="padding: 12px 25px; background: #003ca5; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: 'Montserrat', sans-serif; transition: opacity 0.2s;">Guardar</button>
+                        </div>
+                        <div id="quickMsg" style="margin-top: 10px; font-weight: 600; display: none;"></div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function enseñarRapido(word) {
+            const objInput = document.getElementById('quickObject');
+            const auxInput = document.getElementById('quickAux');
+            const msgDiv = document.getElementById('quickMsg');
+
+            const obj = objInput.value.trim();
+            const aux = auxInput.value.trim();
+
+            if (!obj) {
+                msgDiv.textContent = "⚠️ Ingresa al menos el código de Objeto (ej: 111).";
+                msgDiv.style.color = "#d32f2f"; msgDiv.style.display = "block"; return;
+            }
+
+            document.getElementById('manualWord').value = word;
+            document.getElementById('manualObject').value = obj;
+            document.getElementById('manualAuxiliar').value = aux;
+
+            agregarPalabraManual();
+
+            msgDiv.innerHTML = `✅ ¡Aprendido! Buscando resultados...`;
+            msgDiv.style.color = "#00b300"; msgDiv.style.display = "block";
+
+            setTimeout(() => buscarCon(word), 600);
+        }
+
+        function selectResult(event, objeto, auxiliar, queryToLearn) {
+            const queryNorm = normalizar(queryToLearn);
+            
+            if (queryToLearn) {
+                learnFromSearch(queryToLearn, [], objeto);
+                
+                if (!keywordsMap[queryNorm]) keywordsMap[queryNorm] = [];
+                if (!keywordsMap[queryNorm].includes(objeto)) keywordsMap[queryNorm].push(objeto);
+                if (auxiliar && !keywordsMap[queryNorm].includes(`${objeto}-${auxiliar}`)) keywordsMap[queryNorm].push(`${objeto}-${auxiliar}`);
+                
+                if (!knowledgeBase.learnedKeywords[queryNorm]) knowledgeBase.learnedKeywords[queryNorm] = [];
+                if (!knowledgeBase.learnedKeywords[queryNorm].includes(objeto)) knowledgeBase.learnedKeywords[queryNorm].push(objeto);
+                if (auxiliar && !knowledgeBase.learnedKeywords[queryNorm].includes(`${objeto}-${auxiliar}`)) knowledgeBase.learnedKeywords[queryNorm].push(`${objeto}-${auxiliar}`);
+                saveLearningData();
+            }
+
+            const card = event.target.closest('.result-card');
+            document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
+            if(card) card.classList.add('selected');
+            
+            const feedback = document.createElement('div');
+            feedback.style.cssText = 'background: rgba(0, 60, 165, 0.1); border: 1px solid #003ca5; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; color: #003ca5; font-weight: 600;';
+            feedback.innerHTML = `✅ ¡Localmente aprendido! "${queryToLearn}" ya no necesitará consultar a Gemini y se cargará al instante.`;
+            
+            const existingFeedback = document.querySelector('.ai-feedback');
+            if (existingFeedback) existingFeedback.remove();
+            feedback.classList.add('ai-feedback');
+            document.getElementById('results').appendChild(feedback);
+            
+            setTimeout(() => { feedback.remove(); }, 5000);
+        }
+
+        // ============================================
+        // ⚙️ FUNCIONES DE UTILIDAD
+        // ============================================
+        function buscarCon(termino) { document.getElementById('searchInput').value = termino; buscar(); }
+
+        function setLimite(limite) {
+            limiteResultados = limite;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.textContent.includes('resultados')) { btn.classList.remove('active'); if (btn.textContent.includes(limite)) btn.classList.add('active'); }
+            });
+        }
+
+        function filtrarGrupo(grupo) {
+            filtroGrupo = grupo;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.textContent.includes('Grupo')) { btn.classList.remove('active'); if (btn.textContent.includes('Grupo ' + grupo)) btn.classList.add('active'); }
+            });
+            buscar();
+        }
+
+        function limpiarFiltros() {
+            filtroGrupo = '';
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes('20 resultados')) btn.classList.add('active');
+            });
+            document.getElementById('searchInput').value = '';
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('ultimaBusqueda').textContent = '0';
+        }
+
+        function cargarSugerencias() {
+            const sugerencias = getLearnedSuggestions();
+            const grid = document.getElementById('sugerenciasGrid');
+            if (sugerencias.length === 0) {
+                const defaultSugerencias = ['harina', 'sueldo', 'combustible', 'medicamento', 'vehículo', 'regla', 'internación', 'computadora', 'útiles', 'limpieza', 'electricidad', 'teléfono', 'viático', 'alquiler', 'jubilación', 'beca', 'capacitación', 'mantenimiento', 'construcción', 'vigilancia'];
+                grid.innerHTML = defaultSugerencias.map(s => `<div class="sugerencia-item" onclick="buscarCon('${s}')">${s}</div>`).join('');
+            } else {
+                grid.innerHTML = sugerencias.map(s => `<div class="sugerencia-item" onclick="buscarCon('${s.term}')">${s.term} ${s.type === 'frequent' ? '🔥' : s.type === 'popular' ? '⭐' : '🤖'}</div>`).join('');
+            }
         }
 
         function renderHistory() {
-            const container = document.getElementById('historyList');
-            const section = document.getElementById('historySection');
-            
-            if (appState.searchHistory.length === 0) {
-                section.style.display = 'none';
-                return;
-            }
-            
-            section.style.display = 'block';
-            container.innerHTML = '';
-            
-            appState.searchHistory.slice(0, 10).forEach(item => {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'history-item';
-                historyItem.onclick = () => {
-                    document.getElementById('searchInput').value = item.term;
-                    performSearch();
-                };
-                historyItem.innerHTML = `
-                    <span>🔍 ${item.term}</span>
-                    <span class="history-count">${new Date(item.timestamp).toLocaleDateString()}</span>
-                `;
-                container.appendChild(historyItem);
-            });
+            const historyList = document.getElementById('historyList');
+            const recentSearches = knowledgeBase.searches.slice(-10).reverse();
+            if (recentSearches.length === 0) { historyList.innerHTML = '<p style="color: #888;">No hay historial aún. La IA empezará a aprender con tus búsquedas.</p>'; return; }
+            historyList.innerHTML = recentSearches.map(s => `
+                <div class="history-item" onclick="document.getElementById('searchInput').value='${s.query}'; buscar();">
+                    <span>🔍 ${s.query}</span>
+                    <span class="history-count">${s.resultsCount} resultados ${s.selectedObject ? '→ ' + s.selectedObject : ''}</span>
+                </div>
+            `).join('');
         }
 
-        function clearHistory() {
-            if (confirm('¿Limpiar todo el historial de búsquedas?')) {
-                appState.searchHistory = [];
-                saveDataToStorage();
-                renderHistory();
-            }
-        }
-
-        // ============================================
-        // ACTUALIZACIÓN DE UI
-        // ============================================
-        function updateUI() {
-            document.getElementById('customKeywordsCount').textContent = appState.customKeywords.length;
-            document.getElementById('cacheCount').textContent = Object.keys(appState.searchCache).length;
-            
-            if (appState.objetosGasto.length > 0) {
-                const uniqueObjetos = new Set(appState.objetosGasto.map(o => o.codigo)).size;
-                document.getElementById('totalRegistros').textContent = appState.objetosGasto.length;
-                document.getElementById('totalObjetos').textContent = uniqueObjetos;
-            }
-            
-            renderKeywordsList();
-            renderHistory();
-        }
-
-        function updateStats(resultsCount) {
-            document.getElementById('ultimaBusqueda').textContent = resultsCount;
-            const countEl = document.getElementById('searchCount');
-            countEl.textContent = parseInt(countEl.textContent) + 1;
-        }
-
-        function updateStatusText() {
-            if (appState.objetosGasto.length > 0) {
-                document.getElementById('aiStatusText').textContent = '✅ Sistema listo - Buscá tu objeto de gasto';
-            }
-        }
-
-        // ============================================
-        // EVENT LISTENERS
-        // ============================================
-        function setupEventListeners() {
-            // Búsqueda con Enter
-            document.getElementById('searchInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') performSearch();
-            });
-            
-            // Botón limpiar datos
-            document.getElementById('clearDataBtn').addEventListener('click', () => {
-                if (confirm('⚠️ ¿Confirmás eliminar todos los datos cargados y comenzar de nuevo?')) {
-                    Object.values(CONFIG.localStorageKeys).forEach(key => localStorage.removeItem(key));
-                    location.reload();
-                }
-            });
-            
-            // Auto-guardado
-            setInterval(saveDataToStorage, 30000);
-            
-            // Limpiar caché expirada
-            setInterval(() => {
-                const now = Date.now();
-                let cleared = 0;
-                for (const [key, value] of Object.entries(appState.searchCache)) {
-                    if (now - value.timestamp > CONFIG.cacheExpiration) {
-                        delete appState.searchCache[key];
-                        cleared++;
-                    }
-                }
-                if (cleared > 0) {
-                    saveDataToStorage();
-                    updateUI();
-                }
-            }, 60 * 60 * 1000);
-        }
-
-        // Utilidad debounce (no se usa actualmente pero se mantiene)
-        function debounce(func, wait) {
-            let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
-                };
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-            };
-        }
-
-        // Exponer funciones globales para los onclick del HTML
-        window.toggleCustomKeywordsPanel = toggleCustomKeywordsPanel;
-        window.addCustomKeyword = addCustomKeyword;
-        window.deleteCustomKeyword = deleteCustomKeyword;
-        window.performSearch = performSearch;
-        window.performWebSearch = performWebSearch;
-        window.filterResults = filterResults;
-        window.clearHistory = clearHistory;
-        window.closeModal = closeModal;
-        window.selectWebResult = selectWebResult;
-        window.confirmSelection = confirmSelection;
+        window.onload = function() {
+            loadLearningData(); updateAIStatus();
+            const savedCSV = localStorage.getItem('cgn_csv_data_v1');
+            if (savedCSV) { try { datosCompletos = JSON.parse(savedCSV); if (datosCompletos.length > 0) iniciarAppConDatos(); } catch(e) {} }
+            console.log('Buscador de Objetos de Gastos cargado');
+        };
     </script>
 </body>
 </html>
