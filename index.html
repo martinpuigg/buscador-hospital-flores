@@ -776,6 +776,22 @@
         // --- MAGIA PURA: INTEGRACIÓN CON LA API DE GOOGLE GEMINI ---
         async function buscarConGemini(query) {
             const resultsDiv = document.getElementById('results');
+            
+            // 🛑 COMPROBACIÓN ESTRICTA DE LA LLAVE API (Y CACHÉ DE GITHUB) 🛑
+            const llaveLimpia = typeof apiKey !== 'undefined' ? apiKey.trim() : "";
+            
+            if (!llaveLimpia) {
+                mostrarError(query, `
+                    <div style="margin-top: 15px; padding: 15px; background: rgba(255,0,0,0.05); border: 1px solid #ff4444; border-radius: 8px; color: #cc0000; font-size: 0.95em;">
+                        <strong>🔑 FALTA LA LLAVE API (O GITHUB AÚN NO ACTUALIZÓ):</strong><br>
+                        El sistema intentó usar la Inteligencia Artificial, pero la llave aparece vacía en tu navegador.<br><br>
+                        👉 <strong>Si acabas de poner la llave y guardar en GitHub:</strong> Las páginas de GitHub tardan entre 2 y 5 minutos en publicar los cambios. Tu navegador está mostrando la versión vieja. ¡Espera un momento y presiona <strong>Ctrl + F5</strong> para recargar la página a la fuerza!<br><br>
+                        👉 <strong>Si aún no has puesto la llave:</strong> Edita la línea <code>const apiKey = "";</code> (cerca del renglón 432) y pega tu llave entre las comillas.
+                    </div>
+                `);
+                return; // Cortamos la ejecución aquí para que no salte el error en inglés
+            }
+
             resultsDiv.innerHTML = `
                 <div class="loading" style="color: #003ca5;">
                     <span style="font-size: 1.5em; display:block; margin-bottom: 10px;">✨🧠✨</span>
@@ -794,9 +810,8 @@
                 // Extraemos las primeras 200 categorías para no saturar la petición y que sea ultra rápida
                 const resumenCatalogo = Object.entries(categoriasDisponibles).slice(0, 200).map(([obj, den]) => `- ${obj}: ${den}`).join('\n');
 
-                // En el entorno de canvas se usa el modelo preview, si tienes llave propia usa flash
-                const modeloAUsar = apiKey ? "gemini-1.5-flash" : "gemini-2.5-flash-preview-09-2025";
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${modeloAUsar}:generateContent?key=${apiKey}`;
+                const modeloAUsar = "gemini-1.5-flash";
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${modeloAUsar}:generateContent?key=${llaveLimpia}`;
                 
                 const promptText = `
                     Actúa como un experto contable de la Contaduría General de la Nación de Uruguay.
@@ -882,12 +897,11 @@
                 mostrarError(query);
             } catch (error) {
                 console.error("Error consultando Gemini:", error);
+                let userMsg = `<br><br>💡 <strong>Detalle técnico:</strong> ${error.message}`;
                 
-                let userMsg = `<br><br>💡 <strong>Detalle técnico para el administrador:</strong> ${error.message}`;
-                
-                // Si el error es de llave faltante, mostramos un mensaje amigable indicando la solución
-                if (error.message.includes("API Key not found") || error.message.includes("API key not valid") || error.message.includes("unregistered callers")) {
-                    userMsg = `<br><br>🔑 <strong>Falta tu Llave API:</strong> Como estás usando el buscador en tu PC, necesitas abrir el archivo con el Bloc de Notas, buscar la línea que dice <code>const apiKey = "";</code> y pegar tu Llave de Google entre las comillas (ejemplo: <code>const apiKey = "AIzaSy...";</code>).`;
+                // Si la llave está puesta pero es inválida
+                if (error.message.includes("API Key not valid") || error.message.includes("API_KEY_INVALID")) {
+                    userMsg = `<br><br>❌ <strong>Llave API Inválida:</strong> La llave que pegaste en el código no es válida. Asegúrate de haberla copiado completa y de no haber borrado las comillas.`;
                 }
                 
                 mostrarError(query, userMsg);
