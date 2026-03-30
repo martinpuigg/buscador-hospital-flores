@@ -227,6 +227,40 @@
                 "9": "Reservas y Otros"
             };
 
+            const NOMBRES_SUBGRUPOS = {
+                "01": "Retribuciones Básicas",
+                "02": "Retribuciones Complementarias",
+                "03": "Retribuciones por Dedicación",
+                "04": "Retribuciones Diversas",
+                "05": "Aguinaldo",
+                "06": "Cargas Legales",
+                "07": "Beneficios Familiares",
+                "08": "Otras Retribuciones",
+                "11": "Alimentos y Bebidas",
+                "12": "Vestuario y Calzado",
+                "13": "Útiles y Materiales",
+                "14": "Productos Agropecuarios y Forestales",
+                "15": "Productos de Limpieza",
+                "16": "Productos Sanitarios y Médicos",
+                "17": "Materiales y Repuestos",
+                "19": "Otros Bienes de Consumo",
+                "21": "Servicios Básicos",
+                "22": "Impresión y Publicidad",
+                "23": "Pasajes y Viáticos",
+                "24": "Arrendamientos",
+                "25": "Seguros",
+                "26": "Servicios Profesionales",
+                "27": "Servicios Financieros",
+                "28": "Mantenimiento y Reparaciones",
+                "29": "Otros Servicios",
+                "31": "Bienes Inmuebles",
+                "32": "Maquinaria y Equipos",
+                "33": "Equipos de Computación",
+                "34": "Vehículos",
+                "38": "Activos Intangibles",
+                "92": "Partidas a Reasignar"
+            };
+
             const PADRON_BASE = {
                 "011": { denominacion: "Sueldo básico de cargos", descripcion: "Retribuciones del personal presupuestado." },
                 "111": { denominacion: "Alimentos para personas", descripcion: "Víveres, carnes, lácteos, frutas y verduras." },
@@ -253,7 +287,7 @@
 
             const getSubgrupoInfo = (obj) => {
                 const sCode = String(obj).substring(0, 2);
-                return { code: sCode };
+                return { code: sCode, name: NOMBRES_SUBGRUPOS[sCode] || "Subgrupo " + sCode };
             };
 
             let diccionarioPersonalizado = JSON.parse(localStorage.getItem('diccionarioCGN')) || {};
@@ -272,16 +306,49 @@
                     div.className = 'bg-white border border-slate-200 p-3 rounded-lg shadow-sm animate-result text-xs mb-2';
                     div.innerHTML = `
                         <div class="flex justify-between items-start mb-1">
-                            <div class="font-bold text-slate-800 capitalize truncate w-4/5">${word}</div>
-                            <button class="delete-rule-btn text-red-400 hover:text-red-600 p-1" data-word="${word}">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
+                            <div class="font-bold text-slate-800 capitalize truncate w-3/5" title="${word}">${word}</div>
+                            <div class="flex gap-1">
+                                <button class="edit-rule-btn text-blue-400 hover:text-blue-600 p-1" data-word="${word}" title="Editar clasificación">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                                </button>
+                                <button class="delete-rule-btn text-red-400 hover:text-red-600 p-1" data-word="${word}" title="Eliminar clasificación">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </div>
                         </div>
                         <div class="text-[10px] font-bold text-[#1e3ba6]">Objeto: ${rule.objeto} / ${rule.auxiliar}</div>
                     `;
                     manualRulesContainer.appendChild(div);
                 });
 
+                // Lógica del botón EDITAR
+                document.querySelectorAll('.edit-rule-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const word = e.currentTarget.getAttribute('data-word');
+                        const rule = diccionarioPersonalizado[word];
+                        
+                        // Cargar datos en el formulario
+                        document.getElementById('newWord').value = word;
+                        document.getElementById('newObj').value = rule.objeto || '';
+                        document.getElementById('newAux').value = rule.auxiliar || '000';
+                        document.getElementById('newDenom').value = rule.denominacion || '';
+                        document.getElementById('newDesc').value = rule.descripcion || '';
+                        document.getElementById('newJust').value = rule.justificacion || '';
+                        document.getElementById('newGroup').value = rule.grupoManual || '';
+                        document.getElementById('newSubgroup').value = rule.subgrupoManual || '';
+
+                        // Abrir el panel y hacer scroll hacia él
+                        const details = document.querySelector('#manualForm').closest('details');
+                        if (details) details.open = true;
+                        const form = document.getElementById('manualForm');
+                        form.classList.add('ring-4', 'ring-blue-400');
+                        setTimeout(() => form.classList.remove('ring-4', 'ring-blue-400'), 2000);
+                        form.scrollIntoView({ behavior: 'smooth' });
+                    });
+                });
+
+                // Lógica del botón ELIMINAR
                 document.querySelectorAll('.delete-rule-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -411,7 +478,7 @@
                         </div>
                         <div class="flex gap-3 mb-2 text-[9px] font-bold uppercase text-slate-400">
                             <div>GRUPO <span class="text-slate-600">${groupInfo.code} - ${groupInfo.name}</span></div>
-                            <div>SUBGRUPO <span class="text-slate-600">${subInfo.code}</span></div>
+                            <div>SUBGRUPO <span class="text-slate-600">${safeSub}</span></div>
                         </div>
                         <h3 class="font-extrabold text-lg text-slate-800 uppercase leading-tight mb-1">${safeDenom}</h3>
                         <p class="text-slate-500 text-xs mb-3 line-clamp-2 italic">${safeDesc}</p>
