@@ -214,16 +214,16 @@
             });
 
             const NOMBRES_GRUPOS = {
-                "000": "Retribuciones Personales",
-                "100": "Bienes de Consumo",
-                "200": "Servicios No Personales",
-                "300": "Bienes de Uso",
-                "400": "Transferencias",
-                "500": "Activos Financieros",
-                "600": "Intereses y Gastos de Deuda",
-                "700": "Gastos de Inversión",
-                "800": "Otros Gastos",
-                "900": "Reservas y Otros"
+                "0": "Retribuciones Personales",
+                "1": "Bienes de Consumo",
+                "2": "Servicios No Personales",
+                "3": "Bienes de Uso",
+                "4": "Transferencias",
+                "5": "Activos Financieros",
+                "6": "Intereses y Gastos de Deuda",
+                "7": "Gastos de Inversión",
+                "8": "Otros Gastos",
+                "9": "Reservas y Otros"
             };
 
             const PADRON_BASE = {
@@ -246,12 +246,12 @@
             const normalizar = (text) => text ? text.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
 
             const getGrupoInfo = (obj) => {
-                const gCode = obj.charAt(0) + "00";
+                const gCode = obj.charAt(0);
                 return { code: gCode, name: NOMBRES_GRUPOS[gCode] || "Grupo General" };
             };
 
             const getSubgrupoInfo = (obj) => {
-                const sCode = obj.substring(0, 2) + "0";
+                const sCode = obj.substring(0, 2);
                 return { code: sCode };
             };
 
@@ -371,8 +371,8 @@
             };
 
             function crearHTMLTarjeta(objeto, auxiliar, denominacion, descripcion, justificacion, tipo, queryOriginal, manualGroup, manualSub, index = null) {
-                const groupInfo = manualGroup ? { code: objeto.charAt(0) + "00", name: manualGroup } : getGrupoInfo(objeto);
-                const subInfo = manualSub ? { code: objeto.substring(0, 2) + "0", name: manualSub } : getSubgrupoInfo(objeto);
+                const groupInfo = manualGroup ? { code: objeto.charAt(0), name: manualGroup } : getGrupoInfo(objeto);
+                const subInfo = manualSub ? { code: objeto.substring(0, 2), name: manualSub } : getSubgrupoInfo(objeto);
 
                 const safeJust = justificacion.replace(/'/g, "\\'").replace(/\n/g, " ");
                 const safeWord = queryOriginal.replace(/'/g, "\\'");
@@ -466,7 +466,7 @@
                 Si el usuario ingresa un término genérico que puede tener distintas variantes (por material, tipo de energía, uso, etc. Ej: "estufa", "papel", "caño", "guantes", "carne"), ESTÁS OBLIGADO a devolver MÍNIMO 3 OBJETOS en el JSON, separando claramente cada variante, INCLUSO SI COMPARTEN EL MISMO CÓDIGO DE OBJETO.
                 
                 Ejemplos obligatorios:
-                - "estufa" -> Debes devolver una tarjeta para Estufa Eléctrica (322), otra para Estufa a Gas (322), otra a Leña.
+                - "estufa" -> Debes devolver una tarjeta para Estufa Eléctrica, otra para Estufa a Gas, otra a Leña. (Asegúrate de deducir el código correcto del catálogo CGN para calefacción, NO uses 322 porque 322 es para telefonía y afines).
                 - "papel" -> Papel higiénico (151), Resma A4 (131), Papel toalla (151).
                 - "caño" -> PVC (114), Hierro (171), Cobre/Bronce.
                 
@@ -478,9 +478,9 @@
                 - Metales básicos (hierro, varilla): 171
                 - Herramientas manuales/repuestos: 176
                 - Muebles físicos: 321
-                - Equipos eléctricos y electrodomésticos (estufas eléctricas, aires): 322
                 - Útiles/Papelería (resmas): 131
                 - Limpieza y aseo (papel higiénico, toallas): 151
+                - Para cualquier otro ítem, utiliza tu conocimiento experto y estricto del Catálogo de Objetos de Gastos de la Contaduría General de la Nación (CGN) de Uruguay. Nunca inventes códigos, usa los vigentes.
                 
                 Responde ÚNICAMENTE en formato JSON: un arreglo de objetos con las llaves: "objeto", "auxiliar", "denominacion", "descripcion", "justificacion".`;
 
@@ -576,4 +576,4 @@
         });
     </script>
 </body>
-</html>
+</html
