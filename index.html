@@ -44,7 +44,7 @@
                 <label class="block text-sm font-bold text-slate-500 mb-3 uppercase tracking-wider">Buscar Objeto de Gasto</label>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <div class="relative flex-1">
-                        <input type="text" id="searchInput" placeholder="Ej. Escritorio, Arveja, Aire Acondicionado..." 
+                        <input type="text" id="searchInput" placeholder="Ej. Escritorio, Sueldo, Limpieza, Viáticos..." 
                                class="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-[#1e3ba6] transition-colors text-lg font-medium placeholder-slate-400">
                     </div>
                     <button id="searchBtn" class="px-8 py-4 bg-[#1e3ba6] hover:bg-blue-800 text-white font-bold rounded-xl shadow-md transition-colors flex justify-center items-center gap-2">
@@ -188,17 +188,48 @@
                 setTimeout(() => msg.classList.add('hidden'), 2500);
             });
 
-            // --- PADRÓN AMPLIADO ---
+            // --- PADRÓN AMPLIADO (EXTENDIDO DESDE 011 HASTA 923) ---
             const PADRON_BASE = {
-                "111": { denominacion: "Alimentos para personas", descripcion: "Víveres, carnes, lácteos, frutas y verduras." },
+                // Grupo 000: Retribuciones Personales
+                "011": { denominacion: "Sueldos básicos de cargos presupuestados", descripcion: "Retribuciones mensuales fijas de funcionarios presupuestados." },
+                "031": { denominacion: "Retribuciones de personal contratado", descripcion: "Salarios correspondientes a personal bajo régimen de contrato." },
+                "042": { denominacion: "Compensaciones", descripcion: "Partidas adicionales por funciones específicas, riesgo, o permanencia." },
+                
+                // Grupo 100: Bienes de Consumo
+                "111": { denominacion: "Alimentos para personas", descripcion: "Víveres, carnes, lácteos, frutas y verduras para consumo humano." },
                 "131": { denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Papelería, útiles de oficina, bolígrafos, resmas, carpetas." },
-                "151": { denominacion: "Productos de limpieza", descripcion: "Higiene y limpieza: lavandina, escobas, jabón, detergente." },
+                "141": { denominacion: "Artículos de caucho", descripcion: "Neumáticos, cámaras y productos manufacturados de caucho." },
+                "142": { denominacion: "Materiales eléctricos", descripcion: "Lámparas, cables, materiales de instalación y repuestos eléctricos." },
+                "149": { denominacion: "Herramientas menores", descripcion: "Herramientas manuales, ferretería y equipos de mantenimiento liviano." },
+                "151": { denominacion: "Productos de limpieza", descripcion: "Higiene y limpieza: lavandina, escobas, detergente, jabón." },
                 "156": { denominacion: "Productos plásticos, acrílicos y similares", descripcion: "Plástico, PVC, baldes, envases, polietileno." },
+                "159": { denominacion: "Otros productos químicos", descripcion: "Productos químicos para laboratorios o procesos específicos." },
+                "161": { denominacion: "Combustibles y lubricantes", descripcion: "Gas oil, naftas, aceites para vehículos y generadores." },
+                "176": { denominacion: "Repuestos y accesorios", descripcion: "Repuestos mecánicos, accesorios para maquinaria y mantenimiento técnico." },
                 "181": { denominacion: "Medicamentos y productos farmacéuticos", descripcion: "Insumos médicos, farmacia, gasas, jeringas, medicamentos." },
-                "142": { denominacion: "Materiales eléctricos", descripcion: "Lámparas, cables, tomacorrientes y afines." },
+                "191": { denominacion: "Otros bienes de consumo", descripcion: "Bienes no clasificados en los rubros anteriores." },
+                
+                // Grupo 200: Servicios No Personales
+                "211": { denominacion: "Comunicaciones", descripcion: "Servicios de telefonía fija, móvil, internet y correos." },
+                "212": { denominacion: "Servicio de agua", descripcion: "Suministro de agua potable para el establecimiento." },
+                "213": { denominacion: "Servicio de electricidad", descripcion: "Suministro de energía eléctrica de la red pública." },
+                "231": { denominacion: "Pasajes", descripcion: "Gastos de transporte para funcionarios en misión de servicio." },
+                "232": { denominacion: "Viáticos", descripcion: "Compensación de gastos de alimentación y alojamiento por traslados." },
+                "241": { denominacion: "Mantenimiento de edificios", descripcion: "Reparaciones menores y mantenimiento de la infraestructura física." },
+                "251": { denominacion: "Arrendamientos de inmuebles", descripcion: "Alquiler de locales, depósitos u oficinas." },
+                "282": { denominacion: "Servicios de vigilancia", descripcion: "Contratación de servicios de seguridad privada o 222." },
+                
+                // Grupo 300: Bienes de Uso (Activos Fijos)
                 "321": { denominacion: "Mobiliario y Equipamiento de Oficina", descripcion: "Escritorios físicos, sillas, estanterías, armarios metálicos." },
-                "322": { denominacion: "Equipo de computación y periféricos", descripcion: "Computadoras, monitores, impresoras, scanners." },
-                "149": { denominacion: "Herramientas menores", descripcion: "Herramientas manuales y repuestos menores de ferretería." }
+                "322": { denominacion: "Equipo de computación y periféricos", descripcion: "Computadoras, monitores, impresoras, servidores." },
+                "323": { denominacion: "Maquinaria y equipo de producción", descripcion: "Equipos industriales o de mantenimiento pesado." },
+                "329": { denominacion: "Otros equipos", descripcion: "Equipos diversos no clasificados anteriormente." },
+                
+                // Grupo 400 a 900: Transferencias y Otros
+                "411": { denominacion: "Transferencias a personas", descripcion: "Prestaciones, subsidios o ayudas directas a individuos." },
+                "511": { denominacion: "Títulos y valores", descripcion: "Adquisición de activos financieros." },
+                "611": { denominacion: "Intereses de la deuda", descripcion: "Pago de intereses por compromisos financieros." },
+                "923": { denominacion: "Reserva para imprevistos", descripcion: "Partida asignada para cubrir gastos no programados o urgencias." }
             };
 
             let PADRON_CGN = { ...PADRON_BASE };
@@ -222,7 +253,7 @@
                 rules.forEach(word => {
                     const rule = diccionarioPersonalizado[word];
                     const div = document.createElement('div');
-                    div.className = 'bg-white border border-slate-200 p-3 rounded-lg shadow-sm animate-result text-xs';
+                    div.className = 'bg-white border border-slate-200 p-3 rounded-lg shadow-sm animate-result text-xs mb-2';
                     div.innerHTML = `
                         <div class="flex justify-between items-start mb-1">
                             <div class="font-bold text-slate-800 capitalize truncate w-4/5">${word}</div>
@@ -380,7 +411,6 @@
                 for (const word in diccionarioPersonalizado) {
                     if (term === word || term.includes(word) || word.includes(term)) {
                         const info = diccionarioPersonalizado[word];
-                        // Usar los datos guardados por el usuario
                         renderizarTarjeta(
                             info.objeto, 
                             info.auxiliar, 
@@ -397,6 +427,7 @@
                 // 2. Coincidencia Local (Sistema)
                 const match = datosActuales.find(item => 
                     normalizar(item.denominacion).includes(term) || 
+                    normalizar(item.descripcion).includes(term) ||
                     term.includes(normalizar(item.denominacion))
                 );
                 
@@ -412,9 +443,21 @@
                         <span>Analizando "${termRaw}" con IA...</span>
                     </div>`;
                 
-                const prompt = `Actúa como asesor de compras de Uruguay. Insumo: "${termRaw}". 
-                Categorías: 111 (Alimentos), 131 (Útiles), 151 (Limpieza), 156 (Plásticos), 181 (Farmacia), 142 (Eléctrico), 321 (Mobiliario), 322 (Computación).
-                Si es un escritorio físico responde 321. Si es papelería responde 131.
+                const prompt = `Actúa como asesor de compras del Estado Uruguayo. Insumo: "${termRaw}". 
+                Categorías obligatorias: 
+                - 011/031 (Sueldos/Contratos)
+                - 111 (Alimentos)
+                - 131 (Útiles/Papelería)
+                - 151 (Limpieza)
+                - 156 (Plásticos)
+                - 181 (Medicamentos)
+                - 142 (Eléctrico)
+                - 149 (Herramientas menores)
+                - 176 (Repuestos)
+                - 232 (Viáticos/Traslados)
+                - 321 (Mobiliario)
+                - 322 (Computación)
+                - 923 (Reserva)
                 Responde brevemente qué es y pon el código al final.`;
 
                 try {
@@ -439,7 +482,7 @@
                         textoRespuesta = data.choices?.[0]?.message?.content || "131";
                     }
 
-                    const codigoMatch = textoRespuesta.match(/\b(111|131|141|151|156|181|142|321|322)\b/);
+                    const codigoMatch = textoRespuesta.match(/\b(0\d\d|1\d\d|2\d\d|3\d\d|4\d\d|923)\b/);
                     const codigo = codigoMatch ? codigoMatch[0] : "131";
                     const padron = PADRON_CGN[codigo] || { denominacion: "Grupo Identificado", descripcion: "Análisis semántico." };
                     
