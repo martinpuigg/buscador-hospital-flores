@@ -151,7 +151,7 @@
                 setTimeout(() => msg.classList.add('hidden'), 2500);
             });
 
-            // --- PADRÓN AMPLIADO ---
+            // --- PADRÓN OFICIAL (VALORES BASE) ---
             const PADRON_BASE = {
                 "111": { denominacion: "Alimentos para personas", descripcion: "Víveres, carnes, lácteos, frutas y verduras." },
                 "131": { denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Papelería, útiles de oficina, bolígrafos, resmas, carpetas." },
@@ -234,13 +234,12 @@
             const searchBtn = document.getElementById('searchBtn');
             const resultsList = document.getElementById('resultsList');
 
-            // FUNCIONES GLOBALES PARA LOS BOTONES DE FEEDBACK
             window.confirmarIA = function(word, obj, aux, just) {
                 const wordNorm = normalizar(word);
                 diccionarioPersonalizado[wordNorm] = { objeto: obj, auxiliar: aux, justificacion: just };
                 localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
                 renderizarReglasManuales();
-                resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">✅ Clasificación confirmada y guardada en tus reglas personales.</div>`;
+                resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">✅ Clasificación confirmada y guardada exitosamente.</div>`;
             };
 
             window.corregirIA = function(word, obj, aux, just) {
@@ -249,37 +248,52 @@
                 document.getElementById('newAux').value = aux;
                 document.getElementById('newJust').value = just;
                 
-                // Efecto visual de resaltado en el formulario
                 const form = document.getElementById('manualForm');
                 form.classList.add('ring-4', 'ring-rose-400');
                 setTimeout(() => form.classList.remove('ring-4', 'ring-rose-400'), 2000);
                 
-                // Scroll suave al formulario
                 form.scrollIntoView({ behavior: 'smooth' });
                 document.getElementById('newObj').focus();
+            };
+
+            // FUNCIONES PARA BÚSQUEDA EXTERNA
+            window.buscarEnCGN = function(word) {
+                // Abre el buscador de CGN o una búsqueda de Google dirigida a CGN para mayor eficacia
+                const url = `https://www.google.com/search?q=site:cgn.gub.uy+objeto+del+gasto+${encodeURIComponent(word)}`;
+                window.open(url, '_blank');
+            };
+
+            window.buscarEnARCE = function(word) {
+                // Abre el buscador de Compras Estatales
+                const url = `https://www.google.com/search?q=site:comprasestatales.gub.uy+catalogo+${encodeURIComponent(word)}`;
+                window.open(url, '_blank');
             };
 
             function renderizarTarjeta(objeto, auxiliar, denominacion, descripcion, justificacion, tipo, queryOriginal) {
                 let etiqueta = '';
                 let feedbackButtons = '';
 
+                const safeJust = justificacion.replace(/'/g, "\\'").replace(/\n/g, " ");
+                const safeWord = queryOriginal.replace(/'/g, "\\'");
+
                 if (tipo === 'manual') {
                     etiqueta = `<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">✍️ Regla Personalizada</span>`;
-                } else if (tipo === 'ia') {
-                    etiqueta = `<span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full border border-purple-200">✨ IA (${aiSelect.value.toUpperCase()})</span>`;
+                } else if (tipo === 'ia' || tipo === 'sistema') {
+                    if (tipo === 'ia') {
+                        etiqueta = `<span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full border border-purple-200">✨ IA (${aiSelect.value.toUpperCase()})</span>`;
+                    } else {
+                        etiqueta = `<span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">📚 Padrón Oficial</span>`;
+                    }
                     
-                    // BOTONES DE ACCIÓN PARA LA IA
                     feedbackButtons = `
                         <div class="mt-6 flex flex-col sm:flex-row gap-3 border-t border-slate-100 pt-6">
-                            <button onclick="confirmarIA('${queryOriginal}', '${objeto}', '${auxiliar}', '${justificacion.replace(/'/g, "\\'")}')" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs hover:bg-emerald-700 transition-colors flex justify-center items-center gap-2 shadow-sm">
-                                ✅ Es Correcto, Guardar
+                            <button onclick="confirmarIA('${safeWord}', '${objeto}', '${auxiliar}', '${safeJust}')" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs hover:bg-emerald-700 transition-colors flex justify-center items-center gap-2 shadow-sm">
+                                ✅ Confirmar Imputación
                             </button>
-                            <button onclick="corregirIA('${queryOriginal}', '${objeto}', '${auxiliar}', '${justificacion.replace(/'/g, "\\'")}')" class="flex-1 py-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl font-bold text-xs hover:bg-rose-100 transition-colors flex justify-center items-center gap-2">
+                            <button onclick="corregirIA('${safeWord}', '${objeto}', '${auxiliar}', '${safeJust}')" class="flex-1 py-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl font-bold text-xs hover:bg-rose-100 transition-colors flex justify-center items-center gap-2">
                                 ❌ Corregir Objeto
                             </button>
                         </div>`;
-                } else {
-                    etiqueta = `<span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">📚 Padrón Oficial</span>`;
                 }
 
                 resultsList.innerHTML = `
@@ -289,8 +303,18 @@
                             ${etiqueta}
                         </div>
                         <h2 class="font-extrabold text-2xl text-slate-800 uppercase mb-2 leading-tight">${denominacion}</h2>
-                        <p class="text-slate-600 font-medium italic border-l-4 border-slate-200 pl-4 mb-6 leading-relaxed">${descripcion}</p>
+                        <p class="text-slate-600 font-medium italic border-l-4 border-slate-200 pl-4 mb-4 leading-relaxed">${descripcion}</p>
                         
+                        <!-- BOTONES DE CONSULTA EXTERNA OFICIAL -->
+                        <div class="mb-6 flex flex-wrap gap-2">
+                            <button onclick="buscarEnCGN('${safeWord}')" class="text-[10px] font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors flex items-center gap-1">
+                                🌐 Consultar CGN
+                            </button>
+                            <button onclick="buscarEnARCE('${safeWord}')" class="text-[10px] font-bold text-[#1e3ba6] bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors flex items-center gap-1">
+                                🛒 Consultar Catálogo ARCE
+                            </button>
+                        </div>
+
                         <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 relative overflow-hidden">
                             <div class="absolute top-0 left-0 w-1.5 h-full bg-[#1e3ba6]"></div>
                             <h4 class="text-xs font-black text-[#1e3ba6] uppercase mb-2 flex items-center gap-2">
@@ -318,15 +342,14 @@
                     }
                 }
 
-                // 2. Coincidencia Local
+                // 2. Coincidencia Local (Sistema)
                 const match = datosActuales.find(item => 
                     normalizar(item.denominacion).includes(term) || 
-                    term.includes(normalizar(item.denominacion)) ||
-                    (term.length > 4 && normalizar(item.denominacion).startsWith(term.substring(0, 4)))
+                    term.includes(normalizar(item.denominacion))
                 );
                 
                 if (match) {
-                    renderizarTarjeta(match.objeto, match.auxiliar, match.denominacion, match.descripcion, "Coincidencia semántica directa encontrada en el padrón.", 'sistema', termRaw);
+                    renderizarTarjeta(match.objeto, match.auxiliar, match.denominacion, match.descripcion, "Coincidencia semántica encontrada en el padrón base.", 'sistema', termRaw);
                     return;
                 }
 
@@ -334,14 +357,20 @@
                 resultsList.innerHTML = `
                     <div class="bg-purple-50 p-10 text-center text-purple-700 font-bold rounded-xl animate-pulse shadow-inner flex flex-col items-center gap-3">
                         <span class="text-4xl">🧠</span>
-                        <span>Analizando "${termRaw}" con Inteligencia Artificial...</span>
+                        <span>Analizando "${termRaw}" con IA...</span>
                     </div>`;
                 
                 const prompt = `Actúa como asesor de compras de Uruguay. Insumo: "${termRaw}". 
-                Si es un mueble físico (escritorio, silla, estante) usa 321. 
-                Si es papelería o útiles pequeños (bolígrafo, papel, regla) usa 131.
-                Si es comida usa 111. Si es limpieza usa 151. Si es computación usa 322.
-                Responde brevemente qué es y pon el código al final.`;
+                Categorías principales: 
+                - 111 (Alimentos)
+                - 131 (Papelería/Útiles pequeños)
+                - 151 (Limpieza)
+                - 156 (Plásticos/Envases)
+                - 181 (Farmacia/Gasa/Jeringa)
+                - 142 (Material Eléctrico)
+                - 321 (MOBILIARIO: Mesas, escritorios físicos, sillas)
+                - 322 (COMPUTACIÓN: Monitores, PC, impresoras)
+                Responde brevemente qué es y pon el código al final. Sé preciso diferenciando muebles (321) de útiles (131).`;
 
                 try {
                     let textoRespuesta = "";
@@ -349,9 +378,9 @@
                         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                         const res = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
                         const data = await res.json();
-                        textoRespuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || "000";
+                        textoRespuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || "131";
                     } else {
-                        if (!GROQ_API_KEY) throw new Error("⚠️ Por favor vincula tu llave de Groq en el panel derecho.");
+                        if (!GROQ_API_KEY) throw new Error("⚠️ Vincula tu llave de Groq primero.");
                         const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
                             method: 'POST',
                             headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' },
@@ -362,7 +391,7 @@
                             })
                         });
                         const data = await res.json();
-                        textoRespuesta = data.choices?.[0]?.message?.content || "000";
+                        textoRespuesta = data.choices?.[0]?.message?.content || "131";
                     }
 
                     const codigoMatch = textoRespuesta.match(/\b(111|131|141|151|156|181|142|321|322)\b/);
@@ -372,21 +401,13 @@
                     renderizarTarjeta(codigo, "000", padron.denominacion, padron.descripcion, textoRespuesta.replace(codigo, '').trim(), 'ia', termRaw);
                     
                 } catch (e) {
-                    resultsList.innerHTML = `
-                        <div class="bg-rose-50 p-8 text-center rounded-2xl border-2 border-dashed border-rose-300">
-                            <h3 class="text-rose-700 font-bold text-lg">${e.message.includes("llave") ? "Falta Configuración" : "Error en la IA"}</h3>
-                            <p class="text-rose-500 text-xs mt-2 mb-4">${e.message}</p>
-                            <div class="p-3 bg-white/50 rounded-lg text-rose-800 text-xs italic">
-                                Puedes agregar la regla manualmente a la derecha.
-                            </div>
-                        </div>`;
+                    resultsList.innerHTML = `<div class="bg-rose-50 p-8 text-center rounded-2xl border-2 border-dashed border-rose-300 font-bold text-rose-700">${e.message}</div>`;
                 }
             }
 
             searchBtn.addEventListener('click', ejecutarBusqueda);
             searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') ejecutarBusqueda(); });
 
-            // --- CARGA CSV ---
             document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('csvFileInput').click());
             document.getElementById('csvFileInput').addEventListener('change', function(e) {
                 if (!e.target.files[0]) return;
@@ -399,7 +420,7 @@
                             denominacion: (row.denominacion || row.Denominacion || "").trim(),
                             descripcion: (row.descripcion || row.Descripcion || "").trim()
                         }));
-                        resultsList.innerHTML = `<div class="bg-blue-50 border border-blue-200 p-6 rounded-2xl text-blue-800 text-center font-bold animate-result shadow-sm">📂 Padrón CSV cargado correctamente.</div>`;
+                        resultsList.innerHTML = `<div class="bg-blue-50 border border-blue-200 p-6 rounded-2xl text-blue-800 text-center font-bold animate-result shadow-sm">📂 Padrón cargado correctamente.</div>`;
                     }
                 });
             });
