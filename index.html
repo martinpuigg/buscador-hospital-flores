@@ -191,6 +191,10 @@
             border-left-color: #ffaa00;
             background: rgba(255, 170, 0, 0.05);
         }
+        .result-card.confirmed {
+            border-left-color: #00b300;
+            background: rgba(0, 179, 0, 0.05);
+        }
         .codigo-badge {
             background: #003ca5;
             color: #ffffff; padding: 8px 20px; border-radius: 20px;
@@ -426,7 +430,7 @@
         // 👇👇👇 ¡PON TU LLAVE DE GEMINI AQUÍ ABAJO! 👇👇👇
         // Si vas a usar el botón "Preview" de esta página, DEBES dejarla vacía ("").
         // Si vas a guardar este archivo en tu PC para usarlo, pega tu llave entre las comillas.
-        const apiKey = "AIzaSyAgs8WWB3-TqljduiPkc7BCK2ezU81tVuE";
+        const apiKey = "";
         
         // ============================================
         // 🧠 SISTEMA DE APRENDIZAJE DE IA
@@ -900,7 +904,7 @@
             
             resultados.forEach((r, index) => {
                 html += `
-                    <div class="result-card ${index === 0 && !esDeInternet ? 'selected' : ''}" onclick="selectResult(event, '${r.objeto}', '${r.auxiliar}', '${originalQuery}')">
+                    <div class="result-card ${index === 0 && !esDeInternet ? 'selected' : ''}" data-is-first="${index === 0}" onclick="selectResult(event, '${r.objeto}', '${r.auxiliar}', '${originalQuery}')">
                         <div class="result-header">
                             <span class="codigo-badge">${r.objeto}/${r.auxiliar}</span>
                             <span class="relevancia-badge">${esDeInternet ? '🧠 Certeza IA: Alta' : '📊 Relevancia: ' + r.relevancia + '%'}</span>
@@ -919,7 +923,7 @@
                         
                         ${!esDeInternet && r.keywordEncontrada ? `<div class="keyword-match" style="display:block; margin-top:12px;">🏷️ Coincidencia: ${r.keywordEncontrada}</div>` : ''}
                         
-                        ${index === 0 && !esDeInternet ? '<div style="margin-top: 10px; color: #cc8800; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
+                        ${index === 0 && !esDeInternet ? '<div class="confirm-msg" style="margin-top: 10px; color: #cc8800; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
                     </div>
                 `;
             });
@@ -992,11 +996,36 @@
             }
 
             const card = event.target.closest('.result-card');
-            document.querySelectorAll('.result-card').forEach(c => c.classList.remove('selected'));
-            if(card) card.classList.add('selected');
+            
+            // Eliminar estados de todas las tarjetas y restaurar mensajes
+            document.querySelectorAll('.result-card').forEach(c => {
+                c.classList.remove('selected', 'confirmed');
+                const msgEl = c.querySelector('.confirm-msg');
+                if (msgEl && c.getAttribute('data-is-first') === 'true') {
+                    msgEl.innerHTML = '⭐ Mejor resultado (click para confirmar)';
+                    msgEl.style.color = '#cc8800';
+                } else if (msgEl && c.getAttribute('data-is-first') !== 'true') {
+                    msgEl.remove(); // Removemos si se agregó dinámicamente a una que no era la primera
+                }
+            });
+            
+            // Agregar confirmación verde a la clickeada
+            if(card) {
+                card.classList.add('confirmed');
+                let msgEl = card.querySelector('.confirm-msg');
+                if (!msgEl) {
+                    msgEl = document.createElement('div');
+                    msgEl.className = 'confirm-msg';
+                    msgEl.style.marginTop = '10px';
+                    msgEl.style.fontWeight = '600';
+                    card.appendChild(msgEl);
+                }
+                msgEl.innerHTML = '✅ ¡Confirmado y aprendido!';
+                msgEl.style.color = '#00b300';
+            }
             
             const feedback = document.createElement('div');
-            feedback.style.cssText = 'background: rgba(0, 60, 165, 0.1); border: 1px solid #003ca5; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; color: #003ca5; font-weight: 600;';
+            feedback.style.cssText = 'background: rgba(0, 179, 0, 0.1); border: 1px solid #00b300; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; color: #00b300; font-weight: 600;';
             feedback.innerHTML = `✅ ¡Localmente aprendido! "${queryToLearn}" ya no necesitará consultar internet y se cargará al instante.`;
             
             const existingFeedback = document.querySelector('.ai-feedback');
