@@ -386,7 +386,7 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lechuga, lápiz, cubierta..."
+                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, vaso, lápiz..."
                     onkeypress="if(event.key === 'Enter') buscar()"
                 >
                 <button onclick="buscar()">🔎 Buscar objeto</button>
@@ -429,7 +429,7 @@
         
         // 👇👇👇 ¡PON TU LLAVE DE GEMINI AQUÍ ABAJO! 👇👇👇
         // Si vas a usar el botón "Preview" de esta página, DEBES dejarla vacía ("").
-        // Si vas a guardar este archivo en tu PC para usarlo, pega tu llave entre las comillas.
+        // Si vas a guardar este archivo en tu PC para usarlo, pega tu llave entre las comillas (ej: "AIzaSy...").
         const apiKey = "AIzaSyAgs8WWB3-TqljduiPkc7BCK2ezU81tVuE";
         
         // ============================================
@@ -451,6 +451,7 @@
             'leche': ['111'], 'huevos': ['111'], 'pescado': ['111'], 'pollo': ['111'], 
             'queso': ['111'], 'fruta': ['111'], 'ensalada': ['111'], 'tomate': ['111'], 
             'atun': ['111'], 'arveja': ['111'], 'fideo': ['111'], 'yerba': ['111'],
+            'vaso': ['193', '195', '199'], 'plato': ['193', '195', '199'], 'taza': ['193', '195', '199'], 'cubierto': ['193', '195', '199'], 'menaje': ['193', '195', '199'],
             'sueldo': ['011', '021', '031'], 'salario': ['011', '021'], 'remuneracion': ['011'], 'jornal': ['011', '031'], 'paga': ['011'],
             'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'], 'diesel': ['141'], 'gasolina': ['141'], 'petroleo': ['141'],
             'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'], 'vacuna': ['152'], 'pastilla': ['152'], 'jarabe': ['152'],
@@ -881,7 +882,15 @@
                 mostrarError(query);
             } catch (error) {
                 console.error("Error consultando Gemini:", error);
-                mostrarError(query, `<br><br>💡 <strong>Detalle técnico para el administrador:</strong> ${error.message}`);
+                
+                let userMsg = `<br><br>💡 <strong>Detalle técnico para el administrador:</strong> ${error.message}`;
+                
+                // Si el error es de llave faltante, mostramos un mensaje amigable indicando la solución
+                if (error.message.includes("API Key not found") || error.message.includes("API key not valid") || error.message.includes("unregistered callers")) {
+                    userMsg = `<br><br>🔑 <strong>Falta tu Llave API:</strong> Como estás usando el buscador en tu PC, necesitas abrir el archivo con el Bloc de Notas, buscar la línea que dice <code>const apiKey = "";</code> y pegar tu Llave de Google entre las comillas (ejemplo: <code>const apiKey = "AIzaSy...";</code>).`;
+                }
+                
+                mostrarError(query, userMsg);
             }
         }
 
