@@ -382,7 +382,7 @@
                 <input 
                     type="text" 
                     id="searchInput" 
-                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lechuga..."
+                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, regla, útiles, lechuga, lápiz..."
                     onkeypress="if(event.key === 'Enter') buscar()"
                 >
                 <button onclick="buscar()">🔎 Buscar objeto</button>
@@ -822,7 +822,7 @@
                 });
                 const resumenCatalogo = Object.entries(categoriasDisponibles).map(([obj, den]) => `- ${obj}: ${den}`).join('\n');
 
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
                 
                 const promptText = `
                     Actúa como un experto contable de la Contaduría General de la Nación de Uruguay.
@@ -864,7 +864,12 @@
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(payload)
                         });
-                        if (!response.ok) throw new Error('API Error');
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({}));
+                            throw new Error(errorData?.error?.message || `Error HTTP ${response.status}`);
+                        }
+                        
                         resultData = await response.json();
                         break;
                     } catch (error) {
@@ -901,7 +906,7 @@
                 mostrarError(query); // Si la IA devolvió null o no hizo match
             } catch (error) {
                 console.error("Error consultando Gemini:", error);
-                mostrarError(query, "<br><br>💡 Revisa que tu Llave API de Gemini esté ingresada correctamente en el código.");
+                mostrarError(query, `<br><br>💡 <strong>Detalle del error:</strong> ${error.message}`);
             }
         }
 
