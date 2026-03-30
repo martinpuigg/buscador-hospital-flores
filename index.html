@@ -448,13 +448,20 @@
                         <div class="text-xs font-normal">Estoy buscando las 10 mejores opciones de clasificación para ti.</div>
                     </div>`;
                 
-                const prompt = `Actúa como asesor contable uruguayo para compras estatales. Para el insumo solicitado: "${termRaw}", identifica las 10 opciones de clasificación (Objeto del Gasto y Auxiliar) más probables del catálogo CGN (rango 011 al 923).
-                IMPORTANTE:
-                - Varillas hierro/metales básicos: 171.
-                - Herramientas manuales/martillos/repuestos: 176.
-                - Muebles físicos: 321.
-                - Útiles/Papelería: 131.
-                - Servicios de limpieza: 281 / Insumos: 151.
+                const prompt = `Actúa como experto asesor contable uruguayo para compras estatales.
+                El usuario busca el insumo: "${termRaw}".
+                
+                INSTRUCCIÓN CLAVE PARA VARIANTES:
+                Si el usuario ingresa un término genérico que puede estar hecho de distintos materiales o tener distintos usos (ej. "caño" puede ser PVC o Metal; "guantes" pueden ser quirúrgicos o de obra; "papel" puede ser higiénico o de oficina), DEBES generar opciones separadas para cada variante.
+                En el campo "justificacion", empieza SIEMPRE en mayúsculas aclarando la variante (Ej: "SI ES CAÑO DE PVC: ...", "SI ES CAÑO DE METAL: ...", "SI ES USO MÉDICO: ...").
+                
+                IMPORTANTE (Catálogo CGN 011 a 923):
+                - Artículos de plástico/PVC (ej. caño PVC): 114
+                - Hierro/metales básicos (ej. caño hierro, varillas): 171
+                - Herramientas manuales/repuestos: 176
+                - Muebles físicos: 321
+                - Útiles/Papelería (ej. resmas de papel): 131
+                - Insumos de limpieza y aseo (ej. papel higiénico): 151
                 
                 Responde ÚNICAMENTE en formato JSON: un arreglo de objetos con las llaves: "objeto", "auxiliar", "denominacion", "descripcion", "justificacion".`;
 
