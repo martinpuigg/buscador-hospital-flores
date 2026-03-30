@@ -43,7 +43,7 @@
                 <label class="block text-sm font-bold text-slate-500 mb-3 uppercase tracking-wider">Buscar Objeto de Gasto</label>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <div class="relative flex-1">
-                        <input type="text" id="searchInput" placeholder="Ej. Martillo, Escritorio, Sueldo, Viáticos..." 
+                        <input type="text" id="searchInput" placeholder="Ej. Varilla, Martillo, Escritorio, Viáticos..." 
                                class="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-[#1e3ba6] transition-colors text-lg font-medium placeholder-slate-400">
                     </div>
                     <button id="searchBtn" class="px-8 py-4 bg-[#1e3ba6] hover:bg-blue-800 text-white font-bold rounded-xl shadow-md transition-colors flex justify-center items-center gap-2">
@@ -55,7 +55,7 @@
             
             <div id="resultsList" class="space-y-4 pb-12">
                 <div class="bg-white p-8 text-center text-slate-400 rounded-xl border border-dashed border-slate-300">
-                    Introduce un término para determinar su código (011 al 923).
+                    Introduce un término para encontrar su código presupuestal.
                 </div>
             </div>
         </div>
@@ -85,56 +85,71 @@
 
             <!-- BLOQUE: Base de Datos y Reglas -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h3 class="font-bold text-[#1e3ba6] mb-2 flex items-center gap-2 text-md">
-                    <span>🧠</span> Enseñar al Buscador
-                </h3>
-                <div id="manualForm" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4 transition-all duration-300">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Palabra Clave</label>
-                        <input type="text" id="newWord" placeholder="Ej. Escritorio" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6]">
-                    </div>
+                
+                <!-- SECCIÓN DESPLEGABLE: ENSEÑAR AL BUSCADOR -->
+                <div class="mb-4">
+                    <details class="group">
+                        <summary class="flex justify-between items-center font-bold text-[10px] text-[#1e3ba6] uppercase cursor-pointer hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                            🧠 Enseñar al Buscador
+                            <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </summary>
+                        <div id="manualForm" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mt-2 transition-all duration-300">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Palabra Clave</label>
+                                <input type="text" id="newWord" placeholder="Ej. Varilla" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6]">
+                            </div>
 
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Objeto</label>
-                            <input type="text" id="newObj" placeholder="176" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Objeto</label>
+                                    <input type="text" id="newObj" placeholder="171" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Auxiliar</label>
+                                    <input type="text" id="newAux" placeholder="000" value="000" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Título (Denominación)</label>
+                                <input type="text" id="newDenom" placeholder="Ej. Productos metálicos básicos" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6]">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Grupo (Opcional)</label>
+                                <input type="text" id="newGroup" placeholder="Ej. Bienes de Consumo" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Subgrupo (Opcional)</label>
+                                <input type="text" id="newSubgroup" placeholder="Ej. Artículos metálicos" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Descripción</label>
+                                <textarea id="newDesc" placeholder="Definición oficial..." rows="2" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none resize-none"></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Justificación</label>
+                                <textarea id="newJust" placeholder="Por qué se clasifica así..." rows="2" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none resize-none"></textarea>
+                            </div>
+
+                            <button id="saveWordBtn" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs uppercase shadow-sm">
+                                💾 Guardar Regla
+                            </button>
+                            <div id="saveMsg" class="text-xs text-center font-bold text-emerald-600 hidden">¡Guardado con éxito!</div>
                         </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Auxiliar</label>
-                            <input type="text" id="newAux" placeholder="000" value="000" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Título (Denominación)</label>
-                        <input type="text" id="newDenom" placeholder="Ej. Herramientas y Repuestos" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6]">
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Descripción</label>
-                        <textarea id="newDesc" placeholder="Definición oficial..." rows="2" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none resize-none"></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Justificación</label>
-                        <textarea id="newJust" placeholder="Por qué se clasifica así..." rows="2" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none resize-none"></textarea>
-                    </div>
-
-                    <button id="saveWordBtn" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs uppercase shadow-sm">
-                        💾 Guardar Regla
-                    </button>
-                    <div id="saveMsg" class="text-xs text-center font-bold text-emerald-600 hidden">¡Guardado con éxito!</div>
+                    </details>
                 </div>
 
-                <!-- SECCIÓN DE RESPALDO Y LISTA -->
-                <div class="mt-4 pt-4 border-t border-slate-200">
-                    <details class="group" open>
+                <div class="pt-4 border-t border-slate-200">
+                    <details class="group">
                         <summary class="flex justify-between items-center font-bold text-[10px] text-slate-500 uppercase cursor-pointer hover:text-[#1e3ba6] transition-colors">
                             Mis Clasificaciones Guardadas
                             <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </summary>
                         
-                        <!-- BOTONES DE EXPORTAR / IMPORTAR -->
                         <div class="mt-3 grid grid-cols-2 gap-2">
                             <button id="exportRulesBtn" class="flex items-center justify-center gap-1 py-2 bg-slate-100 text-slate-600 rounded-lg text-[9px] font-bold uppercase hover:bg-slate-200 transition-colors border border-slate-200 shadow-sm">
                                 📤 Exportar
@@ -145,9 +160,7 @@
                             <input type="file" id="importRulesInput" class="hidden" accept=".json">
                         </div>
 
-                        <div id="manualRulesContainer" class="space-y-2 mt-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
-                            <!-- Las reglas se cargan aquí -->
-                        </div>
+                        <div id="manualRulesContainer" class="space-y-2 mt-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar"></div>
                     </details>
                 </div>
 
@@ -171,7 +184,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script>
-        const apiKey = ""; // Gemini API handled by env
+        const apiKey = ""; 
 
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -200,12 +213,27 @@
                 setTimeout(() => msg.classList.add('hidden'), 2500);
             });
 
-            // --- PADRÓN BASE OFICIAL (ACTUALIZADO) ---
+            // --- NOMBRES OFICIALES DE GRUPOS ---
+            const NOMBRES_GRUPOS = {
+                "000": "Retribuciones Personales",
+                "100": "Bienes de Consumo",
+                "200": "Servicios No Personales",
+                "300": "Bienes de Uso",
+                "400": "Transferencias",
+                "500": "Activos Financieros",
+                "600": "Intereses y Gastos de Deuda",
+                "700": "Gastos de Inversión",
+                "800": "Otros Gastos",
+                "900": "Reservas y Otros"
+            };
+
+            // --- PADRÓN BASE OFICIAL ---
             const PADRON_BASE = {
                 "011": { denominacion: "Sueldo básico de cargos", descripcion: "Retribuciones del personal que ocupa cargos presupuestados permanentes." },
                 "111": { denominacion: "Alimentos para personas", descripcion: "Víveres, carnes, lácteos, frutas y verduras." },
                 "131": { denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Papelería, bolígrafos, resmas, carpetas y artículos de oficina." },
                 "151": { denominacion: "Productos de limpieza, aseo y fumigación", descripcion: "Higiene y limpieza: lavandina, escobas, jabón, desinfectantes." },
+                "171": { denominacion: "Productos metálicos básicos", descripcion: "Incluye hierro, VARILLAS, perfiles, chapas y otros materiales metálicos básicos." },
                 "176": { denominacion: "Repuestos y accesorios", descripcion: "Incluye HERRAMIENTAS manuales (martillo, pinza, etc.), repuestos mecánicos y accesorios." },
                 "321": { denominacion: "Mobiliario y equipo de oficina", descripcion: "Bienes de uso: escritorios físicos, mesas, sillas, armarios." },
                 "322": { denominacion: "Equipo de computación y periféricos", descripcion: "Computadoras, monitores, impresoras, servidores." },
@@ -219,7 +247,17 @@
 
             const normalizar = (text) => text ? text.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
 
-            // --- GESTIÓN DE REGLAS MANUALES ---
+            const getGrupoInfo = (obj) => {
+                const gCode = obj.charAt(0) + "00";
+                return { code: gCode, name: NOMBRES_GRUPOS[gCode] || "Grupo General" };
+            };
+
+            const getSubgrupoInfo = (obj) => {
+                const sCode = obj.substring(0, 2) + "0";
+                return { code: sCode };
+            };
+
+            // --- REGLAS MANUALES ---
             let diccionarioPersonalizado = JSON.parse(localStorage.getItem('diccionarioCGN')) || {};
             const manualRulesContainer = document.getElementById('manualRulesContainer');
 
@@ -227,7 +265,7 @@
                 manualRulesContainer.innerHTML = '';
                 const rules = Object.keys(diccionarioPersonalizado);
                 if (rules.length === 0) {
-                    manualRulesContainer.innerHTML = '<p class="text-[10px] text-slate-400 italic text-center py-2">Sin clasificaciones guardadas.</p>';
+                    manualRulesContainer.innerHTML = '<p class="text-[10px] text-slate-400 italic text-center py-2">Sin clasificaciones.</p>';
                     return;
                 }
                 rules.forEach(word => {
@@ -260,41 +298,30 @@
             }
             renderizarReglasManuales();
 
-            // --- RESPALDO: EXPORTAR E IMPORTAR ---
+            // --- RESPALDO ---
             document.getElementById('exportRulesBtn').addEventListener('click', () => {
-                if (Object.keys(diccionarioPersonalizado).length === 0) {
-                    alert("No hay clasificaciones para exportar.");
-                    return;
-                }
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(diccionarioPersonalizado, null, 2));
                 const downloadAnchorNode = document.createElement('a');
                 downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download", "respaldo_palabras_aprendidas.json");
+                downloadAnchorNode.setAttribute("download", "respaldo_clasificador.json");
                 document.body.appendChild(downloadAnchorNode);
                 downloadAnchorNode.click();
                 downloadAnchorNode.remove();
             });
 
-            document.getElementById('importRulesBtn').addEventListener('click', () => {
-                document.getElementById('importRulesInput').click();
-            });
-
+            document.getElementById('importRulesBtn').addEventListener('click', () => document.getElementById('importRulesInput').click());
             document.getElementById('importRulesInput').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = (event) => {
                     try {
                         const imported = JSON.parse(event.target.result);
-                        if (confirm("¿Quieres cargar este respaldo? Se combinará con tus reglas actuales.")) {
-                            diccionarioPersonalizado = { ...diccionarioPersonalizado, ...imported };
-                            localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
-                            renderizarReglasManuales();
-                            alert("¡Respaldo importado correctamente!");
-                        }
-                    } catch (err) {
-                        alert("Error: El archivo no es un respaldo válido.");
-                    }
+                        diccionarioPersonalizado = { ...diccionarioPersonalizado, ...imported };
+                        localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
+                        renderizarReglasManuales();
+                        alert("¡Importado!");
+                    } catch (err) { alert("Error al cargar."); }
                 };
                 reader.readAsText(file);
             });
@@ -306,18 +333,21 @@
                 const denom = document.getElementById('newDenom').value.trim();
                 const desc = document.getElementById('newDesc').value.trim();
                 const just = document.getElementById('newJust').value.trim();
+                const group = document.getElementById('newGroup').value.trim();
+                const sub = document.getElementById('newSubgroup').value.trim();
+
                 if (!word || !obj) return;
                 
-                diccionarioPersonalizado[word] = { objeto: obj, auxiliar: aux, denominacion: denom, descripcion: desc, justificacion: just };
+                diccionarioPersonalizado[word] = { 
+                    objeto: obj, auxiliar: aux, denominacion: denom, 
+                    descripcion: desc, justificacion: just, 
+                    grupoManual: group, subgrupoManual: sub 
+                };
                 localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
                 renderizarReglasManuales();
                 
-                document.getElementById('newWord').value = '';
-                document.getElementById('newObj').value = '';
-                document.getElementById('newDenom').value = '';
-                document.getElementById('newDesc').value = '';
-                document.getElementById('newJust').value = '';
-                
+                // Limpiar
+                ['newWord', 'newObj', 'newDenom', 'newDesc', 'newJust', 'newGroup', 'newSubgroup'].forEach(id => document.getElementById(id).value = '');
                 const msg = document.getElementById('saveMsg');
                 msg.classList.remove('hidden');
                 setTimeout(() => msg.classList.add('hidden'), 2500);
@@ -328,34 +358,44 @@
             const searchBtn = document.getElementById('searchBtn');
             const resultsList = document.getElementById('resultsList');
 
-            window.confirmarIA = function(word, obj, aux, just, denom, desc) {
+            window.confirmarIA = function(word, obj, aux, just, denom, desc, group, sub) {
                 const wordNorm = normalizar(word);
-                diccionarioPersonalizado[wordNorm] = { objeto: obj, auxiliar: aux, denominacion: denom, descripcion: desc, justificacion: just };
+                diccionarioPersonalizado[wordNorm] = { objeto: obj, auxiliar: aux, denominacion: denom, descripcion: desc, justificacion: just, grupoManual: group, subgrupoManual: sub };
                 localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
                 renderizarReglasManuales();
-                resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">✅ Confirmado. Palabra guardada en tus reglas.</div>`;
+                resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">✅ Clasificación guardada.</div>`;
             };
 
-            window.corregirIA = function(word, obj, aux, just, denom, desc) {
+            window.corregirIA = function(word, obj, aux, just, denom, desc, group, sub) {
                 document.getElementById('newWord').value = word;
                 document.getElementById('newObj').value = obj;
                 document.getElementById('newAux').value = aux;
                 document.getElementById('newDenom').value = denom;
                 document.getElementById('newDesc').value = desc;
                 document.getElementById('newJust').value = just;
+                document.getElementById('newGroup').value = group;
+                document.getElementById('newSubgroup').value = sub;
+                const details = document.querySelector('#manualForm').closest('details');
+                if (details) details.open = true;
                 const form = document.getElementById('manualForm');
                 form.classList.add('ring-4', 'ring-rose-400');
                 setTimeout(() => form.classList.remove('ring-4', 'ring-rose-400'), 2000);
                 form.scrollIntoView({ behavior: 'smooth' });
             };
 
-            function renderizarTarjeta(objeto, auxiliar, denominacion, descripcion, justificacion, tipo, queryOriginal) {
+            function renderizarTarjeta(objeto, auxiliar, denominacion, descripcion, justificacion, tipo, queryOriginal, manualGroup, manualSub) {
                 let etiqueta = '';
                 let feedbackButtons = '';
+                
+                const groupInfo = manualGroup ? { code: objeto.charAt(0) + "00", name: manualGroup } : getGrupoInfo(objeto);
+                const subInfo = manualSub ? { code: objeto.substring(0, 2) + "0", name: manualSub } : getSubgrupoInfo(objeto);
+
                 const safeJust = justificacion.replace(/'/g, "\\'").replace(/\n/g, " ");
                 const safeWord = queryOriginal.replace(/'/g, "\\'");
                 const safeDenom = denominacion.replace(/'/g, "\\'");
                 const safeDesc = descripcion.replace(/'/g, "\\'");
+                const safeGroup = groupInfo.name.replace(/'/g, "\\'");
+                const safeSub = (subInfo.name || "General").replace(/'/g, "\\'");
 
                 if (tipo === 'manual') {
                     etiqueta = `<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">✍️ Tu Clasificación</span>`;
@@ -363,8 +403,8 @@
                     etiqueta = tipo === 'ia' ? `<span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full border border-purple-200">✨ IA (${aiSelect.value.toUpperCase()})</span>` : `<span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">📚 Padrón Oficial</span>`;
                     feedbackButtons = `
                         <div class="mt-6 flex flex-col sm:flex-row gap-3 border-t border-slate-100 pt-6">
-                            <button onclick="confirmarIA('${safeWord}', '${objeto}', '${auxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}')" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs hover:bg-emerald-700 transition-colors flex justify-center items-center gap-2 shadow-sm">✅ Confirmar</button>
-                            <button onclick="corregirIA('${safeWord}', '${objeto}', '${auxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}')" class="flex-1 py-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl font-bold text-xs hover:bg-rose-100 transition-colors flex justify-center items-center gap-2">❌ Corregir</button>
+                            <button onclick="confirmarIA('${safeWord}', '${objeto}', '${auxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}')" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs hover:bg-emerald-700 transition-colors flex justify-center items-center gap-2 shadow-sm">✅ Confirmar</button>
+                            <button onclick="corregirIA('${safeWord}', '${objeto}', '${auxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}')" class="flex-1 py-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl font-bold text-xs hover:bg-rose-100 transition-colors flex justify-center items-center gap-2">❌ Corregir</button>
                         </div>`;
                 }
 
@@ -374,11 +414,19 @@
                             <div class="bg-[#1e3ba6] text-white font-black px-5 py-2 rounded-full text-sm">OBJETO ${objeto} / ${auxiliar}</div>
                             ${etiqueta}
                         </div>
+
+                        <!-- JERARQUÍA -->
+                        <div class="flex gap-4 mb-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            <div>GRUPO <span class="text-slate-600">${groupInfo.code} - ${groupInfo.name}</span></div>
+                            <div>SUBGRUPO <span class="text-slate-600">${subInfo.code}</span></div>
+                        </div>
+
                         <h2 class="font-extrabold text-2xl text-slate-800 uppercase mb-2 leading-tight">${denominacion}</h2>
                         <p class="text-slate-600 font-medium italic border-l-4 border-slate-200 pl-4 mb-6 leading-relaxed">${descripcion}</p>
+                        
                         <div class="bg-blue-50 border border-blue-100 rounded-xl p-5 relative overflow-hidden">
                             <div class="absolute top-0 left-0 w-1.5 h-full bg-[#1e3ba6]"></div>
-                            <h4 class="text-xs font-black text-[#1e3ba6] uppercase mb-2 flex items-center gap-2"><span>💡</span> Justificación</h4>
+                            <h4 class="text-xs font-black text-[#1e3ba6] uppercase mb-2">💡 Justificación</h4>
                             <p class="text-slate-700 font-medium leading-relaxed">${justificacion}</p>
                         </div>
                         ${feedbackButtons}
@@ -390,16 +438,14 @@
                 const term = normalizar(termRaw);
                 if (!term) return;
 
-                // 1. Prioridad: Reglas manuales cargadas
                 for (const word in diccionarioPersonalizado) {
                     if (term === word || term.includes(word) || word.includes(term)) {
                         const info = diccionarioPersonalizado[word];
-                        renderizarTarjeta(info.objeto, info.auxiliar, info.denominacion || "Rubro Personalizado", info.descripcion || "Definido por usuario", info.justificacion, 'manual', termRaw);
+                        renderizarTarjeta(info.objeto, info.auxiliar, info.denominacion || "Rubro Personalizado", info.descripcion || "Definido por usuario", info.justificacion, 'manual', termRaw, info.grupoManual, info.subgrupoManual);
                         return;
                     }
                 }
 
-                // 2. Prioridad: Búsqueda en Padrón Local
                 const match = datosActuales.find(item => 
                     normalizar(item.denominacion).includes(term) || 
                     normalizar(item.descripcion).includes(term) ||
@@ -411,16 +457,16 @@
                     return;
                 }
 
-                // 3. IA
                 resultsList.innerHTML = `<div class="bg-purple-50 p-10 text-center text-purple-700 font-bold rounded-xl animate-pulse shadow-inner">🧠 Analizando con IA...</div>`;
                 
-                const prompt = `Actúa como asesor contable de Uruguay. Insumo: "${termRaw}". 
+                const prompt = `Actúa como asesor contable uruguayo. Insumo: "${termRaw}". 
                 REGLAS:
-                - Herramientas manuales y repuestos: 176.
+                - Varillas hierro/chapas: 171.
+                - Herramientas/martillos: 176.
                 - Muebles físicos (escritorio): 321.
                 - Papelería: 131.
                 - Sueldos: 011.
-                Clasifícalo en el rango 011-923. Responde brevemente y pon el código al final.`;
+                Clasifícalo (011-923). Responde brevemente y pon el código al final.`;
 
                 try {
                     let textoRespuesta = "";
@@ -428,7 +474,7 @@
                         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
                         const res = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
                         const data = await res.json();
-                        textoRespuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || "176";
+                        textoRespuesta = data.candidates?.[0]?.content?.parts?.[0]?.text || "171";
                     } else {
                         if (!GROQ_API_KEY) throw new Error("⚠️ Vincula tu llave de Groq.");
                         const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -437,12 +483,12 @@
                             body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages: [{ role: "user", content: prompt }], temperature: 0.1 })
                         });
                         const data = await res.json();
-                        textoRespuesta = data.choices?.[0]?.message?.content || "176";
+                        textoRespuesta = data.choices?.[0]?.message?.content || "171";
                     }
 
                     const codigoMatch = textoRespuesta.match(/\b(0\d\d|1\d\d|2\d\d|3\d\d|4\d\d|923)\b/);
-                    const codigo = codigoMatch ? codigoMatch[0] : "176";
-                    const padron = PADRON_CGN[codigo] || { denominacion: "Grupo Sugerido", descripcion: "Análisis semántico inteligente." };
+                    const codigo = codigoMatch ? codigoMatch[0] : "171";
+                    const padron = PADRON_CGN[codigo] || { denominacion: "Grupo Sugerido", descripcion: "Análisis inteligente." };
                     renderizarTarjeta(codigo, "000", padron.denominacion, padron.descripcion, textoRespuesta.replace(codigo, '').trim(), 'ia', termRaw);
                 } catch (e) {
                     resultsList.innerHTML = `<div class="bg-rose-50 p-8 text-center rounded-2xl border-2 border-dashed border-rose-300 font-bold text-rose-700">${e.message}</div>`;
@@ -452,7 +498,6 @@
             searchBtn.addEventListener('click', ejecutarBusqueda);
             searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') ejecutarBusqueda(); });
 
-            // --- CARGA DE CSV ---
             document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('csvFileInput').click());
             document.getElementById('csvFileInput').addEventListener('change', function(e) {
                 if (!e.target.files[0]) return;
@@ -481,7 +526,7 @@
                         });
 
                         document.getElementById('csvStatus').classList.remove('hidden');
-                        resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">📂 Padrón vinculado correctamente.</div>`;
+                        resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">📂 Padrón vinculado.</div>`;
                     }
                 });
             });
