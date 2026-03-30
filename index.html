@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -17,13 +17,13 @@
         <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
             <!-- Títulos a la izquierda -->
             <div>
-                <h1 class="text-xl md:text-2xl font-extrabold uppercase tracking-tight">Hospital de Flores</h1>
-                <p class="text-xs text-blue-200 uppercase tracking-widest mt-1">DR. Edison Camacho - Buscador de objetos de gastos</p>
+                <h1 class="text-xl md:text-3xl font-extrabold uppercase tracking-tight">Hospital de Flores</h1>
+                <p class="text-xs md:text-sm text-blue-200 uppercase tracking-widest mt-1">DR. Edison Camacho - Buscador de objetos de gastos</p>
             </div>
             
-            <!-- Logo a la derecha -->
+            <!-- Logo a la derecha (Tamaño incrementado) -->
             <div class="flex-shrink-0">
-                <img src="logo--nuevo-asse-2026-blanco.png" alt="Logo ASSE Hospital de Flores" class="h-10 md:h-14 w-auto object-contain" onerror="this.style.display='none'">
+                <img src="logo--nuevo-asse-2026-blanco.png" alt="Logo ASSE Hospital de Flores" class="h-16 md:h-24 w-auto object-contain" onerror="this.style.display='none'">
             </div>
         </div>
     </nav>
@@ -63,6 +63,24 @@
         <div class="w-full md:w-[350px] flex-shrink-0">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 sticky top-28">
                 
+                <!-- NUEVA SECCIÓN: Carga de Padrón CSV -->
+                <div class="mb-6 pb-6 border-b border-slate-200">
+                    <h3 class="font-bold text-[#1e3ba6] mb-2 flex items-center gap-2 text-lg">
+                        <span>🗄️</span> Base de Datos Oficial
+                    </h3>
+                    <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+                        Carga el archivo CSV del padrón para permitir búsquedas exactas en la base.
+                    </p>
+                    <button id="uploadBtn" class="w-full py-3 px-4 bg-[#1e3ba6] hover:bg-blue-800 text-white font-bold rounded-xl text-xs uppercase tracking-wide transition-colors shadow-sm flex justify-center items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Cargar Padrón CSV
+                    </button>
+                    <input type="file" id="csvFileInput" class="hidden" accept=".csv">
+                    <button id="restoreBtn" class="hidden w-full mt-3 py-2 px-4 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-bold text-xs uppercase tracking-wide transition-colors border border-slate-300">
+                        Restaurar Original
+                    </button>
+                </div>
+
                 <h3 class="font-bold text-[#1e3ba6] mb-2 flex items-center gap-2 text-lg">
                     <span>🧠</span> Enseñar al Buscador
                 </h3>
@@ -154,8 +172,8 @@
                 setTimeout(() => msg.classList.add('hidden'), 3000);
             });
 
-            // 1. BASE DE DATOS OFICIAL (Padrón)
-            const PADRON_CGN = {
+            // 1. BASE DE DATOS OFICIAL ORIGINAL (Padrón por Defecto)
+            const PADRON_BASE = {
                 "111": { denominacion: "Alimentos para personas", descripcion: "Todo insumo/producto para la preparación de comidas. Comprende productos alimenticios, víveres, carnes, lácteos." },
                 "131": { denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Comprende los gastos de papel, artículos de escritorio, útiles de oficina, bolígrafos, resmas, carpetas." },
                 "141": { denominacion: "Artículos de caucho", descripcion: "Comprende productos manufacturados de caucho, neumáticos, cámaras, látex y afines." },
@@ -165,6 +183,71 @@
                 "142": { denominacion: "Materiales eléctricos", descripcion: "Comprende lámparas, cables, tomacorrientes y afines." },
                 "149": { denominacion: "Herramientas menores", descripcion: "Comprende herramientas manuales, repuestos y ferretería." }
             };
+
+            let PADRON_CGN = { ...PADRON_BASE };
+
+            // Convertir Padrón en un Array para poder hacer búsquedas locales directas
+            let datosActuales = Object.keys(PADRON_CGN).map(key => ({
+                objeto: key,
+                auxiliar: "000",
+                denominacion: PADRON_CGN[key].denominacion,
+                descripcion: PADRON_CGN[key].descripcion
+            }));
+
+            const normalizar = (text) => text ? text.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
+
+            // --- LÓGICA DE CARGA DE ARCHIVO CSV ---
+            document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('csvFileInput').click());
+            document.getElementById('csvFileInput').addEventListener('change', function(e) {
+                if (!e.target.files[0]) return;
+                Papa.parse(e.target.files[0], {
+                    header: true, skipEmptyLines: true, encoding: "ISO-8859-1",
+                    complete: function(results) {
+                        const cleanField = (f) => f ? normalizar(f).replace(/[^a-z0-9]/g, '') : "";
+                        const fields = results.meta.fields;
+                        const keyObjeto = fields.find(f => cleanField(f).includes('objeto')) || fields[0];
+                        const keyAux = fields.find(f => cleanField(f).includes('auxiliar') || cleanField(f).includes('subgrupo')) || fields[1];
+                        const keyDenom = fields.find(f => cleanField(f).includes('denominacion') || cleanField(f).includes('nombre')) || fields[2];
+                        const keyDesc = fields.find(f => cleanField(f).includes('desc')) || fields[3];
+
+                        datosActuales = results.data.map((row, id) => ({
+                            id, objeto: row[keyObjeto] ? row[keyObjeto].trim() : "",
+                            auxiliar: row[keyAux] ? row[keyAux].trim() : "",
+                            denominacion: row[keyDenom] ? row[keyDenom].trim() : "",
+                            descripcion: row[keyDesc] ? row[keyDesc].trim() : ""
+                        }));
+
+                        // Actualizar el mapeo rápido (PADRON_CGN)
+                        PADRON_CGN = {};
+                        datosActuales.forEach(item => {
+                            if (item.objeto) {
+                                PADRON_CGN[item.objeto] = {
+                                    denominacion: item.denominacion,
+                                    descripcion: item.descripcion
+                                };
+                            }
+                        });
+
+                        document.getElementById('uploadBtn').classList.add('hidden');
+                        document.getElementById('restoreBtn').classList.remove('hidden');
+                        ejecutarBusqueda();
+                    }
+                });
+            });
+
+            document.getElementById('restoreBtn').addEventListener('click', () => {
+                PADRON_CGN = { ...PADRON_BASE };
+                datosActuales = Object.keys(PADRON_CGN).map(key => ({
+                    objeto: key,
+                    auxiliar: "000",
+                    denominacion: PADRON_CGN[key].denominacion,
+                    descripcion: PADRON_CGN[key].descripcion
+                }));
+                document.getElementById('csvFileInput').value = '';
+                document.getElementById('uploadBtn').classList.remove('hidden');
+                document.getElementById('restoreBtn').classList.add('hidden');
+                ejecutarBusqueda();
+            });
 
             // 2. DICCIONARIO BASE PRE-CARGADO (Búsqueda ultrarrápida offline)
             const DICCIONARIO_BASE = {
@@ -180,8 +263,6 @@
             const searchInput = document.getElementById('searchInput');
             const searchBtn = document.getElementById('searchBtn');
             const resultsList = document.getElementById('resultsList');
-
-            const normalizar = (text) => text ? text.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
 
             // --- FUNCIÓN PARA GUARDAR NUEVAS PALABRAS ---
             document.getElementById('saveWordBtn').addEventListener('click', () => {
@@ -284,7 +365,40 @@
                     }
                 }
 
-                // 2. Si no es manual, buscar en el DICCIONARIO BASE (Rápido offline)
+                // 2. Buscar Coincidencia DIRECTA en la Base Oficial o el CSV
+                if (!reglaEncontrada) {
+                    const searchWords = term.split(/\s+/).filter(w => w.length > 0);
+                    const scoredItems = datosActuales.map(item => {
+                        let score = 0;
+                        const denom = normalizar(item.denominacion);
+                        const desc = normalizar(item.descripcion);
+                        const obj = normalizar(item.objeto);
+
+                        searchWords.forEach(word => {
+                            if (denom.includes(word)) score += 30;
+                            if (desc.includes(word)) score += 10;
+                            if (obj === word || obj.startsWith(word)) score += 50;
+                        });
+                        return { item, score };
+                    });
+
+                    let resultadosLocales = scoredItems.filter(x => x.score > 0).sort((a, b) => b.score - a.score).map(x => x.item);
+                    
+                    if (resultadosLocales.length > 0 && resultadosLocales[0].denominacion && 
+                       (normalizar(resultadosLocales[0].denominacion).includes(term) || 
+                        normalizar(resultadosLocales[0].descripcion).includes(term) || 
+                        term === normalizar(resultadosLocales[0].objeto))) {
+                         
+                         reglaEncontrada = {
+                             objeto: resultadosLocales[0].objeto,
+                             auxiliar: resultadosLocales[0].auxiliar,
+                             justificacion: "Coincidencia directa encontrada en el padrón oficial de gastos."
+                         };
+                         tipoRegla = 'sistema';
+                    }
+                }
+
+                // 3. Si no es manual ni directa, buscar en el DICCIONARIO BASE (Rápido offline)
                 if (!reglaEncontrada) {
                     for (const [palabraClave, info] of Object.entries(DICCIONARIO_BASE)) {
                         if (term.includes(palabraClave) || palabraClave.includes(term)) {
@@ -295,7 +409,7 @@
                     }
                 }
 
-                // 3. Si se encontró localmente, se muestra de inmediato
+                // Si se encontró localmente, se muestra de inmediato
                 if (reglaEncontrada) {
                     const nombreOficial = PADRON_CGN[reglaEncontrada.objeto] ? PADRON_CGN[reglaEncontrada.objeto].denominacion : "Rubro General Asignado";
                     const descripcionOficial = PADRON_CGN[reglaEncontrada.objeto] && PADRON_CGN[reglaEncontrada.objeto].descripcion ? PADRON_CGN[reglaEncontrada.objeto].descripcion : "No hay un resumen oficial registrado para este grupo.";
