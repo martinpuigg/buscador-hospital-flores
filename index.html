@@ -1,3 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contaduría - Hospital de Flores</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Montserrat', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-result { animation: fadeIn 0.3s ease-out forwards; }
+        
+        details summary::-webkit-details-marker { display: none; }
+        details[open] summary svg { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Navegación -->
+    <nav class="bg-[#1e3ba6] text-white shadow-lg sticky top-0 z-50 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <div>
+                <h1 class="text-xl md:text-3xl font-extrabold uppercase tracking-tight">Hospital de Flores</h1>
+                <p class="text-xs md:text-sm text-blue-200 uppercase tracking-widest mt-1">DR. Edison Camacho - Buscador de objetos de gastos</p>
+            </div>
+            <div class="flex-shrink-0">
+                <img src="logo--nuevo-asse-2026-blanco.png" alt="Logo ASSE Hospital de Flores" class="h-16 md:h-24 w-auto object-contain" onerror="this.style.display='none'">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Layout Principal -->
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-8 flex flex-col md:flex-row gap-8">
+        
+        <!-- COLUMNA IZQUIERDA: Buscador y Resultados -->
+        <div class="flex-1 flex flex-col gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <label class="block text-sm font-bold text-slate-500 mb-3 uppercase tracking-wider">Buscar Objeto de Gasto</label>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-1">
+                        <input type="text" id="searchInput" placeholder="Ej. Varilla, Martillo, Escritorio, Viáticos..." 
+                               class="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-[#1e3ba6] transition-colors text-lg font-medium placeholder-slate-400">
+                    </div>
+                    <button id="searchBtn" class="px-8 py-4 bg-[#1e3ba6] hover:bg-blue-800 text-white font-bold rounded-xl shadow-md transition-colors flex justify-center items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        Buscar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- CONTENEDOR DE RESULTADOS -->
+            <div id="resultsList" class="space-y-6 pb-12">
+                <div class="bg-white p-8 text-center text-slate-400 rounded-xl border border-dashed border-slate-300">
+                    Introduce un término para obtener las 10 mejores opciones de clasificación.
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: Configuración -->
+        <div class="w-full md:w-[380px] flex-shrink-0 space-y-6">
+            
+            <!-- BLOQUE: Selección de Inteligencia Artificial -->
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="font-bold text-[#1e3ba6] mb-3 flex items-center gap-2 text-sm">
+                    <span>⚡</span> Motor de Inteligencia Artificial
+                </h3>
+                <select id="aiEngineSelect" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm mb-3 bg-slate-50 font-medium focus:outline-none focus:border-[#1e3ba6]">
+                    <option value="gemini">Gratis Integrada (Google)</option>
+                    <option value="groq">Groq (Ultra Rápida - Recomendado)</option>
+                </select>
+                
+                <div id="groqConfig" class="hidden bg-blue-50 p-3 rounded-xl border border-blue-100">
+                    <p class="text-[10px] text-slate-600 mb-2 leading-relaxed">Vincular con <a href="https://console.groq.com/" target="_blank" class="text-blue-600 underline font-bold">Groq Console</a>:</p>
+                    <input type="password" id="groqKeyInput" placeholder="gsk_..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs mb-2 shadow-inner focus:outline-none">
+                    <button id="saveGroqBtn" class="w-full py-2 bg-slate-800 text-white font-bold rounded-lg text-[10px] uppercase tracking-wide hover:bg-black transition-colors">
+                        Guardar Clave Groq
+                    </button>
+                    <div id="groqMsg" class="text-[10px] text-center font-bold text-emerald-600 hidden mt-2">¡Groq Vinculado!</div>
+                </div>
+            </div>
+
+            <!-- BLOQUE: Base de Datos y Reglas -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                
+                <div class="mb-4">
+                    <details class="group">
+                        <summary class="flex justify-between items-center font-bold text-[10px] text-[#1e3ba6] uppercase cursor-pointer hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                            🧠 Enseñar al Buscador
+                            <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </summary>
+                        <div id="manualForm" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mt-2 transition-all duration-300">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Palabra Clave</label>
+                                <input type="text" id="newWord" placeholder="Ej. Varilla" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6]">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Objeto</label>
+                                    <input type="text" id="newObj" placeholder="171" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Auxiliar</label>
+                                    <input type="text" id="newAux" placeholder="000" value="000" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Título (Denominación)</label>
+                                <input type="text" id="newDenom" placeholder="Ej. Productos metálicos básicos" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6]">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Grupo (Opcional)</label>
+                                <input type="text" id="newGroup" placeholder="Ej. Bienes de Consumo" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Subgrupo (Opcional)</label>
+                                <input type="text" id="newSubgroup" placeholder="Ej. Artículos metálicos" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Descripción</label>
+                                <textarea id="newDesc" placeholder="Definición oficial..." rows="2" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none resize-none"></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Justificación</label>
+                                <textarea id="newJust" placeholder="Por qué se clasifica así..." rows="2" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none resize-none"></textarea>
+                            </div>
+
+                            <button id="saveWordBtn" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs uppercase shadow-sm">
+                                💾 Guardar Regla
+                            </button>
+                            <div id="saveMsg" class="text-xs text-center font-bold text-emerald-600 hidden">¡Guardado con éxito!</div>
+                        </div>
+                    </details>
+                </div>
+
+                <div class="pt-4 border-t border-slate-200">
+                    <details class="group">
+                        <summary class="flex justify-between items-center font-bold text-[10px] text-slate-500 uppercase cursor-pointer hover:text-[#1e3ba6] transition-colors">
+                            Mis Clasificaciones Guardadas
+                            <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </summary>
+                        
+                        <div class="mt-3 grid grid-cols-2 gap-2">
+                            <button id="exportRulesBtn" class="flex items-center justify-center gap-1 py-2 bg-slate-100 text-slate-600 rounded-lg text-[9px] font-bold uppercase hover:bg-slate-200 transition-colors border border-slate-200 shadow-sm">
+                                📤 Exportar
+                            </button>
+                            <button id="importRulesBtn" class="flex items-center justify-center gap-1 py-2 bg-slate-100 text-slate-600 rounded-lg text-[9px] font-bold uppercase hover:bg-slate-200 transition-colors border border-slate-200 shadow-sm">
+                                📥 Importar
+                            </button>
+                            <input type="file" id="importRulesInput" class="hidden" accept=".json">
+                        </div>
+
+                        <div id="manualRulesContainer" class="space-y-2 mt-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar"></div>
+                    </details>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-slate-200">
+                    <button id="uploadBtn" class="w-full py-2 px-4 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-xl text-[10px] font-bold uppercase transition-colors flex justify-center items-center gap-2">
+                        📂 Cargar Padrón (CSV)
+                    </button>
+                    <input type="file" id="csvFileInput" class="hidden" accept=".csv">
+                    <div id="csvStatus" class="text-[9px] mt-2 text-center text-emerald-600 font-bold hidden">✅ Padrón CGN Vinculado</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <span class="text-xs text-slate-400 font-bold uppercase">Hospital de Flores • Contaduría</span>
+            <span class="text-xs text-[#1e3ba6] font-black uppercase bg-blue-50 px-4 py-2 rounded-full border border-blue-100 shadow-sm">MPG 2026</span>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script>
+        const apiKey = ""; 
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- GESTIÓN IA ---
+            let GROQ_API_KEY = localStorage.getItem('groqApiKey') || "";
+            const aiSelect = document.getElementById('aiEngineSelect');
+            const groqConfig = document.getElementById('groqConfig');
+            const groqKeyInput = document.getElementById('groqKeyInput');
+
+            const savedEngine = localStorage.getItem('aiEnginePref') || 'gemini';
+            aiSelect.value = savedEngine;
+            if (savedEngine === 'groq') groqConfig.classList.remove('hidden');
+            groqKeyInput.value = GROQ_API_KEY;
+
+            aiSelect.addEventListener('change', (e) => {
+                localStorage.setItem('aiEnginePref', e.target.value);
+                if (e.target.value === 'groq') groqConfig.classList.remove('hidden');
+                else groqConfig.classList.add('hidden');
+            });
+
+            document.getElementById('saveGroqBtn').addEventListener('click', () => {
+                GROQ_API_KEY = groqKeyInput.value.trim();
+                localStorage.setItem('groqApiKey', GROQ_API_KEY);
+                const msg = document.getElementById('groqMsg');
+                msg.classList.remove('hidden');
+                setTimeout(() => msg.classList.add('hidden'), 2500);
+            });
+
+            const NOMBRES_GRUPOS = {
+                "000": "Retribuciones Personales",
+                "100": "Bienes de Consumo",
+                "200": "Servicios No Personales",
+                "300": "Bienes de Uso",
+                "400": "Transferencias",
+                "500": "Activos Financieros",
+                "600": "Intereses y Gastos de Deuda",
+                "700": "Gastos de Inversión",
+                "800": "Otros Gastos",
+                "900": "Reservas y Otros"
+            };
+
+            const PADRON_BASE = {
+                "011": { denominacion: "Sueldo básico de cargos", descripcion: "Retribuciones del personal presupuestado." },
+                "111": { denominacion: "Alimentos para personas", descripcion: "Víveres, carnes, lácteos, frutas y verduras." },
+                "131": { denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Papelería, bolígrafos, resmas, carpetas." },
+                "151": { denominacion: "Productos de limpieza, aseo y fumigación", descripcion: "Higiene y limpieza: lavandina, escobas, jabón." },
+                "171": { denominacion: "Productos metálicos básicos", descripcion: "Hierro, varillas, perfiles, chapas." },
+                "176": { denominacion: "Repuestos y accesorios", descripcion: "Herramientas manuales (martillo, pinza), repuestos mecánicos." },
+                "321": { denominacion: "Mobiliario y equipo de oficina", descripcion: "Escritorios físicos, mesas, sillas, armarios." },
                 "322": { denominacion: "Equipo de computación y periféricos", descripcion: "PCs, monitores, impresoras." },
                 "923": { denominacion: "Reserva para imprevistos", descripcion: "Gastos no programados." }
             };
