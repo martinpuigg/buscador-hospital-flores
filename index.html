@@ -21,7 +21,7 @@
             position: absolute;
             top: 20px;
             left: 0;
-            width: 260px; /* Antes estaba en 200px */
+            width: 260px;
             max-width: 100%;
             height: auto;
         }
@@ -354,7 +354,7 @@
                 </div>
                 <div class="learn-stat">
                     <div class="learn-stat-value" id="learningScore">0</div>
-                    <div class="learn-stat-label">Score de Aprendizaje</div>
+                    <div class="learn-stat-label">Puntaje de Aprendizaje</div>
                 </div>
             </div>
             
@@ -423,8 +423,9 @@
         let limiteResultados = 20;
         let filtroGrupo = '';
         
-        // Llave proporcionada dinámicamente por el entorno para uso de la IA
-        const apiKey = "";
+        // 👇👇👇 ¡PON TU LLAVE DE GEMINI AQUÍ ABAJO! 👇👇👇
+        // (Pégala exactamente entre las comillas)
+        const apiKey = "AIzaSyBBfxH0B7Vnazo608LL07QR7fLbdPXfCeY";
         
         // ============================================
         // 🧠 SISTEMA DE APRENDIZAJE DE IA
@@ -438,12 +439,67 @@
             keywordMappings: {}
         };
         
-        // Keywords base que se expanden con el aprendizaje
+        // DICCIONARIO INTERNO COMPLETAMENTE NORMALIZADO (SIN TILDES)
+        // Esto soluciona que "lapiz" o "lápiz" siempre hagan match perfecto
         let keywordsMap = {
+            // Alimentos
             'harina': ['111'], 'lechuga': ['111'], 'arroz': ['111'], 'carne': ['111'], 
             'verdura': ['111'], 'comida': ['111'], 'alimento': ['111'], 'pan': ['111'], 
             'leche': ['111'], 'huevos': ['111'], 'pescado': ['111'], 'pollo': ['111'], 
-            'queso': ['111'], 'fruta': ['111'], 'ensalada': ['111'], 'tomate': ['111']
+            'queso': ['111'], 'fruta': ['111'], 'ensalada': ['111'], 'tomate': ['111'], 
+            'atun': ['111'], 'arveja': ['111'], 'fideo': ['111'], 'yerba': ['111'],
+            // Sueldos
+            'sueldo': ['011', '021', '031'], 'salario': ['011', '021'], 'remuneracion': ['011'], 'jornal': ['011', '031'], 'paga': ['011'],
+            // Combustibles
+            'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'], 'diesel': ['141'], 'gasolina': ['141'], 'petroleo': ['141'],
+            // Medicamentos
+            'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'], 'vacuna': ['152'], 'pastilla': ['152'], 'jarabe': ['152'],
+            // Vehículos
+            'vehiculo': ['353'], 'auto': ['353'], 'camioneta': ['353'], 'moto': ['353'], 'ambulancia': ['353'], 'camion': ['353'],
+            // Útiles de oficina
+            'regla': ['191', '176'], 'util': ['191'], 'oficina': ['191', '131', '326'], 'papel': ['131'], 'lapiz': ['191'], 'boligrafo': ['191'], 'cuaderno': ['191'], 'tinta': ['191'], 'toner': ['191'], 'hoja': ['131'], 'goma': ['191'], 'clip': ['191'],
+            // Internación/Salud
+            'internacion': ['283'], 'hospital': ['283', '152'], 'sanatorio': ['283'], 'medico': ['283', '152'], 'clinica': ['283'], 'paciente': ['283'],
+            // Informática
+            'computadora': ['323'], 'laptop': ['323'], 'notebook': ['323'], 'servidor': ['323'], 'software': ['285'], 'programa': ['285'], 'teclado': ['323'], 'mouse': ['323'], 'monitor': ['323'],
+            // Limpieza
+            'limpieza': ['192', '278'], 'jabon': ['192'], 'escoba': ['192'], 'lavandina': ['192'], 'detergente': ['192'], 'trapo': ['192'], 'bolsa': ['192'],
+            // Servicios básicos
+            'electricidad': ['213'], 'luz': ['213'], 'agua': ['212'], 'telefono': ['211'], 'internet': ['211'], 'wifi': ['211'],
+            // Viáticos/Pasajes
+            'viatico': ['234', '235'], 'pasaje': ['231', '232', '233'], 'alquiler': ['251'], 'hospedaje': ['234', '235'], 'hotel': ['234', '235'],
+            // Capacitación
+            'capacitacion': ['284'], 'curso': ['284'], 'taller': ['284'], 'seminario': ['284'], 'diplomado': ['284'], 'maestria': ['284'],
+            // Jubilación/Becas
+            'jubilacion': ['571'], 'retiro': ['571'], 'pasividad': ['571'], 'beca': ['577'], 'becario': ['577'], 'becaria': ['577'],
+            // Herramientas
+            'herramienta': ['176'], 'destornillador': ['176'], 'martillo': ['176'], 'llave': ['176'], 'alicate': ['176'], 'pinza': ['176'], 'taladro': ['322'],
+            // Vestimenta
+            'vestimenta': ['122'], 'uniforme': ['122'], 'ropa': ['122'], 'calzado': ['122'], 'zapato': ['122'], 'botas': ['122'], 'camisa': ['122'], 'pantalon': ['122'],
+            // Seguros
+            'seguro': ['264'], 'poliza': ['264'], 'prima': ['264'], 'cobertura': ['264'],
+            // Mantenimiento
+            'mantenimiento': ['271', '273', '275', '276'], 'reparacion': ['271', '273'], 'arreglo': ['271', '273'], 'pintura': ['151'], 'repuesto': ['199'],
+            // Construcción
+            'construccion': ['387'], 'carretera': ['387'], 'camino': ['387'], 'puente': ['387'], 'obra': ['387'], 'edificio': ['387', '271'], 'ladrillo': ['161'], 'cemento': ['161'], 'arena': ['161'],
+            // Vigilancia
+            'vigilancia': ['291'], 'seguridad': ['291', '328'], 'custodia': ['291'], 'guardia': ['291'], 'alarma': ['328'],
+            // Mobiliario
+            'mueble': ['326'], 'escritorio': ['326'], 'silla': ['326'], 'mesa': ['326'], 'sillon': ['326'], 'armario': ['326'], 'estante': ['326'],
+            // Impresoras/Equipos
+            'impresora': ['323', '324'], 'scanner': ['323'], 'plotter': ['324'], 'fotocopiadora': ['324'],
+            // Subsidios/Transferencias
+            'subsidio': ['511', '554', '579'], 'subvencion': ['511', '554'], 'aporte': ['511', '513'], 'transferencia': ['511', '513', '514', '519'],
+            // Deportes/Cultura
+            'deporte': ['555'], 'cultural': ['555'], 'recreativo': ['555'], 'olimpico': ['555'], 'futbol': ['555'], 'tenis': ['555'],
+            // Animales
+            'animal': ['112'], 'mascota': ['112'], 'perro': ['112'], 'gato': ['112'], 'caballo': ['112'], 'veterinario': ['112', '153'], 'racion': ['112'],
+            // Energía
+            'energia': ['213', '142'], 'consumo': ['213'], 'medidor': ['213'], 'kilowatt': ['213'], 'kw': ['213'], 'kwh': ['213'],
+            // Impuestos
+            'impuesto': ['263'], 'tasa': ['263'], 'tributo': ['263'], 'multa': ['263'], 'dgi': ['263'], 'dna': ['263'], 'bps': ['263'], 'iva': ['263'],
+            // Indemnizaciones
+            'indemnizacion': ['793'], 'expropiacion': ['793'], 'sentencia': ['711'], 'judicial': ['711']
         };
 
         // ============================================
@@ -538,7 +594,7 @@
             const topObject = Object.entries(knowledgeBase.objectPopularity).sort((a, b) => b[1] - a[1])[0];
             if (topObject) {
                 const data = datosCompletos.find(d => d.objeto === topObject[0]);
-                document.getElementById('topObject').textContent = data ? `${topObject[0]} (${data.denominacion.split(' ').slice(0, 2).join(' ')})` : topObject[0];
+                document.getElementById('topObject').textContent = data ? `${data.objeto}/${data.auxiliar}` : topObject[0];
             }
 
             const score = Math.min(100, Math.round(
@@ -676,7 +732,7 @@
         }
 
         // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA CON IA LOCAL Y GEMINI
+        // 🔍 MOTOR DE BÚSQUEDA Y EXPANSIÓN SEMÁNTICA
         // ============================================
         
         function normalizar(texto) {
@@ -736,7 +792,7 @@
                 
                 document.getElementById('ultimaBusqueda').textContent = resultados.length;
                 
-                // Si no hay resultados locales, invocamos a Google Gemini
+                // Si no hay resultados locales, invocamos la IA de Gemini
                 if (resultados.length === 0) {
                     buscarConGemini(query);
                 } else {
@@ -800,6 +856,7 @@
                 let retries = 0;
                 const delays = [1000, 2000, 4000, 8000, 16000];
 
+                // Sistema de reintentos por si Google limita la velocidad (Exponential Backoff)
                 while (retries < 5) {
                     try {
                         const response = await fetch(url, {
@@ -811,10 +868,7 @@
                         resultData = await response.json();
                         break;
                     } catch (error) {
-                        if (retries === 4) {
-                            mostrarError(query, "Fallo de conexión con el servidor de la IA.");
-                            return;
-                        }
+                        if (retries === 4) throw error;
                         await new Promise(r => setTimeout(r, delays[retries]));
                         retries++;
                     }
@@ -832,7 +886,7 @@
                             resultadosAI = resultadosAI.map(item => ({
                                 ...item,
                                 relevancia: 95,
-                                keywordEncontrada: aiResult.razon // Usamos la explicación de la IA aquí
+                                keywordEncontrada: aiResult.razon // Guardamos la explicación de la IA
                             }));
                             
                             if (filtroGrupo) resultadosAI = resultadosAI.filter(r => r.grupo === filtroGrupo);
@@ -847,7 +901,7 @@
                 mostrarError(query); // Si la IA devolvió null o no hizo match
             } catch (error) {
                 console.error("Error consultando Gemini:", error);
-                mostrarError(query);
+                mostrarError(query, "<br><br>💡 Revisa que tu Llave API de Gemini esté ingresada correctamente en el código.");
             }
         }
 
@@ -858,7 +912,7 @@
             
             if (esDeInternet) {
                 html += `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; background: rgba(0, 60, 165, 0.05); padding: 15px; border-radius: 10px; border: 1px solid rgba(0, 60, 165, 0.2);">
-                    ✨🧠 <strong>Deducción de Inteligencia Artificial (Gemini):</strong> Analizamos "${originalQuery}" usando NLP y determinamos su clasificación correcta. <br>
+                    ✨🧠 <strong>Deducción de Inteligencia Artificial (Gemini):</strong> Analizamos "${originalQuery}" y determinamos su clasificación correcta. <br>
                     <span style="font-size: 0.9em; margin-top: 5px; display: inline-block; font-weight: 600; color: #cc8800;">👉 Haz clic en el objeto para que tu navegador lo aprenda y la próxima búsqueda sea instantánea.</span>
                 </div>`;
             } else {
@@ -876,10 +930,19 @@
                             <span class="relevancia-badge">${esDeInternet ? '🧠 Certeza IA: Alta' : '📊 Relevancia: ' + r.relevancia + '%'}</span>
                         </div>
                         <div class="denominacion">${r.denominacion}</div>
+                        
+                        ${esDeInternet && r.keywordEncontrada ? `
+                            <div style="margin: 12px 0; padding: 15px; background: rgba(255, 170, 0, 0.1); border-left: 4px solid #ffaa00; border-radius: 4px; color: #b27300; font-size: 0.95em; line-height: 1.5;">
+                                💡 <strong>Justificación IA:</strong> ${r.keywordEncontrada}
+                            </div>
+                        ` : ''}
+
                         <div class="descripcion">${r.descripcion}</div>
                         ${r.categoria ? `<div class="categoria-tag" style="display:inline-block;background:rgba(0, 60, 165, 0.1);color:#003ca5;font-weight:600;padding:5px 12px;border-radius:15px;font-size:0.85em;margin-top:10px;">📁 ${r.categoria}</div>` : ''}
                         <span class="grupo-tag" style="display:inline-block;background:rgba(0, 60, 165, 0.05);border: 1px solid rgba(0,60,165,0.2);color:#003ca5;font-weight:600;padding:3px 10px;border-radius:10px;font-size:0.75em;margin-left:10px;">Grupo ${r.grupo}</span>
-                        ${r.keywordEncontrada ? `<div class="keyword-match" style="display:block; margin-top:12px; white-space: pre-wrap;">💡 <strong>Justificación IA:</strong> ${r.keywordEncontrada}</div>` : ''}
+                        
+                        ${!esDeInternet && r.keywordEncontrada ? `<div class="keyword-match" style="display:block; margin-top:12px;">🏷️ Coincidencia: ${r.keywordEncontrada}</div>` : ''}
+                        
                         ${index === 0 && !esDeInternet ? '<div style="margin-top: 10px; color: #cc8800; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
                     </div>
                 `;
@@ -894,7 +957,7 @@
             resultsDiv.innerHTML = `
                 <div class="error" style="background: rgba(255, 170, 0, 0.05); border-color: #ffaa00; color: #b27300;">
                     <h3 style="margin-bottom: 10px; color: #cc8800;">🤔 Aún no conozco la palabra "<strong>${query}</strong>"</h3>
-                    <p>Ni la búsqueda local ni la Inteligencia Artificial lograron clasificar este gasto con certeza. ${mensajeExtra}</p>
+                    <p>Ni la búsqueda local ni el análisis de internet lograron clasificar este gasto con certeza. ${mensajeExtra}</p>
                     
                     <div style="margin-top: 20px; padding: 20px; background: #fff; border-radius: 10px; border: 1px dashed #ffaa00;">
                         <p style="margin-bottom: 15px; font-weight: 600; color: #003ca5;">Enséñame manualmente y no lo olvidaré para la próxima:</p>
@@ -958,7 +1021,7 @@
             
             const feedback = document.createElement('div');
             feedback.style.cssText = 'background: rgba(0, 60, 165, 0.1); border: 1px solid #003ca5; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; color: #003ca5; font-weight: 600;';
-            feedback.innerHTML = `✅ ¡Localmente aprendido! "${queryToLearn}" ya no necesitará consultar a Gemini y se cargará al instante.`;
+            feedback.innerHTML = `✅ ¡Localmente aprendido! "${queryToLearn}" ya no necesitará consultar internet y se cargará al instante.`;
             
             const existingFeedback = document.querySelector('.ai-feedback');
             if (existingFeedback) existingFeedback.remove();
