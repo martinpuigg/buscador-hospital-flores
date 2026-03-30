@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -6,76 +6,122 @@
     <title>Contaduría - Hospital de Flores</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         body { font-family: 'Montserrat', sans-serif; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
     <!-- Navegación -->
     <nav class="bg-[#1e3ba6] text-white shadow-lg sticky top-0 z-50 py-4 px-6">
-        <div class="max-w-7xl mx-auto flex items-center gap-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            <!-- Títulos a la izquierda -->
             <div>
                 <h1 class="text-xl md:text-2xl font-extrabold uppercase tracking-tight">Hospital de Flores</h1>
-                <p class="text-xs text-blue-200 uppercase tracking-widest mt-1">Sector Contaduría • Buscador Inteligente</p>
+                <p class="text-xs text-blue-200 uppercase tracking-widest mt-1">DR. Edison Camacho - Buscador de objetos de gastos</p>
+            </div>
+            
+            <!-- Logo a la derecha -->
+            <div class="flex-shrink-0">
+                <img src="logo--nuevo-asse-2026-blanco.png" alt="Logo ASSE Hospital de Flores" class="h-10 md:h-14 w-auto object-contain" onerror="this.style.display='none'">
             </div>
         </div>
     </nav>
 
-    <!-- Layout de Dos Columnas -->
+    <!-- Layout Principal -->
     <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-8 flex flex-col md:flex-row gap-8">
         
-        <!-- Columna Izquierda: Buscador y Resultados -->
+        <!-- COLUMNA IZQUIERDA: Buscador y Resultados -->
         <div class="flex-1 flex flex-col gap-6">
             
             <!-- Caja de Búsqueda -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 <label class="block text-sm font-bold text-slate-500 mb-3 uppercase tracking-wider">Buscar Objeto de Gasto</label>
-                <div class="relative">
-                    <input type="text" id="searchInput" placeholder="Ej. Balde, Legumbre, Regla, Tornillo, 111..." 
-                           class="w-full px-5 py-4 pl-12 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-[#1e3ba6] transition-colors text-lg font-medium placeholder-slate-400">
-                    <svg class="w-6 h-6 text-slate-400 absolute left-4 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
-                <div class="mt-3 text-sm text-slate-500 font-semibold flex justify-between">
-                    <span id="resultsLabel">Cargando base de datos...</span>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-1">
+                        <input type="text" id="searchInput" placeholder="Ej. Arveja, Balde, Termómetro..." 
+                               class="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-[#1e3ba6] transition-colors text-lg font-medium placeholder-slate-400">
+                    </div>
+                    <!-- Botón de Búsqueda -->
+                    <button id="searchBtn" class="px-8 py-4 bg-[#1e3ba6] hover:bg-blue-800 text-white font-bold rounded-xl shadow-md transition-colors flex justify-center items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        Buscar
+                    </button>
                 </div>
             </div>
             
             <!-- Contenedor de Resultados -->
-            <div id="resultsList" class="space-y-6 pb-12"></div>
+            <div id="resultsList" class="space-y-4 pb-12">
+                <!-- Estado Inicial -->
+                <div class="bg-white p-8 text-center text-slate-400 rounded-xl border border-dashed border-slate-300">
+                    Escribe una palabra (ej. "Arveja") y haz clic en Buscar.
+                </div>
+            </div>
         </div>
 
-        <!-- Columna Derecha: Panel de Carga -->
-        <div class="w-full md:w-80 flex-shrink-0">
+        <!-- COLUMNA DERECHA: Configuración y Reglas Manuales -->
+        <div class="w-full md:w-[350px] flex-shrink-0">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 sticky top-28">
-                <h3 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
-                    <span class="text-xl">🗄️</span> Base de Datos
+                
+                <h3 class="font-bold text-[#1e3ba6] mb-2 flex items-center gap-2 text-lg">
+                    <span>🧠</span> Enseñar al Buscador
                 </h3>
-                <p class="text-sm text-slate-500 mb-6 leading-relaxed">
-                    El sistema utiliza Inteligencia Artificial para clasificar insumos que no figuran explícitamente en el padrón.
+                <p class="text-xs text-slate-500 mb-6 leading-relaxed">
+                    Si la Inteligencia Artificial se equivoca o no conoce un término, agrégalo aquí para que el sistema lo aprenda para siempre.
                 </p>
                 
-                <button id="uploadBtn" class="w-full py-4 px-4 bg-[#1e3ba6] text-white rounded-xl font-bold text-sm uppercase tracking-wide transition-colors hover:bg-blue-800 flex justify-center items-center gap-2 mb-3 shadow-md">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    Cargar Padrón CSV
-                </button>
-                <input type="file" id="csvFileInput" class="hidden" accept=".csv">
-                
-                <button id="restoreBtn" class="hidden w-full py-3 px-4 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-bold text-sm uppercase tracking-wide transition-colors border border-slate-300">
-                    Restaurar Original
-                </button>
+                <!-- Formulario de Carga de Palabras -->
+                <div class="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Palabra a buscar</label>
+                        <input type="text" id="newWord" placeholder="Ej. Arveja" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6]">
+                    </div>
 
-                <div class="mt-8 bg-blue-50 p-4 rounded-xl border border-blue-100">
-                    <h4 class="text-xs font-bold text-[#1e3ba6] uppercase tracking-wide mb-3">MOTOR INTELIGENTE</h4>
-                    <ul class="text-xs text-blue-800 space-y-2">
-                        <li>• <b>IA Activa:</b> La Inteligencia Artificial analiza el contexto si no hay coincidencia exacta.</li>
-                        <li>• <b>Antirrastreo:</b> Llave API camuflada para evitar bloqueos del servidor.</li>
-                    </ul>
+                    <div class="flex gap-3">
+                        <div class="flex-1">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Objeto</label>
+                            <input type="number" id="newObj" placeholder="Ej. 111" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6]">
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Auxiliar</label>
+                            <input type="number" id="newAux" placeholder="000" value="000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6]">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Justificación (Por qué va ahí)</label>
+                        <textarea id="newJust" placeholder="Ej. Es una legumbre utilizada como alimento..." rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6] resize-none"></textarea>
+                    </div>
+
+                    <button id="saveWordBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-sm uppercase tracking-wide transition-colors shadow-sm flex justify-center items-center gap-2">
+                        💾 Guardar Regla
+                    </button>
+                    
+                    <div id="saveMsg" class="text-xs text-center font-bold text-emerald-600 hidden">¡Regla guardada con éxito!</div>
                 </div>
+
+                <div class="mt-4 pt-4 border-t border-slate-200">
+                    <button id="clearDictBtn" class="w-full py-2 text-xs text-red-500 hover:bg-red-50 font-bold rounded-lg transition-colors border border-transparent hover:border-red-200">
+                        Borrar mis reglas manuales
+                    </button>
+                </div>
+
+                <!-- CONFIGURACIÓN DE LLAVE API DE FORMA SEGURA -->
+                <div class="mt-6 pt-6 border-t border-slate-200 bg-blue-50/50 p-4 rounded-xl">
+                    <h3 class="font-bold text-[#1e3ba6] mb-2 flex items-center gap-2 text-sm">
+                        <span>🔑</span> Conexión Inteligencia Artificial
+                    </h3>
+                    <p class="text-[10px] text-slate-600 mb-3 leading-relaxed">
+                        Pega tu llave aquí. Se guardará de forma privada en tu navegador para que Google no la detecte en Github y no la bloquee.
+                    </p>
+                    <input type="password" id="apiKeyInput" placeholder="AIzaSy..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6] mb-2 shadow-inner">
+                    <button id="saveApiBtn" class="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg text-xs uppercase tracking-wide transition-colors shadow-sm">
+                        Guardar Llave Privada
+                    </button>
+                    <div id="apiMsg" class="text-xs text-center font-bold text-emerald-600 hidden mt-2">¡Conexión IA activada!</div>
+                </div>
+
             </div>
         </div>
     </main>
@@ -85,217 +131,267 @@
             <span class="text-xs text-slate-400 font-bold uppercase tracking-widest text-center sm:text-left">
                 Hospital de Flores • Sector Contaduría
             </span>
-            <span class="text-xs text-[#1e3ba6] font-black uppercase tracking-widest bg-blue-50 px-4 py-2 rounded-full border border-blue-100">
-                MPG 2026 • VERSIÓN IA
+            <span class="text-xs text-[#1e3ba6] font-black uppercase tracking-widest bg-blue-50 px-4 py-2 rounded-full border border-blue-100 shadow-sm">
+                MPG 2026
             </span>
         </div>
     </footer>
 
     <script>
-        // ======================================================================
-        // TRUCO DE CAMUFLAJE: Llave API encriptada en Base64.
-        // Los robots de Google y GitHub no pueden leer esto.
-        const LLAVE_OCULTA = "QUl6YVN5Q25CWEFNRlZnSVBieFFncHBZNF9rNzdGMWp2SFBnazdz";
-        const GEMINI_API_KEY = atob(LLAVE_OCULTA); // Desencripta la llave automáticamente
-        // ======================================================================
-
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- BASE DE DATOS LOCAL POR DEFECTO ---
-            const DATOS_POR_DEFECTO = [
-                { objeto: "111", auxiliar: "000", denominacion: "Alimentos para personas", descripcion: "Todo insumo/producto para la preparación de comidas. Comprende productos alimenticios, víveres, carnes, lácteos." },
-                { objeto: "131", auxiliar: "000", denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Comprende los gastos de papel, artículos de escritorio, útiles de oficina, bolígrafos, resmas, carpetas." },
-                { objeto: "141", auxiliar: "000", denominacion: "Artículos de caucho y plástico", descripcion: "Comprende productos manufacturados de caucho y plástico como baldes, caños PVC, accesorios, polietileno." },
-                { objeto: "151", auxiliar: "000", denominacion: "Productos de limpieza", descripcion: "Comprende productos para la higiene y limpieza del establecimiento: lavandina, escobas, jabón, detergente." },
-                { objeto: "156", auxiliar: "000", denominacion: "Artículos y accesorios para sanitaria", descripcion: "Comprende los elementos destinados a instalaciones sanitarias y plomería: codos, válvulas, grifería, teflón." },
-                { objeto: "181", auxiliar: "000", denominacion: "Medicamentos y productos farmacéuticos", descripcion: "Comprende los gastos en medicamentos e insumos médicos, farmacia, gasas, jeringas." },
-                { objeto: "142", auxiliar: "000", denominacion: "Materiales eléctricos", descripcion: "Comprende lámparas, cables, tomacorrientes y afines." },
-                { objeto: "149", auxiliar: "000", denominacion: "Herramientas menores", descripcion: "Comprende herramientas manuales, repuestos y ferretería." }
-            ];
+            // --- GESTIÓN SEGURA DE LA API KEY (Se guarda localmente) ---
+            let GEMINI_API_KEY = localStorage.getItem('geminiApiKey') || "";
+            document.getElementById('apiKeyInput').value = GEMINI_API_KEY;
 
-            let datosActuales = [...DATOS_POR_DEFECTO];
-            let timeoutId = null;
+            document.getElementById('saveApiBtn').addEventListener('click', () => {
+                const key = document.getElementById('apiKeyInput').value.trim();
+                localStorage.setItem('geminiApiKey', key);
+                GEMINI_API_KEY = key;
+                
+                const msg = document.getElementById('apiMsg');
+                msg.classList.remove('hidden');
+                setTimeout(() => msg.classList.add('hidden'), 3000);
+            });
+
+            // 1. BASE DE DATOS OFICIAL (Padrón)
+            const PADRON_CGN = {
+                "111": { denominacion: "Alimentos para personas", descripcion: "Todo insumo/producto para la preparación de comidas. Comprende productos alimenticios, víveres, carnes, lácteos." },
+                "131": { denominacion: "Útiles de escritorio, oficina y enseñanza", descripcion: "Comprende los gastos de papel, artículos de escritorio, útiles de oficina, bolígrafos, resmas, carpetas." },
+                "141": { denominacion: "Artículos de caucho", descripcion: "Comprende productos manufacturados de caucho, neumáticos, cámaras, látex y afines." },
+                "151": { denominacion: "Productos de limpieza", descripcion: "Comprende productos para la higiene y limpieza del establecimiento: lavandina, escobas, jabón, detergente." },
+                "156": { denominacion: "Productos plásticos, acrílicos y similares", descripcion: "Comprende artículos manufacturados de plástico, acrílico, PVC, baldes, envases, polietileno y afines." },
+                "181": { denominacion: "Medicamentos y productos farmacéuticos", descripcion: "Comprende los gastos en medicamentos e insumos médicos, farmacia, gasas, jeringas." },
+                "142": { denominacion: "Materiales eléctricos", descripcion: "Comprende lámparas, cables, tomacorrientes y afines." },
+                "149": { denominacion: "Herramientas menores", descripcion: "Comprende herramientas manuales, repuestos y ferretería." }
+            };
+
+            // 2. DICCIONARIO BASE PRE-CARGADO (Búsqueda ultrarrápida offline)
+            const DICCIONARIO_BASE = {
+                "balde": { objeto: "156", auxiliar: "000", justificacion: "Se trata de un artículo manufacturado principalmente de plástico o PVC." },
+                "regla": { objeto: "131", auxiliar: "000", justificacion: "Se trata de útiles de escritorio, papelería o artículos de uso en oficinas." },
+                "lavandina": { objeto: "151", auxiliar: "000", justificacion: "Es un producto destinado a la higiene, limpieza o desinfección." },
+                "cable": { objeto: "142", auxiliar: "000", justificacion: "Es un material o repuesto específico para instalaciones eléctricas." }
+            };
+
+            // 3. CARGAR EL DICCIONARIO PERSONALIZADO DEL USUARIO
+            let diccionarioPersonalizado = JSON.parse(localStorage.getItem('diccionarioCGN')) || {};
 
             const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
             const resultsList = document.getElementById('resultsList');
-            const resultsLabel = document.getElementById('resultsLabel');
 
             const normalizar = (text) => text ? text.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
 
-            // --- Lógica de Carga CSV ---
-            document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('csvFileInput').click());
-            document.getElementById('csvFileInput').addEventListener('change', function(e) {
-                Papa.parse(e.target.files[0], {
-                    header: true, skipEmptyLines: true, encoding: "ISO-8859-1",
-                    complete: function(results) {
-                        const cleanField = (f) => f ? normalizar(f).replace(/[^a-z0-9]/g, '') : "";
-                        const fields = results.meta.fields;
-                        const keyObjeto = fields.find(f => cleanField(f).includes('objeto')) || fields[0];
-                        const keyAux = fields.find(f => cleanField(f).includes('auxiliar') || cleanField(f).includes('subgrupo')) || fields[1];
-                        const keyDenom = fields.find(f => cleanField(f).includes('denominacion') || cleanField(f).includes('nombre')) || fields[2];
-                        const keyDesc = fields.find(f => cleanField(f).includes('desc')) || fields[3];
+            // --- FUNCIÓN PARA GUARDAR NUEVAS PALABRAS ---
+            document.getElementById('saveWordBtn').addEventListener('click', () => {
+                const word = normalizar(document.getElementById('newWord').value);
+                const obj = document.getElementById('newObj').value.trim();
+                const aux = document.getElementById('newAux').value.trim() || "000";
+                const just = document.getElementById('newJust').value.trim();
 
-                        datosActuales = results.data.map((row, id) => ({
-                            id, objeto: row[keyObjeto] ? row[keyObjeto].trim() : "",
-                            auxiliar: row[keyAux] ? row[keyAux].trim() : "",
-                            denominacion: row[keyDenom] ? row[keyDenom].trim() : "",
-                            descripcion: row[keyDesc] ? row[keyDesc].trim() : ""
-                        }));
-                        
-                        document.getElementById('uploadBtn').classList.add('hidden');
-                        document.getElementById('restoreBtn').classList.remove('hidden');
-                        ejecutarBusqueda();
-                    }
-                });
-            });
-
-            document.getElementById('restoreBtn').addEventListener('click', () => {
-                datosActuales = [...DATOS_POR_DEFECTO];
-                document.getElementById('csvFileInput').value = '';
-                document.getElementById('uploadBtn').classList.remove('hidden');
-                document.getElementById('restoreBtn').classList.add('hidden');
-                ejecutarBusqueda();
-            });
-
-            // --- DISEÑO DE TARJETAS ORIGINAL (Con IA, Borde Azul y Tarjeta Naranja abajo) ---
-            function mostrarTarjetas(explicacionIA, listaObjetos) {
-                resultsList.innerHTML = '';
-                
-                // 1. Tarjeta superior de Asociación (Borde azul)
-                if (explicacionIA) {
-                    resultsList.innerHTML += `
-                        <div class="bg-white border-2 border-[#1e3ba6] rounded-xl p-6 shadow-sm mb-6 relative overflow-hidden">
-                            <div class="absolute top-0 left-0 w-1.5 h-full bg-[#1e3ba6]"></div>
-                            <h4 class="text-xs font-bold text-[#1e3ba6] uppercase tracking-wider mb-2">Análisis de la Inteligencia Artificial</h4>
-                            <p class="text-slate-700 text-lg md:text-xl font-medium leading-relaxed">${explicacionIA}</p>
-                        </div>
-                    `;
-                }
-
-                if (listaObjetos.length === 0) {
-                    resultsList.innerHTML += `<div class="bg-white p-8 text-center text-slate-500 rounded-xl border border-slate-200"><span class="text-3xl block mb-3">🔍</span>No hay registros para mostrar.</div>`;
+                if (!word || !obj || !just) {
+                    alert("Por favor, completa la palabra, el objeto y la justificación.");
                     return;
                 }
 
-                // 2. Tarjeta inferior oficial (Borde naranja, pastilla azul)
-                listaObjetos.forEach(item => {
-                    resultsList.innerHTML += `
-                        <div class="bg-[#fff9f2] border-l-[6px] border-[#f97316] p-6 rounded-xl shadow-sm mb-4 hover:shadow-md transition-shadow">
-                            <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
-                                <div class="bg-[#1e3ba6] text-white font-bold px-4 py-1.5 rounded-full text-sm tracking-wide shadow-sm">
-                                    Objeto ${item.objeto} / ${item.auxiliar}
-                                </div>
-                                <div class="text-[#1e3ba6] font-bold text-xs md:text-sm tracking-wide bg-blue-100 px-3 py-1 rounded-full border border-blue-200">
-                                    ${explicacionIA ? '✨ Asociado por IA' : '✓ Coincidencia en Padrón'}
-                                </div>
+                diccionarioPersonalizado[word] = { objeto: obj, auxiliar: aux, justificacion: just };
+                localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
+
+                const msg = document.getElementById('saveMsg');
+                msg.classList.remove('hidden');
+                setTimeout(() => msg.classList.add('hidden'), 3000);
+
+                document.getElementById('newWord').value = '';
+                document.getElementById('newObj').value = '';
+                document.getElementById('newJust').value = '';
+                document.getElementById('newAux').value = '000';
+
+                searchInput.value = word;
+                ejecutarBusqueda();
+            });
+
+            // --- FUNCIÓN PARA BORRAR REGLAS MANUALES ---
+            document.getElementById('clearDictBtn').addEventListener('click', () => {
+                if(confirm("¿Estás seguro de que deseas borrar todas tus reglas personalizadas?")) {
+                    localStorage.removeItem('diccionarioCGN');
+                    diccionarioPersonalizado = {};
+                    alert("Reglas borradas.");
+                }
+            });
+
+            // --- DISEÑO VISUAL DE LA TARJETA (Denominación -> Resumen -> Justificación) ---
+            function renderizarTarjeta(objeto, auxiliar, denominacion, descripcion, justificacion, tipo) {
+                let etiquetaTipo = '';
+                if (tipo === 'manual') etiquetaTipo = `<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">✍️ Regla Personalizada</span>`;
+                else if (tipo === 'ia') etiquetaTipo = `<span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full border border-purple-200">✨ Inteligencia Artificial</span>`;
+                else etiquetaTipo = `<span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">📚 Regla del Sistema</span>`;
+
+                resultsList.innerHTML = `
+                    <div class="bg-[#fffcf8] border-l-[6px] border-[#f97316] p-6 rounded-2xl shadow-md transition-all">
+                        
+                        <!-- 1. Objeto y Etiquetas -->
+                        <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                            <div class="bg-[#1e3ba6] text-white font-black px-5 py-2 rounded-full text-sm tracking-widest shadow-sm">
+                                OBJETO ${objeto} / ${auxiliar}
                             </div>
-                            <h3 class="font-bold text-xl md:text-2xl text-slate-800 mb-2 uppercase">${item.denominacion || 'SIN DENOMINACIÓN'}</h3>
-                            <p class="text-slate-600 font-medium leading-relaxed">${item.descripcion}</p>
-                        </div>`;
-                });
+                            ${etiquetaTipo}
+                        </div>
+
+                        <!-- 2. Denominación y Resumen Oficial -->
+                        <div class="mb-6">
+                            <h2 class="font-extrabold text-2xl md:text-3xl text-slate-800 uppercase leading-tight mb-2">
+                                ${denominacion}
+                            </h2>
+                            <p class="text-slate-600 font-medium text-base md:text-lg leading-relaxed italic border-l-4 border-slate-200 pl-4">
+                                ${descripcion}
+                            </p>
+                        </div>
+
+                        <!-- 3. Justificación (Recuadro Azul) -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1.5 h-full bg-[#1e3ba6]"></div>
+                            <h4 class="text-xs font-black text-[#1e3ba6] uppercase tracking-widest mb-2 flex items-center gap-2">
+                                <span>💡</span> Justificación de la clasificación
+                            </h4>
+                            <p class="text-slate-700 font-medium text-base md:text-lg leading-relaxed">
+                                ${justificacion}
+                            </p>
+                        </div>
+
+                    </div>
+                `;
             }
 
-            // --- Motor de Búsqueda Mixto ---
+            // --- MOTOR DE BÚSQUEDA HÍBRIDO ---
             async function ejecutarBusqueda() {
                 const term = normalizar(searchInput.value);
 
                 if (!term) {
-                    resultsLabel.textContent = `Mostrando registros del padrón...`;
-                    mostrarTarjetas(null, datosActuales.slice(0, 50));
+                    resultsList.innerHTML = `<div class="bg-white p-8 text-center text-slate-400 rounded-xl border border-dashed border-slate-300">Escribe una palabra y haz clic en Buscar.</div>`;
                     return;
                 }
 
-                // 1. BÚSQUEDA LOCAL DIRECTA (Encuentra "Balde" en milisegundos)
-                const searchWords = term.split(/\s+/).filter(w => w.length > 0);
-                const scoredItems = datosActuales.map(item => {
-                    let score = 0;
-                    const denom = normalizar(item.denominacion);
-                    const desc = normalizar(item.descripcion);
-                    const obj = normalizar(item.objeto);
+                let reglaEncontrada = null;
+                let tipoRegla = 'sistema';
+
+                // 1. Buscar en el DICCIONARIO PERSONALIZADO (Máxima prioridad)
+                for (const [palabraClave, info] of Object.entries(diccionarioPersonalizado)) {
+                    if (term.includes(palabraClave) || palabraClave.includes(term)) {
+                        reglaEncontrada = info;
+                        tipoRegla = 'manual';
+                        break;
+                    }
+                }
+
+                // 2. Si no es manual, buscar en el DICCIONARIO BASE (Rápido offline)
+                if (!reglaEncontrada) {
+                    for (const [palabraClave, info] of Object.entries(DICCIONARIO_BASE)) {
+                        if (term.includes(palabraClave) || palabraClave.includes(term)) {
+                            reglaEncontrada = info;
+                            tipoRegla = 'sistema';
+                            break;
+                        }
+                    }
+                }
+
+                // 3. Si se encontró localmente, se muestra de inmediato
+                if (reglaEncontrada) {
+                    const nombreOficial = PADRON_CGN[reglaEncontrada.objeto] ? PADRON_CGN[reglaEncontrada.objeto].denominacion : "Rubro General Asignado";
+                    const descripcionOficial = PADRON_CGN[reglaEncontrada.objeto] && PADRON_CGN[reglaEncontrada.objeto].descripcion ? PADRON_CGN[reglaEncontrada.objeto].descripcion : "No hay un resumen oficial registrado para este grupo.";
                     
-                    searchWords.forEach(word => {
-                        if (denom.includes(word)) score += 30; // Prioridad alta al título
-                        if (desc.includes(word)) score += 10;  // Prioridad media a la descripción
-                        if (obj === word || obj.startsWith(word)) score += 50; 
-                    });
-                    return { item, score };
-                });
-
-                let resultadosLocales = scoredItems.filter(x => x.score > 0).sort((a, b) => b.score - a.score).map(x => x.item);
-
-                // Verificamos si la palabra está escrita de forma obvia en el padrón
-                const coincidenciaDirecta = resultadosLocales.some(item => 
-                    normalizar(item.denominacion).includes(term) || 
-                    normalizar(item.descripcion).includes(term) ||
-                    normalizar(item.objeto) === term
-                );
-
-                if (coincidenciaDirecta) {
-                    resultsLabel.textContent = `Búsqueda local (CGN) • ${resultadosLocales.length} resultados`;
-                    mostrarTarjetas(null, resultadosLocales.slice(0, 50));
+                    renderizarTarjeta(reglaEncontrada.objeto, reglaEncontrada.auxiliar, nombreOficial, descripcionOficial, reglaEncontrada.justificacion, tipoRegla);
                     return;
                 }
 
-                // 2. INTELIGENCIA ARTIFICIAL (Si no encuentra nada local, ej. "Rúcula")
-                resultsList.innerHTML = `<div class="bg-blue-50 p-8 text-center text-[#1e3ba6] font-bold rounded-xl border border-blue-200 animate-pulse text-lg flex flex-col items-center gap-3">
-                    <span class="text-3xl">🧠</span> Analizando insumo con Inteligencia Artificial...
-                </div>`;
-                resultsLabel.textContent = "Conectando...";
+                // 4. SI NO CONOCE LA PALABRA (Ej. "Arveja"), VERIFICAMOS SI HAY LLAVE
+                if (!GEMINI_API_KEY) {
+                    resultsList.innerHTML = `
+                        <div class="bg-amber-50 p-8 text-center rounded-2xl border-2 border-dashed border-amber-300 shadow-sm">
+                            <span class="block text-4xl mb-4">🔑</span>
+                            <h3 class="text-xl font-bold text-amber-800 mb-2">Falta tu Llave de Inteligencia Artificial</h3>
+                            <p class="text-amber-700 mb-6 text-sm">Para que el sistema clasifique automáticamente la palabra "${searchInput.value}", debes ingresar tu API Key de Google en el panel de la derecha.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // 5. LLAMAMOS A LA INTELIGENCIA ARTIFICIAL
+                resultsList.innerHTML = `
+                    <div class="bg-purple-50 p-8 text-center text-purple-700 font-bold rounded-xl border border-purple-200 animate-pulse text-lg flex flex-col items-center gap-3 shadow-sm">
+                        <span class="text-4xl">🧠</span> 
+                        <span>La IA de Google está analizando la palabra "${searchInput.value}"...</span>
+                    </div>`;
 
                 const prompt = `Actúa como asesor de compras del Estado Uruguayo.
 Insumo solicitado: "${term}".
-Redacta una breve y profesional oración explicando qué es este artículo o para qué se utiliza.
-Al final de la oración, escribe ÚNICAMENTE el código de 3 dígitos de esta lista al que pertenece: 111 (Alimentos), 131 (Oficina), 141 (Plásticos/Envases/Baldes), 151 (Limpieza), 156 (Sanitaria), 181 (Farmacia), 142 (Eléctrico), 149 (Herramientas).`;
+Redacta una breve oración explicando qué es este artículo o para qué se utiliza.
+Al final de la oración, escribe ÚNICAMENTE el código de 3 dígitos de esta lista al que pertenece: 111 (Alimentos), 131 (Oficina), 141 (Plásticos/Caucho), 151 (Limpieza), 156 (Sanitaria/Acrílicos), 181 (Farmacia), 142 (Eléctrico), 149 (Herramientas). Si no corresponde a ninguno, responde "000".`;
 
                 try {
                     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }]
-                        })
+                        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                     });
 
-                    if (!response.ok) throw new Error("Error de conexión");
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error?.message || "Fallo en la API");
+                    }
 
                     const data = await response.json();
                     let textoRespuesta = data.candidates[0].content.parts[0].text.trim();
                     
-                    // Extraemos los 3 números de forma segura
+                    // Extraer número
                     const numeros = textoRespuesta.match(/\b(111|131|141|151|156|181|142|149)\b/);
                     const codigo = numeros ? numeros[0] : "000";
                     
-                    // Limpiamos la explicación (quitamos el número)
+                    // Limpiar justificación (borrar el número de la oración)
                     let explicacionLimpia = textoRespuesta;
                     if (codigo !== "000") {
                         explicacionLimpia = explicacionLimpia.replace(codigo, '').trim();
                         explicacionLimpia = explicacionLimpia.replace(/[:\-.,]+$/, '') + ".";
                     }
-                    
+
                     if (codigo !== "000") {
-                        const resultadosOficiales = datosActuales.filter(item => item.objeto.startsWith(codigo));
-                        resultsLabel.textContent = `Asociado por Inteligencia Artificial`;
-                        mostrarTarjetas(explicacionLimpia, resultadosOficiales.slice(0, 10));
+                        const nombreOficial = PADRON_CGN[codigo] ? PADRON_CGN[codigo].denominacion : "Rubro General";
+                        const descripcionOficial = PADRON_CGN[codigo] ? PADRON_CGN[codigo].descripcion : "Sin descripción.";
+                        
+                        renderizarTarjeta(codigo, "000", nombreOficial, descripcionOficial, explicacionLimpia, 'ia');
                     } else {
-                        resultsList.innerHTML = `<div class="bg-white p-8 text-center text-slate-500 rounded-xl border border-slate-200 shadow-sm"><span class="block text-3xl mb-3">❓</span>El artículo ingresado no coincide con ninguna categoría registrada.</div>`;
+                        throw new Error("No clasificado");
                     }
 
                 } catch (error) {
-                    console.error("Error AI:", error);
-                    // Si falla el internet por algún motivo, muestra el local.
-                    resultsLabel.textContent = `Mostrando aproximación local`;
-                    mostrarTarjetas(null, resultadosLocales.slice(0, 50));
+                    
+                    let errorTitle = `No logré clasificar la palabra "${searchInput.value}"`;
+                    let errorDesc = "La Inteligencia Artificial no está segura de a qué Objeto de Gasto pertenece.";
+
+                    // Detectamos si el error fue porque Google invalidó la llave
+                    if (error.message.includes("API_KEY_INVALID")) {
+                        errorTitle = "Llave API Inválida";
+                        errorDesc = "La llave que ingresaste no es válida o fue bloqueada por Google. Genera una nueva y guárdala en el panel derecho.";
+                    }
+
+                    resultsList.innerHTML = `
+                        <div class="bg-white p-8 text-center rounded-2xl border-2 border-dashed border-rose-300 shadow-sm">
+                            <span class="block text-4xl mb-4">🤷‍♂️</span>
+                            <h3 class="text-xl font-bold text-rose-700 mb-2">${errorTitle}</h3>
+                            <p class="text-rose-500 mb-6">${errorDesc}</p>
+                            <div class="inline-block bg-emerald-50 text-emerald-700 px-5 py-3 rounded-lg text-sm font-bold border border-emerald-200">
+                                👉 Usa el panel de la derecha para enseñarme a qué grupo pertenece manualmente.
+                            </div>
+                        </div>
+                    `;
                 }
             }
 
-            // Al escribir, ejecuta la búsqueda (con delay para no saturar la IA)
-            searchInput.addEventListener('input', () => {
-                clearTimeout(timeoutId);
-                timeoutId = setTimeout(ejecutarBusqueda, 1000);
+            searchBtn.addEventListener('click', ejecutarBusqueda);
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') ejecutarBusqueda();
             });
 
-            // Arranque inicial
-            mostrarTarjetas(null, datosActuales.slice(0, 50));
         });
     </script>
 </body>
