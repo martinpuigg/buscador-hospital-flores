@@ -3,437 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hospital de Flores Dr. Edison Camacho - Sector Contaduría</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: #ffffff;
-            min-height: 100vh;
-            padding: 20px;
-            color: #003ca5;
-        }
-        .container { max-width: 1400px; margin: 0 auto; }
-        
-        .header { position: relative; text-align: center; padding: 40px 0; }
-        .logo {
-            position: absolute;
-            top: 20px;
-            left: 0;
-            width: 260px;
-            max-width: 100%;
-            height: auto;
-        }
-
-        .header h1 {
-            font-size: 2.5em; margin-bottom: 10px;
-            color: #003ca5;
-        }
-        .header p { color: #555; font-size: 1.1em; }
-        
-        .ai-status {
-            background: rgba(0, 60, 165, 0.05);
-            border: 1px solid #003ca5;
-            padding: 15px; border-radius: 10px;
-            text-align: center; margin-bottom: 20px;
-            color: #003ca5;
-        }
-        .ai-status span { color: #003ca5; font-weight: bold; }
-        
-        .upload-section {
-            background: #f8f9fa;
-            padding: 40px; border-radius: 15px;
-            text-align: center; margin-bottom: 30px;
-            border: 2px dashed #003ca5;
-        }
-        .upload-section input { display: none; }
-        .upload-btn {
-            background: #003ca5;
-            color: #ffffff; padding: 20px 40px;
-            border-radius: 10px; cursor: pointer;
-            font-size: 18px; font-weight: bold;
-            display: inline-block; transition: transform 0.2s;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .upload-btn:hover { transform: scale(1.05); }
-        
-        .stats-bar {
-            display: none; justify-content: center; gap: 30px;
-            margin: 20px 0; flex-wrap: wrap;
-        }
-        .stat-item {
-            background: rgba(0, 60, 165, 0.05);
-            padding: 15px 25px; border-radius: 10px; text-align: center;
-        }
-        .stat-number { font-size: 2em; font-weight: bold; color: #003ca5; }
-        .stat-label { font-size: 0.9em; color: #555; }
-        
-        .learning-panel {
-            display: none;
-            background: rgba(0, 60, 165, 0.03);
-            border: 1px solid rgba(0, 60, 165, 0.2);
-            padding: 20px; border-radius: 12px;
-            margin-bottom: 25px;
-        }
-        .learning-panel h4 { color: #003ca5; margin-bottom: 15px; font-weight: 700; }
-        .learning-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
-        .learn-stat {
-            background: #fff;
-            border: 1px solid rgba(0, 60, 165, 0.1);
-            padding: 15px; border-radius: 8px;
-        }
-        .learn-stat-value { font-size: 1.5em; color: #003ca5; font-weight: bold; }
-        .learn-stat-label { font-size: 0.85em; color: #555; }
-        
-        .manual-learning {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px dashed rgba(0, 60, 165, 0.3);
-        }
-        .manual-learning-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            color: #003ca5;
-            transition: opacity 0.2s;
-        }
-        .manual-learning-header:hover { opacity: 0.8; }
-        .manual-learning-header h4 { margin-bottom: 0; }
-
-        .manual-learning input {
-            padding: 12px 15px; font-size: 15px;
-            border: 1px solid rgba(0, 60, 165, 0.4); border-radius: 8px;
-            font-family: 'Montserrat', sans-serif; color: #003ca5;
-            outline: none; background: #fff;
-        }
-        .manual-learning input:focus { border-color: #003ca5; box-shadow: 0 0 0 2px rgba(0,60,165,0.1); }
-        .manual-learning button {
-            padding: 12px 25px; background: #003ca5; color: #fff;
-            border: none; border-radius: 8px; cursor: pointer;
-            font-weight: 600; font-family: 'Montserrat', sans-serif;
-            transition: opacity 0.2s;
-        }
-        .manual-learning button:hover { opacity: 0.9; }
-
-        .search-container {
-            display: none;
-            background: rgba(0, 60, 165, 0.03);
-            border: 1px solid rgba(0, 60, 165, 0.1);
-            padding: 30px; border-radius: 15px; margin-bottom: 30px;
-        }
-        .search-box { display: flex; gap: 15px; margin-bottom: 20px; }
-        .search-box input {
-            flex: 1; padding: 18px 25px; font-size: 18px;
-            border: 2px solid rgba(0, 60, 165, 0.3); border-radius: 10px;
-            background: #fff; color: #003ca5; outline: none;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .search-box input:focus { border-color: #003ca5; }
-        .search-box input::placeholder { color: #888; }
-        .search-box button {
-            padding: 18px 40px;
-            background: #003ca5;
-            color: #ffffff; border: none; border-radius: 10px;
-            font-size: 18px; font-weight: bold; cursor: pointer;
-            font-family: 'Montserrat', sans-serif;
-            transition: opacity 0.2s;
-        }
-        .search-box button:hover { opacity: 0.9; }
-        
-        .filters { display: flex; gap: 10px; flex-wrap: wrap; }
-        .filter-btn {
-            padding: 10px 20px;
-            background: #fff;
-            border: 1px solid #003ca5;
-            border-radius: 20px; color: #003ca5; cursor: pointer;
-            transition: all 0.3s;
-            font-family: 'Montserrat', sans-serif; font-weight: 600;
-        }
-        .filter-btn:hover, .filter-btn.active {
-            background: #003ca5; color: #ffffff;
-        }
-        
-        .sugerencias {
-            margin-top: 20px; padding: 20px;
-            background: rgba(0, 60, 165, 0.05); border-radius: 10px;
-        }
-        .sugerencias h3 { margin-bottom: 15px; color: #003ca5; font-size: 1.1em; }
-        .sugerencias-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-        }
-        .sugerencia-item {
-            background: #fff;
-            border: 1px solid rgba(0, 60, 165, 0.2);
-            padding: 10px 15px; border-radius: 8px;
-            cursor: pointer; transition: all 0.3s; text-align: center;
-            color: #003ca5; font-weight: 600;
-        }
-        .sugerencia-item:hover { background: #003ca5; color: #fff; }
-        
-        .results-container { display: grid; gap: 20px; }
-        .result-card {
-            background: #ffffff;
-            border: 1px solid rgba(0, 60, 165, 0.1);
-            border-left: 4px solid #003ca5;
-            padding: 25px; border-radius: 10px;
-            transition: all 0.3s;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-        }
-        .result-card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 6px 12px rgba(0, 60, 165, 0.1);
-        }
-        .result-card.selected {
-            border-left-color: #ffaa00;
-            background: rgba(255, 170, 0, 0.05);
-        }
-        .result-card.confirmed {
-            border-left-color: #00b300;
-            background: rgba(0, 179, 0, 0.05);
-        }
-        .codigo-badge {
-            background: #003ca5;
-            color: #ffffff; padding: 8px 20px; border-radius: 20px;
-            font-weight: bold; font-size: 1.1em; display: inline-block;
-            margin-bottom: 10px;
-        }
-        .denominacion {
-            font-size: 1.3em; font-weight: 700;
-            margin: 10px 0; color: #003ca5;
-        }
-        .descripcion {
-            color: #444; line-height: 1.6; font-size: 0.95em;
-            background: rgba(0, 60, 165, 0.03);
-            border: 1px solid rgba(0, 60, 165, 0.1);
-            padding: 15px; border-radius: 8px;
-            max-height: 200px; overflow-y: auto;
-        }
-        .relevancia-badge {
-            background: rgba(0, 60, 165, 0.1);
-            color: #003ca5; font-weight: 600;
-            padding: 5px 15px; border-radius: 15px; font-size: 0.9em;
-            float: right;
-        }
-        .keyword-match {
-            display: inline-block;
-            background: rgba(255, 170, 0, 0.15);
-            color: #cc8800; padding: 4px 10px;
-            border-radius: 8px; font-size: 0.75em; margin-top: 8px;
-            font-weight: 600;
-        }
-        
-        .loading { text-align: center; padding: 50px; color: #003ca5; font-weight: 600; }
-        .error {
-            background: rgba(255, 60, 60, 0.1);
-            color: #d32f2f;
-            border: 1px solid rgba(255, 60, 60, 0.3); padding: 20px;
-            border-radius: 10px; margin-top: 20px; font-weight: 600;
-        }
-        
-        .history-section {
-            display: none;
-            margin-top: 30px;
-            background: rgba(0, 60, 165, 0.03);
-            border: 1px solid rgba(0, 60, 165, 0.1);
-            padding: 25px; border-radius: 12px;
-        }
-        .history-section h3 { color: #003ca5; margin-bottom: 15px; }
-        .history-item {
-            background: #fff;
-            border: 1px solid rgba(0, 60, 165, 0.1);
-            padding: 12px 18px; border-radius: 8px;
-            margin-bottom: 10px; cursor: pointer;
-            display: flex; justify-content: space-between;
-            align-items: center;
-            color: #003ca5;
-            font-weight: 600;
-        }
-        .history-item:hover { background: rgba(0, 60, 165, 0.05); }
-        .history-count { color: #666; font-size: 0.9em; font-weight: 400; }
-        
-        .clear-btn {
-            background: #fff;
-            color: #d32f2f; border: 1px solid #d32f2f;
-            padding: 8px 20px; border-radius: 8px;
-            cursor: pointer; margin-top: 15px; font-family: 'Montserrat', sans-serif;
-            font-weight: 600; transition: all 0.2s;
-        }
-        .clear-btn:hover { background: #d32f2f; color: #fff; }
-        
-        .footer {
-            text-align: center;
-            padding: 30px 20px 20px;
-            margin-top: 40px;
-            color: #888;
-            border-top: 1px solid rgba(0, 60, 165, 0.1);
-            font-size: 0.9em;
-            font-weight: 600;
-        }
-        
-        @media (max-width: 768px) {
-            .search-box { flex-direction: column; }
-            .stats-bar { flex-direction: column; align-items: center; }
-            .header h1 { font-size: 1.8em; }
-            .manual-learning div { flex-direction: column; }
-            .manual-learning input { width: 100% !important; }
-            .logo {
-                position: relative;
-                top: 0;
-                margin: 0 auto 20px auto;
-                display: block;
-            }
-            .header { padding-top: 20px; }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <img src="logo_hospital_flores.png" alt="Logo Hospital de Flores" class="logo" onerror="this.style.display='none'">
-            <h1 style="font-size: 2.2em; font-weight: 700;">Hospital de Flores Dr. Edison Camacho</h1>
-            <h2 style="color: #003ca5; margin-bottom: 10px; font-size: 1.6em;">Sector Contaduría</h2>
-            <p>Buscador de Objetos del Gasto CGN - SIIF Uruguay</p>
-        </div>
-        
-        <div class="ai-status" id="aiStatus">
-            🔍 Búsquedas realizadas: <span id="searchCount">0</span> |
-            📚 Palabras clave aprendidas: <span id="keywordsLearned">0</span>
-        </div>
-        
-        <!-- Carga de CSV -->
-        <div class="upload-section" id="uploadSection">
-            <h2>📂 Paso 1: Carga tu archivo CSV</h2>
-            <p style="margin: 20px 0; color: #aaa; font-size: 1.1em;">
-                Selecciona el archivo <strong>ObjetosGasto.csv</strong> que descargaste de la CGN
-            </p>
-            <label class="upload-btn">
-                📥 Seleccionar Archivo CSV
-                <input type="file" id="csvFile" accept=".csv">
-            </label>
-            <p id="fileName" style="margin-top: 20px; color: #00ff88; font-weight: bold;"></p>
-            <p style="margin-top: 15px; color: #888; font-size: 0.9em;">
-                🔒 El archivo se procesa localmente en tu navegador. No se envía a ningún servidor.
-            </p>
-        </div>
-        
-        <!-- Estadísticas -->
-        <div class="stats-bar" id="statsBar">
-            <div class="stat-item">
-                <div class="stat-number" id="totalRegistros">0</div>
-                <div class="stat-label">Registros Cargados</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" id="totalObjetos">0</div>
-                <div class="stat-label">Objetos Únicos</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number" id="ultimaBusqueda">0</div>
-                <div class="stat-label">Resultados</div>
-            </div>
-            <div class="stat-item" style="cursor: pointer; background: rgba(211, 47, 47, 0.05); border: 1px solid rgba(211, 47, 47, 0.3);" onclick="borrarDatosCSV()">
-                <div class="stat-number" style="color: #d32f2f; font-size: 1.5em;">🔄</div>
-                <div class="stat-label" style="color: #d32f2f; font-weight: bold;">Cambiar CSV</div>
-            </div>
-        </div>
-        
-        <!-- Panel de Aprendizaje -->
-        <div class="learning-panel" id="learningPanel">
-            <h4>🧠 Panel de Aprendizaje de IA</h4>
-            <div class="learning-stats">
-                <div class="learn-stat">
-                    <div class="learn-stat-value" id="learnedTerms">0</div>
-                    <div class="learn-stat-label">Términos Aprendidos</div>
-                </div>
-                <div class="learn-stat">
-                    <div class="learn-stat-value" id="avgRelevance">0%</div>
-                    <div class="learn-stat-label">Relevancia Promedio</div>
-                </div>
-                <div class="learn-stat">
-                    <div class="learn-stat-value" id="topObject">-</div>
-                    <div class="learn-stat-label">Objeto Más Buscado</div>
-                </div>
-                <div class="learn-stat">
-                    <div class="learn-stat-value" id="learningScore">0</div>
-                    <div class="learn-stat-label">Puntaje de Aprendizaje</div>
-                </div>
-            </div>
-            
-            <!-- Nueva sección: Carga Manual de Palabras -->
-            <div class="manual-learning">
-                <div class="manual-learning-header" onclick="toggleManualLearning()">
-                    <h4>➕ Enseñar palabra a la IA manualmente</h4>
-                    <span id="manualToggleIcon" style="font-weight: bold;">▼</span>
-                </div>
-                <div id="manualLearningForm" style="display: none; margin-top: 15px;">
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <input type="text" id="manualWord" placeholder="Palabra (ej: maceta)" style="flex: 1; min-width: 150px;">
-                        <input type="text" id="manualObject" placeholder="Objeto (ej: 199)" style="width: 140px;">
-                        <input type="text" id="manualAuxiliar" placeholder="Auxiliar (ej: 000)" style="width: 140px;">
-                        <button onclick="agregarPalabraManual()">Guardar</button>
-                    </div>
-                    <div id="manualMsg" style="margin-top: 15px; font-weight: 600; display: none;"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Buscador -->
-        <div class="search-container" id="searchContainer">
-            <div class="search-box">
-                <input 
-                    type="text" 
-                    id="searchInput" 
-                    placeholder="Ej: harina, sueldo, combustible, vehículo, medicamento, internación, vaso, lápiz..."
-                    onkeypress="if(event.key === 'Enter') buscar()"
-                >
-                <button onclick="buscar()">🔎 Buscar objeto</button>
-            </div>
-            
-            <div class="filters">
-                <button class="filter-btn active" onclick="setLimite(20)">20 resultados</button>
-                <button class="filter-btn" onclick="setLimite(50)">50 resultados</button>
-                <button class="filter-btn" onclick="setLimite(100)">100 resultados</button>
-                <button class="filter-btn" onclick="limpiarFiltros()">🔄 Limpiar</button>
-            </div>
-            
-            <div class="sugerencias" id="sugerencias">
-                <h3>💡 Sugerencias de IA (basado en tu historial)</h3>
-                <div class="sugerencias-grid" id="sugerenciasGrid"></div>
-            </div>
-        </div>
-        
-        <div id="results" class="results-container"></div>
-        
-        <!-- Historial -->
-        <div class="history-section" id="historySection">
-            <h3>📜 Historial de Búsquedas (La IA aprende de esto)</h3>
-            <div id="historyList"></div>
-            <button class="clear-btn" onclick="clearHistory()">🗑️ Limpiar Historial y Aprendizaje</button>
-        </div>
-        
-        <div class="footer">
-            MPG 2026
-        </div>
-    </div>
-
-    <script>
-        // ============================================
-        // 📊 VARIABLES GLOBALES Y API DE GOOGLE GEMINI
-        // ============================================
-        let datosCompletos = [];
-        let limiteResultados = 20;
-        let filtroGrupo = '';
-        
-        // 👇👇👇 ¡PON TU  DE GEMINI AQUÍ ABAJO! 👇👇👇
-        // Pega tu  de Google entre las comillas.
-        const apiKey = "<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscador CGN</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -471,14 +40,15 @@
             </button>
         </div>
         
-        <!-- Contenedor de Resultados (Diseño Limpio) -->
+        <!-- Contenedor de Resultados -->
         <div id="resultsList" class="space-y-6 pb-12"></div>
         
     </main>
 
     <script>
         // ======================================================================
-        // LLAVE API INYECTADA (Es la que me acabas de pasar, está 100% activa)
+        // IMPORTANTE: Si subes este archivo a un repositorio PÚBLICO de GitHub, 
+        // Google bloqueará esta llave automáticamente por seguridad.
         const GEMINI_API_KEY = "AIzaSyCnBXAMFVgIPbxQgppY4_k77F1jvHPgk7s";
         // ======================================================================
 
@@ -493,7 +63,7 @@
                 { objeto: "181", auxiliar: "000", denominacion: "Medicamentos y productos farmacéuticos", descripcion: "Comprende los gastos en medicamentos e insumos médicos, farmacia, gasas, jeringas." },
                 { objeto: "142", auxiliar: "000", denominacion: "Materiales eléctricos", descripcion: "Comprende lámparas, cables, tomacorrientes y afines." },
                 { objeto: "149", auxiliar: "000", denominacion: "Herramientas menores", descripcion: "Comprende herramientas manuales, repuestos y ferretería." }
-            ];
+            AIzaSyCnBXAMFVgIPbxQgppY4_k77F1jvHPgk7s];
 
             let datosActuales = [...DATOS_POR_DEFECTO];
             let timeoutId = null;
@@ -539,7 +109,7 @@
                 ejecutarBusqueda();
             });
 
-            // --- DISEÑO DE TARJETAS (Tal cual lo pediste, SIN botón naranja) ---
+            // --- DISEÑO DE TARJETAS (Sin recuadros extraños) ---
             function mostrarTarjetas(explicacionIA, listaObjetos) {
                 resultsList.innerHTML = '';
                 
@@ -575,7 +145,7 @@
                 });
             }
 
-            // --- Motor de Búsqueda Súper Robusto ---
+            // --- Motor de Búsqueda Mejorado y a Prueba de Fallos ---
             async function ejecutarBusqueda() {
                 const term = normalizar(searchInput.value);
 
@@ -585,7 +155,7 @@
                     return;
                 }
 
-                // 1. Búsqueda Local (En el archivo)
+                // 1. Búsqueda Local Optimizada (Busca en título y descripción al mismo tiempo)
                 const searchWords = term.split(/\s+/).filter(w => w.length > 0);
                 const scoredItems = datosActuales.map(item => {
                     let score = 0;
@@ -594,7 +164,8 @@
                     const obj = normalizar(item.objeto);
                     
                     searchWords.forEach(word => {
-                        if (denom.includes(word) || desc.includes(word) || obj.includes(word)) score += 10;
+                        if (denom.includes(word)) score += 30; // Alta prioridad al título
+                        if (desc.includes(word)) score += 10;  // Prioridad media a la descripción (Ej: "Balde")
                         if (obj === word || obj.startsWith(word)) score += 50; 
                     });
                     return { item, score };
@@ -602,18 +173,24 @@
 
                 let resultadosLocales = scoredItems.filter(x => x.score > 0).sort((a, b) => b.score - a.score).map(x => x.item);
 
-                // Si hay coincidencia muy obvia (ej. "Alimentos" o "111")
-                if (resultadosLocales.length > 0 && resultadosLocales[0].denominacion.toLowerCase().includes(term)) {
+                // Verificamos si la palabra buscada está explícitamente escrita en la denominación o en la descripción.
+                // Esto soluciona el problema de "balde" para que lo encuentre directo sin usar la IA.
+                const coincidenciaDirecta = resultadosLocales.some(item => 
+                    normalizar(item.denominacion).includes(term) || 
+                    normalizar(item.descripcion).includes(term) ||
+                    normalizar(item.objeto) === term
+                );
+
+                if (coincidenciaDirecta) {
                     resultsLabel.textContent = `Búsqueda local (CGN)`;
                     mostrarTarjetas(null, resultadosLocales.slice(0, 50));
                     return;
                 }
 
-                // 2. Si no es obvio (ej. "Balde", "Legumbre"), usa Inteligencia Artificial
-                resultsList.innerHTML = `<div class="bg-blue-50 p-6 text-center text-[#1e3ba6] font-bold rounded-xl border border-blue-200 animate-pulse text-lg">Analizando concepto con IA...</div>`;
+                // 2. Si no es una palabra obvia (ej. "Legumbre", "Atún"), entra la Inteligencia Artificial
+                resultsList.innerHTML = `<div class="bg-blue-50 p-6 text-center text-[#1e3ba6] font-bold rounded-xl border border-blue-200 animate-pulse text-lg">🧠 Analizando insumo con Inteligencia Artificial...</div>`;
                 resultsLabel.textContent = "Buscando correspondencia...";
 
-                // Instrucción a prueba de fallos para la IA
                 const prompt = `Actúa como asesor de compras del Estado Uruguayo.
 Insumo solicitado: "${term}".
 Redacta una breve y profesional oración explicando qué es este artículo o para qué se utiliza.
@@ -628,19 +205,18 @@ Al final de la oración, escribe ÚNICAMENTE el código de 3 dígitos de esta li
                         })
                     });
 
+                    // Manejo específico si Google bloqueó la llave API
                     if (!response.ok) {
-                        const errorDetails = await response.text();
-                        throw new Error("La API rechazó la conexión. " + errorDetails);
+                        const errorData = await response.json();
+                        throw new Error(errorData.error?.message || "La API rechazó la conexión.");
                     }
 
                     const data = await response.json();
                     let textoRespuesta = data.candidates[0].content.parts[0].text.trim();
                     
-                    // Extraer los 3 dígitos de forma infalible
                     const numeros = textoRespuesta.match(/\b(111|131|141|151|156|181|142|149)\b/);
                     const codigo = numeros ? numeros[0] : "000";
                     
-                    // Limpiar el texto para la tarjeta azul (quitando el número)
                     let explicacionLimpia = textoRespuesta;
                     if (codigo !== "000") {
                         explicacionLimpia = explicacionLimpia.replace(codigo, '').trim();
@@ -652,739 +228,55 @@ Al final de la oración, escribe ÚNICAMENTE el código de 3 dígitos de esta li
                         resultsLabel.textContent = `Asociado por Inteligencia Artificial`;
                         mostrarTarjetas(explicacionLimpia, resultadosOficiales.slice(0, 10));
                     } else {
-                        // Si la IA no sabe qué es, mostramos resultados aproximados locales
-                        resultsLabel.textContent = `Mostrando resultados aproximados`;
-                        mostrarTarjetas(null, resultadosLocales.slice(0, 50));
+                        resultsList.innerHTML = `<div class="bg-white p-6 text-center text-slate-500 rounded-xl border border-slate-200">El artículo no se relaciona con las categorías del padrón.</div>`;
                     }
+
                 } catch (error) {
                     console.error("Error al conectar con Gemini:", error);
-                    resultsList.innerHTML = `<div class="bg-red-50 text-red-600 p-6 text-center rounded-xl border border-red-200">
-                        <strong>Error de conexión.</strong> Ocurrió un fallo al consultar la Inteligencia Artificial. Revisa tu conexión a internet.
-                    </div>`;
                     
-                    // Mostrar resultados locales por si acaso
-                    setTimeout(() => mostrarTarjetas(null, resultadosLocales.slice(0, 50)), 2000);
+                    let mensajeError = "Ocurrió un fallo de red al consultar la Inteligencia Artificial. Por favor, revisa tu conexión a internet.";
+                    
+                    // Si el error es específicamente que la llave está bloqueada/inválida
+                    if (error.message.includes("API_KEY_INVALID") || error.message.includes("key not valid") || error.message.includes("API key")) {
+                        mensajeError = "<strong>¡Llave API bloqueada!</strong> Google desactivó tu llave por seguridad (suele ocurrir al subir el código a un repositorio público en GitHub). Debes generar una llave nueva en Google AI Studio y actualizarla en el código fuente.";
+                    }
+
+                    // Renderizado de error amigable + resultados aproximados abajo para que no quede vacía la pantalla
+                    let htmlFallback = `
+                        <div class="bg-red-50 text-red-600 p-6 text-center rounded-xl border border-red-200 mb-6 shadow-sm text-sm">
+                            ${mensajeError}
+                        </div>
+                    `;
+
+                    if (resultadosLocales.length > 0) {
+                        htmlFallback += resultadosLocales.slice(0, 10).map(item => `
+                            <div class="bg-[#fff9f2] border-l-[6px] border-[#f97316] p-6 rounded-xl shadow-sm mb-4 opacity-80">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="bg-[#1e3ba6] text-white font-bold px-4 py-1.5 rounded-full text-sm tracking-wide shadow-sm">
+                                        Objeto ${item.objeto} / ${item.auxiliar}
+                                    </div>
+                                    <div class="text-[#1e3ba6] font-bold text-sm tracking-wide bg-blue-100 px-3 py-1 rounded-full">
+                                        Aproximación Local
+                                    </div>
+                                </div>
+                                <h3 class="font-bold text-xl md:text-2xl text-slate-800 mb-2 uppercase">${item.denominacion || 'SIN DENOMINACIÓN'}</h3>
+                                <p class="text-slate-600 font-medium leading-relaxed">${item.descripcion}</p>
+                            </div>
+                        `).join('');
+                    }
+
+                    resultsList.innerHTML = htmlFallback;
                 }
             }
 
             searchInput.addEventListener('input', () => {
                 clearTimeout(timeoutId);
-                timeoutId = setTimeout(ejecutarBusqueda, 1000); 
+                timeoutId = setTimeout(ejecutarBusqueda, 800); 
             });
 
+            // Arranque inicial
             mostrarTarjetas(null, datosActuales.slice(0, 50));
         });
     </script>
 </body>
-</html>";
-        
-        // ============================================
-        // 🧠 SISTEMA DE APRENDIZAJE DE IA
-        // ============================================
-        let knowledgeBase = {
-            searches: [],
-            learnedKeywords: {},
-            objectPopularity: {},
-            userPreferences: {},
-            searchHistory: [],
-            keywordMappings: {}
-        };
-        
-        // DICCIONARIO INTERNO COMPLETAMENTE NORMALIZADO (SIN TILDES)
-        let keywordsMap = {
-            'harina': ['111'], 'lechuga': ['111'], 'arroz': ['111'], 'carne': ['111'], 
-            'verdura': ['111'], 'comida': ['111'], 'alimento': ['111'], 'pan': ['111'], 
-            'leche': ['111'], 'huevos': ['111'], 'pescado': ['111'], 'pollo': ['111'], 
-            'queso': ['111'], 'fruta': ['111'], 'ensalada': ['111'], 'tomate': ['111'], 
-            'atun': ['111'], 'arveja': ['111'], 'fideo': ['111'], 'yerba': ['111'],
-            'vaso': ['193', '195', '199'], 'plato': ['193', '195', '199'], 'taza': ['193', '195', '199'], 'cubierto': ['193', '195', '199'], 'menaje': ['193', '195', '199'],
-            'sueldo': ['011', '021', '031'], 'salario': ['011', '021'], 'remuneracion': ['011'], 'jornal': ['011', '031'], 'paga': ['011'],
-            'combustible': ['141'], 'nafta': ['141'], 'gasoil': ['141'], 'diesel': ['141'], 'gasolina': ['141'], 'petroleo': ['141'],
-            'medicamento': ['152'], 'droga': ['152'], 'farmaco': ['152'], 'vacuna': ['152'], 'pastilla': ['152'], 'jarabe': ['152'],
-            'vehiculo': ['353'], 'auto': ['353'], 'camioneta': ['353'], 'moto': ['353'], 'ambulancia': ['353'], 'camion': ['353'],
-            'regla': ['191', '176'], 'util': ['191'], 'oficina': ['191', '131', '326'], 'papel': ['131'], 'lapiz': ['191'], 'boligrafo': ['191'], 'cuaderno': ['191'], 'tinta': ['191'], 'toner': ['191'], 'hoja': ['131'], 'goma': ['191'], 'clip': ['191'],
-            'internacion': ['283'], 'hospital': ['283', '152'], 'sanatorio': ['283'], 'medico': ['283', '152'], 'clinica': ['283'], 'paciente': ['283'],
-            'computadora': ['323'], 'laptop': ['323'], 'notebook': ['323'], 'servidor': ['323'], 'software': ['285'], 'programa': ['285'], 'teclado': ['323'], 'mouse': ['323'], 'monitor': ['323'],
-            'limpieza': ['192', '278'], 'jabon': ['192'], 'escoba': ['192'], 'lavandina': ['192'], 'detergente': ['192'], 'trapo': ['192'], 'bolsa': ['192'],
-            'electricidad': ['213'], 'luz': ['213'], 'agua': ['212'], 'telefono': ['211'], 'internet': ['211'], 'wifi': ['211'],
-            'viatico': ['234', '235'], 'pasaje': ['231', '232', '233'], 'alquiler': ['251'], 'hospedaje': ['234', '235'], 'hotel': ['234', '235'],
-            'capacitacion': ['284'], 'curso': ['284'], 'taller': ['284'], 'seminario': ['284'], 'diplomado': ['284'], 'maestria': ['284'],
-            'jubilacion': ['571'], 'retiro': ['571'], 'pasividad': ['571'], 'beca': ['577'], 'becario': ['577'], 'becaria': ['577'],
-            'herramienta': ['176'], 'destornillador': ['176'], 'martillo': ['176'], '': ['176'], 'alicate': ['176'], 'pinza': ['176'], 'taladro': ['322'],
-            'vestimenta': ['122'], 'uniforme': ['122'], 'ropa': ['122'], 'calzado': ['122'], 'zapato': ['122'], 'botas': ['122'], 'camisa': ['122'], 'pantalon': ['122'],
-            'seguro': ['264'], 'poliza': ['264'], 'prima': ['264'], 'cobertura': ['264'],
-            'mantenimiento': ['271', '273', '275', '276'], 'reparacion': ['271', '273'], 'arreglo': ['271', '273'], 'pintura': ['151'], 'repuesto': ['199'],
-            'construccion': ['387'], 'carretera': ['387'], 'camino': ['387'], 'puente': ['387'], 'obra': ['387'], 'edificio': ['387', '271'], 'ladrillo': ['161'], 'cemento': ['161'], 'arena': ['161'],
-            'vigilancia': ['291'], 'seguridad': ['291', '328'], 'custodia': ['291'], 'guardia': ['291'], 'alarma': ['328'],
-            'mueble': ['326'], 'escritorio': ['326'], 'silla': ['326'], 'mesa': ['326'], 'sillon': ['326'], 'armario': ['326'], 'estante': ['326'],
-            'impresora': ['323', '324'], 'scanner': ['323'], 'plotter': ['324'], 'fotocopiadora': ['324'],
-            'subsidio': ['511', '554', '579'], 'subvencion': ['511', '554'], 'aporte': ['511', '513'], 'transferencia': ['511', '513', '514', '519'],
-            'deporte': ['555'], 'cultural': ['555'], 'recreativo': ['555'], 'olimpico': ['555'], 'futbol': ['555'], 'tenis': ['555'],
-            'animal': ['112'], 'mascota': ['112'], 'perro': ['112'], 'gato': ['112'], 'caballo': ['112'], 'veterinario': ['112', '153'], 'racion': ['112'],
-            'energia': ['213', '142'], 'consumo': ['213'], 'medidor': ['213'], 'kilowatt': ['213'], 'kw': ['213'], 'kwh': ['213'],
-            'impuesto': ['263'], 'tasa': ['263'], 'tributo': ['263'], 'multa': ['263'], 'dgi': ['263'], 'dna': ['263'], 'bps': ['263'], 'iva': ['263'],
-            'indemnizacion': ['793'], 'expropiacion': ['793'], 'sentencia': ['711'], 'judicial': ['711']
-        };
-
-        // ============================================
-        // 💾 PERSISTENCIA (LocalStorage)
-        // ============================================
-        
-        function loadLearningData() {
-            const saved = localStorage.getItem('cgn_ai_learning_v2');
-            if (saved) {
-                knowledgeBase = JSON.parse(saved);
-                Object.keys(knowledgeBase.learnedKeywords).forEach(term => {
-                    if (!keywordsMap[term]) keywordsMap[term] = knowledgeBase.learnedKeywords[term];
-                });
-                if (knowledgeBase.keywordMappings) {
-                    Object.keys(knowledgeBase.keywordMappings).forEach(term => {
-                        if (!keywordsMap[term]) keywordsMap[term] = knowledgeBase.keywordMappings[term];
-                    });
-                }
-            }
-        }
-
-        function saveLearningData() {
-            localStorage.setItem('cgn_ai_learning_v2', JSON.stringify(knowledgeBase));
-        }
-
-        // ============================================
-        // 🧠 FUNCIONES DE APRENDIZAJE
-        // ============================================
-        
-        function learnFromSearch(query, results, selectedObject) {
-            const timestamp = Date.now();
-            const queryNorm = normalizar(query);
-            
-            knowledgeBase.searches.push({ query: queryNorm, timestamp: timestamp, resultsCount: results.length, selectedObject: selectedObject });
-
-            if (selectedObject) {
-                knowledgeBase.objectPopularity[selectedObject] = (knowledgeBase.objectPopularity[selectedObject] || 0) + 1;
-                if (!knowledgeBase.keywordMappings[queryNorm]) knowledgeBase.keywordMappings[queryNorm] = [];
-                if (!knowledgeBase.keywordMappings[queryNorm].includes(selectedObject)) knowledgeBase.keywordMappings[queryNorm].push(selectedObject);
-                
-                results.forEach(r => {
-                    if (r.relevancia >= 50) {
-                        if (!knowledgeBase.learnedKeywords[queryNorm]) knowledgeBase.learnedKeywords[queryNorm] = [];
-                        if (!knowledgeBase.learnedKeywords[queryNorm].includes(r.objeto)) knowledgeBase.learnedKeywords[queryNorm].push(r.objeto);
-                    }
-                });
-            }
-
-            if (knowledgeBase.searches.length > 100) knowledgeBase.searches = knowledgeBase.searches.slice(-100);
-            saveLearningData();
-            updateAIStatus();
-        }
-
-        function getLearnedSuggestions() {
-            const suggestions = [];
-            const searchCounts = {};
-            knowledgeBase.searches.forEach(s => { searchCounts[s.query] = (searchCounts[s.query] || 0) + 1; });
-            
-            Object.entries(searchCounts).sort((a, b) => b[1] - a[1]).slice(0, 5).forEach(([term, count]) => {
-                suggestions.push({ term, count, type: 'frequent' });
-            });
-
-            Object.entries(knowledgeBase.objectPopularity).sort((a, b) => b[1] - a[1]).slice(0, 3).forEach(([objeto, count]) => {
-                const data = datosCompletos.find(d => d.objeto === objeto);
-                if (data) suggestions.push({ term: data.denominacion.split(' ')[0], count, type: 'popular', objeto });
-            });
-
-            Object.keys(knowledgeBase.learnedKeywords).slice(0, 5).forEach(term => {
-                if (!suggestions.find(s => s.term === term)) suggestions.push({ term, count: 1, type: 'learned' });
-            });
-
-            return suggestions.slice(0, 12);
-        }
-
-        function updateAIStatus() {
-            document.getElementById('searchCount').textContent = knowledgeBase.searches.length;
-            document.getElementById('keywordsLearned').textContent = Object.keys(knowledgeBase.learnedKeywords).length + Object.keys(knowledgeBase.keywordMappings).length;
-            document.getElementById('learnedTerms').textContent = Object.keys(knowledgeBase.learnedKeywords).length;
-            
-            const recentSearches = knowledgeBase.searches.slice(-20);
-            if (recentSearches.length > 0) {
-                const avg = Math.round(recentSearches.reduce((sum, s) => sum + (s.resultsCount > 0 ? 70 : 30), 0) / recentSearches.length);
-                document.getElementById('avgRelevance').textContent = avg + '%';
-            }
-
-            const topObject = Object.entries(knowledgeBase.objectPopularity).sort((a, b) => b[1] - a[1])[0];
-            if (topObject) {
-                const data = datosCompletos.find(d => d.objeto === topObject[0]);
-                document.getElementById('topObject').textContent = data ? `${data.objeto}/${data.auxiliar}` : topObject[0];
-            }
-
-            const score = Math.min(100, Math.round(
-                (knowledgeBase.searches.length * 2) + 
-                (Object.keys(knowledgeBase.learnedKeywords).length * 5) +
-                (Object.keys(knowledgeBase.objectPopularity).length * 3) +
-                (Object.keys(knowledgeBase.keywordMappings).length * 4)
-            ));
-            document.getElementById('learningScore').textContent = score;
-        }
-
-        function clearHistory() {
-            if (confirm('¿Estás seguro de limpiar todo el historial de aprendizaje? La IA volverá a empezar.')) {
-                knowledgeBase = { searches: [], learnedKeywords: {}, objectPopularity: {}, userPreferences: {}, searchHistory: [], keywordMappings: {} };
-                saveLearningData(); updateAIStatus(); renderHistory(); renderSuggestions();
-                alert('Historial limpiado. La IA empezará a aprender desde cero.');
-            }
-        }
-
-        function toggleManualLearning() {
-            const form = document.getElementById('manualLearningForm');
-            const icon = document.getElementById('manualToggleIcon');
-            if (form.style.display === 'none') { form.style.display = 'block'; icon.textContent = '▲'; } 
-            else { form.style.display = 'none'; icon.textContent = '▼'; }
-        }
-
-        function agregarPalabraManual() {
-            const wordInput = document.getElementById('manualWord');
-            const objInput = document.getElementById('manualObject');
-            const auxInput = document.getElementById('manualAuxiliar');
-            const word = normalizar(wordInput.value);
-            const obj = objInput.value.trim();
-            const aux = auxInput.value.trim();
-            const msgDiv = document.getElementById('manualMsg');
-
-            if (!word || !obj) {
-                msgDiv.textContent = "⚠️ Por favor, completa al menos la palabra y el objeto.";
-                msgDiv.style.color = "#d32f2f"; msgDiv.style.display = "block";
-                setTimeout(() => { msgDiv.style.display = "none"; }, 4000); return;
-            }
-
-            if (!knowledgeBase.learnedKeywords[word]) knowledgeBase.learnedKeywords[word] = [];
-            if (!knowledgeBase.learnedKeywords[word].includes(obj)) knowledgeBase.learnedKeywords[word].push(obj);
-            if (aux && !knowledgeBase.learnedKeywords[word].includes(`${obj}-${aux}`)) knowledgeBase.learnedKeywords[word].push(`${obj}-${aux}`);
-
-            if (!keywordsMap[word]) keywordsMap[word] = [];
-            if (!keywordsMap[word].includes(obj)) keywordsMap[word].push(obj);
-            if (aux && !keywordsMap[word].includes(`${obj}-${aux}`)) keywordsMap[word].push(`${obj}-${aux}`);
-
-            saveLearningData(); updateAIStatus(); cargarSugerencias();
-
-            wordInput.value = ''; objInput.value = ''; auxInput.value = '';
-            
-            msgDiv.innerHTML = `✅ ¡Palabra <strong>"${word}"</strong> vinculada al objeto <strong>${obj}</strong>${aux ? ` (Aux: <strong>${aux}</strong>)` : ''} con éxito!`;
-            msgDiv.style.color = "#003ca5"; msgDiv.style.display = "block";
-            setTimeout(() => { msgDiv.style.display = "none"; }, 5000);
-        }
-
-        // ============================================
-        // 💾 CARGA DEL CSV
-        // ============================================
-        document.getElementById('csvFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            document.getElementById('fileName').textContent = `✅ Archivo cargado: ${file.name}`;
-            const reader = new FileReader();
-            reader.onload = function(event) { procesarCSV(event.target.result); };
-            reader.onerror = function() { alert('❌ Error al leer el archivo. Asegúrate que sea un CSV válido.'); };
-            reader.readAsText(file, 'ISO-8859-1');
-        });
-
-        function procesarCSV(texto) {
-            try {
-                const lineas = texto.split('\n');
-                datosCompletos = [];
-                for (let i = 1; i < lineas.length; i++) {
-                    const linea = lineas[i].trim();
-                    if (!linea) continue;
-                    
-                    const columnas = [];
-                    let actual = '';
-                    let entreComillas = false;
-                    for (let char of linea) {
-                        if (char === '"') entreComillas = !entreComillas;
-                        else if (char === ',' && !entreComillas) { columnas.push(actual.trim().replace(/^"|"$/g, '')); actual = ''; }
-                        else actual += char;
-                    }
-                    columnas.push(actual.trim().replace(/^"|"$/g, ''));
-                    
-                    if (columnas.length >= 4) {
-                        const objeto = columnas[0]?.trim() || '';
-                        datosCompletos.push({
-                            objeto: objeto,
-                            auxiliar: columnas[1]?.trim() || '',
-                            denominacion: columnas[2]?.trim() || '',
-                            descripcion: columnas[3]?.trim() || '',
-                            grupo: objeto.charAt(0),
-                            categoria: obtenerCategoria(objeto.charAt(0))
-                        });
-                    }
-                }
-                
-                if (datosCompletos.length === 0) { alert('⚠️ No se encontraron datos en el CSV.'); return; }
-                try { localStorage.setItem('cgn_csv_data_v1', JSON.stringify(datosCompletos)); } catch (e) {}
-                
-                iniciarAppConDatos();
-                alert(`✅ ¡Listo! ${datosCompletos.length} registros cargados.`);
-            } catch (error) { alert('❌ Error al procesar el CSV: ' + error.message); }
-        }
-
-        function iniciarAppConDatos() {
-            document.getElementById('totalRegistros').textContent = datosCompletos.length;
-            document.getElementById('totalObjetos').textContent = [...new Set(datosCompletos.map(d => d.objeto))].length;
-            document.getElementById('uploadSection').style.display = 'none';
-            document.getElementById('statsBar').style.display = 'flex';
-            document.getElementById('learningPanel').style.display = 'block';
-            document.getElementById('searchContainer').style.display = 'block';
-            document.getElementById('historySection').style.display = 'block';
-            updateAIStatus(); cargarSugerencias(); renderHistory();
-        }
-
-        function borrarDatosCSV() {
-            if (confirm('¿Deseas borrar el archivo actual y cargar uno nuevo? Tu historial de aprendizaje NO se perderá.')) {
-                localStorage.removeItem('cgn_csv_data_v1'); location.reload();
-            }
-        }
-
-        function obtenerCategoria(grupo) {
-            const categorias = {
-                '0': 'Servicios Personales', '1': 'Bienes de Consumo', '2': 'Servicios No Personales',
-                '3': 'Bienes de Uso', '4': 'Aplicaciones Financieras', '5': 'Transferencias',
-                '6': 'Deuda Pública', '7': 'Otros Gastos', '8': 'Amortización de Deuda', '9': 'Gastos Figurativos'
-            };
-            return categorias[grupo] || 'Otros';
-        }
-
-        // ============================================
-        // 🔍 MOTOR DE BÚSQUEDA Y EXPANSIÓN SEMÁNTICA
-        // ============================================
-        
-        function normalizar(texto) {
-            if (!texto) return '';
-            texto = texto.toLowerCase().trim();
-            texto = texto.replace(/[áàäâ]/g, 'a').replace(/[éèëê]/g, 'e').replace(/[íìïî]/g, 'i').replace(/[óòöô]/g, 'o').replace(/[úùüû]/g, 'u').replace(/ñ/g, 'n');
-            return texto;
-        }
-
-        function calcularRelevancia(query, item) {
-            const queryNorm = normalizar(query);
-            const textoCompleto = normalizar(`${item.objeto} ${item.auxiliar} ${item.denominacion} ${item.descripcion}`);
-            const denomNorm = normalizar(item.denominacion);
-            const descNorm = normalizar(item.descripcion);
-            
-            let score = 0; let keywordEncontrada = null;
-            if (denomNorm.includes(queryNorm)) score += 50;
-            if (descNorm.includes(queryNorm)) score += 30;
-            if (item.objeto.includes(queryNorm) || item.auxiliar.includes(queryNorm)) score += 60;
-            
-            if (keywordsMap[queryNorm]) {
-                if (keywordsMap[queryNorm].includes(item.objeto)) { score += 40; keywordEncontrada = queryNorm; }
-                if (keywordsMap[queryNorm].includes(`${item.objeto}-${item.auxiliar}`)) { score += 60; keywordEncontrada = queryNorm; }
-            }
-            
-            const palabrasQuery = queryNorm.split(' ').filter(p => p.length > 2);
-            palabrasQuery.forEach(palabra => {
-                if (textoCompleto.includes(palabra)) { score += 15; if (!keywordEncontrada) keywordEncontrada = palabra; }
-            });
-            
-            if (item.categoria && normalizar(item.categoria).includes(queryNorm)) score += 20;
-            if (knowledgeBase.objectPopularity[item.objeto]) score += Math.min(20, knowledgeBase.objectPopularity[item.objeto] * 2);
-            
-            return { score: Math.min(score, 100), keyword: keywordEncontrada };
-        }
-
-        function buscar() {
-            const query = document.getElementById('searchInput').value.trim();
-            const resultsDiv = document.getElementById('results');
-            
-            if (!query || query.length < 2) {
-                resultsDiv.innerHTML = '<div class="error">⚠️ Ingresa al menos 2 caracteres para buscar</div>'; return;
-            }
-            
-            resultsDiv.innerHTML = '<div class="loading">⏳ Buscando en base de datos local...</div>';
-            
-            setTimeout(() => {
-                let resultados = datosCompletos.map(item => {
-                    const relevancia = calcularRelevancia(query, item);
-                    return { ...item, relevancia: relevancia.score, keywordEncontrada: relevancia.keyword };
-                });
-                
-                resultados = resultados.filter(r => r.relevancia >= 15);
-                if (filtroGrupo) resultados = resultados.filter(r => r.grupo === filtroGrupo);
-                resultados.sort((a, b) => b.relevancia - a.relevancia);
-                resultados = resultados.slice(0, limiteResultados);
-                
-                document.getElementById('ultimaBusqueda').textContent = resultados.length;
-                
-                if (resultados.length === 0) {
-                    buscarConGemini(query);
-                } else {
-                    learnFromSearch(query, resultados, resultados[0]?.objeto);
-                    renderResultados(resultados, false, query);
-                }
-            }, 300);
-        }
-
-        // --- MAGIA PURA: INTEGRACIÓN CON LA API DE GOOGLE GEMINI ---
-        async function buscarConGemini(query) {
-            const resultsDiv = document.getElementById('results');
-            
-            const Limpia = typeof apiKey !== 'undefined' ? apiKey.trim() : "";
-            
-            if (!Limpia) {
-                mostrarError(query, `
-                    <div style="margin-top: 15px; padding: 15px; background: rgba(255,0,0,0.05); border: 1px solid #ff4444; border-radius: 8px; color: #cc0000; font-size: 0.95em;">
-                        <strong>🔑 FALTA LA  API:</strong><br>
-                        El sistema intentó usar la Inteligencia Artificial, pero la  aparece vacía.<br><br>
-                        👉 <strong>Si acabas de guardar en GitHub:</strong> Espera 2 minutos y presiona <strong>Ctrl + F5</strong> para borrar el caché.<br><br>
-                        👉 <strong>Si aún no pusiste la :</strong> Edita el código y pega tu  en la línea <code>const apiKey = "...";</code>
-                    </div>
-                `);
-                return;
-            }
-
-            resultsDiv.innerHTML = `
-                <div class="loading" style="color: #003ca5;">
-                    <span style="font-size: 1.5em; display:block; margin-bottom: 10px;">✨🧠✨</span>
-                    Palabra no registrada en memoria.<br>
-                    <strong>Consultando a la Inteligencia Artificial de Google (Gemini)</strong> para deducir el objeto del gasto...
-                </div>`;
-
-            try {
-                const categoriasDisponibles = {};
-                datosCompletos.forEach(d => {
-                    if (!categoriasDisponibles[d.objeto]) {
-                        categoriasDisponibles[d.objeto] = d.denominacion;
-                    }
-                });
-                
-                const resumenCatalogo = Object.entries(categoriasDisponibles).slice(0, 200).map(([obj, den]) => `- ${obj}: ${den}`).join('\n');
-
-                const promptText = `
-                    Actúa como un experto contable de la Contaduría General de la Nación de Uruguay.
-                    Un usuario quiere clasificar un gasto descrito como: "${query}".
-                    
-                    Revisa las siguientes categorías de Objetos del Gasto (código de 3 dígitos) y elige el que sea más preciso a nivel semántico. Por ejemplo, "arveja" o "atún" van en Alimentos, "silla de ruedas" va en equipos médicos, etc.
-                    
-                    Aquí está el catálogo principal:
-                    ${resumenCatalogo}
-                    
-                    Devuelve ÚNICAMENTE un objeto JSON válido, sin markdown ni comillas externas, con esta estructura:
-                    {"codigo": "AQUI_EL_CODIGO_DE_3_DIGITOS", "razon": "Breve explicación muy clara de por qué este artículo o servicio ('${query}') se clasifica bajo esa denominación."}
-                    Si no logras encontrar nada razonable en la lista, devuelve {"codigo": null}.
-                `;
-
-                const payload = {
-                    contents: [{ parts: [{ text: promptText }] }],
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                codigo: { type: "STRING" },
-                                razon: { type: "STRING" }
-                            }
-                        }
-                    }
-                };
-
-                // AUTO-SELECTOR DE MODELOS DE GOOGLE
-                // Si uno falla porque tu tipo de cuenta no lo soporta, probará el siguiente automáticamente.
-                const modelosParaProbar = [
-                    "gemini-1.5-flash-latest",
-                    "gemini-1.5-flash",
-                    "gemini-1.5-pro",
-                    "gemini-pro"
-                ];
-
-                let resultData = null;
-                let ultimoError = "";
-
-                for (const modeloAUsar of modelosParaProbar) {
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modeloAUsar}:generateContent?key=${llaveLimpia}`;
-                    
-                    try {
-                        const response = await fetch(url, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-                        
-                        if (!response.ok) {
-                            const errorText = await response.text();
-                            ultimoError = errorText;
-                            
-                            // Si el error es "Not Found", simplemente saltamos al siguiente modelo de la lista
-                            if (errorText.includes("not found") || errorText.includes("not supported")) {
-                                console.warn(`El modelo ${modeloAUsar} no está habilitado para esta cuenta. Probando el siguiente...`);
-                                continue; 
-                            } else {
-                                // Si es un error de llave inválida, detenemos el proceso
-                                let errMsg = `HTTP ${response.status}`;
-                                try { const errObj = JSON.parse(errorText); errMsg = errObj.error.message; } catch(e) {}
-                                throw new Error(errMsg);
-                            }
-                        }
-                        
-                        // Si todo salió bien, guardamos la data y rompemos el ciclo
-                        resultData = await response.json();
-                        break; 
-                        
-                    } catch (error) {
-                        if (error.message.includes("API Key") || error.message.includes("API_KEY_INVALID")) {
-                            throw error; // Detener si es problema de llave
-                        }
-                    }
-                }
-
-                if (!resultData || !resultData.candidates || !resultData.candidates[0]) {
-                    throw new Error(ultimoError ? ultimoError : "Ninguno de los modelos de IA está habilitado para tu Llave API.");
-                }
-
-                let textResponse = resultData.candidates[0].content.parts[0].text;
-                textResponse = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
-                const aiResult = JSON.parse(textResponse);
-
-                if (aiResult.codigo && aiResult.codigo !== "null") {
-                    let resultadosAI = datosCompletos.filter(item => item.objeto === aiResult.codigo);
-                    
-                    if (resultadosAI.length > 0) {
-                        resultadosAI = resultadosAI.map(item => ({
-                            ...item,
-                            relevancia: 95,
-                            keywordEncontrada: aiResult.razon
-                        }));
-                        
-                        if (filtroGrupo) resultadosAI = resultadosAI.filter(r => r.grupo === filtroGrupo);
-                        resultadosAI = resultadosAI.slice(0, limiteResultados);
-                        
-                        renderResultados(resultadosAI, true, query);
-                        return;
-                    }
-                }
-                
-                mostrarError(query);
-            } catch (error) {
-                console.error("Error consultando Gemini:", error);
-                let userMsg = `<br><br>💡 <strong>Detalle técnico:</strong> ${error.message}`;
-                
-                if (error.message.includes("API Key not valid") || error.message.includes("API_KEY_INVALID")) {
-                    userMsg = `<br><br>❌ <strong>Llave API Inválida:</strong> La llave que pegaste en el código no es válida. Asegúrate de haberla copiado completa y de no haber borrado las comillas.`;
-                } else if (error.message.includes("habilitado para tu Llave")) {
-                    userMsg = `<br><br>⚙️ <strong>Error de permisos de Google Cloud:</strong> Tu llave es correcta, pero no tienes habilitado el acceso a la API de Gemini ("Generative Language API") en la consola de Google Cloud.`;
-                }
-                
-                mostrarError(query, userMsg);
-            }
-        }
-
-        // --- FUNCIÓN UNIFICADA DE RENDERIZADO ---
-        function renderResultados(resultados, esDeInternet = false, originalQuery = '') {
-            const resultsDiv = document.getElementById('results');
-            let html = '';
-            
-            if (esDeInternet) {
-                html += `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; background: rgba(0, 60, 165, 0.05); padding: 15px; border-radius: 10px; border: 1px solid rgba(0, 60, 165, 0.2);">
-                    ✨🧠 <strong>Deducción de Inteligencia Artificial (Gemini):</strong> Analizamos "${originalQuery}" y determinamos su clasificación correcta. <br>
-                    <span style="font-size: 0.9em; margin-top: 5px; display: inline-block; font-weight: 600; color: #cc8800;">👉 Haz clic en el objeto para que tu navegador lo aprenda y la próxima búsqueda sea instantánea.</span>
-                </div>`;
-            } else {
-                html += `<div style="margin-bottom: 20px; color: #003ca5; font-size: 1.1em; font-weight: 600;">
-                    ✅ <strong>${resultados.length}</strong> resultados encontrados 
-                    (de ${datosCompletos.length} registros totales)
-                </div>`;
-            }
-            
-            resultados.forEach((r, index) => {
-                html += `
-                    <div class="result-card ${index === 0 && !esDeInternet ? 'selected' : ''}" data-is-first="${index === 0}" onclick="selectResult(event, '${r.objeto}', '${r.auxiliar}', '${originalQuery}')">
-                        <div class="result-header">
-                            <span class="codigo-badge">${r.objeto}/${r.auxiliar}</span>
-                            <span class="relevancia-badge">${esDeInternet ? '🧠 Certeza IA: Alta' : '📊 Relevancia: ' + r.relevancia + '%'}</span>
-                        </div>
-                        <div class="denominacion">${r.denominacion}</div>
-                        
-                        ${esDeInternet && r.keywordEncontrada ? `
-                            <div style="margin: 12px 0; padding: 15px; background: rgba(255, 170, 0, 0.1); border-left: 4px solid #ffaa00; border-radius: 4px; color: #b27300; font-size: 0.95em; line-height: 1.5;">
-                                💡 <strong>Justificación IA:</strong> ${r.keywordEncontrada}
-                            </div>
-                        ` : ''}
-
-                        <div class="descripcion">${r.descripcion}</div>
-                        ${r.categoria ? `<div class="categoria-tag" style="display:inline-block;background:rgba(0, 60, 165, 0.1);color:#003ca5;font-weight:600;padding:5px 12px;border-radius:15px;font-size:0.85em;margin-top:10px;">📁 ${r.categoria}</div>` : ''}
-                        <span class="grupo-tag" style="display:inline-block;background:rgba(0, 60, 165, 0.05);border: 1px solid rgba(0,60,165,0.2);color:#003ca5;font-weight:600;padding:3px 10px;border-radius:10px;font-size:0.75em;margin-left:10px;">Grupo ${r.grupo}</span>
-                        
-                        ${!esDeInternet && r.keywordEncontrada ? `<div class="keyword-match" style="display:block; margin-top:12px;">🏷️ Coincidencia: ${r.keywordEncontrada}</div>` : ''}
-                        
-                        ${index === 0 && !esDeInternet ? '<div class="confirm-msg" style="margin-top: 10px; color: #cc8800; font-weight: 600;">⭐ Mejor resultado (click para confirmar)</div>' : ''}
-                    </div>
-                `;
-            });
-            
-            resultsDiv.innerHTML = html;
-            renderHistory();
-        }
-
-        function mostrarError(query, mensajeExtra = "") {
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `
-                <div class="error" style="background: rgba(255, 170, 0, 0.05); border-color: #ffaa00; color: #b27300;">
-                    <h3 style="margin-bottom: 10px; color: #cc8800;">🤔 Aún no conozco la palabra "<strong>${query}</strong>"</h3>
-                    <p>Ni la búsqueda local ni el análisis de Inteligencia Artificial lograron clasificar este gasto con certeza. ${mensajeExtra}</p>
-                    
-                    <div style="margin-top: 20px; padding: 20px; background: #fff; border-radius: 10px; border: 1px dashed #ffaa00;">
-                        <p style="margin-bottom: 15px; font-weight: 600; color: #003ca5;">Enséñame manualmente y no lo olvidaré para la próxima:</p>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                            <input type="text" id="quickWord" value="${query}" disabled style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #f5f5f5; color: #666; width: 150px; font-family: 'Montserrat', sans-serif;">
-                            <span style="font-size: 1.5em; color: #ccc;">➡</span>
-                            <input type="text" id="quickObject" placeholder="Cód Objeto (ej: 111)" style="padding: 12px; border: 1px solid #003ca5; border-radius: 8px; width: 180px; font-family: 'Montserrat', sans-serif; outline: none;">
-                            <input type="text" id="quickAux" placeholder="Aux (opcional)" style="padding: 12px; border: 1px solid #ccc; border-radius: 8px; width: 160px; font-family: 'Montserrat', sans-serif; outline: none;">
-                            <button onclick="enseñarRapido('${query}')" style="padding: 12px 25px; background: #003ca5; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: 'Montserrat', sans-serif; transition: opacity 0.2s;">Guardar</button>
-                        </div>
-                        <div id="quickMsg" style="margin-top: 10px; font-weight: 600; display: none;"></div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        function enseñarRapido(word) {
-            const objInput = document.getElementById('quickObject');
-            const auxInput = document.getElementById('quickAux');
-            const msgDiv = document.getElementById('quickMsg');
-
-            const obj = objInput.value.trim();
-            const aux = auxInput.value.trim();
-
-            if (!obj) {
-                msgDiv.textContent = "⚠️ Ingresa al menos el código de Objeto (ej: 111).";
-                msgDiv.style.color = "#d32f2f"; msgDiv.style.display = "block"; return;
-            }
-
-            document.getElementById('manualWord').value = word;
-            document.getElementById('manualObject').value = obj;
-            document.getElementById('manualAuxiliar').value = aux;
-
-            agregarPalabraManual();
-
-            msgDiv.innerHTML = `✅ ¡Aprendido! Buscando resultados...`;
-            msgDiv.style.color = "#00b300"; msgDiv.style.display = "block";
-
-            setTimeout(() => buscarCon(word), 600);
-        }
-
-        function selectResult(event, objeto, auxiliar, queryToLearn) {
-            const queryNorm = normalizar(queryToLearn);
-            
-            if (queryToLearn) {
-                learnFromSearch(queryToLearn, [], objeto);
-                
-                if (!keywordsMap[queryNorm]) keywordsMap[queryNorm] = [];
-                if (!keywordsMap[queryNorm].includes(objeto)) keywordsMap[queryNorm].push(objeto);
-                if (auxiliar && !keywordsMap[queryNorm].includes(`${objeto}-${auxiliar}`)) keywordsMap[queryNorm].push(`${objeto}-${auxiliar}`);
-                
-                if (!knowledgeBase.learnedKeywords[queryNorm]) knowledgeBase.learnedKeywords[queryNorm] = [];
-                if (!knowledgeBase.learnedKeywords[queryNorm].includes(objeto)) knowledgeBase.learnedKeywords[queryNorm].push(objeto);
-                if (auxiliar && !knowledgeBase.learnedKeywords[queryNorm].includes(`${objeto}-${auxiliar}`)) knowledgeBase.learnedKeywords[queryNorm].push(`${objeto}-${auxiliar}`);
-                saveLearningData();
-            }
-
-            const card = event.target.closest('.result-card');
-            
-            // Eliminar estados de todas las tarjetas y restaurar mensajes
-            document.querySelectorAll('.result-card').forEach(c => {
-                c.classList.remove('selected', 'confirmed');
-                const msgEl = c.querySelector('.confirm-msg');
-                if (msgEl && c.getAttribute('data-is-first') === 'true') {
-                    msgEl.innerHTML = '⭐ Mejor resultado (click para confirmar)';
-                    msgEl.style.color = '#cc8800';
-                } else if (msgEl && c.getAttribute('data-is-first') !== 'true') {
-                    msgEl.remove(); // Removemos si se agregó dinámicamente a una que no era la primera
-                }
-            });
-            
-            // Agregar confirmación verde a la clickeada
-            if(card) {
-                card.classList.add('confirmed');
-                let msgEl = card.querySelector('.confirm-msg');
-                if (!msgEl) {
-                    msgEl = document.createElement('div');
-                    msgEl.className = 'confirm-msg';
-                    msgEl.style.marginTop = '10px';
-                    msgEl.style.fontWeight = '600';
-                    card.appendChild(msgEl);
-                }
-                msgEl.innerHTML = '✅ ¡Confirmado y aprendido!';
-                msgEl.style.color = '#00b300';
-            }
-            
-            const feedback = document.createElement('div');
-            feedback.style.cssText = 'background: rgba(0, 179, 0, 0.1); border: 1px solid #00b300; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center; color: #00b300; font-weight: 600;';
-            feedback.innerHTML = `✅ ¡Localmente aprendido! "${queryToLearn}" ya no necesitará consultar internet y se cargará al instante.`;
-            
-            const existingFeedback = document.querySelector('.ai-feedback');
-            if (existingFeedback) existingFeedback.remove();
-            feedback.classList.add('ai-feedback');
-            document.getElementById('results').appendChild(feedback);
-            
-            setTimeout(() => { feedback.remove(); }, 5000);
-        }
-
-        // ============================================
-        // ⚙️ FUNCIONES DE UTILIDAD
-        // ============================================
-        function buscarCon(termino) { document.getElementById('searchInput').value = termino; buscar(); }
-
-        function setLimite(limite) {
-            limiteResultados = limite;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.textContent.includes('resultados')) { btn.classList.remove('active'); if (btn.textContent.includes(limite)) btn.classList.add('active'); }
-            });
-        }
-
-        function filtrarGrupo(grupo) {
-            filtroGrupo = grupo;
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.textContent.includes('Grupo')) { btn.classList.remove('active'); if (btn.textContent.includes('Grupo ' + grupo)) btn.classList.add('active'); }
-            });
-            buscar();
-        }
-
-        function limpiarFiltros() {
-            filtroGrupo = '';
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.textContent.includes('20 resultados')) btn.classList.add('active');
-            });
-            document.getElementById('searchInput').value = '';
-            document.getElementById('results').innerHTML = '';
-            document.getElementById('ultimaBusqueda').textContent = '0';
-        }
-
-        function cargarSugerencias() {
-            const sugerencias = getLearnedSuggestions();
-            const grid = document.getElementById('sugerenciasGrid');
-            if (sugerencias.length === 0) {
-                const defaultSugerencias = ['harina', 'sueldo', 'combustible', 'medicamento', 'vehículo', 'regla', 'internación', 'computadora', 'útiles', 'limpieza', 'electricidad', 'teléfono', 'viático', 'alquiler', 'jubilación', 'beca', 'capacitación', 'mantenimiento', 'construcción', 'vigilancia'];
-                grid.innerHTML = defaultSugerencias.map(s => `<div class="sugerencia-item" onclick="buscarCon('${s}')">${s}</div>`).join('');
-            } else {
-                grid.innerHTML = sugerencias.map(s => `<div class="sugerencia-item" onclick="buscarCon('${s.term}')">${s.term} ${s.type === 'frequent' ? '🔥' : s.type === 'popular' ? '⭐' : '🤖'}</div>`).join('');
-            }
-        }
-
-        function renderHistory() {
-            const historyList = document.getElementById('historyList');
-            const recentSearches = knowledgeBase.searches.slice(-10).reverse();
-            if (recentSearches.length === 0) { historyList.innerHTML = '<p style="color: #888;">No hay historial aún. La IA empezará a aprender con tus búsquedas.</p>'; return; }
-            historyList.innerHTML = recentSearches.map(s => `
-                <div class="history-item" onclick="document.getElementById('searchInput').value='${s.query}'; buscar();">
-                    <span>🔍 ${s.query}</span>
-                    <span class="history-count">${s.resultsCount} resultados ${s.selectedObject ? '→ ' + s.selectedObject : ''}</span>
-                </div>
-            `).join('');
-        }
-
-        window.onload = function() {
-            loadLearningData(); updateAIStatus();
-            const savedCSV = localStorage.getItem('cgn_csv_data_v1');
-            if (savedCSV) { try { datosCompletos = JSON.parse(savedCSV); if (datosCompletos.length > 0) iniciarAppConDatos(); } catch(e) {} }
-            console.log('Hospital de Flores Dr. Edison Camacho - Sector Contaduría cargado');
-        };
-    </script>
-</body>
 </html>
-
-
