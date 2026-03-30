@@ -43,7 +43,7 @@
                 <label class="block text-sm font-bold text-slate-500 mb-3 uppercase tracking-wider">Buscar Objeto de Gasto</label>
                 <div class="flex flex-col sm:flex-row gap-3">
                     <div class="relative flex-1">
-                        <input type="text" id="searchInput" placeholder="Ej. Varilla, Martillo, Escritorio, Estufa, Caño..." 
+                        <input type="text" id="searchInput" placeholder="Ej. Papel, Estufa, Caño, Martillo..." 
                                class="w-full px-5 py-4 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:border-[#1e3ba6] transition-colors text-lg font-medium placeholder-slate-400">
                     </div>
                     <button id="searchBtn" class="px-8 py-4 bg-[#1e3ba6] hover:bg-blue-800 text-white font-bold rounded-xl shadow-md transition-colors flex justify-center items-center gap-2">
@@ -56,7 +56,7 @@
             <!-- CONTENEDOR DE RESULTADOS -->
             <div id="resultsList" class="space-y-6 pb-12">
                 <div class="bg-white p-8 text-center text-slate-400 rounded-xl border border-dashed border-slate-300">
-                    Introduce un término para obtener las 10 mejores opciones de clasificación.
+                    Introduce un término para obtener las opciones de clasificación y sus variantes.
                 </div>
             </div>
         </div>
@@ -424,51 +424,63 @@
                     if (term === word || term.includes(word) || word.includes(term)) {
                         const info = diccionarioPersonalizado[word];
                         resultsList.innerHTML = crearHTMLTarjeta(info.objeto, info.auxiliar, info.denominacion || "Rubro Personalizado", info.descripcion || "Definido por usuario", info.justificacion, 'manual', termRaw, info.grupoManual, info.subgrupoManual);
-                        return;
+                        return; // Termina aquí porque es una regla forzada por el usuario
                     }
                 }
 
-                // 2. PADRÓN LOCAL
-                const match = datosActuales.find(item => 
-                    normalizar(item.denominacion).includes(term) || 
-                    normalizar(item.descripcion).includes(term) ||
-                    term.includes(normalizar(item.denominacion))
-                );
-                
-                if (match) {
-                    resultsList.innerHTML = crearHTMLTarjeta(match.objeto, match.auxiliar, match.denominacion, match.descripcion, "Coincidencia directa en el padrón.", 'sistema', termRaw);
-                    return;
-                }
-
-                // 3. IA - TOP 10 OPCIONES
+                // MOSTRAR ESTADO DE CARGA DE IA
                 resultsList.innerHTML = `
                     <div class="bg-purple-50 p-10 text-center text-purple-700 font-bold rounded-xl animate-pulse shadow-inner flex flex-col items-center gap-4">
                         <span class="text-4xl">🧠</span>
-                        <div class="text-lg">Analizando "${termRaw}"...</div>
-                        <div class="text-xs font-normal">Estoy buscando las 10 mejores opciones de clasificación para ti.</div>
+                        <div class="text-lg">Analizando "${termRaw}" y buscando variantes...</div>
+                        <div class="text-xs font-normal">Estoy separando por materiales y usos. Un momento...</div>
                     </div>`;
-                
+
+                // 2. PADRÓN LOCAL (Ahora filtramos y lo mostramos como bloque aparte, NO CORTAMOS el proceso)
+                const localMatches = datosActuales.filter(item => 
+                    normalizar(item.denominacion).includes(term) || 
+                    normalizar(item.descripcion).includes(term) ||
+                    term.includes(normalizar(item.denominacion))
+                ).slice(0, 3); // Solo traemos los primeros 3 locales para no llenar la pantalla
+
+                let htmlLocal = "";
+                if (localMatches.length > 0) {
+                    htmlLocal = `
+                        <div class="mb-4">
+                            <h2 class="text-sm font-extrabold text-slate-400 uppercase flex items-center gap-2">
+                                <span>📁</span> Coincidencias en la base de datos local
+                            </h2>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">`;
+                    localMatches.forEach(match => {
+                        htmlLocal += crearHTMLTarjeta(match.objeto, match.auxiliar, match.denominacion, match.descripcion, "Encontrado en el padrón local (CSV o Padrón Base).", 'sistema', termRaw);
+                    });
+                    htmlLocal += `</div>`;
+                }
+
+                // 3. IA - TOP OPCIONES CON REGLA ESTRICTA DE VARIANTES
                 const prompt = `Actúa como experto asesor contable uruguayo para compras estatales.
                 El usuario busca el insumo: "${termRaw}".
                 
-                INSTRUCCIÓN CLAVE PARA VARIANTES (MUY IMPORTANTE):
-                Si el usuario ingresa un término genérico que puede tener distintas variantes (por material, fuente de energía, uso, etc.), DEBES generar opciones separadas para cada variante.
-                Ejemplos de términos con variantes:
-                - "estufa" (puede ser eléctrica, a gas, a leña).
-                - "caño" (puede ser PVC, metal, termofusión).
-                - "guantes" (quirúrgicos, de obra, de limpieza).
-                - "papel" (higiénico, resma A4).
-                - "vehículo" (auto, ambulancia, moto).
-                En el campo "justificacion", empieza SIEMPRE en mayúsculas aclarando la variante (Ej: "SI ES ESTUFA ELÉCTRICA: ...", "SI ES ESTUFA A GAS: ...", "SI ES CAÑO DE PVC: ...").
+                REGLA DE ORO ESTRICTA PARA VARIANTES:
+                Si el usuario ingresa un término genérico que puede tener distintas variantes (por material, tipo de energía, uso, etc. Ej: "estufa", "papel", "caño", "guantes", "carne"), ESTÁS OBLIGADO a devolver MÍNIMO 3 OBJETOS en el JSON, separando claramente cada variante, INCLUSO SI COMPARTEN EL MISMO CÓDIGO DE OBJETO.
                 
-                IMPORTANTE (Catálogo CGN 011 a 923):
-                - Artículos de plástico/PVC (ej. caño PVC): 114
-                - Hierro/metales básicos (ej. caño hierro, varillas): 171
+                Ejemplos obligatorios:
+                - "estufa" -> Debes devolver una tarjeta para Estufa Eléctrica (322), otra para Estufa a Gas (322), otra a Leña.
+                - "papel" -> Papel higiénico (151), Resma A4 (131), Papel toalla (151).
+                - "caño" -> PVC (114), Hierro (171), Cobre/Bronce.
+                
+                En el campo "denominacion", pon el nombre específico de la variante (Ej: "Estufa Eléctrica").
+                En el campo "justificacion", DEBES EMPEZAR en mayúsculas aclarando el caso: "SI ES ELÉCTRICA: ...", "SI ES A GAS: ...", "SI ES HIGIÉNICO: ...".
+                
+                IMPORTANTE (Catálogo CGN de referencia):
+                - Plástico/PVC: 114
+                - Metales básicos (hierro, varilla): 171
                 - Herramientas manuales/repuestos: 176
                 - Muebles físicos: 321
-                - Equipos eléctricos, electrodomésticos y de calefacción eléctrica: 322 o el correspondiente a equipamiento.
-                - Útiles/Papelería (ej. resmas de papel): 131
-                - Insumos de limpieza y aseo (ej. papel higiénico): 151
+                - Equipos eléctricos y electrodomésticos (estufas eléctricas, aires): 322
+                - Útiles/Papelería (resmas): 131
+                - Limpieza y aseo (papel higiénico, toallas): 151
                 
                 Responde ÚNICAMENTE en formato JSON: un arreglo de objetos con las llaves: "objeto", "auxiliar", "denominacion", "descripcion", "justificacion".`;
 
@@ -499,33 +511,38 @@
                             })
                         });
                         const data = await res.json();
-                        // Groq a veces devuelve el objeto raíz si no se especifica bien, buscamos el array
                         const parsed = JSON.parse(data.choices?.[0]?.message?.content);
-                        textoRespuesta = JSON.stringify(parsed.options || parsed.results || Object.values(parsed)[0]);
+                        textoRespuesta = JSON.stringify(parsed.options || parsed.results || Object.values(parsed)[0] || parsed);
                     }
 
                     const opciones = JSON.parse(textoRespuesta);
                     if (!Array.isArray(opciones)) throw new Error("La IA no devolvió un formato de lista válido.");
 
-                    let htmlFinal = `
+                    let htmlIA = `
                         <div class="mb-4">
                             <h2 class="text-xl font-extrabold text-[#1e3ba6] flex items-center gap-2">
-                                <span>🔍</span> Resultados para "${termRaw}"
+                                <span>✨</span> Análisis Inteligente de Variantes para "${termRaw}"
                             </h2>
-                            <p class="text-slate-500 text-xs mt-1">He encontrado 10 opciones posibles según el contexto semántico.</p>
+                            <p class="text-slate-500 text-xs mt-1">Opciones deducidas por la IA según el contexto.</p>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
                     
                     opciones.slice(0, 10).forEach((opt, i) => {
-                        const padronRef = PADRON_CGN[opt.objeto] || { denominacion: opt.denominacion, descripcion: opt.descripcion };
-                        htmlFinal += crearHTMLTarjeta(opt.objeto, opt.auxiliar || "000", padronRef.denominacion, padronRef.descripcion, opt.justificacion, 'ia', termRaw, null, null, i);
+                        htmlIA += crearHTMLTarjeta(opt.objeto, opt.auxiliar || "000", opt.denominacion, opt.descripcion || "Variante específica", opt.justificacion, 'ia', termRaw, null, null, i);
                     });
                     
-                    htmlFinal += `</div>`;
-                    resultsList.innerHTML = htmlFinal;
+                    htmlIA += `</div>`;
+                    
+                    // Mostramos ambas cosas: Coincidencias locales + Variantes de IA
+                    resultsList.innerHTML = htmlLocal + htmlIA;
 
                 } catch (e) {
-                    resultsList.innerHTML = `<div class="bg-rose-50 p-8 text-center rounded-2xl border-2 border-dashed border-rose-300 font-bold text-rose-700">${e.message}</div>`;
+                    if (htmlLocal) {
+                        // Si la IA falla pero tenemos locales, mostramos los locales y un mensaje chico de error de IA
+                        resultsList.innerHTML = htmlLocal + `<div class="bg-rose-50 p-4 mt-4 text-center rounded-xl text-rose-700 text-xs">Aviso: La IA no pudo generar variantes extra (${e.message})</div>`;
+                    } else {
+                        resultsList.innerHTML = `<div class="bg-rose-50 p-8 text-center rounded-2xl border-2 border-dashed border-rose-300 font-bold text-rose-700">${e.message}</div>`;
+                    }
                 }
             }
 
