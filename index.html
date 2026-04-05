@@ -248,6 +248,7 @@
         const apiKey = ""; 
 
         document.addEventListener('DOMContentLoaded', () => {
+            console.log("Aplicación inicializada. Listo para procesar.");
 
             // --- SISTEMA DE SEGURIDAD LOCAL (CONTRASEÑA ENCRIPTADA) ---
             // La contraseña ofuscada (Base64) de "Portugal1301" es "UG9ydHVnYWwxMzAx"
@@ -268,6 +269,7 @@
                     callback();
                     return;
                 }
+                console.log("Autenticación requerida para esta acción.");
                 accionPendiente = callback;
                 document.getElementById('passwordModal').classList.remove('hidden');
                 document.getElementById('adminPasswordInput').value = '';
@@ -278,6 +280,7 @@
             function verificarClave() {
                 const input = document.getElementById('adminPasswordInput').value;
                 if (generarHash(input) === HASH_MAESTRO) {
+                    console.log("Clave correcta. Sistema desbloqueado.");
                     estaDesbloqueado = true;
                     document.getElementById('passwordModal').classList.add('hidden');
                     
@@ -289,6 +292,7 @@
                     mostrarToast("Sistema desbloqueado para edición.", "success");
                     if (accionPendiente) accionPendiente();
                 } else {
+                    console.warn("Intento de desbloqueo fallido. Clave incorrecta.");
                     document.getElementById('passwordError').classList.remove('hidden');
                 }
             }
@@ -397,6 +401,7 @@
 
             // Inicializamos los datos actuales como una copia del array base.
             window.datosActuales = [...PADRON_BASE];
+            console.log("Padrón base cargado con", window.datosActuales.length, "elementos.");
 
             const normalizar = (text) => text ? text.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
             const getGrupoInfo = (obj) => { const gCode = String(obj).charAt(0); return { code: gCode, name: NOMBRES_GRUPOS[gCode] || "Grupo General" }; };
@@ -562,6 +567,7 @@
                     diccionarioPersonalizado[word] = ruleData;
                     localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
                     renderizarReglasManuales();
+                    console.log("Nueva regla guardada:", word, ruleData);
                     
                     ['newWord', 'newObj', 'newDenom', 'newDesc', 'newJust', 'newGroup', 'newSubgroup'].forEach(id => document.getElementById(id).value = '');
                     document.getElementById('newSource').value = 'usuario'; // Reset a usuario
@@ -574,13 +580,15 @@
             const searchBtn = document.getElementById('searchBtn');
             const resultsList = document.getElementById('resultsList');
 
-            window.confirmarIA = function(word, obj, aux, just, denom, desc, group, sub) {
+            window.confirmarIA = function(word, obj, aux, just, denom, desc, group, sub, origen = 'usuario') {
                 pedirAutenticacion(() => {
                     const wordNorm = normalizar(word);
-                    diccionarioPersonalizado[wordNorm] = { objeto: obj, auxiliar: aux, denominacion: denom, descripcion: desc, justificacion: just, grupoManual: group, subgrupoManual: sub, origen: 'usuario' };
+                    diccionarioPersonalizado[wordNorm] = { objeto: obj, auxiliar: aux, denominacion: denom, descripcion: desc, justificacion: just, grupoManual: group, subgrupoManual: sub, origen: origen };
                     localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
                     renderizarReglasManuales();
-                    resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">✅ Clasificación guardada exitosamente. Vuelve a buscar para verla destacada.</div>`;
+                    console.log(`IA Confirmada como ${origen}:`, wordNorm);
+                    const mensajeExito = origen === 'auditoria' ? 'Criterio de Auditoría' : 'Criterio de Usuario';
+                    resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">✅ Clasificación guardada exitosamente como ${mensajeExito}. Vuelve a buscar para verla destacada.</div>`;
                     mostrarToast("Regla aprendida por el sistema", "success");
                 });
             };
@@ -637,9 +645,13 @@
                 } else {
                     etiqueta = tipo === 'ia' ? `<span class="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-1 rounded-full border border-purple-200">✨ Opción IA #${index + 1}</span>` : `<span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-1 rounded-full border border-blue-200">📚 Padrón Oficial</span>`;
                     feedbackButtons = `
-                        <div class="mt-4 flex flex-col sm:flex-row gap-2 border-t border-slate-100 pt-4">
-                            <button onclick="confirmarIA('${safeWord}', '${cleanObjeto}', '${cleanAuxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}')" class="flex-1 py-2 bg-emerald-600 text-white rounded-lg font-bold text-[10px] hover:bg-emerald-700 transition-colors flex justify-center items-center gap-1">✅ Confirmar</button>
-                            <button onclick="corregirIA('${safeWord}', '${cleanObjeto}', '${cleanAuxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}')" class="flex-1 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-bold text-[10px] hover:bg-rose-100 transition-colors flex justify-center items-center gap-1">❌ Corregir</button>
+                        <div class="mt-4 border-t border-slate-100 pt-4">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase mb-2">Guardar sugerencia en el sistema como:</p>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <button onclick="confirmarIA('${safeWord}', '${cleanObjeto}', '${cleanAuxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}', 'usuario')" class="flex-1 py-2 bg-emerald-600 text-white rounded-lg font-bold text-[10px] hover:bg-emerald-700 transition-colors flex justify-center items-center gap-1">✅ Usuario</button>
+                                <button onclick="confirmarIA('${safeWord}', '${cleanObjeto}', '${cleanAuxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}', 'auditoria')" class="flex-1 py-2 bg-amber-500 text-white rounded-lg font-bold text-[10px] hover:bg-amber-600 transition-colors flex justify-center items-center gap-1">⭐ Auditoría</button>
+                                <button onclick="corregirIA('${safeWord}', '${cleanObjeto}', '${cleanAuxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}')" class="flex-1 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-bold text-[10px] hover:bg-rose-100 transition-colors flex justify-center items-center gap-1">❌ Editar Detalles</button>
+                            </div>
                         </div>`;
                 }
 
@@ -667,6 +679,8 @@
                 const term = normalizar(termRaw);
                 if (!term) return;
 
+                console.log("Iniciando búsqueda de:", termRaw);
+
                 // 1. REGLA MANUAL LOCAL (DESTACADA)
                 let htmlManual = "";
                 let manualCards = "";
@@ -677,6 +691,7 @@
                     }
                 }
                 if (manualCards) {
+                    console.log("Se encontraron coincidencias de reglas manuales/auditoría");
                     htmlManual = `<div class="mb-4"><h2 class="text-lg font-black text-amber-600 uppercase tracking-wide flex items-center gap-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg> Criterios Guardados</h2></div><div class="grid grid-cols-1 gap-4 mb-8">` + manualCards + `</div>`;
                 }
 
@@ -694,6 +709,7 @@
                 ).slice(0, 5);
                 
                 if (localMatches.length > 0) {
+                    console.log("Coincidencias en el padrón local:", localMatches);
                     htmlLocal = `<div class="mb-4 mt-6"><h2 class="text-sm font-extrabold text-slate-400 uppercase flex items-center gap-2"><span>📁</span> Coincidencias Locales</h2></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">`;
                     localMatches.forEach(match => { htmlLocal += crearHTMLTarjeta(match.objeto, match.auxiliar, match.denominacion, match.descripcion, "Padrón Local.", 'sistema', termRaw, null, null, null); });
                     htmlLocal += `</div>`;
@@ -722,6 +738,8 @@
                     const aiSelect = document.getElementById('aiEngineSelect').value;
                     let GROQ_API_KEY = localStorage.getItem('groqApiKey') || "";
 
+                    console.log("Iniciando consulta a la IA usando el motor:", aiSelect);
+
                     if (aiSelect === 'gemini') {
                         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, { 
                             method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" }}) 
@@ -746,6 +764,8 @@
                     const opciones = JSON.parse(cleanJSON);
                     if (!Array.isArray(opciones) || opciones.length === 0) throw new Error("Fallo de formato IA");
 
+                    console.log("Respuesta recibida y parseada correctamente de la IA:", opciones);
+
                     let htmlIA = `<div class="mb-4"><h2 class="text-xl font-extrabold text-[#1e3ba6] flex items-center gap-2"><span>✨</span> Opciones de IA para "${termRaw}"</h2></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4">`;
                     opciones.slice(0, 10).forEach((opt, i) => { htmlIA += crearHTMLTarjeta(opt.objeto, opt.auxiliar, opt.denominacion, opt.descripcion, opt.justificacion, 'ia', termRaw, null, null, null, i); });
                     htmlIA += `</div>`;
@@ -753,8 +773,9 @@
                     resultsList.innerHTML = htmlManual + htmlLocal + htmlIA;
 
                 } catch (e) {
-                    if (htmlLocal || htmlManual) resultsList.innerHTML = htmlManual + htmlLocal + `<div class="bg-rose-50 p-4 mt-4 text-center rounded-xl text-rose-700 text-xs">La IA no pudo generar variantes extras.</div>`;
-                    else resultsList.innerHTML = `<div class="bg-rose-50 p-8 text-center rounded-2xl border-2 border-dashed border-rose-300 font-bold text-rose-700">Error en la Inteligencia Artificial. Intenta nuevamente.</div>`;
+                    console.error("Error en la IA:", e);
+                    if (htmlLocal || htmlManual) resultsList.innerHTML = htmlManual + htmlLocal + `<div class="bg-rose-50 p-4 mt-4 text-center rounded-xl text-rose-700 text-xs">La IA no pudo generar variantes extras (Revisa la consola para más detalles).</div>`;
+                    else resultsList.innerHTML = `<div class="bg-rose-50 p-8 text-center rounded-2xl border-2 border-dashed border-rose-300 font-bold text-rose-700">Error en la Inteligencia Artificial. Intenta nuevamente o verifica la consola.</div>`;
                 }
             }
 
@@ -764,6 +785,7 @@
             document.getElementById('uploadBtn').addEventListener('click', () => document.getElementById('csvFileInput').click());
             document.getElementById('csvFileInput').addEventListener('change', function(e) {
                 if (!e.target.files[0]) return;
+                console.log("Comenzando lectura y parseo del archivo CSV:", e.target.files[0].name);
                 Papa.parse(e.target.files[0], {
                     header: true, skipEmptyLines: true, 
                     complete: function(results) {
@@ -787,6 +809,7 @@
                         
                         window.datosActuales = Array.from(map.values());
                         
+                        console.log("Archivo CSV procesado. Total de registros en memoria local:", window.datosActuales.length);
                         mostrarToast("Padrón Local vinculado (Auxiliares respetados)", "success");
                     }
                 });
