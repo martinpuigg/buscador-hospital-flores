@@ -350,7 +350,7 @@
                 "13": "Útiles y Materiales", "14": "Productos Agropecuarios", "15": "Productos de Limpieza",
                 "16": "Productos Médicos", "17": "Materiales y Repuestos", "19": "Otros Bienes",
                 "21": "Servicios Básicos", "23": "Pasajes y Viáticos", "24": "Arrendamientos", "25": "Seguros", 
-                "26": "Servicios Profesionales", "28": "Mantenimiento", "32": "Maquinaria", "33": "Equipos Computación"
+                "26": "Seguros", "28": "Mantenimiento", "32": "Maquinaria", "33": "Equipos Computación"
             };
 
             const PADRON_BASE = {
@@ -363,7 +363,7 @@
                 "231": { denominacion: "Pasajes dentro del país", descripcion: "Boletos de ómnibus, pasajes nacionales." },
                 "233": { denominacion: "Fletes", descripcion: "Transporte de bienes y mercaderías." },
                 "234": { denominacion: "Transporte de personas", descripcion: "Traslados de personal o pacientes." },
-                "264": { denominacion: "Servicios médicos, sanitarios y sociales", descripcion: "Incluye traslados especializados en ambulancia." },
+                "264": { denominacion: "Primas y otros gastos de seguro contratados dentro del país", descripcion: "Primas de seguros generales, de vida y otros riesgos para personas, equipos, inmuebles, muebles, valores, instalaciones y otros bienes asegurados en el país." },
                 "321": { denominacion: "Mobiliario y equipo de oficina", descripcion: "Escritorios físicos, mesas, sillas, armarios." },
                 "322": { denominacion: "Equipo de computación y periféricos", descripcion: "PCs, monitores, impresoras." },
                 "923": { denominacion: "Reserva para imprevistos", descripcion: "Gastos no programados." }
@@ -653,6 +653,7 @@
                 ESTÁS OBLIGADO a devolver MÍNIMO 3 OBJETOS en JSON separando variantes. 
                 El "objeto" DEBE SER UN NÚMERO DE 3 DÍGITOS. No inventes códigos numéricos, usa los de CGN.${reglasExtra}
                 Ejemplos de otros rubros: 
+                - Flete de carga (233), Traslado de personas (234), Arrendamiento Vehículos (257).
                 - Plástico/PVC (114), Hierro (171), Herramientas (176), Muebles (321), Resmas (131), Limpieza (151).
                 Responde ÚNICAMENTE en JSON: arreglo de objetos con llaves: "objeto", "auxiliar", "denominacion", "descripcion", "justificacion".`;
 
