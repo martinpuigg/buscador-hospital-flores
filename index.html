@@ -608,7 +608,7 @@
                 const term = normalizar(termRaw);
                 if (!term) return;
 
-                // 1. REGLA MANUAL LOCAL (DESTACADA) - Ya no corta la búsqueda
+                // 1. REGLA MANUAL LOCAL (DESTACADA)
                 let htmlManual = "";
                 let manualCards = "";
                 for (const word in diccionarioPersonalizado) {
@@ -621,13 +621,18 @@
                     htmlManual = `<div class="mb-4"><h2 class="text-lg font-black text-amber-600 uppercase tracking-wide flex items-center gap-2"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg> Criterio de Auditoría</h2></div><div class="grid grid-cols-1 gap-4 mb-8">` + manualCards + `</div>`;
                 }
 
-                // Mostrar tarjetas manuales y el loader de IA
                 resultsList.innerHTML = htmlManual + `<div class="bg-purple-50 p-10 text-center text-purple-700 font-bold rounded-xl animate-pulse shadow-inner flex flex-col items-center gap-4"><span class="text-4xl">🧠</span><div class="text-lg">Analizando "${termRaw}"...</div><div class="text-xs font-normal">Separando variantes y consultando IA...</div></div>`;
 
-                // 2. BÚSQUEDA LOCAL
+                // 2. BÚSQUEDA LOCAL MEJORADA (Ahora busca también por número de objeto)
                 let htmlLocal = "";
                 let localData = window.datosActuales || [];
-                const localMatches = localData.filter(item => normalizar(item.denominacion).includes(term) || normalizar(item.descripcion).includes(term) || term.includes(normalizar(item.denominacion))).slice(0, 3);
+                const localMatches = localData.filter(item => 
+                    item.objeto.includes(term) ||
+                    item.auxiliar.includes(term) ||
+                    normalizar(item.denominacion).includes(term) || 
+                    normalizar(item.descripcion).includes(term) || 
+                    term.includes(normalizar(item.denominacion))
+                ).slice(0, 3);
                 
                 if (localMatches.length > 0) {
                     htmlLocal = `<div class="mb-4 mt-6"><h2 class="text-sm font-extrabold text-slate-400 uppercase flex items-center gap-2"><span>📁</span> Coincidencias Locales</h2></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">`;
@@ -635,13 +640,19 @@
                     htmlLocal += `</div>`;
                 }
 
-                // 3. IA - TOP OPCIONES
+                // 3. IA - TOP OPCIONES (La IA ahora respeta las reglas manuales)
+                let reglasExtra = "";
+                if (Object.keys(diccionarioPersonalizado).length > 0) {
+                    reglasExtra = "\n\nREGLAS DE AUDITORÍA DEL HOSPITAL (PRIORIDAD ABSOLUTA - APLICA ESTO SÍ O SÍ SI HAY COINCIDENCIA):\n";
+                    for (const [k, v] of Object.entries(diccionarioPersonalizado)) {
+                        reglasExtra += `- Si buscan algo sobre "${k}", DEBES incluir la opción con Objeto ${v.objeto} y Auxiliar ${v.auxiliar}.\n`;
+                    }
+                }
+
                 const prompt = `Actúa como experto asesor contable uruguayo para compras estatales. Busca el insumo o servicio: "${termRaw}". 
                 ESTÁS OBLIGADO a devolver MÍNIMO 3 OBJETOS en JSON separando variantes. 
-                El "objeto" DEBE SER UN NÚMERO DE 3 DÍGITOS. No inventes códigos numéricos, usa los de CGN.
-                Ejemplos de análisis: 
-                - Flete de carga (233), Traslado de personas (234), Ambulancia (264), Arrendamiento Vehículos (257).
-                - Estufa a Gas (322).
+                El "objeto" DEBE SER UN NÚMERO DE 3 DÍGITOS. No inventes códigos numéricos, usa los de CGN.${reglasExtra}
+                Ejemplos de otros rubros: 
                 - Plástico/PVC (114), Hierro (171), Herramientas (176), Muebles (321), Resmas (131), Limpieza (151).
                 Responde ÚNICAMENTE en JSON: arreglo de objetos con llaves: "objeto", "auxiliar", "denominacion", "descripcion", "justificacion".`;
 
