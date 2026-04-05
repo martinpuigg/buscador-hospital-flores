@@ -123,6 +123,17 @@
                                 <input type="text" id="newDenom" placeholder="Ej. Servicio de Traslado (Auditoría)" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:border-[#1e3ba6]">
                             </div>
 
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Grupo (Opcional)</label>
+                                    <input type="text" id="newGroup" placeholder="Ej. 2 - Servicios" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Subgrupo (Opcional)</label>
+                                    <input type="text" id="newSubgroup" placeholder="Ej. 25 - Arrendamientos" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none">
+                                </div>
+                            </div>
+
                             <div>
                                 <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Descripción</label>
                                 <textarea id="newDesc" placeholder="Definición oficial o aclaración..." rows="2" class="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none resize-none"></textarea>
@@ -410,6 +421,8 @@
                             document.getElementById('newObj').value = rule.objeto || '';
                             document.getElementById('newAux').value = rule.auxiliar || '000';
                             document.getElementById('newDenom').value = rule.denominacion || '';
+                            document.getElementById('newGroup').value = rule.grupoManual || '';
+                            document.getElementById('newSubgroup').value = rule.subgrupoManual || '';
                             document.getElementById('newDesc').value = rule.descripcion || '';
                             document.getElementById('newJust').value = rule.justificacion || '';
 
@@ -478,12 +491,16 @@
             document.getElementById('saveWordBtn').addEventListener('click', () => {
                 pedirAutenticacion(() => {
                     const word = normalizar(document.getElementById('newWord').value);
+                    const group = document.getElementById('newGroup').value.trim();
+                    const sub = document.getElementById('newSubgroup').value.trim();
                     const ruleData = {
                         objeto: document.getElementById('newObj').value.trim(),
                         auxiliar: document.getElementById('newAux').value.trim() || "000",
                         denominacion: document.getElementById('newDenom').value.trim(),
                         descripcion: document.getElementById('newDesc').value.trim(),
-                        justificacion: document.getElementById('newJust').value.trim()
+                        justificacion: document.getElementById('newJust').value.trim(),
+                        grupoManual: group,
+                        subgrupoManual: sub
                     };
                     
                     if (!word || !ruleData.objeto) {
@@ -495,7 +512,7 @@
                     localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
                     renderizarReglasManuales();
                     
-                    ['newWord', 'newObj', 'newDenom', 'newDesc', 'newJust'].forEach(id => document.getElementById(id).value = '');
+                    ['newWord', 'newObj', 'newDenom', 'newDesc', 'newJust', 'newGroup', 'newSubgroup'].forEach(id => document.getElementById(id).value = '');
                     mostrarToast("¡Clasificación guardada con éxito!", "success");
                 });
             });
@@ -505,10 +522,10 @@
             const searchBtn = document.getElementById('searchBtn');
             const resultsList = document.getElementById('resultsList');
 
-            window.confirmarIA = function(word, obj, aux, just, denom, desc) {
+            window.confirmarIA = function(word, obj, aux, just, denom, desc, group, sub) {
                 pedirAutenticacion(() => {
                     const wordNorm = normalizar(word);
-                    diccionarioPersonalizado[wordNorm] = { objeto: obj, auxiliar: aux, denominacion: denom, descripcion: desc, justificacion: just };
+                    diccionarioPersonalizado[wordNorm] = { objeto: obj, auxiliar: aux, denominacion: denom, descripcion: desc, justificacion: just, grupoManual: group, subgrupoManual: sub };
                     localStorage.setItem('diccionarioCGN', JSON.stringify(diccionarioPersonalizado));
                     renderizarReglasManuales();
                     resultsList.innerHTML = `<div class="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-emerald-800 text-center font-bold animate-result shadow-sm">✅ Clasificación guardada exitosamente. Vuelve a buscar para verla destacada.</div>`;
@@ -516,12 +533,14 @@
                 });
             };
 
-            window.corregirIA = function(word, obj, aux, just, denom, desc) {
+            window.corregirIA = function(word, obj, aux, just, denom, desc, group, sub) {
                 pedirAutenticacion(() => {
                     document.getElementById('newWord').value = word;
                     document.getElementById('newObj').value = obj;
                     document.getElementById('newAux').value = aux;
                     document.getElementById('newDenom').value = denom;
+                    document.getElementById('newGroup').value = group || '';
+                    document.getElementById('newSubgroup').value = sub || '';
                     document.getElementById('newDesc').value = desc;
                     document.getElementById('newJust').value = just;
                     const details = document.querySelector('#manualForm').closest('details');
@@ -533,18 +552,21 @@
                 });
             };
 
-            function crearHTMLTarjeta(objeto, auxiliar, denominacion, descripcion, justificacion, tipo, queryOriginal, index = null) {
+            function crearHTMLTarjeta(objeto, auxiliar, denominacion, descripcion, justificacion, tipo, queryOriginal, manualGroup, manualSub, index = null) {
                 let cleanObjeto = String(objeto).replace(/\D/g, '');
                 let cleanAuxiliar = String(auxiliar).replace(/\D/g, '');
                 if(!cleanObjeto || cleanObjeto.length < 1) cleanObjeto = "199";
                 if(!cleanAuxiliar || cleanAuxiliar.length < 1) cleanAuxiliar = "000";
 
-                const groupInfo = getGrupoInfo(cleanObjeto);
-                const subInfo = getSubgrupoInfo(cleanObjeto);
+                const groupInfo = manualGroup ? { code: String(cleanObjeto).charAt(0), name: manualGroup } : getGrupoInfo(cleanObjeto);
+                const subInfo = manualSub ? { code: String(cleanObjeto).substring(0, 2), name: manualSub } : getSubgrupoInfo(cleanObjeto);
+                
                 const safeJust = (justificacion || "Sin justificación").replace(/'/g, "\\'").replace(/\n/g, " ");
                 const safeWord = (queryOriginal || "").replace(/'/g, "\\'");
                 const safeDenom = (denominacion || "Genérico").replace(/'/g, "\\'");
                 const safeDesc = (descripcion || "Sin descripción").replace(/'/g, "\\'");
+                const safeGroup = (groupInfo.name || "").replace(/'/g, "\\'");
+                const safeSub = (subInfo.name || "").replace(/'/g, "\\'");
 
                 let etiqueta = '';
                 let feedbackButtons = '';
@@ -557,8 +579,8 @@
                     etiqueta = tipo === 'ia' ? `<span class="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-1 rounded-full border border-purple-200">✨ Opción IA #${index + 1}</span>` : `<span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-1 rounded-full border border-blue-200">📚 Padrón Oficial</span>`;
                     feedbackButtons = `
                         <div class="mt-4 flex flex-col sm:flex-row gap-2 border-t border-slate-100 pt-4">
-                            <button onclick="confirmarIA('${safeWord}', '${cleanObjeto}', '${cleanAuxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}')" class="flex-1 py-2 bg-emerald-600 text-white rounded-lg font-bold text-[10px] hover:bg-emerald-700 transition-colors flex justify-center items-center gap-1">✅ Confirmar</button>
-                            <button onclick="corregirIA('${safeWord}', '${cleanObjeto}', '${cleanAuxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}')" class="flex-1 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-bold text-[10px] hover:bg-rose-100 transition-colors flex justify-center items-center gap-1">❌ Corregir</button>
+                            <button onclick="confirmarIA('${safeWord}', '${cleanObjeto}', '${cleanAuxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}')" class="flex-1 py-2 bg-emerald-600 text-white rounded-lg font-bold text-[10px] hover:bg-emerald-700 transition-colors flex justify-center items-center gap-1">✅ Confirmar</button>
+                            <button onclick="corregirIA('${safeWord}', '${cleanObjeto}', '${cleanAuxiliar}', '${safeJust}', '${safeDenom}', '${safeDesc}', '${safeGroup}', '${safeSub}')" class="flex-1 py-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-bold text-[10px] hover:bg-rose-100 transition-colors flex justify-center items-center gap-1">❌ Corregir</button>
                         </div>`;
                 }
 
@@ -569,8 +591,8 @@
                             ${etiqueta}
                         </div>
                         <div class="flex gap-3 mb-2 text-[9px] font-bold uppercase text-slate-400">
-                            <div>GRUPO <span class="text-slate-600">${groupInfo.code} - ${groupInfo.name}</span></div>
-                            <div>SUBGRUPO <span class="text-slate-600">${subInfo.name}</span></div>
+                            <div>GRUPO <span class="text-slate-600">${groupInfo.code} - ${safeGroup}</span></div>
+                            <div>SUBGRUPO <span class="text-slate-600">${safeSub}</span></div>
                         </div>
                         <h3 class="font-extrabold text-lg text-slate-800 uppercase leading-tight mb-1">${safeDenom}</h3>
                         <p class="text-slate-500 text-xs mb-3 line-clamp-2 italic">${safeDesc}</p>
@@ -592,7 +614,7 @@
                 for (const word in diccionarioPersonalizado) {
                     if (term === word || term.includes(word) || word.includes(term)) {
                         const info = diccionarioPersonalizado[word];
-                        manualCards += crearHTMLTarjeta(info.objeto, info.auxiliar, info.denominacion, info.descripcion, info.justificacion, 'manual', termRaw);
+                        manualCards += crearHTMLTarjeta(info.objeto, info.auxiliar, info.denominacion, info.descripcion, info.justificacion, 'manual', termRaw, info.grupoManual, info.subgrupoManual);
                     }
                 }
                 if (manualCards) {
@@ -609,7 +631,7 @@
                 
                 if (localMatches.length > 0) {
                     htmlLocal = `<div class="mb-4 mt-6"><h2 class="text-sm font-extrabold text-slate-400 uppercase flex items-center gap-2"><span>📁</span> Coincidencias Locales</h2></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">`;
-                    localMatches.forEach(match => { htmlLocal += crearHTMLTarjeta(match.objeto, match.auxiliar, match.denominacion, match.descripcion, "Padrón Local.", 'sistema', termRaw); });
+                    localMatches.forEach(match => { htmlLocal += crearHTMLTarjeta(match.objeto, match.auxiliar, match.denominacion, match.descripcion, "Padrón Local.", 'sistema', termRaw, null, null); });
                     htmlLocal += `</div>`;
                 }
 
