@@ -222,19 +222,17 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- SISTEMA DE SEGURIDAD LOCAL (CONTRASEÑA ENCRIPTADA) ---
-            // La huella matemática (Hash) de "Portugal1301" es "-368142340"
-            const HASH_MAESTRO = "-368142340"; 
+            // La contraseña ofuscada (Base64) de "Portugal1301" es "UG9ydHVnYWwxMzAx"
+            const HASH_MAESTRO = "UG9ydHVnYWwxMzAx"; 
             let estaDesbloqueado = false;
             let accionPendiente = null;
 
             function generarHash(texto) {
-                let hash = 0;
-                for (let i = 0; i < texto.length; i++) {
-                    let char = texto.charCodeAt(i);
-                    hash = ((hash << 5) - hash) + char;
-                    hash = hash & hash;
+                try {
+                    return btoa(texto);
+                } catch(e) {
+                    return texto;
                 }
-                return hash.toString();
             }
 
             function pedirAutenticacion(callback) {
