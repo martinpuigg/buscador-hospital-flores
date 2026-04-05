@@ -340,7 +340,7 @@
                 "01": "Retribuciones Básicas", "11": "Alimentos y Bebidas", "12": "Vestuario y Calzado",
                 "13": "Útiles y Materiales", "14": "Productos Agropecuarios", "15": "Productos de Limpieza",
                 "16": "Productos Médicos", "17": "Materiales y Repuestos", "19": "Otros Bienes",
-                "21": "Servicios Básicos", "26": "Servicios Profesionales", "28": "Mantenimiento",
+                "21": "Servicios Básicos", "23": "Pasajes y Viáticos", "26": "Servicios Profesionales", "28": "Mantenimiento",
                 "32": "Maquinaria", "33": "Equipos Computación"
             };
 
@@ -351,6 +351,10 @@
                 "151": { denominacion: "Productos de limpieza, aseo y fumigación", descripcion: "Higiene y limpieza: lavandina, escobas, jabón." },
                 "171": { denominacion: "Productos metálicos básicos", descripcion: "Hierro, varillas, perfiles, chapas." },
                 "176": { denominacion: "Repuestos y accesorios", descripcion: "Herramientas manuales (martillo, pinza), repuestos mecánicos." },
+                "231": { denominacion: "Pasajes dentro del país", descripcion: "Boletos de ómnibus, pasajes nacionales." },
+                "233": { denominacion: "Fletes", descripcion: "Transporte de bienes y mercaderías." },
+                "234": { denominacion: "Transporte de personas", descripcion: "Traslados de personal o pacientes." },
+                "264": { denominacion: "Servicios médicos, sanitarios y sociales", descripcion: "Incluye traslados especializados en ambulancia." },
                 "321": { denominacion: "Mobiliario y equipo de oficina", descripcion: "Escritorios físicos, mesas, sillas, armarios." },
                 "322": { denominacion: "Equipo de computación y periféricos", descripcion: "PCs, monitores, impresoras." },
                 "923": { denominacion: "Reserva para imprevistos", descripcion: "Gastos no programados." }
@@ -601,10 +605,13 @@
                     htmlLocal += `</div>`;
                 }
 
-                const prompt = `Actúa como experto asesor contable uruguayo para compras estatales. Busca el insumo: "${termRaw}". 
+                const prompt = `Actúa como experto asesor contable uruguayo para compras estatales. Busca el insumo o servicio: "${termRaw}". 
                 ESTÁS OBLIGADO a devolver MÍNIMO 3 OBJETOS en JSON separando variantes. 
                 El "objeto" DEBE SER UN NÚMERO DE 3 DÍGITOS. No inventes códigos numéricos, usa los de CGN.
-                Ej: Estufa Eléctrica, a Gas. Plástico/PVC(114), Hierro(171), Herramientas(176), Muebles(321), Resmas(131), Limpieza(151).
+                Ejemplos de análisis: 
+                - Flete de carga (233), Traslado de personas (234), Ambulancia (264).
+                - Estufa a Gas (322).
+                - Plástico/PVC (114), Hierro (171), Herramientas (176), Muebles (321), Resmas (131), Limpieza (151).
                 Responde ÚNICAMENTE en JSON: arreglo de objetos con llaves: "objeto", "auxiliar", "denominacion", "descripcion", "justificacion".`;
 
                 try {
